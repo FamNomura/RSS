@@ -1,0 +1,44 @@
+﻿[
+    {
+        "page_title": "総合ニュース",
+        "filename": "index.html",
+        "feeds": [
+            {
+                "title": "GIGAZINE",
+                "url": "https://feed.rssad.jp/rss/gigazine/rss_2.0"
+            },
+            {
+                "title": "NHKニュース",
+                "url": "https://www.nhk.or.jp/rss/news/cat0.xml"
+            }
+        ]
+    },
+    {
+        "page_title": "レシピ・料理",
+        "filename": "recipes.html",
+        "feeds": [
+            {
+                "title": "Lifehacker (Food)",
+                "url": "https://www.lifehacker.jp/tag/food/feed/index.xml"
+            },
+            {
+                "title": "オレンジページnet",
+                "url": "https://www.orangepage.net/feed/recipes/new.rss"
+            }
+        ]
+    },
+    {
+        "page_title": "Tech情報",
+        "filename": "tech.html",
+        "feeds": [
+            {
+                "title": "Publickey",
+                "url": "https://www.publickey1.jp/atom.xml"
+            },
+            {
+                "title": "DevelopersIO",
+                "url": "https://dev.classmethod.jp/feed/"
+            }
+        ]
+    }
+]

@@ -1,0 +1,3 @@
+﻿feedparser
+jinja2
+pytz
