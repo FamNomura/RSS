@@ -1,5 +1,35 @@
 [
     {
+        "page_title": "福祉行政",
+        "filename": "new.html",
+        "feeds": [
+            {
+                "title": "厚生労働省",
+                "url": "https://www.mhlw.go.jp/stf/news.rdf"
+            },
+            {
+                "title": "WAMNET行政情報",
+                "url": "https://www.wam.go.jp/gyoseiShiryou/new_rss"
+            },
+            {
+                "title": "道新",
+                "url": "https://www.hokkaido-np.co.jp/output/7/free/index.ad.xml"
+            },
+            {
+                "title": "旭川新聞",
+                "url": "https://www.asahikawa-np.com/digest/feed/"
+            },
+            {
+                "title": "まるまるNET北海道",
+                "url": "http://www.hofm.co.jp/feed/"
+            },
+            {
+                "title": "中央バス",
+                "url": "https://www.chuo-bus.co.jp/support/stop/?ope=feed&topic=stop_top"
+            }
+        ]
+    },
+    {
         "page_title": "総合ニュース",
         "filename": "index.html",
         "feeds": [
