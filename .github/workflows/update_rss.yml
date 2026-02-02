@@ -2,8 +2,14 @@ name: Update RSS Feed
 
 on:
   schedule:
-    - cron: '0 22 * * *' # 日本時間 朝7:00
+    # cron構文: 分 時 日 月 曜日 (UTC)
+    # '0 * * * *' は「毎時0分」を意味します
+    - cron: '0 * * * *'
+  
+  # 手動実行ボタンを引き続き有効化
   workflow_dispatch:
+  
+  # 設定ファイルをいじった時も更新
   push:
     paths:
       - 'feeds.json'
@@ -39,7 +45,6 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        # 変更されたすべてのHTMLファイルを追加
         git add *.html
         # 変更がある場合のみコミット
         git diff --quiet && git diff --staged --quiet || (git commit -m "Update RSS feed [skip ci]" && git push)
