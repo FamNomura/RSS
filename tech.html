@@ -1,0 +1,271 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech情報 - My RSS Reader</title>
+    <style>
+        :root {
+            --bg-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --meta-color: #666;
+            --accent-color: #007bff;
+            --nav-bg: #2c3e50;
+            --nav-text: #ffffff;
+        }
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding-bottom: 40px;
+        }
+        
+        /* ナビゲーションバーのスタイル */
+        .navbar {
+            background-color: var(--nav-bg);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .nav-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .nav-link {
+            color: var(--nav-text);
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 14px;
+            opacity: 0.8;
+            transition: opacity 0.2s, background-color 0.2s;
+        }
+        .nav-link:hover {
+            opacity: 1;
+            background-color: rgba(255,255,255,0.1);
+        }
+        .nav-link.active {
+            opacity: 1;
+            background-color: var(--accent-color);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        h1 { margin: 0; font-size: 24px; color: #2c3e50; }
+        .update-time { font-size: 0.9em; color: var(--meta-color); margin-top: 5px; }
+        
+        .feed-section { margin-bottom: 40px; }
+        .feed-title {
+            font-size: 20px;
+            border-left: 5px solid var(--accent-color);
+            padding-left: 10px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .article-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        .article-card:hover { transform: translateY(-2px); }
+        .article-title {
+            font-size: 18px;
+            margin: 0 0 10px 0;
+        }
+        .article-title a {
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        .article-title a:hover { color: var(--accent-color); }
+        .article-meta {
+            font-size: 12px;
+            color: var(--meta-color);
+            display: flex;
+            justify-content: space-between;
+        }
+        .summary {
+            font-size: 14px;
+            color: #555;
+            margin-top: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        @media (max-width: 600px) {
+            .container { padding: 0 10px; }
+            .article-title { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            
+            <a href="index.html" 
+               class="nav-link ">
+                総合ニュース
+            </a>
+            
+            <a href="recipes.html" 
+               class="nav-link ">
+                レシピ・料理
+            </a>
+            
+            <a href="tech.html" 
+               class="nav-link active">
+                Tech情報
+            </a>
+            
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>Tech情報</h1>
+            <div class="update-time">最終更新: 2026/02/02 09:11:23 JST</div>
+        </header>
+
+        
+        <div class="feed-section">
+            <h2 class="feed-title">Publickey</h2>
+            
+            <div class="article-card">
+                <h3 class="article-title">
+                    <a href="https://www.publickey1.jp/blog/26/bunzigmarkdownhtmlgithub_flavored_markdownreact.html" target="_blank" rel="noopener noreferrer">BunがZig製の高速なMarkdownパーサー搭載。HTMLへのレンダリング、GitHub Flavored Markdown対応、Reactエレメントの生成など</a>
+                </h3>
+                <div class="summary">オープンソースで開発されているJavaScriptランタイム「Bun」の最新バージョン「Bun v1.3.8」が公開されました。 下記はBunの作者であるJarred Sumner氏のポストです。 In the next version o...</div>
+                <div class="article-meta">
+                    <span>2026-02-01T15:37:12Z</span>
+                </div>
+            </div>
+            
+            <div class="article-card">
+                <h3 class="article-title">
+                    <a href="https://www.publickey1.jp/blog/26/jquery_40jquery_ui_1142.html" target="_blank" rel="noopener noreferrer">jQuery 4.0で正式にテストされた「jQuery UI 1.14.2」が公開</a>
+                </h3>
+                <div class="summary">jQuery UI開発チームは、今月（2025年1月）にリリースされたばかりのjQuery 4.0で正式にテストされたjQuery UIの最新版「jQuery UI 1.14.2」の公開を発表しました。 jQuery UIはその名称から分か...</div>
+                <div class="article-meta">
+                    <span>2026-02-01T15:34:28Z</span>
+                </div>
+            </div>
+            
+            <div class="article-card">
+                <h3 class="article-title">
+                    <a href="https://www.publickey1.jp/blog/26/awsmac_studioamazon_ec2_m4_max_mac.html" target="_blank" rel="noopener noreferrer">AWS、最新のMac Studioを利用した「Amazon EC2 M4 Max Macインスタンス」提供開始</a>
+                </h3>
+                <div class="summary">Amazon Web Servicesは、最新のMac Studioハードウェアを利用したMacインスタンス「Amazon EC2 M4 Max Macインスタンス」の提供開始を発表しました。 MacインスタンスはAppleのMacを使用し...</div>
+                <div class="article-meta">
+                    <span>2026-01-29T15:20:24Z</span>
+                </div>
+            </div>
+            
+            <div class="article-card">
+                <h3 class="article-title">
+                    <a href="https://www.publickey1.jp/blog/26/openailatexprism.html" target="_blank" rel="noopener noreferrer">OpenAI、ホワイトボードの数式や図をLaTeXの図版に変換。問題の仮説検証、推論、関連文献の検索など、論文執筆を支援してくれる「Prism」公開</a>
+                </h3>
+                <div class="summary">OpenAIは、GPT‑5.2をベースに研究者が論文の執筆や共同作業を行うためのWebブラウザから利用できるサービス「Prism」を発表しました。 数学や科学的推論に特化したGPT-5.2を統合 Prism は、数学および科学的推論に特化し...</div>
+                <div class="article-meta">
+                    <span>2026-01-28T15:55:11Z</span>
+                </div>
+            </div>
+            
+            <div class="article-card">
+                <h3 class="article-title">
+                    <a href="https://www.publickey1.jp/blog/26/linuxoracle_ai_database_26ai.html" target="_blank" rel="noopener noreferrer">オラクル、Linux版の「Oracle AI Database 26ai」正式リリース。前バージョンからそのまま移行可能</a>
+                </h3>
+                <div class="summary">オラクルはオンプレミス向けのLinux x86-64版「Oracle AI Database 26ai」の正式リリースを発表しました。 Oracle AI Database 26aiは、1つ前のバージョンであるOracle AI Datab...</div>
+                <div class="article-meta">
+                    <span>2026-01-28T15:51:08Z</span>
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="feed-section">
+            <h2 class="feed-title">DevelopersIO</h2>
+            
+            <div class="article-card">
+                <h3 class="article-title">
+                    <a href="https://dev.classmethod.jp/articles/seiya-tanaka-looking-back-join-12-month/" target="_blank" rel="noopener noreferrer">【1年の振り返り】クラスメソッドに入社したら年間で60回も工場に足を運ぶITエンジニアになっていました</a>
+                </h3>
+                <div class="summary">【1年の振り返り】クラスメソッドに入社したら年間で60回も工場に足を運ぶITエンジニアになっていました</div>
+                <div class="article-meta">
+                    <span>Mon, 02 Feb 2026 00:00:11 GMT</span>
+                </div>
+            </div>
+            
+            <div class="article-card">
+                <h3 class="article-title">
+                    <a href="https://dev.classmethod.jp/articles/amazon-q-in-connect-reconfigure-logs-recreate-assistant/" target="_blank" rel="noopener noreferrer">Amazon Q in Connectのアシスタントを作り直した際に、CloudWatch Logs出力を再設定する手順</a>
+                </h3>
+                <div class="summary">Amazon Q in Connectのアシスタントを作り直した際に、CloudWatch Logs出力を再設定する手順</div>
+                <div class="article-meta">
+                    <span>Sun, 01 Feb 2026 23:53:41 GMT</span>
+                </div>
+            </div>
+            
+            <div class="article-card">
+                <h3 class="article-title">
+                    <a href="https://dev.classmethod.jp/articles/azure-app-testing-reporting/" target="_blank" rel="noopener noreferrer">Azure App Testing の Playwright ワークスペースでレポート機能を有効化し、Azure Blob ストレージにテスト結果などを自動アップロードできるようになりました</a>
+                </h3>
+                <div class="summary">Azure App Testing の Playwright ワークスペースでレポート機能を有効化し、Azure Blob ストレージにテスト結果などを自動アップロードできるようになりました</div>
+                <div class="article-meta">
+                    <span>Sun, 01 Feb 2026 21:38:21 GMT</span>
+                </div>
+            </div>
+            
+            <div class="article-card">
+                <h3 class="article-title">
+                    <a href="https://dev.classmethod.jp/articles/lambda-cross-account-dynamodb-streams/" target="_blank" rel="noopener noreferrer">[アップデート] 別アカウントのAmazon DynamoDB Streamsをイベントソースマッピングとして設定し、別アカウントからAWS Lambdaを実行できるようになりました</a>
+                </h3>
+                <div class="summary">AWS LambdaがAmazon DynamoDB Streamsに対してクロスアカウントアクセスできるようになりました。</div>
+                <div class="article-meta">
+                    <span>Sun, 01 Feb 2026 15:15:03 GMT</span>
+                </div>
+            </div>
+            
+            <div class="article-card">
+                <h3 class="article-title">
+                    <a href="https://dev.classmethod.jp/articles/ai_filter/" target="_blank" rel="noopener noreferrer">[新機能]AI_FILTER関数が一般提供となったので試してみた</a>
+                </h3>
+                <div class="summary">[新機能]AI_FILTER関数が一般提供となったので試してみた</div>
+                <div class="article-meta">
+                    <span>Sun, 01 Feb 2026 12:45:42 GMT</span>
+                </div>
+            </div>
+            
+        </div>
+        
+        
+        <footer style="text-align: center; margin-top: 50px; font-size: 12px; color: #999;">
+            Powered by GitHub Actions & Python
+        </footer>
+    </div>
+</body>
+</html>

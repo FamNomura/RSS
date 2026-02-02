@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>総合ニュース - My RSS Reader</title>
+    <style>
+        :root {
+            --bg-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --meta-color: #666;
+            --accent-color: #007bff;
+            --nav-bg: #2c3e50;
+            --nav-text: #ffffff;
+        }
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding-bottom: 40px;
+        }
+        
+        /* ナビゲーションバーのスタイル */
+        .navbar {
+            background-color: var(--nav-bg);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .nav-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .nav-link {
+            color: var(--nav-text);
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 14px;
+            opacity: 0.8;
+            transition: opacity 0.2s, background-color 0.2s;
+        }
+        .nav-link:hover {
+            opacity: 1;
+            background-color: rgba(255,255,255,0.1);
+        }
+        .nav-link.active {
+            opacity: 1;
+            background-color: var(--accent-color);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        h1 { margin: 0; font-size: 24px; color: #2c3e50; }
+        .update-time { font-size: 0.9em; color: var(--meta-color); margin-top: 5px; }
+        
+        .feed-section { margin-bottom: 40px; }
+        .feed-title {
+            font-size: 20px;
+            border-left: 5px solid var(--accent-color);
+            padding-left: 10px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .article-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        .article-card:hover { transform: translateY(-2px); }
+        .article-title {
+            font-size: 18px;
+            margin: 0 0 10px 0;
+        }
+        .article-title a {
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        .article-title a:hover { color: var(--accent-color); }
+        .article-meta {
+            font-size: 12px;
+            color: var(--meta-color);
+            display: flex;
+            justify-content: space-between;
+        }
+        .summary {
+            font-size: 14px;
+            color: #555;
+            margin-top: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        @media (max-width: 600px) {
+            .container { padding: 0 10px; }
+            .article-title { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            
+            <a href="index.html" 
+               class="nav-link active">
+                総合ニュース
+            </a>
+            
+            <a href="recipes.html" 
+               class="nav-link ">
+                レシピ・料理
+            </a>
+            
+            <a href="tech.html" 
+               class="nav-link ">
+                Tech情報
+            </a>
+            
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>総合ニュース</h1>
+            <div class="update-time">最終更新: 2026/02/02 09:11:23 JST</div>
+        </header>
+
+        
+        <div class="feed-section">
+            <h2 class="feed-title">GIGAZINE</h2>
+            
+        </div>
+        
+        <div class="feed-section">
+            <h2 class="feed-title">NHKニュース</h2>
+            
+            <div class="article-card">
+                <h3 class="article-title">
+                    <a href="https://news.web.nhk/newsweb/na/na-k10015041171000" target="_blank" rel="noopener noreferrer">衆院選 投票日まで1週間切る 各党党首や幹部 接戦選挙区などに</a>
+                </h3>
+                <div class="summary">衆議院選挙は、2月8日の投票日まで1週間を切り、論戦が激しくなっています。各党の党首や幹部は接戦となっている選挙区や、比例代表での支持拡大を目指す地域などに入り、議席の上積みを目指すことにしています。</div>
+                <div class="article-meta">
+                    <span>Mon, 02 Feb 2026 06:12:52 +0900</span>
+                </div>
+            </div>
+            
+            <div class="article-card">
+                <h3 class="article-title">
+                    <a href="https://news.web.nhk/newsweb/na/na-k10015041211000" target="_blank" rel="noopener noreferrer">青森県 記録的な大雪で陸上自衛隊に災害派遣を要請</a>
+                </h3>
+                <div class="summary">青森県は青森市で記録的な大雪となり除雪作業中の死亡事故も起きているとして、1日夜、陸上自衛隊に災害派遣を要請しました。1人暮らしの高齢者世帯を対象に屋根の雪下ろしなどへの支援を求めています。</div>
+                <div class="article-meta">
+                    <span>Mon, 02 Feb 2026 06:49:08 +0900</span>
+                </div>
+            </div>
+            
+            <div class="article-card">
+                <h3 class="article-title">
+                    <a href="https://news.web.nhk/newsweb/na/na-k10015041221000" target="_blank" rel="noopener noreferrer">香港 5000万円強盗事件 日本人含む4人 強盗を共謀した罪で起訴</a>
+                </h3>
+                <div class="summary">香港で日本人の男性が現金5000万円あまりを奪われた事件で、日本人を含む4人が強盗を共謀した罪で起訴されました。2日、現地の裁判所で初公判が開かれ、検察側が起訴内容を明らかにするものとみられます。</div>
+                <div class="article-meta">
+                    <span>Mon, 02 Feb 2026 06:32:40 +0900</span>
+                </div>
+            </div>
+            
+            <div class="article-card">
+                <h3 class="article-title">
+                    <a href="https://news.web.nhk/newsweb/na/na-k10015040971000" target="_blank" rel="noopener noreferrer">「緊急避妊薬」きょうから処方箋なくても店頭で購入可能に</a>
+                </h3>
+                <div class="summary">意図しない妊娠を防ぐ「緊急避妊薬」が2日から医師の処方箋がなくても薬局やドラッグストアの店頭で購入できるようになります。店舗での対面販売に限られ、薬剤師からの説明を受けた上で、その場で服用することが求…</div>
+                <div class="article-meta">
+                    <span>Mon, 02 Feb 2026 06:00:36 +0900</span>
+                </div>
+            </div>
+            
+            <div class="article-card">
+                <h3 class="article-title">
+                    <a href="https://news.web.nhk/newsweb/na/na-k10015041161000" target="_blank" rel="noopener noreferrer">東京23区単身マンションの家賃 去年平均9万6700円上昇傾向続く</a>
+                </h3>
+                <div class="summary">東京23区の単身向けマンションの家賃は、民間の調査によりますと、去年1月から12月の平均で、前の年より6％上昇して9万6700円になりました。家賃の上昇傾向は続き、去年12月の家賃は10万円を超えてい…</div>
+                <div class="article-meta">
+                    <span>Mon, 02 Feb 2026 05:36:06 +0900</span>
+                </div>
+            </div>
+            
+        </div>
+        
+        
+        <footer style="text-align: center; margin-top: 50px; font-size: 12px; color: #999;">
+            Powered by GitHub Actions & Python
+        </footer>
+    </div>
+</body>
+</html>
