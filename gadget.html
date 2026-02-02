@@ -13,6 +13,7 @@
             --accent: #007bff;
             --new-badge: #e74c3c;
             --border: #e9ecef;
+            --highlight: #fff3cd; /* ハイライト色 */
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -35,7 +36,14 @@
             max-width: 800px;
             margin: 0 auto;
             display: flex;
-            gap: 15px;
+            align-items: center;
+            justify-content: space-between; /* 検索窓とリンクを左右に配置 */
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 10px;
             overflow-x: auto;
             white-space: nowrap;
         }
@@ -50,13 +58,30 @@
         }
         .nav-link.active { opacity: 1; background-color: var(--accent); }
 
+        /* 検索ボックスのデザイン */
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 300px;
+        }
+        .search-input {
+            width: 100%;
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: none;
+            font-size: 14px;
+            background-color: rgba(255,255,255,0.9);
+            box-sizing: border-box;
+        }
+        .search-input:focus { outline: 2px solid var(--accent); }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
         }
 
-        header { margin-bottom: 30px; text-align: center; }
+        header { margin-bottom: 20px; text-align: center; }
         h1 { font-size: 22px; margin: 0; color: #333; }
         .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
 
@@ -95,133 +120,113 @@
         .entry-item {
             padding: 15px;
             border-bottom: 1px solid var(--border);
-            /* Flexboxで画像とテキストを横並びにする */
             display: flex;
             gap: 15px;
             align-items: flex-start;
         }
         .entry-item:last-child { border-bottom: none; }
         
-        /* テキストエリア */
-        .entry-content-wrapper {
-            flex: 1;
-            min-width: 0; /* Flexbox内でのテキスト折り返し用 */
-        }
-
-        /* サムネイル画像 */
+        .entry-content-wrapper { flex: 1; min-width: 0; }
         .entry-thumbnail {
-            width: 100px;
-            height: 75px;
-            object-fit: cover;
-            border-radius: 4px;
-            flex-shrink: 0; /* 縮まないようにする */
-            border: 1px solid #eee;
+            width: 100px; height: 75px; object-fit: cover;
+            border-radius: 4px; flex-shrink: 0; border: 1px solid #eee;
         }
 
-        .entry-title {
-            font-size: 16px;
-            margin: 0 0 5px 0;
-            line-height: 1.4;
-        }
+        .entry-title { font-size: 16px; margin: 0 0 5px 0; line-height: 1.4; }
         .entry-title a { text-decoration: none; color: var(--text-main); }
         .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
         .new-badge {
-            display: inline-block;
-            background-color: var(--new-badge);
-            color: white;
-            font-size: 10px;
-            padding: 2px 5px;
-            border-radius: 3px;
-            margin-right: 5px;
-            vertical-align: middle;
-            font-weight: bold;
+            display: inline-block; background-color: var(--new-badge); color: white;
+            font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px;
+            vertical-align: middle; font-weight: bold;
         }
 
-        .entry-meta {
-            font-size: 12px;
-            color: var(--text-sub);
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
+        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; }
         .entry-summary {
-            font-size: 13px;
-            color: #555;
-            margin-top: 8px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            opacity: 0.8;
+            font-size: 13px; color: #555; margin-top: 8px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden; opacity: 0.8;
         }
-        /* サマリー内の元画像は非表示（サムネイルとして横に出すため） */
         .entry-summary img { display: none; }
+
+        /* ハイライト用スタイル */
+        mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
 
         @media (max-width: 600px) {
             .container { padding: 15px 10px; }
             summary { padding: 12px; }
-            /* スマホではサムネイルを少し小さく */
             .entry-thumbnail { width: 80px; height: 60px; }
+            .nav-container { flex-direction: column; align-items: stretch; }
+            .search-box { max-width: 100%; margin-top: 10px; }
         }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-container">
-            
-            <a href="new.html" 
-               class="nav-link ">
-                福祉行政
-            </a>
-            
-            <a href="index.html" 
-               class="nav-link ">
-                総合ニュース
-            </a>
-            
-            <a href="recipes.html" 
-               class="nav-link ">
-                レシピ・料理
-            </a>
-            
-            <a href="tech.html" 
-               class="nav-link ">
-                Tech情報
-            </a>
-            
-            <a href="business.html" 
-               class="nav-link ">
-                ビジネス・経済
-            </a>
-            
-            <a href="gadget.html" 
-               class="nav-link active">
-                ガジェット・モノ
-            </a>
-            
-            <a href="design.html" 
-               class="nav-link ">
-                デザイン・Web制作
-            </a>
-            
-            <a href="entertainment.html" 
-               class="nav-link ">
-                エンタメ・コラム
-            </a>
-            
+            <div class="nav-links">
+                
+                <a href="new.html" 
+                   class="nav-link ">
+                    福祉行政
+                </a>
+                
+                <a href="index.html" 
+                   class="nav-link ">
+                    総合ニュース
+                </a>
+                
+                <a href="recipes.html" 
+                   class="nav-link ">
+                    レシピ・料理
+                </a>
+                
+                <a href="tech.html" 
+                   class="nav-link ">
+                    Tech情報
+                </a>
+                
+                <a href="business.html" 
+                   class="nav-link ">
+                    ビジネス・経済
+                </a>
+                
+                <a href="gadget.html" 
+                   class="nav-link active">
+                    ガジェット・モノ
+                </a>
+                
+                <a href="design.html" 
+                   class="nav-link ">
+                    デザイン・Web制作
+                </a>
+                
+                <a href="entertainment.html" 
+                   class="nav-link ">
+                    エンタメ・コラム
+                </a>
+                
+                <a href="yahoo.html" 
+                   class="nav-link ">
+                    ニュース記事
+                </a>
+                
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" class="search-input" placeholder="キーワード検索...">
+            </div>
         </div>
     </nav>
 
     <div class="container">
         <header>
             <h1>ガジェット・モノ</h1>
-            <div class="last-updated">最終更新: 02/02 15:01</div>
+            <div class="last-updated">最終更新: 02/02 15:54</div>
         </header>
 
         
-        <details open>
+        <details class="feed-section">
             <summary>
                 <div class="feed-header">
                     <img src="https://www.google.com/s2/favicons?domain=www.gizmodo.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
@@ -234,7 +239,7 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="スケルトンでレトロ味マシマシ。つまめるカワイイ極小コンデジ" data-summary="Image:SACCO.,LTD.透けてても時代に色褪せないスケルトン。プロ向けからお遊びまで、デジタルカメラは種類も値段もピンキリですよね。中でもトイカメラと呼ばれる手のひらサイズは、画質は低めでもデザインがキュートだったり、アクセサリー感覚で使えるジャンル。持っているといろいろ遊べます。スケスケなトイカメラ株式会社SACでもトイカメラを出していますが、「SMC01」シリーズに半透明のスケルトン">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -244,7 +249,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>2分前</span>
+                            <span>54分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -257,7 +262,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="【SALE最終日】重低音突き抜ける、Xiaomiのポータブルスピーカーが5,000円台だと？" data-summary="Amazon（アマゾン）では、2026年1月27日（火）9時から2月2日（木）23時59分まで｢AmazonスマイルSALE｣を開催中。 現在、全面メッシュデザインによりクリアでバランスのとれたオーディオを実現した、Xiaomi（シャオミ）のポータブルスピーカー「サウンドアウトドア」がお得に登場しています。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -267,7 +272,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>7分前</span>
+                            <span>59分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -280,7 +285,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="モンベルの「保温力強すぎウェア」、本当に暖かいのに汗冷えしない" data-summary="Photo:covacova.ROOMIE2025年2月21日掲載の記事より転載寒い季節の登山や通勤、アウトドアで重要なのは“暖かさ”と“動きやすさ”です。どうしてもアウターの保温性に目が行きがちですが、大切なのはアンダーウェア選び。冬もアクティブに動き回るなら、モンベルのこのアンダーウェアが1枚あると頼りになるんです。圧倒的な保温力で極寒でも安心mont-bell「ジオラインEXP.ラウンドネッ">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -290,7 +295,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>27分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -303,7 +308,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="【3年前】Geminiはかつて〇〇と呼ばれていた" data-summary="Image:GeneratedwithGemini2023年2月4日、「GoogleがChatGPT対抗ボットをテスト中、その名も…」という記事を掲載しました。当時は、彗星のごとく現れたChatGPTに世界が度肝を抜かれ、「いずれGoogle検索の時代が終わるのでは？」という空気が充満していた時期。そんな中、Googleが必死に開発をしているというAIに関心を寄せていた人も多かったはず。開発中とさ">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -326,7 +331,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="Apple Creator Studioが神コスパ。機能的には万能じゃないけどね…" data-summary="Image:RaymondWong-GizmodoUSApple（アップル）から新しいクリエイター向けスイート「CreatorStudio」（月額1,780円／年間1万7800円）が登場しました。AdobeCreativeCloud（月額9,080円／年間10万2960円）より圧倒的に安いのは、火を見るより明らかです。画像編集、動画編集、音楽制作といったApple謹製のクリエイティブ系ソフトウェア">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -349,7 +354,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="Ankerの新作6-in-1ハブがポート不足終わらせに来た。早速の20％オフで" data-summary="Amazon（アマゾン）では、2026年1月27日（火）9時から2月2日（木）23時59分まで「AmazonスマイルSALE」を開催中。 現在、コンパクト設計ながら6-in-1で、ノートPCのポート不足を1台で解消できるAnker（アンカー）の「Nano USB-C ハブ（6-in-1, 5Gbps）」がお得に登場しています。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -372,7 +377,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="HUAWEIってタフなんです。スマウォとイヤホンに助けられた過酷な富士山マラソン" data-summary="Photo:石阪大輔先日の箱根駅伝で話題をさらった新・山の神こと青山学院大学の黒田朝日選手は、時計をつけて走らないそうです。自分の感覚を大事にしているんだとか。ごく稀に異次元の感覚で走れる人もいますが、ファンランナーにしてみたら、ランニングに必要なツールとしてシューズと同じくらい時計は重要でしょう。加えてイヤホンも大事。装着せずに走るランナーもいますが、ぼくの場合は音楽の力を借りないと走れません。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -382,7 +387,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>2時間前</span>
+                            <span>3時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -395,7 +400,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="G-SHOCKみたいなスマート…リング!? ウォッチじゃなくて指輪!?" data-summary="Image:Rogbidすっごく似てるし機能もテンコ盛り。世界に誇るカシオのタフネス腕時計「G-SHOCK」には、心拍センサーなどのアクティビティー・トラッカーを兼ねた｢G-SQUADDW-H5600｣があります。ゴツくてタフなド定番デザイン、なのに歩数や睡眠なども計測するスマートっぷりです。一方で「G-SHOCK」には、時計機能だけで耐衝撃＆20気圧防水の指輪バージョンも存在します。こっちも活動">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -418,7 +423,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="もう給水所でがっかりしない。ぺたんこになるモンベルの水パック" data-summary="Photo:SUMA-KIYO2025年4月24日の記事を編集して再掲載しています。商業施設やレジャー施設などで見かける給水スポットは、無料で飲料水を提供してもらえるありがたい存在。しかし、給水したいときに限って「ボトルを持っていない」…そんな経験ありませんか？僕も「今日は荷物を軽くしたいし、まあいいか」と水筒を持たずに出かけた日に限って、給水スポットを見つけて「しまった」と思ったことが何度かあり">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -428,7 +433,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3時間前</span>
+                            <span>4時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -441,7 +446,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="Samsung Galaxy Buds4 / 4 Proは2月26日発表か？ 機能もお値段もアップしそう" data-summary="Image:AdrianoContreras-GizmodoUS2月25日（日本時間では26日）に開催が噂されているSamsung（サムスン）の新製品発表会「GalaxyUnpacked」。GalaxyS26シリーズ発表会、日本時間2月26日でほぼ確ガジェット業界における1年の始まりといえば、年明けすぐのCES。ここで大量の新製品やコンセプトに埋もれエンジンをしっかりかけて、次にSamsung（サ">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -467,7 +472,7 @@
             </ul>
         </details>
         
-        <details open>
+        <details class="feed-section">
             <summary>
                 <div class="feed-header">
                     <img src="https://www.google.com/s2/favicons?domain=pc.watch.impress.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
@@ -480,7 +485,7 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="GMKtec、Core Ultra 7 256V搭載のミニPC「K13」" data-summary="GMKtecは、CPUにCore Ultra 7 256Vを採用したミニPC「K13」を発売した。価格は、ストレージ512GBモデルが13万4,999円、1TBモデルが14万2,499円。現在はセール価格が適用され、それぞれ10万498円、10万7,998円で購入可能。また、2月5日まで利用できるクーポンコード「GMKK1315」によりさらに2,250円オフが適用される。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -490,7 +495,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>55分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -501,7 +506,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="ローカルAI開発環境「Razer AIKit」最新版、モニタリング機能など追加" data-summary="Razerは1月30日、オープンソースのAI開発環境「Razer AIKit v0.2.0」を公開した。現時点ではプレビュー版での提供となっている。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -511,7 +516,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -522,7 +527,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="指先ひとつでらくらく動くモニターアーム「Flo Now」" data-summary="アーキサイトは、モニターアームブランドのコルブルック・ボッソン・サンダース製モニターアーム「Flo Now」を発表した。本体カラーはブラック、ホワイト、シルバーの3色を用意する。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -532,7 +537,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -543,7 +548,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="JAPANNEXT、未発売の6Kモニターが当たるキャンペーン" data-summary="JAPANNEXTは、創業10周年を記念した「おかげさまで10周年。6Kモニタープレゼントキャンペーン」を開催する。応募期間は2月15日まで。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -553,7 +558,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3時間前</span>
+                            <span>4時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -564,7 +569,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="【本日みつけたお買い得品】ケロッグのコーンフロスティ 6袋セットが20%オフなど、シリアルがお買い得に！" data-summary="Amazonは本日まで、スマイルSALEを実施中だ。ケロッグ「コーンフロスティ」の6袋セットは、20%オフにあたる633円引きで、2,531円にて購入できる。栄養バランスに配慮したというコーンフレーク。1食30gと牛乳200gを一緒に食べることで、学校給食摂取基準のビタミン・ミネラルを摂れるとする。内容量は350g。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -574,7 +579,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3時間前</span>
+                            <span>4時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -585,7 +590,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="なぜ、その椅子だと14時間座っても平気なのか？ヘルニアもやった腰痛持ちのプロが「魔法のよう」と語る電動チェアの正体 ～電動ワークチェア「LiberNovo Omni」のリアル体験記[Sponsored]" data-summary="厚生労働省の「技術革新と労働に関する実態調査」によれば、約77.6%のデジタル機器作業者が身体的な疲労を感じていると回答しており、その中でも「首・肩のこり・痛み」は約75%、「腰の痛み」は約60%(重複回答あり)とされている。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -606,7 +611,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="【本日みつけたお買い得品】Xboxワイヤレスコントローラと専用バッテリのセットがセール" data-summary="Amazonは本日まで、スマイルSALEを実施している。Microsoft「Xbox ワイヤレス コントローラー」と「Xbox 充電式バッテリー」、USB Type-Cケーブルの3点セットは、直近価格から901円引きの9,788円。Xbox ワイヤレス コントローラーの単体は、直近価格から901円引きの7,118円にて、それぞれ購入可能だ。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -616,7 +621,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>4時間前</span>
+                            <span>5時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -627,7 +632,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="【本日みつけたお買い得品】ロジクールの高性能ワイヤレストラックボールが2,820円引き" data-summary="Amazonは本日まで、スマイルSALEを実施中だ。ロジクールのワイヤレストラックボール「MX Ergo S」は、2,820円引きで、1万4,980円にて購入できる。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -637,7 +642,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>4時間前</span>
+                            <span>5時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -648,7 +653,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="【本日みつけたお買い得品】液晶モニター搭載のRyzen 7 PROミニPCが約2万7千円オフ" data-summary="Amazonは本日まで、スマイルSALEを実施している。AOOSTARのミニPC「G-FLIP 8845HS」は、1月22日の価格から2万7,035円引きで、9万7,665円にて購入可能だ。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -658,7 +663,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>4時間前</span>
+                            <span>5時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -669,7 +674,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="モバイルバッテリ発火時の延焼を抑えるケース" data-summary="ゴッパは、モバイルバッテリを収納しておき、発火時の延焼や煙の拡散を抑えるケース「モバイルバッテリー用 燃えにくいケース(EG-FR18S)」をAmazonで発売した。価格はオープンプライスで、実売価格は2,180円。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -679,7 +684,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>4時間前</span>
+                            <span>5時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -693,7 +698,7 @@
             </ul>
         </details>
         
-        <details open>
+        <details class="feed-section">
             <summary>
                 <div class="feed-header">
                     <img src="https://www.google.com/s2/favicons?domain=k-tai.watch.impress.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
@@ -706,7 +711,7 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="眼鏡市場、カメラ搭載スマートグラス「Linse」を2月6日発売　“毎日かけるメガネ”を基準に開発" data-summary="眼鏡市場を展開するメガネトップは、カメラを搭載したスマートグラス「Linse（リンゼ）」と、オーディオグラス「Linse Lite（リンゼライト）」を2月6日に発売する。価格は「Linse」が5万5000円、「Linse Lite」が1万9800円。全国の眼鏡市場130店舗で取り扱われる。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -716,7 +721,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>58分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -727,7 +732,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="楽天ペイ、東京ポイントから楽天キャッシュに交換で抽選で5555円相当プレゼント" data-summary="楽天ペイメントは、東京都が開始する「東京アプリ生活応援事業」に合わせて「東京ポイントを交換するなら楽天ペイ！東京GOGOキャンペーン！」を実施する。期間は4月1日9時59分まで。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -737,7 +742,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -748,7 +753,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="楽天モバイル、法人向けに「AQUOS sense9」などが最大9000円割引＆事務手数料無料" data-summary="楽天モバイルは、法人向けサービス「Rakuten最強プラン ビジネス」において、対象のAndroidスマートフォンが値引きされる「Android乗り換え＆新規おトク割」を開始した。終了日は未定。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -758,7 +763,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>2時間前</span>
+                            <span>3時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -769,7 +774,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="「東京アプリ」の生活応援事業が本日2日13時にスタート、都民の本人確認で1万1000ポイント進呈" data-summary="東京都は、都民向けアプリ「東京都公式アプリ」（東京アプリ）での本人確認などでポイントが進呈される「東京アプリ生活応援事業」を2日13時から開始する。期間は2027年4月1日まで。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -779,7 +784,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>2時間前</span>
+                            <span>3時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -790,7 +795,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="楽天モバイル、「超楽天祭」を2月4日スタート" data-summary="楽天モバイルの契約数が1000万回線を突破したことを記念し、2月4日より「超楽天祭」が実施される。期間は2月18日9時59分まで。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -800,7 +805,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>2時間前</span>
+                            <span>3時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -811,7 +816,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="「Rakuten 最強 U-NEXT」で3カ月1100ポイント還元　3月1日～" data-summary="楽天モバイルは、月額4378円の料金プラン「Rakuten 最強 U-NEXT」において、初のポイント還元キャンペーンを実施する。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -821,7 +826,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3時間前</span>
+                            <span>4時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -832,7 +837,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="楽天モバイル、都内の地下鉄で通信帯域を4倍に拡張　7月までに全区間完了" data-summary="楽天モバイルは、東京都内の地下鉄や山手線駅、大規模集客施設におけるネットワークの改善状況と今後の計画を公表した。「つながりやすさ強化宣言2026」として、トラフィックが集中するエリアでの通信品質向上を加速させる。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -842,7 +847,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3時間前</span>
+                            <span>4時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -853,7 +858,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="楽天モバイル、5G対応新型ルーター「Rakuten WiFi Pocket 5G」発売　期間限定で1円に" data-summary="楽天モバイルは、オリジナルモバイルWi-Fiルーターの最新モデル「Rakuten WiFi Pocket 5G」を3月に発売する。価格は1万6800円だが、条件を満たせば1円で購入できる。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -863,7 +868,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3時間前</span>
+                            <span>4時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -874,7 +879,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="Google、ブラウザ上で仮想世界を探索できる「Project Genie」を提供開始" data-summary="Googleは、簡単なプロンプトで世界を作成・探索できるプロトタイプ「Project Genie」を、18歳以上の米国のGoogle AI Ultra加入者向けに提供開始した。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -895,7 +900,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="[みんなのケータイ]モバイルバッテリーを家での充電に活用、寿命を延ばす" data-summary="ここ最近、モバイルバッテリーが発火し火災になったり、それが理由で公共交通機関が遅延するといった事故が増えています。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -921,5 +926,89 @@
         
         
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const entries = document.querySelectorAll('.entry-item');
+            const sections = document.querySelectorAll('.feed-section');
+
+            // 元のHTMLを保存（ハイライト解除用）
+            entries.forEach(entry => {
+                const titleLink = entry.querySelector('.entry-title a');
+                const summaryDiv = entry.querySelector('.entry-summary');
+                entry.dataset.originalTitleHtml = titleLink.innerHTML;
+                entry.dataset.originalSummaryHtml = summaryDiv.innerHTML;
+            });
+
+            searchInput.addEventListener('input', function(e) {
+                const term = e.target.value.trim().toLowerCase();
+
+                // 検索リセット時の処理
+                if (term === '') {
+                    sections.forEach(sec => {
+                        sec.style.display = '';
+                        sec.open = false; // 全て閉じる
+                    });
+                    entries.forEach(entry => {
+                        entry.style.display = '';
+                        // ハイライト解除
+                        const titleLink = entry.querySelector('.entry-title a');
+                        const summaryDiv = entry.querySelector('.entry-summary');
+                        titleLink.innerHTML = entry.dataset.originalTitleHtml;
+                        summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
+                    });
+                    return;
+                }
+
+                // 検索実行
+                sections.forEach(section => {
+                    let hasVisibleEntry = false;
+                    const sectionEntries = section.querySelectorAll('.entry-item');
+
+                    sectionEntries.forEach(entry => {
+                        const titleText = entry.dataset.title.toLowerCase();
+                        const summaryText = entry.dataset.summary.toLowerCase();
+
+                        if (titleText.includes(term) || summaryText.includes(term)) {
+                            entry.style.display = '';
+                            hasVisibleEntry = true;
+                            
+                            // ハイライト処理
+                            highlightText(entry, term);
+                        } else {
+                            entry.style.display = 'none';
+                        }
+                    });
+
+                    // ヒットする記事があればセクションを開いて表示
+                    if (hasVisibleEntry) {
+                        section.style.display = '';
+                        section.open = true;
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+            });
+
+            function highlightText(entry, term) {
+                const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
+                const highlightMark = '<mark>$1</mark>';
+
+                // タイトルのハイライト
+                const titleLink = entry.querySelector('.entry-title a');
+                titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
+
+                // サマリーのハイライト
+                const summaryDiv = entry.querySelector('.entry-summary');
+                summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
+            }
+
+            // 正規表現のエスケープ処理
+            function escapeRegExp(string) {
+                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+        });
+    </script>
 </body>
 </html>

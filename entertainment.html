@@ -13,6 +13,7 @@
             --accent: #007bff;
             --new-badge: #e74c3c;
             --border: #e9ecef;
+            --highlight: #fff3cd; /* ハイライト色 */
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -35,7 +36,14 @@
             max-width: 800px;
             margin: 0 auto;
             display: flex;
-            gap: 15px;
+            align-items: center;
+            justify-content: space-between; /* 検索窓とリンクを左右に配置 */
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 10px;
             overflow-x: auto;
             white-space: nowrap;
         }
@@ -50,13 +58,30 @@
         }
         .nav-link.active { opacity: 1; background-color: var(--accent); }
 
+        /* 検索ボックスのデザイン */
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 300px;
+        }
+        .search-input {
+            width: 100%;
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: none;
+            font-size: 14px;
+            background-color: rgba(255,255,255,0.9);
+            box-sizing: border-box;
+        }
+        .search-input:focus { outline: 2px solid var(--accent); }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
         }
 
-        header { margin-bottom: 30px; text-align: center; }
+        header { margin-bottom: 20px; text-align: center; }
         h1 { font-size: 22px; margin: 0; color: #333; }
         .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
 
@@ -95,133 +120,113 @@
         .entry-item {
             padding: 15px;
             border-bottom: 1px solid var(--border);
-            /* Flexboxで画像とテキストを横並びにする */
             display: flex;
             gap: 15px;
             align-items: flex-start;
         }
         .entry-item:last-child { border-bottom: none; }
         
-        /* テキストエリア */
-        .entry-content-wrapper {
-            flex: 1;
-            min-width: 0; /* Flexbox内でのテキスト折り返し用 */
-        }
-
-        /* サムネイル画像 */
+        .entry-content-wrapper { flex: 1; min-width: 0; }
         .entry-thumbnail {
-            width: 100px;
-            height: 75px;
-            object-fit: cover;
-            border-radius: 4px;
-            flex-shrink: 0; /* 縮まないようにする */
-            border: 1px solid #eee;
+            width: 100px; height: 75px; object-fit: cover;
+            border-radius: 4px; flex-shrink: 0; border: 1px solid #eee;
         }
 
-        .entry-title {
-            font-size: 16px;
-            margin: 0 0 5px 0;
-            line-height: 1.4;
-        }
+        .entry-title { font-size: 16px; margin: 0 0 5px 0; line-height: 1.4; }
         .entry-title a { text-decoration: none; color: var(--text-main); }
         .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
         .new-badge {
-            display: inline-block;
-            background-color: var(--new-badge);
-            color: white;
-            font-size: 10px;
-            padding: 2px 5px;
-            border-radius: 3px;
-            margin-right: 5px;
-            vertical-align: middle;
-            font-weight: bold;
+            display: inline-block; background-color: var(--new-badge); color: white;
+            font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px;
+            vertical-align: middle; font-weight: bold;
         }
 
-        .entry-meta {
-            font-size: 12px;
-            color: var(--text-sub);
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
+        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; }
         .entry-summary {
-            font-size: 13px;
-            color: #555;
-            margin-top: 8px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            opacity: 0.8;
+            font-size: 13px; color: #555; margin-top: 8px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden; opacity: 0.8;
         }
-        /* サマリー内の元画像は非表示（サムネイルとして横に出すため） */
         .entry-summary img { display: none; }
+
+        /* ハイライト用スタイル */
+        mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
 
         @media (max-width: 600px) {
             .container { padding: 15px 10px; }
             summary { padding: 12px; }
-            /* スマホではサムネイルを少し小さく */
             .entry-thumbnail { width: 80px; height: 60px; }
+            .nav-container { flex-direction: column; align-items: stretch; }
+            .search-box { max-width: 100%; margin-top: 10px; }
         }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-container">
-            
-            <a href="new.html" 
-               class="nav-link ">
-                福祉行政
-            </a>
-            
-            <a href="index.html" 
-               class="nav-link ">
-                総合ニュース
-            </a>
-            
-            <a href="recipes.html" 
-               class="nav-link ">
-                レシピ・料理
-            </a>
-            
-            <a href="tech.html" 
-               class="nav-link ">
-                Tech情報
-            </a>
-            
-            <a href="business.html" 
-               class="nav-link ">
-                ビジネス・経済
-            </a>
-            
-            <a href="gadget.html" 
-               class="nav-link ">
-                ガジェット・モノ
-            </a>
-            
-            <a href="design.html" 
-               class="nav-link ">
-                デザイン・Web制作
-            </a>
-            
-            <a href="entertainment.html" 
-               class="nav-link active">
-                エンタメ・コラム
-            </a>
-            
+            <div class="nav-links">
+                
+                <a href="new.html" 
+                   class="nav-link ">
+                    福祉行政
+                </a>
+                
+                <a href="index.html" 
+                   class="nav-link ">
+                    総合ニュース
+                </a>
+                
+                <a href="recipes.html" 
+                   class="nav-link ">
+                    レシピ・料理
+                </a>
+                
+                <a href="tech.html" 
+                   class="nav-link ">
+                    Tech情報
+                </a>
+                
+                <a href="business.html" 
+                   class="nav-link ">
+                    ビジネス・経済
+                </a>
+                
+                <a href="gadget.html" 
+                   class="nav-link ">
+                    ガジェット・モノ
+                </a>
+                
+                <a href="design.html" 
+                   class="nav-link ">
+                    デザイン・Web制作
+                </a>
+                
+                <a href="entertainment.html" 
+                   class="nav-link active">
+                    エンタメ・コラム
+                </a>
+                
+                <a href="yahoo.html" 
+                   class="nav-link ">
+                    ニュース記事
+                </a>
+                
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" class="search-input" placeholder="キーワード検索...">
+            </div>
         </div>
     </nav>
 
     <div class="container">
         <header>
             <h1>エンタメ・コラム</h1>
-            <div class="last-updated">最終更新: 02/02 15:01</div>
+            <div class="last-updated">最終更新: 02/02 15:54</div>
         </header>
 
         
-        <details open>
+        <details class="feed-section">
             <summary>
                 <div class="feed-header">
                     <img src="https://www.google.com/s2/favicons?domain=rocketnews24.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
@@ -234,7 +239,30 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="【Amazon】最大72％オフ！ 価格が一気に落ちた注目アイテム14選（2月2日）" data-summary="いよいよ本日でフィナーレを迎えるバーゲン「AmazonスマイルSALE」。買い逃しがないように終了時刻（23時59分）まで思う存分ショッピングを楽しもう。 セール最終日の今回は価格が一気に落ちた注目のアイテムを厳選ピック […]">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://rocketnews24.com/2026/02/02/2644850/" target="_blank" rel="noopener noreferrer">【Amazon】最大72％オフ！ 価格が一気に落ちた注目アイテム14選（2月2日）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>30分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            いよいよ本日でフィナーレを迎えるバーゲン「AmazonスマイルSALE」。買い逃しがないように終了時刻（23時59分）まで思う存分ショッピングを楽しもう。 セール最終日の今回は価格が一気に落ちた注目のアイテムを厳選ピック […]
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/02/IMG_5967-2.jpg" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-title="バーガーキング最新作『チキン＆ビーフ ビッグマウスホワイトバーガー』を実食！ 直火焼き×サクサク衣が織りなす「狂気の二刀流」が予想外だった" data-summary="やっぱりバーガーキングは狂ってやがる……無論これは誉め言葉である。過去にパティを5枚ぶち込んだ「日本相撲協会公認バーガー」等を販売したことを思えば、やはりバーガーキングはぶっ飛んだバーガーショップなのだろう。 そのバーガ […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -244,7 +272,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1分前</span>
+                            <span>54分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -257,7 +285,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="【4コマ】魔王軍はホワイト企業 1888話目「お土産（余談④）」" data-summary="漫画：スガラジカル">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -280,7 +308,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="880円で餃子食べ放題！ ガチ中華を毎日食べて気づいた、池袋『座・麻婆唐府』のランチビュッフェの独自性" data-summary="食べ放題が安いガチ中華のランチ。1000円台ビュッフェや1000円以下のミニビュッフェも普通にあったりする。街に隠れた現代日本とは思えないコスパの秘境。そんなガチ中華ランチを巡る連載が『ガチ中華ランチ紀行』だ。 ここのと […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -303,7 +331,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="【年間48兆円】「日本の医療保険制度の未来」が不安すぎて夜も眠れないので偉い人を問い詰めに行った結果 → なぜか友情が爆誕した" data-summary="それは突然だった。私が何気なく先日の読売新聞を読んでいたところ……アーーーーッ!!!! 先日の記事でご紹介した「みどりアクション」が広告になっとるやないかーーーーッ!!!! 「みどりアクション」を超要約すると “いま我が […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -313,7 +341,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3時間前</span>
+                            <span>4時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -326,7 +354,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="都内で勢力を伸ばす「トライアル」のPBにハズレなし!? 冷凍炒飯を食べたら黒胡椒ですべてを押し通すパワープレイにやられた" data-summary="昨年、西友を買収した九州発祥のディスカウントストア「トライアル」。都内での勢力を伸ばしているのは以前にもお伝えした通りで、11月に小型店舗「トライアルGO」をオープンすると数も少しずつ増やしている。 都内の西友では名物の […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -349,7 +377,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="AIはAIを使えるか？　「Gemini」に「Siri」を操作するように仕向けたら、緩い漫才になって笑えた" data-summary="もはや日常に溶け込み始めている生成AI。そういう私（佐藤）も毎日利用している。すでにGoogle検索を使う頻度はめっきり減り、調べたいことは「Gemini」に丸投げ。まだ完全に信用に足るレベルではないので、Geminiか […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -372,7 +400,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="「こんな会社辞めてやる！」元旦から働く私を襲った悲劇。事務所のシャワートイレが下した “非情な宣告”" data-summary="会社勤めの方、つまりはサラリーマンやOLさんにお伺いしたい。あなたは「こんな会社辞めてやる！」とブチギレたことはあるだろうか？ ぶっちゃけた話、私（サンジュン）にはその経験がある……しかも1カ月ほど前に。あれは2026年 […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -395,7 +423,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="【フロントガラス凍結問題】あらゆる凍結対策を試した記者が、結局いちばん頼っているのはコレだった" data-summary="1年前より家を出る時間を約30分遅らせたからだろうか。今年はフロントガラスの凍結にほとんど悩まされずに冬を越せそうだ、なんて油断をしていた。凍結対策に最も効果があるのは「出発時間を遅らせること」だと本気で思っていたのだが […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -418,7 +446,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="お化けもビックリ！ 友人の言うことに従った青年！　四コマサボタージュBYD第291回「廃校肝試し」" data-summary="肝試しってその名前に反してどちらかというと怖がりに行っている節があるよね。 漫画：ザックKT-4">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -441,33 +469,10 @@
                     
                 </li>
                 
-                <li class="entry-item">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://rocketnews24.com/2026/02/01/2643701/" target="_blank" rel="noopener noreferrer">ロケットニュース読者の体験怪談　寄忌耳（キキミミ）第49話「同乗者」</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>20時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            あなたの体験した短い恐怖体験、不思議な体験を募集中！ご応募お待ちしております。 漫画：ザックKT-4
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/01/kikimimi51-1koma.png" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
             </ul>
         </details>
         
-        <details open>
+        <details class="feed-section">
             <summary>
                 <div class="feed-header">
                     <img src="https://www.google.com/s2/favicons?domain=www.lifehacker.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
@@ -480,7 +485,28 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="死角なし、しかも4Kで鮮明に。Ankerの新作防犯カメラがもう最安" data-summary="Amazon（アマゾン）では、2026年1月27日（火）9時から2月2日（月）23時59分まで「AmazonスマイルSALE」を開催中。 現在、死角がなく鮮明画像で捉え、屋外の防犯対策をぐっと強化するAnke（アンカー）の4K対応スマートセキュリティカメラ「Eufy SoloCam E42」が、お得に登場しています。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.lifehacker.jp/article/amazon-timesale-fes-2026-0202-1/" target="_blank" rel="noopener noreferrer">死角なし、しかも4Kで鮮明に。Ankerの新作防犯カメラがもう最安</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>54分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Amazon（アマゾン）では、2026年1月27日（火）9時から2月2日（月）23時59分まで「AmazonスマイルSALE」を開催中。 現在、死角がなく鮮明画像で捉え、屋外の防犯対策をぐっと強化するAnke（アンカー）の4K対応スマートセキュリティカメラ「Eufy SoloCam E42」が、お得に登場しています。
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-title="「1歩も動かない」ための寝室ハック。山崎実業で作る、究極のベッドサイドコックピット" data-summary="冬の極寒、温かい布団は聖域です。しかし充電器やゴミ箱の遠さが、無情にも私達を外界へ引きずり出す。そこで山崎実業のアイテムを駆使し、半径50cm以内に全てを集約する「ベッドサイド・コックピット」を構築。自堕落を戦略的に肯定し、一歩も動かずに最高のQOLを享受する冬の生存術を伝授します。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -501,7 +527,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="「職場の貼らずメント案件」を攻略せよ。いつもの「テプラ」が最強の業務ハックツールに化ける「機能性テープ」活用術" data-summary="職場の「ケーブルどれ？」「今話せる？」といった地味なストレス＝「職場の貼らずメント案件」をキングジムの「テプラ」で解決！生産性を下げるオフィスの4大カオスを、機能性テープを使ってハックする方法を検証・解説します。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -522,7 +548,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="旅行・アウトドアに大活躍。スマホより軽い「4in1グリップ」で、自撮りも集合写真も楽々撮れる！" data-summary="旅行やVlog撮影の荷物を減らしたい方必見！MagSafe対応iPhoneに最適な「Ulanzi JJ03」をレビュー。これ一つで自撮り棒・ハンドグリップ・三脚・リモコンの4役をこなす多機能アイテムです。約125gの軽量コンパクト設計と、その便利な使い心地を紹介します。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -532,7 +558,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>4時間前</span>
+                            <span>5時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -543,7 +569,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="Chromeを自分流に「魔改造」する10の設定。これでPC作業の「負担」が減ったよ" data-summary="Google Chromeが登場したのは2008年のこと。それから、便利機能が追加されたり、こっそり消えたり……。毎日使っている人でも、その実力を100%引き出せているケースは意外と少ないかもしれません。今回は、タブの整理術から動作を軽くする裏技まで、仕事の効率を劇的に変える私のお気に入りハックを紹介します。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -564,7 +590,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="【毎日書評】自律神経を整える。不調をリセットする「眠り・食・光」の新習慣" data-summary="【毎日書評】『科学的に証明された 自律神経を整える習慣』（小林弘幸 著、アスコム）より、自律神経を整える。不調をリセットする「眠り・食・光」の新習慣について解説します。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -585,7 +611,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="使い捨てない純チタン製フロスハンドルが画期的。衛生面も使いやすさも口腔ケアの常識が変わります" data-summary="医療グレードの99％純チタンを使用した「チタン製フロスハンドル」は、従来のフロス使用での不便さを解決します。F型デザイン採用で操作性を大幅に向上。小型化と独自のクリップ構造により、歯間や奥歯をしっかりとケア可能になりました。市販のほぼすべてのフロス糸に対応し、年間コストを削減できる経済性も魅力。一生ものの耐久性と抗菌性を兼ね備えサステナブルな口腔ケアを実現するアイテムです。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -606,7 +632,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="【心理テスト】潜在意識で縛られているものは？あなたが「手放せないもの」とそのリスク" data-summary="【心理テスト】道で遭遇した旧友が、あなたの手のひらに何かをのせました。それは何？ 選んだ答えからわかるのは、あなたが「手放せないもの」。人生を豊かにし、自分を知るきっかけにもなる「心理テスト」をお届けします。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -627,7 +653,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="肩と腰が限界になる前に。デスクチェアを変えたら、作業の「しんどさ」が先に減った" data-summary="AmazonスマイルSALE＜2/2(火)23:59まで＞が開催中！腰痛や肩こりに悩んでいるほど見直すべきデスクチェアのおすすめをご紹介します。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -637,7 +663,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>16時間前</span>
+                            <span>17時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -648,7 +674,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="スマホを「究極の効率化デバイス」にアップデート。MOFTのギミックが利いた4つの周辺アクセサリー" data-summary="MOFTのスマホケース＆スタンドのおすすめを紹介します。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -658,32 +684,11 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>16時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            MOFTのスマホケース＆スタンドのおすすめを紹介します。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://www.lifehacker.jp/article/2602-roomie-musashi-light/" target="_blank" rel="noopener noreferrer">暗くなるのが早いから。バッグに挟むだけ「LEDクリップライト」で夜道も安心</a>
-                        </div>
-                        
-                        <div class="entry-meta">
                             <span>17時間前</span>
                         </div>
 
                         <div class="entry-summary">
-                            夜道の歩行を安全にするムサシの「護衛さんライト」をレビュー。クリップ式で両手が自由になり、傘や荷物を持つ時も快適です。コンパクトながら2段階の調光と点滅モードを備え、車や自転車からの視認性も抜群な“夜道の相棒”の魅力をお届けします。
+                            MOFTのスマホケース＆スタンドのおすすめを紹介します。
                         </div>
                     </div>
 
@@ -695,5 +700,89 @@
         
         
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const entries = document.querySelectorAll('.entry-item');
+            const sections = document.querySelectorAll('.feed-section');
+
+            // 元のHTMLを保存（ハイライト解除用）
+            entries.forEach(entry => {
+                const titleLink = entry.querySelector('.entry-title a');
+                const summaryDiv = entry.querySelector('.entry-summary');
+                entry.dataset.originalTitleHtml = titleLink.innerHTML;
+                entry.dataset.originalSummaryHtml = summaryDiv.innerHTML;
+            });
+
+            searchInput.addEventListener('input', function(e) {
+                const term = e.target.value.trim().toLowerCase();
+
+                // 検索リセット時の処理
+                if (term === '') {
+                    sections.forEach(sec => {
+                        sec.style.display = '';
+                        sec.open = false; // 全て閉じる
+                    });
+                    entries.forEach(entry => {
+                        entry.style.display = '';
+                        // ハイライト解除
+                        const titleLink = entry.querySelector('.entry-title a');
+                        const summaryDiv = entry.querySelector('.entry-summary');
+                        titleLink.innerHTML = entry.dataset.originalTitleHtml;
+                        summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
+                    });
+                    return;
+                }
+
+                // 検索実行
+                sections.forEach(section => {
+                    let hasVisibleEntry = false;
+                    const sectionEntries = section.querySelectorAll('.entry-item');
+
+                    sectionEntries.forEach(entry => {
+                        const titleText = entry.dataset.title.toLowerCase();
+                        const summaryText = entry.dataset.summary.toLowerCase();
+
+                        if (titleText.includes(term) || summaryText.includes(term)) {
+                            entry.style.display = '';
+                            hasVisibleEntry = true;
+                            
+                            // ハイライト処理
+                            highlightText(entry, term);
+                        } else {
+                            entry.style.display = 'none';
+                        }
+                    });
+
+                    // ヒットする記事があればセクションを開いて表示
+                    if (hasVisibleEntry) {
+                        section.style.display = '';
+                        section.open = true;
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+            });
+
+            function highlightText(entry, term) {
+                const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
+                const highlightMark = '<mark>$1</mark>';
+
+                // タイトルのハイライト
+                const titleLink = entry.querySelector('.entry-title a');
+                titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
+
+                // サマリーのハイライト
+                const summaryDiv = entry.querySelector('.entry-summary');
+                summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
+            }
+
+            // 正規表現のエスケープ処理
+            function escapeRegExp(string) {
+                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+        });
+    </script>
 </body>
 </html>

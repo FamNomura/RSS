@@ -13,6 +13,7 @@
             --accent: #007bff;
             --new-badge: #e74c3c;
             --border: #e9ecef;
+            --highlight: #fff3cd; /* ハイライト色 */
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -35,7 +36,14 @@
             max-width: 800px;
             margin: 0 auto;
             display: flex;
-            gap: 15px;
+            align-items: center;
+            justify-content: space-between; /* 検索窓とリンクを左右に配置 */
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 10px;
             overflow-x: auto;
             white-space: nowrap;
         }
@@ -50,13 +58,30 @@
         }
         .nav-link.active { opacity: 1; background-color: var(--accent); }
 
+        /* 検索ボックスのデザイン */
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 300px;
+        }
+        .search-input {
+            width: 100%;
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: none;
+            font-size: 14px;
+            background-color: rgba(255,255,255,0.9);
+            box-sizing: border-box;
+        }
+        .search-input:focus { outline: 2px solid var(--accent); }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
         }
 
-        header { margin-bottom: 30px; text-align: center; }
+        header { margin-bottom: 20px; text-align: center; }
         h1 { font-size: 22px; margin: 0; color: #333; }
         .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
 
@@ -95,133 +120,113 @@
         .entry-item {
             padding: 15px;
             border-bottom: 1px solid var(--border);
-            /* Flexboxで画像とテキストを横並びにする */
             display: flex;
             gap: 15px;
             align-items: flex-start;
         }
         .entry-item:last-child { border-bottom: none; }
         
-        /* テキストエリア */
-        .entry-content-wrapper {
-            flex: 1;
-            min-width: 0; /* Flexbox内でのテキスト折り返し用 */
-        }
-
-        /* サムネイル画像 */
+        .entry-content-wrapper { flex: 1; min-width: 0; }
         .entry-thumbnail {
-            width: 100px;
-            height: 75px;
-            object-fit: cover;
-            border-radius: 4px;
-            flex-shrink: 0; /* 縮まないようにする */
-            border: 1px solid #eee;
+            width: 100px; height: 75px; object-fit: cover;
+            border-radius: 4px; flex-shrink: 0; border: 1px solid #eee;
         }
 
-        .entry-title {
-            font-size: 16px;
-            margin: 0 0 5px 0;
-            line-height: 1.4;
-        }
+        .entry-title { font-size: 16px; margin: 0 0 5px 0; line-height: 1.4; }
         .entry-title a { text-decoration: none; color: var(--text-main); }
         .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
         .new-badge {
-            display: inline-block;
-            background-color: var(--new-badge);
-            color: white;
-            font-size: 10px;
-            padding: 2px 5px;
-            border-radius: 3px;
-            margin-right: 5px;
-            vertical-align: middle;
-            font-weight: bold;
+            display: inline-block; background-color: var(--new-badge); color: white;
+            font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px;
+            vertical-align: middle; font-weight: bold;
         }
 
-        .entry-meta {
-            font-size: 12px;
-            color: var(--text-sub);
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
+        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; }
         .entry-summary {
-            font-size: 13px;
-            color: #555;
-            margin-top: 8px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            opacity: 0.8;
+            font-size: 13px; color: #555; margin-top: 8px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden; opacity: 0.8;
         }
-        /* サマリー内の元画像は非表示（サムネイルとして横に出すため） */
         .entry-summary img { display: none; }
+
+        /* ハイライト用スタイル */
+        mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
 
         @media (max-width: 600px) {
             .container { padding: 15px 10px; }
             summary { padding: 12px; }
-            /* スマホではサムネイルを少し小さく */
             .entry-thumbnail { width: 80px; height: 60px; }
+            .nav-container { flex-direction: column; align-items: stretch; }
+            .search-box { max-width: 100%; margin-top: 10px; }
         }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-container">
-            
-            <a href="new.html" 
-               class="nav-link ">
-                福祉行政
-            </a>
-            
-            <a href="index.html" 
-               class="nav-link ">
-                総合ニュース
-            </a>
-            
-            <a href="recipes.html" 
-               class="nav-link ">
-                レシピ・料理
-            </a>
-            
-            <a href="tech.html" 
-               class="nav-link ">
-                Tech情報
-            </a>
-            
-            <a href="business.html" 
-               class="nav-link active">
-                ビジネス・経済
-            </a>
-            
-            <a href="gadget.html" 
-               class="nav-link ">
-                ガジェット・モノ
-            </a>
-            
-            <a href="design.html" 
-               class="nav-link ">
-                デザイン・Web制作
-            </a>
-            
-            <a href="entertainment.html" 
-               class="nav-link ">
-                エンタメ・コラム
-            </a>
-            
+            <div class="nav-links">
+                
+                <a href="new.html" 
+                   class="nav-link ">
+                    福祉行政
+                </a>
+                
+                <a href="index.html" 
+                   class="nav-link ">
+                    総合ニュース
+                </a>
+                
+                <a href="recipes.html" 
+                   class="nav-link ">
+                    レシピ・料理
+                </a>
+                
+                <a href="tech.html" 
+                   class="nav-link ">
+                    Tech情報
+                </a>
+                
+                <a href="business.html" 
+                   class="nav-link active">
+                    ビジネス・経済
+                </a>
+                
+                <a href="gadget.html" 
+                   class="nav-link ">
+                    ガジェット・モノ
+                </a>
+                
+                <a href="design.html" 
+                   class="nav-link ">
+                    デザイン・Web制作
+                </a>
+                
+                <a href="entertainment.html" 
+                   class="nav-link ">
+                    エンタメ・コラム
+                </a>
+                
+                <a href="yahoo.html" 
+                   class="nav-link ">
+                    ニュース記事
+                </a>
+                
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" class="search-input" placeholder="キーワード検索...">
+            </div>
         </div>
     </nav>
 
     <div class="container">
         <header>
             <h1>ビジネス・経済</h1>
-            <div class="last-updated">最終更新: 02/02 15:01</div>
+            <div class="last-updated">最終更新: 02/02 15:54</div>
         </header>
 
         
-        <details open>
+        <details class="feed-section">
             <summary>
                 <div class="feed-header">
                     <img src="https://www.google.com/s2/favicons?domain=toyokeizai.net" class="feed-favicon" alt="" onerror="this.style.display='none'">
@@ -234,7 +239,7 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="｢自民単独過半数｣で維新･吉村代表を襲うWパンチ | 国内政治 | 東洋経済オンライン" data-summary="2月8日に投開票日を迎える第51回衆議院選挙が後半戦に入った。各種の世論調査では、高市早苗首相が率いる…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -244,7 +249,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>32分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -257,7 +262,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="｢すぐ他人を怒る人｣と｢怒らない人｣の決定的な差 | 健康 | 東洋経済オンライン" data-summary="人間関係のトラブル、仕事のパフォーマンスやモチベーションの低下、夫婦間の不和、心身の不調……。さま…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -280,7 +285,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="｢ミヤネ屋｣20年､宮根誠司が時代に重くなった訳 | テレビ | 東洋経済オンライン" data-summary="宮根誠司氏が司会を務める昼の情報番組『情報ライブ ミヤネ屋』（読売テレビ制作、日本テレビ系）が今秋…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -290,7 +295,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -303,7 +308,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="新時代の副業note｢いま最も稼ぎやすい｣理由 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン" data-summary="今、多くの人が利用するプラットフォーム「note」。その成長市場で、就活全敗・借金1500万円の男が累計2…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -326,7 +331,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="Androidの｢Googleウォレット｣ 意外な便利さ | Androidの裏技 | 東洋経済オンライン" data-summary="ガラケー（旧来型の携帯電話）時代のおサイフケータイを受け継ぎ、早くからFeliCaを搭載してきたAndroid…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -349,7 +354,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="小林死刑囚自殺､執行待ち15年は｢精神的拷問｣か | 災害･事件･裁判 | 東洋経済オンライン" data-summary="2006年に岡山県で大学生2人を生き埋めにして殺害した事件により死刑が確定し、大阪拘置所に収容れていた…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -359,7 +364,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3時間前</span>
+                            <span>4時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -372,7 +377,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="突然の｢リベンジ退職｣リアルにどう対応すべきか? | リーダーシップ・教養・資格・スキル | 東洋経済オンライン" data-summary="職場への不満から、退職を「仕返し」の手段とする「リベンジ退職」が問題となっています。中小企業にとっ…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -395,7 +400,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="｢2万円で買う安心｣緊急避妊薬を使った彼女の傷 | 健康 | 東洋経済オンライン" data-summary="本日（2026年2月2日）から、緊急避妊薬（アフターピル・商品名：ノルレボ）が市販薬として発売されます。…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -418,7 +423,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="【不登校】親世代より令和の子どもが疲弊する訳 | 子育て | 東洋経済オンライン" data-summary="「まさか自分の子が」――。不登校に直面し、自分を責める親は少なくありません。しかし、現代の子どもが…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -441,7 +446,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="商談を無断欠席し…Z世代｢リベンジ退職｣の真因 | 自衛隊員も学ぶ！メンタルチューニング | 東洋経済オンライン" data-summary="定時退勤時刻。新人のAさんは、上司から「明日までに全部直しておいて」と投げられた大量の資料を前に、…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -467,7 +472,7 @@
             </ul>
         </details>
         
-        <details >
+        <details class="feed-section">
             <summary>
                 <div class="feed-header">
                     <img src="https://www.google.com/s2/favicons?domain=diamond.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
@@ -481,7 +486,7 @@
             </ul>
         </details>
         
-        <details open>
+        <details class="feed-section">
             <summary>
                 <div class="feed-header">
                     <img src="https://www.google.com/s2/favicons?domain=www.itmedia.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
@@ -494,7 +499,7 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="生成AIを使って不安に感じること　2位「誤った情報に気付かないまま使う」、1位は？" data-summary="LINEヤフーは、過去1年以内に生成AIサービスを利用したことがある人を対象に「生成AI利用に関する意識調査」を発表した。調査によると……。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -504,7 +509,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>4時間前</span>
+                            <span>5時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -515,7 +520,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="会社経営の不安、「事業継承」を抑えた1位は？　経営者に調査" data-summary="経営者はどのような会社経営の不安を抱えているのか？ メットライフ生命保険の調査から明らかになった。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -525,7 +530,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>6時間前</span>
+                            <span>7時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -536,7 +541,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="国内のイノベーション実施率、10年で3.5ポイント低下　「意欲はあるが動けない」企業が抱えるジレンマ" data-summary="「イノベーションは、企業の競争力を高めるために欠かせない」。そう語られる場面は多いが、実際に行動に移せている企業はどれほどあるのか。帝国データバンクの調査から、国内企業のイノベーションの現在地が見えてきた。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -557,7 +562,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="「まいばすけっと」が都心に増え続けるワケ　イオンが仕掛けた“ちょっと変なスーパー”の正体" data-summary="まいばすけっとが京浜間で急増している。そほ背後には、イオンの巧みな“小規模スーパー展開”の戦略があった……。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -578,7 +583,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="「用事がないと話せない……」　気が小さい上司ほど“相談”という名の「高度な雑談」を活用すべき" data-summary="用もないのに話しかけるのが、どうしても苦手だ……。このように悩む上司は珍しくないのではないか。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -599,7 +604,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="「顧客の声」を宝の持ち腐れにしない　武器にできる企業は何が違うのか？" data-summary="顧客の声を集めている企業は多いが、それを成果につなげられている企業は限られている。ラーニングイットが実施した「VoC（顧客の声）活用実態調査」から、VoC活用の実態と課題が明らかになった。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -620,7 +625,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="ココイチも参入した「夜パフェ専門店」　壱番屋はなぜ“甘い夜”に乗り出したのか" data-summary="「カレーハウス CoCo 壱番屋」などを展開する壱番屋が、M＆Aを通じてスイーツ事業に参入した。買収したのは、全国9店舗の「夜パフェ専門店」を運営するGAKU（ガク）だ。その狙いを取材したところ……。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -641,7 +646,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="「貧乏人の食べ物だ」　“スープの巨人”キャンベル社が防げなかった「顧客蔑視」の末路" data-summary="「スープの代名詞」、ザ・キャンベルズ・カンパニーの副社長（当時）であるマーティン・バリー氏が口にした「貧乏人のためのクソみたいな食べ物」。通報者はわずか20日後に会社を解雇された。同社の対応は、有事における企業対応のケーススタディとして極めて示唆に富んでいる。時系列で追う。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -662,7 +667,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="民鉄の経営は2極化　多角化経営が生き残りのカギに" data-summary="中小民営鉄道41社の9割近くが増収となった2025年3月期。インバウンド回復が追い風となる一方、コスト増を吸収できず減益に転じる企業も増え、業績の二極化が鮮明になった。多角化経営の成否が、地域鉄道の命運を分け始めている。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -683,7 +688,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="AIを活用した就活、ES突破率は高いが面接で苦戦　内定への影響は？" data-summary="ネオキャリアの調査で、生成AIを活用した就活生は書類選考や一次面接など初期選考で通過率が高い傾向があると分かった。最終的な内定率への影響はどうだったのだろうか？">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -709,5 +714,89 @@
         
         
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const entries = document.querySelectorAll('.entry-item');
+            const sections = document.querySelectorAll('.feed-section');
+
+            // 元のHTMLを保存（ハイライト解除用）
+            entries.forEach(entry => {
+                const titleLink = entry.querySelector('.entry-title a');
+                const summaryDiv = entry.querySelector('.entry-summary');
+                entry.dataset.originalTitleHtml = titleLink.innerHTML;
+                entry.dataset.originalSummaryHtml = summaryDiv.innerHTML;
+            });
+
+            searchInput.addEventListener('input', function(e) {
+                const term = e.target.value.trim().toLowerCase();
+
+                // 検索リセット時の処理
+                if (term === '') {
+                    sections.forEach(sec => {
+                        sec.style.display = '';
+                        sec.open = false; // 全て閉じる
+                    });
+                    entries.forEach(entry => {
+                        entry.style.display = '';
+                        // ハイライト解除
+                        const titleLink = entry.querySelector('.entry-title a');
+                        const summaryDiv = entry.querySelector('.entry-summary');
+                        titleLink.innerHTML = entry.dataset.originalTitleHtml;
+                        summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
+                    });
+                    return;
+                }
+
+                // 検索実行
+                sections.forEach(section => {
+                    let hasVisibleEntry = false;
+                    const sectionEntries = section.querySelectorAll('.entry-item');
+
+                    sectionEntries.forEach(entry => {
+                        const titleText = entry.dataset.title.toLowerCase();
+                        const summaryText = entry.dataset.summary.toLowerCase();
+
+                        if (titleText.includes(term) || summaryText.includes(term)) {
+                            entry.style.display = '';
+                            hasVisibleEntry = true;
+                            
+                            // ハイライト処理
+                            highlightText(entry, term);
+                        } else {
+                            entry.style.display = 'none';
+                        }
+                    });
+
+                    // ヒットする記事があればセクションを開いて表示
+                    if (hasVisibleEntry) {
+                        section.style.display = '';
+                        section.open = true;
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+            });
+
+            function highlightText(entry, term) {
+                const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
+                const highlightMark = '<mark>$1</mark>';
+
+                // タイトルのハイライト
+                const titleLink = entry.querySelector('.entry-title a');
+                titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
+
+                // サマリーのハイライト
+                const summaryDiv = entry.querySelector('.entry-summary');
+                summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
+            }
+
+            // 正規表現のエスケープ処理
+            function escapeRegExp(string) {
+                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+        });
+    </script>
 </body>
 </html>

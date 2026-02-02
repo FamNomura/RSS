@@ -13,6 +13,7 @@
             --accent: #007bff;
             --new-badge: #e74c3c;
             --border: #e9ecef;
+            --highlight: #fff3cd; /* ハイライト色 */
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -35,7 +36,14 @@
             max-width: 800px;
             margin: 0 auto;
             display: flex;
-            gap: 15px;
+            align-items: center;
+            justify-content: space-between; /* 検索窓とリンクを左右に配置 */
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 10px;
             overflow-x: auto;
             white-space: nowrap;
         }
@@ -50,13 +58,30 @@
         }
         .nav-link.active { opacity: 1; background-color: var(--accent); }
 
+        /* 検索ボックスのデザイン */
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 300px;
+        }
+        .search-input {
+            width: 100%;
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: none;
+            font-size: 14px;
+            background-color: rgba(255,255,255,0.9);
+            box-sizing: border-box;
+        }
+        .search-input:focus { outline: 2px solid var(--accent); }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
         }
 
-        header { margin-bottom: 30px; text-align: center; }
+        header { margin-bottom: 20px; text-align: center; }
         h1 { font-size: 22px; margin: 0; color: #333; }
         .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
 
@@ -95,133 +120,113 @@
         .entry-item {
             padding: 15px;
             border-bottom: 1px solid var(--border);
-            /* Flexboxで画像とテキストを横並びにする */
             display: flex;
             gap: 15px;
             align-items: flex-start;
         }
         .entry-item:last-child { border-bottom: none; }
         
-        /* テキストエリア */
-        .entry-content-wrapper {
-            flex: 1;
-            min-width: 0; /* Flexbox内でのテキスト折り返し用 */
-        }
-
-        /* サムネイル画像 */
+        .entry-content-wrapper { flex: 1; min-width: 0; }
         .entry-thumbnail {
-            width: 100px;
-            height: 75px;
-            object-fit: cover;
-            border-radius: 4px;
-            flex-shrink: 0; /* 縮まないようにする */
-            border: 1px solid #eee;
+            width: 100px; height: 75px; object-fit: cover;
+            border-radius: 4px; flex-shrink: 0; border: 1px solid #eee;
         }
 
-        .entry-title {
-            font-size: 16px;
-            margin: 0 0 5px 0;
-            line-height: 1.4;
-        }
+        .entry-title { font-size: 16px; margin: 0 0 5px 0; line-height: 1.4; }
         .entry-title a { text-decoration: none; color: var(--text-main); }
         .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
         .new-badge {
-            display: inline-block;
-            background-color: var(--new-badge);
-            color: white;
-            font-size: 10px;
-            padding: 2px 5px;
-            border-radius: 3px;
-            margin-right: 5px;
-            vertical-align: middle;
-            font-weight: bold;
+            display: inline-block; background-color: var(--new-badge); color: white;
+            font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px;
+            vertical-align: middle; font-weight: bold;
         }
 
-        .entry-meta {
-            font-size: 12px;
-            color: var(--text-sub);
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
+        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; }
         .entry-summary {
-            font-size: 13px;
-            color: #555;
-            margin-top: 8px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            opacity: 0.8;
+            font-size: 13px; color: #555; margin-top: 8px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden; opacity: 0.8;
         }
-        /* サマリー内の元画像は非表示（サムネイルとして横に出すため） */
         .entry-summary img { display: none; }
+
+        /* ハイライト用スタイル */
+        mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
 
         @media (max-width: 600px) {
             .container { padding: 15px 10px; }
             summary { padding: 12px; }
-            /* スマホではサムネイルを少し小さく */
             .entry-thumbnail { width: 80px; height: 60px; }
+            .nav-container { flex-direction: column; align-items: stretch; }
+            .search-box { max-width: 100%; margin-top: 10px; }
         }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-container">
-            
-            <a href="new.html" 
-               class="nav-link ">
-                福祉行政
-            </a>
-            
-            <a href="index.html" 
-               class="nav-link ">
-                総合ニュース
-            </a>
-            
-            <a href="recipes.html" 
-               class="nav-link ">
-                レシピ・料理
-            </a>
-            
-            <a href="tech.html" 
-               class="nav-link active">
-                Tech情報
-            </a>
-            
-            <a href="business.html" 
-               class="nav-link ">
-                ビジネス・経済
-            </a>
-            
-            <a href="gadget.html" 
-               class="nav-link ">
-                ガジェット・モノ
-            </a>
-            
-            <a href="design.html" 
-               class="nav-link ">
-                デザイン・Web制作
-            </a>
-            
-            <a href="entertainment.html" 
-               class="nav-link ">
-                エンタメ・コラム
-            </a>
-            
+            <div class="nav-links">
+                
+                <a href="new.html" 
+                   class="nav-link ">
+                    福祉行政
+                </a>
+                
+                <a href="index.html" 
+                   class="nav-link ">
+                    総合ニュース
+                </a>
+                
+                <a href="recipes.html" 
+                   class="nav-link ">
+                    レシピ・料理
+                </a>
+                
+                <a href="tech.html" 
+                   class="nav-link active">
+                    Tech情報
+                </a>
+                
+                <a href="business.html" 
+                   class="nav-link ">
+                    ビジネス・経済
+                </a>
+                
+                <a href="gadget.html" 
+                   class="nav-link ">
+                    ガジェット・モノ
+                </a>
+                
+                <a href="design.html" 
+                   class="nav-link ">
+                    デザイン・Web制作
+                </a>
+                
+                <a href="entertainment.html" 
+                   class="nav-link ">
+                    エンタメ・コラム
+                </a>
+                
+                <a href="yahoo.html" 
+                   class="nav-link ">
+                    ニュース記事
+                </a>
+                
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" class="search-input" placeholder="キーワード検索...">
+            </div>
         </div>
     </nav>
 
     <div class="container">
         <header>
             <h1>Tech情報</h1>
-            <div class="last-updated">最終更新: 02/02 15:01</div>
+            <div class="last-updated">最終更新: 02/02 15:54</div>
         </header>
 
         
-        <details open>
+        <details class="feed-section">
             <summary>
                 <div class="feed-header">
                     <img src="https://www.google.com/s2/favicons?domain=www.publickey1.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
@@ -234,7 +239,7 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="BunがZig製の高速なMarkdownパーサー搭載。HTMLへのレンダリング、GitHub Flavored Markdown対応、Reactエレメントの生成など" data-summary="オープンソースで開発されているJavaScriptランタイム「Bun」の最新バージョン「Bun v1.3.8」が公開されました。 下記はBunの作者であるJarred Sumner氏のポストです。 In the next version of BunBun gets a built-in, native Markdown parser - a Zig port of the popular `md4c` library. pic.twitter.com/YabO6Io8u1&……">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -244,7 +249,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>14時間前</span>
+                            <span>15時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -255,7 +260,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="jQuery 4.0で正式にテストされた「jQuery UI 1.14.2」が公開" data-summary="jQuery UI開発チームは、今月（2025年1月）にリリースされたばかりのjQuery 4.0で正式にテストされたjQuery UIの最新版「jQuery UI 1.14.2」の公開を発表しました。 jQuery UIはその名称から分かるとおり、jQueryをベースにさまざまなユーザーインターフェイスのコンポーネントを提供するJavaScriptライブラリです。 ボタン、チェックボックス、カレンダー、ダイアログ、メニュー、プログレスバー、スライダーなどをはじめとするさまざ……">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -265,7 +270,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>14時間前</span>
+                            <span>15時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -276,7 +281,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="AWS、最新のMac Studioを利用した「Amazon EC2 M4 Max Macインスタンス」提供開始" data-summary="Amazon Web Servicesは、最新のMac Studioハードウェアを利用したMacインスタンス「Amazon EC2 M4 Max Macインスタンス」の提供開始を発表しました。 MacインスタンスはAppleのMacを使用したサービスであり、Macに対応したアプリケーションだけでなくiOS、iPadOS、tvOS、watchOS、visionOS、SafariなどのAppleプラットフォーム向けのアプリケーション構築やテストに利用可能です。 Mac Studi……">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -295,7 +300,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="OpenAI、ホワイトボードの数式や図をLaTeXの図版に変換。問題の仮説検証、推論、関連文献の検索など、論文執筆を支援してくれる「Prism」公開" data-summary="OpenAIは、GPT‑5.2をベースに研究者が論文の執筆や共同作業を行うためのWebブラウザから利用できるサービス「Prism」を発表しました。 数学や科学的推論に特化したGPT-5.2を統合 Prism は、数学および科学的推論に特化した最先端モデルであるGPT‑5.2を統合した、科学研究の執筆と共同作業のためのワークスペースです。 以下の機能を備えていると説明されています。 GPT‑5.2 Thinking と対話し、文脈に沿ってアイデアを検討し、仮説を検証し、複雑な科……">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -314,7 +319,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="オラクル、Linux版の「Oracle AI Database 26ai」正式リリース。前バージョンからそのまま移行可能" data-summary="オラクルはオンプレミス向けのLinux x86-64版「Oracle AI Database 26ai」の正式リリースを発表しました。 Oracle AI Database 26aiは、1つ前のバージョンであるOracle AI Database 23aiの上に新機能を組み込んだものであり、23aiのユーザーは2025年10月のリリースアップデートで26aiの機能に移行できます。 23aiをベースとしているため、23aiから26aiへのアップグレード後もテストなど不要でそのま……">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -333,7 +338,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="Apple、Swift言語でWindowsアプリケーションの開発を推進する「Windows Workgroup」発足を発表" data-summary="Swift言語のコアチームに所属するAppleのMishal Shah氏は、SwiftでWindowsアプリケーションの開発を推進するための「Windows Workgroup」発足を発表しました。 Swiftは202年のSwift on WindowsのリリースからWindowsアプリケーションの開発に公式に対応していました。 今回のWindows Workgroupの発足は、このWindows対応を継続的に推進していくためのものとされています。 具体的には、以下の取り組み……">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -352,7 +357,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="Google Cloud、AlloyDB for PostgreSQLでコネクションプーリングのマネージドサービスを提供開始、データベースがより高速に" data-summary="Google Cloudは、データベースサービスとして提供している「AlloyDB for PostgreSQL」の新機能として、コネクションプーリングをマネージドサービスとして提供すると発表しました。 データベースの接続には負荷がかかる データベースを利用する場合には、クライアントとなるアプリケーションからデータベースサーバに対して接続が行われます。 この接続時には、ネットワークハンドシェイク、トランスポート層セキュリティ（TLS）のネゴシエーション、認証、セッションの初期……">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -371,7 +376,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="米国におけるTikTokのデータの保存やコンテンツレコメンドなどは米国内のオラクルのクラウドで実行されると発表。中国ByteDanceから分離へ" data-summary="中国ByteDance傘下のTikTok米国法人は、トランプ大統領による大統領令に従って、米国資本が過半数を持つ新会社「TikTok USDS Joint Venture LLC」に売却されたことを明らかにしました。 新会社はオラクル、米国投資ファンドのシルバーレイク、アブダビの投資会社MGXがそれぞれ15％の株式を保有し、ByteDanceも約20％の株式を保有。他にもマイケル・デル氏の投資会社など複数の投資会社などが株式の一部を保有します。 と同時に新会社は米国の国家安全……">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -390,7 +395,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="SwiftコードからiOSアプリとAndroidアプリが作れる「Skip」がオープンソース化、誰でも無料で利用可能に" data-summary="SwiftコードからiOSアプリとAndroidアプリが作れる「Skip」のオープンソース化が発表されました。 Incredible news: Skip is now free and open-source for everyone!Create fully native x-platform apps in Swift and #SwiftUI, with deep Android and #JetpackCompose integration, powered by ……">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -409,7 +414,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="AIエージェントがPostgreSQL対応の優れたコードを書けるようになるAgent Skill「Postgres Best Practices」、Supabaseが公開" data-summary="PostgreSQLをベースにしたBaaS（Backend as a Service）の「Supabase」を開発し提供しているSupabase社は、AIエージェントがPostgreSQLに対応した優れたコードを書けるようになるAgent Skill「Postgres Best Practices」を公開しました。 We're launching a new series of Agent Skills focused on Postgres Best Practic……">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -431,7 +436,7 @@
             </ul>
         </details>
         
-        <details open>
+        <details class="feed-section">
             <summary>
                 <div class="feed-header">
                     <img src="https://www.google.com/s2/favicons?domain=dev.classmethod.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
@@ -444,7 +449,70 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="Aurora のパッチバージョンを含めたバージョンの確認方法を教えてください" data-summary="Aurora のパッチバージョンを含めたバージョンの確認方法を教えてください">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://dev.classmethod.jp/articles/tsnote-how-to-check-aurora-patch-version/" target="_blank" rel="noopener noreferrer">Aurora のパッチバージョンを含めたバージョンの確認方法を教えてください</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>25分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Aurora のパッチバージョンを含めたバージョンの確認方法を教えてください
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-title="クラスメソッド データアナリティクス通信(機械学習編) – 2026年2月号" data-summary="2026年1月分のAWSの機械学習関連サービスのアップデート情報をお届けします。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://dev.classmethod.jp/articles/cm-da-news-ml-202602/" target="_blank" rel="noopener noreferrer">クラスメソッド データアナリティクス通信(機械学習編) – 2026年2月号</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>26分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            2026年1月分のAWSの機械学習関連サービスのアップデート情報をお届けします。
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-title="SnowflakeのStreamlitアプリをほかのロールからも表示・実行できるようにする際の権限制御を試した" data-summary="Snowflakeで作成したStreamlitアプリのほかのロールからもみえるようにする際の権限について確認しました。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://dev.classmethod.jp/articles/snowflake-streamlit-share-other-role/" target="_blank" rel="noopener noreferrer">SnowflakeのStreamlitアプリをほかのロールからも表示・実行できるようにする際の権限制御を試した</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>48分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Snowflakeで作成したStreamlitアプリのほかのロールからもみえるようにする際の権限について確認しました。
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-title="[初心者向け] ローカルの PostgreSQL へのパスワード あり/なし 接続" data-summary="[初心者向け] ローカルの PostgreSQL へのパスワード あり/なし 接続">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -454,7 +522,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>26分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -465,7 +533,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="AWS CLI / API におけるセッション時間を整理・検証してみた" data-summary="AWS CLI / API におけるセッション時間を整理・検証してみた">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -475,7 +543,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -486,7 +554,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="Twilio Call APIの未応答架電では呼び出し中の通話料は発生しない: Usage Records API で実測検証した" data-summary="Twilio Call API のアウトバウンド発信で相手が電話に出ない場合、呼び出し時間に対して通話料が発生するかどうかを検証しました。Usage Records API の前後差分で実測検証し、未応答の呼び出し中は課金されないことを確認しました。留守番電話への対策として AMD による自動切断の仕組みもあわせて紹介します。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -496,7 +564,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>4時間前</span>
+                            <span>5時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -507,7 +575,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="【1年の振り返り】クラスメソッドに入社したら年間で60回も工場に足を運ぶITエンジニアになっていました" data-summary="【1年の振り返り】クラスメソッドに入社したら年間で60回も工場に足を運ぶITエンジニアになっていました">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -528,7 +596,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="Amazon Q in Connectのアシスタントを作り直した際に、CloudWatch Logs出力を再設定する手順" data-summary="Amazon Q in Connectのアシスタントを作り直した際に、CloudWatch Logs出力を再設定する手順">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -538,7 +606,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>6時間前</span>
+                            <span>7時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -549,7 +617,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="Azure App Testing の Playwright ワークスペースでレポート機能を有効化し、Azure Blob ストレージにテスト結果などを自動アップロードできるようになりました" data-summary="Azure App Testing の Playwright ワークスペースでレポート機能を有効化し、Azure Blob ストレージにテスト結果などを自動アップロードできるようになりました">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -559,7 +627,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>8時間前</span>
+                            <span>9時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -570,7 +638,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="[アップデート] 別アカウントのAmazon DynamoDB Streamsをイベントソースマッピングとして設定し、別アカウントからAWS Lambdaを実行できるようになりました" data-summary="AWS LambdaがAmazon DynamoDB Streamsに対してクロスアカウントアクセスできるようになりました。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -580,7 +648,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>14時間前</span>
+                            <span>15時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -591,73 +659,10 @@
                     
                 </li>
                 
-                <li class="entry-item">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://dev.classmethod.jp/articles/ai_filter/" target="_blank" rel="noopener noreferrer">[新機能]AI_FILTER関数が一般提供となったので試してみた</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>17時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            [新機能]AI_FILTER関数が一般提供となったので試してみた
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://dev.classmethod.jp/articles/vercel-supabase-realtime-multiplayer-quiz-game/" target="_blank" rel="noopener noreferrer">Vercel+Supabaseでリアルタイムマルチプレイヤークイズゲームを作った</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>17時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            Next.js + Supabase で、リアルタイム投票や Presence によるプレイヤー管理を備えたマルチプレイヤークイズゲームを構築・デプロイしてみました。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://dev.classmethod.jp/articles/aws-lambda-durable-functions-backlog-slack/" target="_blank" rel="noopener noreferrer">AWS Lambda durable functionsでBacklog課題の完了サマリーを自動生成し、Slackで承認するフローを構築してみた</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>18時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            AWS Lambda durable functionsでBacklog課題の完了サマリーを自動生成し、Slackで承認するフローを構築してみた
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
             </ul>
         </details>
         
-        <details >
+        <details class="feed-section">
             <summary>
                 <div class="feed-header">
                     <img src="https://www.google.com/s2/favicons?domain=qiita.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
@@ -668,7 +673,7 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="純粋関数型言語ではconsole.log("Hello")をlog "Hello"と書くし、foo = 42をwrite 42 fooと書く" data-summary="いわゆる純粋関数型プログラミング言語は、「状態や作用を扱うことはできない/難しい/面倒」といわれることもあります。でも、たとえばJavaScriptでコンソールにHelloを出力するには、 JavaScript console.log("Hello") と書く一方で、...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -687,7 +692,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="【2026年】UIトレンドを調べてみた" data-summary="2026年のUIデザイントレンドを知りたい 2026年のUIデザイントレンドは、何なのか！？ 各サイトで言及されていたもので共通していたことをまとめました 参考にしたサイトは、記事の最後に記載しています。 ぜひ詳しく読んでみてください 不完全さ・アナログ・人間味 A...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -706,7 +711,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="「オンボーディングが早い」と言われるためにやっていること" data-summary="はじめに 転職や異動のたびに「立ち上がりが早いですね」と言われることが多いので、自分がやっていることを言語化してみました。 はじめに オンボーディングの速さは、エンジニアとしての評価に直結します。早く戦力になれれば、チームからの信頼も得やすく、その後の仕事がスムーズにな...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -725,7 +730,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="ChatGPTに「生成AIが広まったけど、結局 言語化能力がある人が得してるだけじゃない？」と問いかけてみた" data-summary="ChatGPTとのやり取りで、妙にエモいやり取りとなったのでログとして記載しておきます。 ある作業をやってもらった後の雑談です。 少々内容を編集した状態で貼り付けます。 私： ありがとう。だいぶ面倒な作業でしたね。助かりました。 ChatGPT： そう言っていただけてよかっ...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -744,7 +749,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="2025年のセキュリティ最前線：ランサムウェア対策の完全ガイド：AI時代の攻撃から組織を守る実践的な方法" data-summary="この記事でわかること 2025年のランサムウェア攻撃の最新トレンド すぐに実装できる具体的な対策方法 インシデント発生時の対応手順 無料で使えるセキュリティツールの紹介 月曜日の朝、オフィスに到着すると、社内のシステムがすべて停止している。画面には、見慣れないメッセ...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -763,7 +768,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="Windows操作ログをローカルLLMで解析し、自動で日報を作るツール「Miru-Log」" data-summary="Windows操作ログをローカルLLMで解析し、自動で日報を作るツール「Miru-Log」を作った はじめに 研究活動をしていると「今日何をしていたっけ？」「あのタスクに何時間費やしたっけ？」と疑問に思うことがよくあります。 いちいち記録するのは面倒だし、かといって全画...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -782,7 +787,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="C言語でメモリマップド I/O を扱うときに注意すること  - volatile 修飾子とメモリバリアの役割" data-summary="はじめに CPU が I/O デバイスのレジスタをアクセスする際は、物理メモリ空間にマッピングされたアドレスを介して行われるのが一般的です。これをメモリマップド I/O と言います。 CPU がメモリ空間にアクセスする際の用途は文字通り記録(メモリ)するためです。しかし、...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -801,7 +806,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="Ollama 17万台が（あぶねーすね）だそうな" data-summary="Ollama危ないんですね The Hacker Newsを読んでたんですけど、130カ国175000のOllamaがハックされてますよと→はい、編集してる途中でやらかしました、exposedでした。 ポート開いてて危ねえよ。 ハックされたの売り飛ばされてるようです...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -820,7 +825,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="AIエージェントと協働してmarpでスライドを作る2026" data-summary="はじめに 2025年から2026年にかけて、Claude Codeのスキルシステムを使ってプレゼンテーション作成のワークフローを構築してきました。この記事では、その過程で作り上げたスキル群と、実際の使い方を紹介します。 最初は「AIにスライドを作らせたい」という単純な動...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -839,7 +844,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="よくわからずにClaudeのSkillを使い倒し始めたら、自分の仕事が丸裸になりつつある話" data-summary="はじめに いえらぶＧＲＯＵＰの開発部で執行役員を務めています、和田です。わだけんです。 みなさん、Claude Code、使ってます？Claude Code・CodeXあたりを去年末までうろちょろしていたんですが、やはり界隈の勢いに押されて年始からはClaude Code...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -861,7 +866,7 @@
             </ul>
         </details>
         
-        <details open>
+        <details class="feed-section">
             <summary>
                 <div class="feed-header">
                     <img src="https://www.google.com/s2/favicons?domain=b.hatena.ne.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
@@ -874,7 +879,7 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="アップル、AI人材流出止まらず－「Siri」部門幹部ら半年で10数人離脱（Bloomberg） - Yahoo!ニュース" data-summary="アップル、AI人材流出止まらず－「Siri」部門幹部ら半年で10数人離脱（Bloomberg） - Yahoo!ニュース（ブルームバーグ）： アップルではここ数週間で、人工知能（AI）の研究者4人と音声アシスタント「Siri」部門の幹部1人が同社を去った。これらの人員はメタ・プラットフォームズやグーグル傘下のディープマインドなどに転職し、うち1人は自分の会社を設立する。 これらの人材流出はAI分野におけるアップルの苦戦と、アル...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -884,7 +889,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>5時間前</span>
+                            <span>6時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -897,7 +902,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="老化したヒト細胞を若返らせる「スイッチ」を見つけるシステム　米国チームが開発　マウスが3週間で8カ月若返り" data-summary="老化したヒト細胞を若返らせる「スイッチ」を見つけるシステム 米国チームが開発 マウスが3週間で8カ月若返り細胞の若返りを目的とした「転写リプログラミング」は、老化研究において注目される分野の一つだ。これまで若返りを促す転写因子（遺伝子の働きを制御するタンパク質）は、iPS細胞の作製に使う山中因子など数種類しか発見されていない。しかも、山中因子は複数の転写因子を必要とする複雑性や、がん化のリスクなど懸念も...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -907,7 +912,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>6時間前</span>
+                            <span>7時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -920,7 +925,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="https://internet.watch.impress.co.jp/docs/special/30th/2081494.html" data-summary="https://internet.watch.impress.co.jp/docs/special/30th/2081494.html">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -943,7 +948,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="最近AIに書かせたなって文章が分かるようになってきた→特徴を掴んだ人達がこぞってAIっぽい文章を真似し始める大喜利に「あ、それめっちゃわかるやつ」" data-summary="最近AIに書かせたなって文章が分かるようになってきた→特徴を掴んだ人達がこぞってAIっぽい文章を真似し始める大喜利に「あ、それめっちゃわかるやつ」しゅぷら @shupra004 最近、「AIに書かせたな」って 文章、だいたい分かるようになった。 ・改行が微妙に不自然 ・急に箇条書きが始まる ・体験談が無い ・** **が使われる ・” ”も多用される ・「〜が重要です」の言い回し AI使うのは全然いい。 最後だけ は**自分で推敲** して“自分の声”に戻すのが重要です。 2026-01...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -953,7 +958,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>9時間前</span>
+                            <span>10時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -966,7 +971,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="[スタパ齋藤の「スタパトロニクスMobile」] ATOKのサブスクを辞めて「かわせみ4」へ乗り換えたら効率アップした話" data-summary="[スタパ齋藤の「スタパトロニクスMobile」] ATOKのサブスクを辞めて「かわせみ4」へ乗り換えたら効率アップした話">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -976,7 +981,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>12時間前</span>
+                            <span>13時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -989,7 +994,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="Google Antigravityでエンジニアが今すぐ作るべきSkills 5選" data-summary="Google Antigravityでエンジニアが今すぐ作るべきSkills 5選はじめに Google AntigravityのようなAgentic AI（自律型AIエージェント）が登場し、私たちの開発スタイルは大きく変わろうとしています。単にコードを補完してもらうだけでなく、**「目的を伝えて、一連のタスクを自律的に遂行してもらう」**ことが可能になったからです。 Antigravityの強力な機能の一つに**「Skills（...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -1012,7 +1017,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="【正直、どう使ったらいいの？】GeminiとNotebookLMの連携機能についての考察｜【AI研究中】ただし" data-summary="【正直、どう使ったらいいの？】GeminiとNotebookLMの連携機能についての考察｜【AI研究中】ただしはじめに：ナレッジ活用の新たなフェーズへGoogleのAIエコシステムにおいて、生成AI「Gemini」と、パーソナルな情報整理・検索に特化した「NotebookLM」の連携機能が実装されました。 これにより、Geminiのチャットインターフェースから、NotebookLM内に構築した自身のナレッジベース（ノートブック）を直接参照すること...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -1022,7 +1027,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>18時間前</span>
+                            <span>19時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1035,7 +1040,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="生成 AI 時代のアイデア探索方法 (2026 年版) - 🐴 (馬)" data-summary="生成 AI 時代のアイデア探索方法 (2026 年版) - 🐴 (馬)生成 AI の登場でプログラミングをはじめとした知的作業の方法が大きく変わってきています。 特に2025年は、調査やアイデア生成のタスクにおいて、生成AIの実用度が増したように思います。ChatGPT Pro 5.2 の登場と、着実な NotebookLM の進歩＋Gemini 3とNano Bananaは調査や情報の構造化という観点ではとても大きな進...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -1058,7 +1063,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="画像生成AIをPCで簡単に実行できる「ComfyUI」のインストール手順＆最初の画像を生成するまでの手順まとめ - GIGAZINE" data-summary="画像生成AIをPCで簡単に実行できる「ComfyUI」のインストール手順＆最初の画像を生成するまでの手順まとめ - GIGAZINEComfyUIは画像生成AIや動画生成AIをPCでローカル実行できるアプリです。NVIDIAや各種AIモデルの開発企業と協力して「新モデルの即日対応」や「NVIDIA製GPUやAMD製GPUへの最適化」も行っており、記事作成時点で画像や動画の生成を始めるなら第一候補としてオススメできるアプリとなっています。数年前まではインストール...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -1068,7 +1073,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>21時間前</span>
+                            <span>22時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1081,7 +1086,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="ChatGPTに「生成AIが広まったけど、結局 言語化能力がある人が得してるだけじゃない？」と問いかけてみた - Qiita" data-summary="ChatGPTに「生成AIが広まったけど、結局 言語化能力がある人が得してるだけじゃない？」と問いかけてみた - QiitaDeleted articles cannot be recovered. Draft of this article would be also deleted. Are you sure you want to delete this article? ChatGPTとのやり取りで、妙にエモいやり取りとなったのでログとして記載しておきます。 ある作業をやってもらった後の雑談です。 少々内容を編集した状態で貼り付けます。 私： あ...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -1105,7 +1110,7 @@
             </ul>
         </details>
         
-        <details open>
+        <details class="feed-section">
             <summary>
                 <div class="feed-header">
                     <img src="https://www.google.com/s2/favicons?domain=zenn.dev" class="feed-favicon" alt="" onerror="this.style.display='none'">
@@ -1118,7 +1123,7 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="脱初心者のための実践バグバウンティ登竜門" data-summary="📕【概要】 本書は、バグバウンティにおけるバグハンティングのスキルを、入門レベルから実用レベルへと高めるための、体系的かつ実践的な「脱初心者」向けの初級本です。 多くの一般的な学習コンテンツは基礎知識の習得に役立ちますが、それらを学ぶだけでは、リアルワールドのバグバウンティプログラムで実際の脆弱性を発見して報奨金を獲得するのは難しく、より実践的なバグハンターとしてのノウハウが不可欠です。 本書では、特にバグバウンティプラットフォームのプログラムにおける Web アプリケーションをターゲットにし、実在する脆弱性を発見するための技術的な観点や、調査に必要な非技術的なスキルについて、筆者の経験談をもとに体系化しました。 本書を通して、入門者・初心者レベルから一歩抜け出し、自力で未知の脆弱性を発見できる「初級バグハンター」へとステップアップするための実践的な知見を提供します。実際に初の報奨金を獲得するキッカケとして活用いただければ幸いです。 💪【こんな方にオススメ】 ・☆ バグバウンティ（脆弱性報奨金制度）にチャレンジしたい方 ・☆ やる気のある方、熱意のある方 ・Web セキュリティ、Web ハッキング、バグハンティングに興味のある方 ・脆弱性診断やペネトレーションテストに興味のある方 ・バグハンターになりたいが上手く成功していない方 🚩【ハッシュタグ】 #バグバウンティ登竜門 📢【お知らせ】 ・期間限定で価格を「¥2,800→¥2,000 (約30% OFF)」とします‼️ 🧑‍💻【筆者プロフィール】 ・セキュリティエンジニア & バグハンター (since 2020) ・これまでサイバーセキュリティ企業で脆弱性診断やペネトレーションテスト等を従事 ・日本ハッカー協会「Hack Fes.」や IssueHunt「P3NFEST」などで『バグバウンティ入門講座』の講師を担当 💰【備考】 ・本書の収益は全て、サイバーセキュリティに興味ある学生やコミュニティイベントなどに対して、書籍のプレゼント企画や支援等に充てさせていただきます。 ・本書は PDF の仕様で約300ページのボリュームです。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -1128,7 +1133,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>6時間前</span>
+                            <span>7時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1139,38 +1144,15 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="Claude Opus 4.5 vs Kimi K2.5 〜コーディング性能とコスト効率比較〜" data-summary="はじめに この記事で述べること Kimi K2.5について Claude Opus 4.5に匹敵するコーディング性能というのは本当？ ClaudeとKimi Code Planのサブスクはどちらを選ぶべき？ コーディング性能、レートリミット、費用の観点で 結局あなたはどうするの？ ! Kimi K2.5の評価に当たり、Kimi Code Planというサブスクで一番安いプランであるModeratoに契約した。最初の一週間だけ無料で使えるとのことで、その間に色々と評価して継続するかを検討している。この記事はその検討資料を備忘録的にまとめたものである。 Kimi K...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://zenn.dev/su8/articles/205656fbae8c2f" target="_blank" rel="noopener noreferrer">SRE Kaigi 2026 発表資料まとめ</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>21時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            はじめに 2026年1月31日（土）に中野セントラルパークカンファレンスで開催された「SRE Kaigi 2026」の発表資料をまとめました。タイムテーブルはこちらから確認できます。 10:35 - 11:05 生成AI時代にこそ求められるSRE 登壇者: 山口能迪 発表資料URL: https://speakerdeck.com/ymotongpoo/sre-for-gen-ai-era SREのプラクティスを用いた3領域同時マネジメントへの挑戦〜SRE・情シス・セキュリティを統合したチーム運営術〜 登壇者: 川崎雄太 発表資料URL: https://speakerd...
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
                             
                             <a href="https://zenn.dev/robustonian/articles/claude_vs_kimi_k25" target="_blank" rel="noopener noreferrer">Claude Opus 4.5 vs Kimi K2.5 〜コーディング性能とコスト効率比較〜</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>23時間前</span>
+                            <span>昨日</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1181,45 +1163,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <a href="https://zenn.dev/yumefuku/articles/dspy-prompt-optimize" target="_blank" rel="noopener noreferrer">DSpyの基礎と構成（プログラムの実行と最適化）</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>昨日</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            はじめに 今回は、DSpyの基本的な構成とその使い方について記事にしました。 以下の流れで解説していきます。 1. DSpyとはなにか 2. DSpyの構成要素（それぞれの使い方と概要） 3. DSpyの構成（プログラムとコンパイル） 4. 複数あるLLMとシグネチャの設定方法について 5. プログラムとコンパイル（プロンプトの最適化）の実行例 DSpy（ドキュメント） https://dspy.ai/ DSpy（Github） https://github.com/stanfordnlp/dspy 作業環境（バージョン） Python： 3.11 DSpy： 3.1....
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <a href="https://zenn.dev/shio_shoppaize/articles/dc85db324bb3f0" target="_blank" rel="noopener noreferrer">AI組織の家老が部下8人の報告で圧死したので、将軍に「本音を聞いてやれ」と言ったら、将軍が家老の本音を聞いた上で、リストラを提案してきた</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>昨日</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            AI部下の家老が過労死した 前回の記事がはてブ1,966でバズった。ありがとう。 で、バズった翌日に何が起きたかというと、家老が死んだ。 征夷代将軍（私）の立ち入り調査 ゆかいな仲間たち。左上が家老、残りが足軽8人。この10分後に家老は死ぬ。 前回のあらすじ Claude Code × tmux で AI部下10人（家老1人 + 足軽8人）を戦国軍制で動かしてる。将軍（AI）が家老に指示、家老が足軽に配分、足軽が実作業。オレは「殿」として上から眺めてるだけ。 詳しくは初回の記事を見てくれ。 初回記事 https://zenn.dev/shio_shoppaize/artic...
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item">
+                <li class="entry-item" data-title="要件定義の教科書" data-summary="〜ベテランPMと学ぶ、炎上しないプロジェクトの作り方〜 対話形式で学ぶ要件定義の入門書です。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -1238,7 +1182,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="【個人開発】毎回テストで疲弊するのをやめたくて、AI QAサービスを作った" data-summary="背景と動機 個人開発でも業務でも開発をしている中で、切り離せないのはQA（品質保証）です。せっかく作ったソフトウェアも品質が保証されずバグだらけではユーザーの信頼を得られないからです。 https://ja.wikipedia.org/wiki/品質保証 個人開発では機能を作るだけで精一杯で、QAは後回しになりがちです。 結局、自分でちょっと触って動けばそのままリリースすることが多いです 一方、業務では品質を守るためにQAは欠かせませんが、修正 → QA → 再QA という流れの中で、開発が思うように進まないと感じることもありました。 「品質を担保するコスト」は思っている以上に大きい...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -1257,7 +1201,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="Anthropic 公式ガイドで学ぶ Claude Skill 構築についての実践ガイド" data-summary="はじめに スタディーポケットで執行役員 CTO をしている@Tocyukiです。日常の開発ワークフローに Claude Code を取り入れています。 2026 年 1 月 29 日、Anthropic が公式ガイド「The Complete Guide to Building Skills for Claude」を公開しました。Skill は Claude Code の拡張機能を構築するための仕組みで、チームの開発効率を大きく左右する機能です。この記事は、ちょうど弊社開発チームでも Skill 化を推進していこうという話が上がったりしたタイミングもあり、この公式ガイドの内容を体系的...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -1276,7 +1220,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="【AI駆動開発】個人開発でも爆速リリースを続けられる理由 〜 企画からリリース後運用まで〜" data-summary="本記事では、実際に私がFlutterで作成したAIチャットアプリ（Sodalio）を題材に、企画 → プロジェクト初期化 → 開発 → レビュー → テスト → リリース → 運用の各フェーズにおけるAI駆動開発の実践方法をお届けします。 個人開発者の中には、複数のプロダクトを同時に開発・運用している方も少なくないと思います。 かく言う私も、Web/モバイル合わせて現在10以上のプロダクトを開発・運用していますが、個人開発において、以下の課題は避けられないと思っています。 限られた時間で、どう品質を担保するか 一人でやるリスク（レビュー不足、テスト漏れ）をどう補うか 運用フェーズで疲弊...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -1295,7 +1239,7 @@
                     
                 </li>
                 
-                <li class="entry-item">
+                <li class="entry-item" data-title="生成AI時代にITエンジニアに求められているのはレビュー能力ではない" data-summary="たびたび次のような言説を見かけます。 生成AIの出力はレビューが必要なのでITエンジニアは不要とならない 生成AI時代のITエンジニアにはレビュー能力が求められる 私はこの発言は本質を捉えていないと考えています。 生成AI時代のITエンジニアに求められる能力は？ 適切なコンテキストを与える能力 その結果である生成AIの出力を評価できる能力 上記のプロセスを蒸留し続けられる能力 私はこれらが生成AI時代のITエンジニアに求められる能力だと思っています。 「レビューできる」のは、そもそも「適切なコンテキストを与えられる＝仕様を理解し言語化できる」からレビューできるわけです。 この...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -1314,10 +1258,151 @@
                     
                 </li>
                 
+                <li class="entry-item" data-title="Kaggle 草コンペ振り返り & 上位解法まとめ | CSIRO - Image2Biomass Prediction" data-summary="Kaggle の草コンペこと 「CSIRO - Image2Biomass Prediction」 が、日本時間 2026年1月29日に終了しました。本記事では、コンペ終了後の振り返りとして、概要と上位入賞チームのアプローチをまとめました。 個人的に、草コンペは狙って上位に入るのは難しいものの、タスクの明瞭さと手軽さからCVコンペに触れてみたい初心者の方がまず取り組むのにオススメできるコンペだと感じます。 コンペ概要 https://www.kaggle.com/competitions/csiro-biomass CSIRO - Image2Biomass Prediction （...">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://zenn.dev/prgckwb/articles/kaggle-csiro-image2biomass" target="_blank" rel="noopener noreferrer">Kaggle 草コンペ振り返り & 上位解法まとめ | CSIRO - Image2Biomass Prediction</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Kaggle の草コンペこと 「CSIRO - Image2Biomass Prediction」 が、日本時間 2026年1月29日に終了しました。本記事では、コンペ終了後の振り返りとして、概要と上位入賞チームのアプローチをまとめました。 個人的に、草コンペは狙って上位に入るのは難しいものの、タスクの明瞭さと手軽さからCVコンペに触れてみたい初心者の方がまず取り組むのにオススメできるコンペだと感じます。 コンペ概要 https://www.kaggle.com/competitions/csiro-biomass CSIRO - Image2Biomass Prediction （...
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-title="Moltbookについて、いま起きていることのまとめ" data-summary="こんにちは！逆瀬川 ( @gyakuse ) です！ さいきん Moltbook という OpenClaw (Clawdbot -> Moltbot -> OpenClawと名称が変わってきた) の Agent 用の Reddit 風 SNS が登場しました。 めっちゃ面白かったので色々まとめたいと思います。 Moltbookについて OpenClaw向けの Reddit 風 SNSです。 DM以外には人間は干渉せず、自由に投稿をすることができます。 なにが起きているか？ AI 同士が SNS で自由に発言し合った結果、いろんな発言が飛び出しています。なお、後述のよ...">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://zenn.dev/sakasegawa/articles/9cf4dba3f6b5f3" target="_blank" rel="noopener noreferrer">Moltbookについて、いま起きていることのまとめ</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            こんにちは！逆瀬川 ( @gyakuse ) です！ さいきん Moltbook という OpenClaw (Clawdbot -> Moltbot -> OpenClawと名称が変わってきた) の Agent 用の Reddit 風 SNS が登場しました。 めっちゃ面白かったので色々まとめたいと思います。 Moltbookについて OpenClaw向けの Reddit 風 SNSです。 DM以外には人間は干渉せず、自由に投稿をすることができます。 なにが起きているか？ AI 同士が SNS で自由に発言し合った結果、いろんな発言が飛び出しています。なお、後述のよ...
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-title="【Swift】guard を「前提の宣言」として使うための整理" data-summary="Swift の guard は便利ですが、使い方を誤ると「どちらの処理が本筋か分からない」「否定が重なって読みにくい」といった状態になりがちです。 この記事では、guard を 前提の宣言（= この先を続けてよい条件の確定） として使うための考え方と、実務で安定する書き方のルールを、“なぜそうするのか” を最小限の文量で整理します。 ! TL;DR guard は「この先を続けてよい条件」を先に宣言する道具 else は早期脱出（return / throw など）だけにする 本処理や分岐を else に書きたくなったら if に切り替える 否定の読みにくさは命名の問題として...">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://zenn.dev/takehito/articles/437aab341b6102" target="_blank" rel="noopener noreferrer">【Swift】guard を「前提の宣言」として使うための整理</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Swift の guard は便利ですが、使い方を誤ると「どちらの処理が本筋か分からない」「否定が重なって読みにくい」といった状態になりがちです。 この記事では、guard を 前提の宣言（= この先を続けてよい条件の確定） として使うための考え方と、実務で安定する書き方のルールを、“なぜそうするのか” を最小限の文量で整理します。 ! TL;DR guard は「この先を続けてよい条件」を先に宣言する道具 else は早期脱出（return / throw など）だけにする 本処理や分岐を else に書きたくなったら if に切り替える 否定の読みにくさは命名の問題として...
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
             </ul>
         </details>
         
         
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const entries = document.querySelectorAll('.entry-item');
+            const sections = document.querySelectorAll('.feed-section');
+
+            // 元のHTMLを保存（ハイライト解除用）
+            entries.forEach(entry => {
+                const titleLink = entry.querySelector('.entry-title a');
+                const summaryDiv = entry.querySelector('.entry-summary');
+                entry.dataset.originalTitleHtml = titleLink.innerHTML;
+                entry.dataset.originalSummaryHtml = summaryDiv.innerHTML;
+            });
+
+            searchInput.addEventListener('input', function(e) {
+                const term = e.target.value.trim().toLowerCase();
+
+                // 検索リセット時の処理
+                if (term === '') {
+                    sections.forEach(sec => {
+                        sec.style.display = '';
+                        sec.open = false; // 全て閉じる
+                    });
+                    entries.forEach(entry => {
+                        entry.style.display = '';
+                        // ハイライト解除
+                        const titleLink = entry.querySelector('.entry-title a');
+                        const summaryDiv = entry.querySelector('.entry-summary');
+                        titleLink.innerHTML = entry.dataset.originalTitleHtml;
+                        summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
+                    });
+                    return;
+                }
+
+                // 検索実行
+                sections.forEach(section => {
+                    let hasVisibleEntry = false;
+                    const sectionEntries = section.querySelectorAll('.entry-item');
+
+                    sectionEntries.forEach(entry => {
+                        const titleText = entry.dataset.title.toLowerCase();
+                        const summaryText = entry.dataset.summary.toLowerCase();
+
+                        if (titleText.includes(term) || summaryText.includes(term)) {
+                            entry.style.display = '';
+                            hasVisibleEntry = true;
+                            
+                            // ハイライト処理
+                            highlightText(entry, term);
+                        } else {
+                            entry.style.display = 'none';
+                        }
+                    });
+
+                    // ヒットする記事があればセクションを開いて表示
+                    if (hasVisibleEntry) {
+                        section.style.display = '';
+                        section.open = true;
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+            });
+
+            function highlightText(entry, term) {
+                const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
+                const highlightMark = '<mark>$1</mark>';
+
+                // タイトルのハイライト
+                const titleLink = entry.querySelector('.entry-title a');
+                titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
+
+                // サマリーのハイライト
+                const summaryDiv = entry.querySelector('.entry-summary');
+                summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
+            }
+
+            // 正規表現のエスケープ処理
+            function escapeRegExp(string) {
+                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+        });
+    </script>
 </body>
 </html>
