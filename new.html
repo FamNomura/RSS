@@ -1,0 +1,1521 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>福祉行政</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-sub: #7f8c8d;
+            --accent: #007bff;
+            --new-badge: #e74c3c;
+            --border: #e9ecef;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding-bottom: 80px;
+            line-height: 1.6;
+        }
+        
+        .navbar {
+            background-color: #343a40;
+            padding: 0.8rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .nav-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+        .nav-link.active { opacity: 1; background-color: var(--accent); }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header { margin-bottom: 30px; text-align: center; }
+        h1 { font-size: 22px; margin: 0; color: #333; }
+        .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
+
+        details {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #fff;
+            transition: background 0.2s;
+        }
+        summary::-webkit-details-marker { display: none; }
+        summary:hover { background-color: #f8f9fa; }
+        
+        .feed-header { display: flex; align-items: center; gap: 10px; font-size: 16px; }
+        .feed-favicon { width: 16px; height: 16px; border-radius: 2px; }
+        .feed-status { font-size: 12px; color: var(--new-badge); font-weight: normal; }
+
+        .entry-list {
+            border-top: 1px solid var(--border);
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        .entry-item {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            /* Flexboxで画像とテキストを横並びにする */
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+        .entry-item:last-child { border-bottom: none; }
+        
+        /* テキストエリア */
+        .entry-content-wrapper {
+            flex: 1;
+            min-width: 0; /* Flexbox内でのテキスト折り返し用 */
+        }
+
+        /* サムネイル画像 */
+        .entry-thumbnail {
+            width: 100px;
+            height: 75px;
+            object-fit: cover;
+            border-radius: 4px;
+            flex-shrink: 0; /* 縮まないようにする */
+            border: 1px solid #eee;
+        }
+
+        .entry-title {
+            font-size: 16px;
+            margin: 0 0 5px 0;
+            line-height: 1.4;
+        }
+        .entry-title a { text-decoration: none; color: var(--text-main); }
+        .entry-title a:hover { color: var(--accent); text-decoration: underline; }
+
+        .new-badge {
+            display: inline-block;
+            background-color: var(--new-badge);
+            color: white;
+            font-size: 10px;
+            padding: 2px 5px;
+            border-radius: 3px;
+            margin-right: 5px;
+            vertical-align: middle;
+            font-weight: bold;
+        }
+
+        .entry-meta {
+            font-size: 12px;
+            color: var(--text-sub);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .entry-summary {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            opacity: 0.8;
+        }
+        /* サマリー内の元画像は非表示（サムネイルとして横に出すため） */
+        .entry-summary img { display: none; }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px 10px; }
+            summary { padding: 12px; }
+            /* スマホではサムネイルを少し小さく */
+            .entry-thumbnail { width: 80px; height: 60px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            
+            <a href="new.html" 
+               class="nav-link active">
+                福祉行政
+            </a>
+            
+            <a href="index.html" 
+               class="nav-link ">
+                総合ニュース
+            </a>
+            
+            <a href="recipes.html" 
+               class="nav-link ">
+                レシピ・料理
+            </a>
+            
+            <a href="tech.html" 
+               class="nav-link ">
+                Tech情報
+            </a>
+            
+            <a href="business.html" 
+               class="nav-link ">
+                ビジネス・経済
+            </a>
+            
+            <a href="gadget.html" 
+               class="nav-link ">
+                ガジェット・モノ
+            </a>
+            
+            <a href="design.html" 
+               class="nav-link ">
+                デザイン・Web制作
+            </a>
+            
+            <a href="entertainment.html" 
+               class="nav-link ">
+                エンタメ・コラム
+            </a>
+            
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>福祉行政</h1>
+            <div class="last-updated">最終更新: 02/02 13:01</div>
+        </header>
+
+        
+        <details open>
+            <summary>
+                <div class="feed-header">
+                    <img src="https://www.google.com/s2/favicons?domain=www.mhlw.go.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span>厚生労働省</span>
+                </div>
+                
+                <span class="feed-status">● New</span>
+                
+            </summary>
+            
+            <ul class="entry-list">
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.mhlw.go.jp/stf/newpage_69736.html" target="_blank" rel="noopener noreferrer">令和７年度第２回医道審議会歯科医師分科会歯学生共用試験部会</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>-534分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.mhlw.go.jp/stf/kouseiroudoushou/saiyou/hijoukin/hj-daijinkanboukokusaika.html" target="_blank" rel="noopener noreferrer">採用情報（期間業務職員（大臣官房国際課）募集情報）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.mhlw.go.jp/web_magazine/" target="_blank" rel="noopener noreferrer">WEBマガジン「厚生労働」(CLOSE UP更新)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.mhlw.go.jp/stf/newpage_68687.html" target="_blank" rel="noopener noreferrer">第78回「保健文化賞」の募集について</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.mhlw.go.jp/stf/shingi2/0000198131_00056.html" target="_blank" rel="noopener noreferrer">第108回社会保障審議会年金数理部会　資料</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.mhlw.go.jp/stf/kouseiroudoushou/saiyou/ninkituki/ninki-kaigosienmonkan.html" target="_blank" rel="noopener noreferrer">採用情報（任期付職員（介護支援専門官）募集情報）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.mhlw.go.jp/bunya/roudoukijun/anzeneisei11/rousai-hassei/index.html" target="_blank" rel="noopener noreferrer">労働災害発生状況</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.mhlw.go.jp/stf/newpage_69735.html" target="_blank" rel="noopener noreferrer">職場における熱中症防止対策に係る検討会　第２回資料</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.mhlw.go.jp/stf/newpage_69727.html" target="_blank" rel="noopener noreferrer">ドナー関連業務実施法人を許可しました</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.mhlw.go.jp/kinkyu/151106.html" target="_blank" rel="noopener noreferrer">労働基準関係法令違反に係る公表事案</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+            </ul>
+        </details>
+        
+        <details open>
+            <summary>
+                <div class="feed-header">
+                    <img src="https://www.google.com/s2/favicons?domain=www.wam.go.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span>WAMNET行政情報</span>
+                </div>
+                
+                <span class="feed-status">● New</span>
+                
+            </summary>
+            
+            <ul class="entry-list">
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.wam.go.jp/gyoseiShiryou/detail?gno=22328&ct=070010010&from=rss" target="_blank" rel="noopener noreferrer">第183回 市町村職員を対象とするセミナー（オンライン会議）（令和8年2月13日開催予定）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>13時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ●テーマ 高齢者のポリファーマシー対策について●厚生労働省への傍聴申込み申し込み締切は、月日（木）までまた、会議の状況...全文を読む
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.wam.go.jp/gyoseiShiryou/detail?gno=22331&ct=070010030&from=rss" target="_blank" rel="noopener noreferrer">第110回 厚生科学審議会 予防接種・ワクチン分科会 副反応検討部会、令和7年度第11回 薬事審議会 医薬品等安全対策部会 安全対策調査会（合同開催）（令和8年2月4日開催予定）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>13時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ●主な議題新型コロナワクチンの接種及び副反応疑い報告の状況等について麻しん、風しん、おたふくかぜ、水痘、帯状疱疹、肺炎球...全文を読む
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.wam.go.jp/gyoseiShiryou/detail?gno=22330&ct=010010315&from=rss" target="_blank" rel="noopener noreferrer">第35回 社会保障審議会 医療保険部会 あん摩マッサージ指圧、はり・きゅう療養費検討専門委員会（令和8年1月30日開催）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>13時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ●主な議題 〇あはき療養費の令和８年度改定の基本的な考え方（案）について※詳細は以下のリンクからご参照ください。（会議...全文を読む
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.wam.go.jp/gyoseiShiryou-files/documents/2026/0202095044335/ksvol.1466.pdf?from=rss" target="_blank" rel="noopener noreferrer">介護保険最新情報Vol.1466（PDF：1.2MB）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>13時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ...全文を読む
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.wam.go.jp/gyoseiShiryou/detail?gno=22322&ct=090080285&from=rss" target="_blank" rel="noopener noreferrer">第12回 こども家庭審議会 こども・若者参画及び意見反映専門委員会（令和8年1月30日開催）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ●主な議題．自治体における意見聴取について．意見を表明しやすい環境づくりについて※詳細は以下のリンクからご参照ください。...全文を読む
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.wam.go.jp/gyoseiShiryou/detail?gno=22327&ct=010050010&from=rss" target="_blank" rel="noopener noreferrer">第646回 中央社会保険医療協議会 総会（令和8年1月30日開催）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ●主な議題１．バイオ後続品等の最適使用推進ガイドラインの取扱いについて２．パブリックコメント、公聴会の報告について３．個...全文を読む
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.wam.go.jp/gyoseiShiryou/detail?gno=22325&ct=030020210&from=rss" target="_blank" rel="noopener noreferrer">第10回 地域医療構想及び医療計画等に関する検討会（令和8年1月28日開催）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ●主な議題１．新たな地域医療構想策定ガイドラインについて（地域での協議、構想区域に関する協議、医療機関機能に関する協議、...全文を読む
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.wam.go.jp/gyoseiShiryou/detail?gno=22324&ct=070010030&from=rss" target="_blank" rel="noopener noreferrer">第151回 先進医療会議（令和8年2月5日開催予定）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ●主な議題新規技術（２月受理分）の先進医療Ａ又は先進医療Ｂへの振り分けについて（案）先進医療Ａに係る新規技術の科学的評価...全文を読む
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.wam.go.jp/gyoseiShiryou/detail?gno=22323&ct=050080115&from=rss" target="_blank" rel="noopener noreferrer">第13回 今後の障害者雇用促進制度の在り方に関する研究会（令和8年1月30日開催）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ●主な議題１．報告書（案）について２．その他※詳細は以下のリンクからご参照ください。（会議資料）：第回今後の障害者雇用促...全文を読む
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.wam.go.jp/gyoseiShiryou/detail?gno=22317&ct=070010030&from=rss" target="_blank" rel="noopener noreferrer">第110回 厚生科学審議会 予防接種・ワクチン分科会 副反応検討部会、令和7年度 第8回 薬事審議会 医薬品等安全対策部会 安全対策調査会（合同開催）（令和8年2月4日開催予定）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>4日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ●主な議題（１）新型コロナワクチンの接種及び副反応疑い報告の状況等について（２）麻しん、風しん、おたふくかぜ、水痘、帯状...全文を読む
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+            </ul>
+        </details>
+        
+        <details open>
+            <summary>
+                <div class="feed-header">
+                    <img src="https://www.google.com/s2/favicons?domain=www.hokkaido-np.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span>道新</span>
+                </div>
+                
+                <span class="feed-status">● New</span>
+                
+            </summary>
+            
+            <ul class="entry-list">
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.hokkaido-np.co.jp/article/1270121/" target="_blank" rel="noopener noreferrer">期日前投票、前回同時期並みの22万5076人　道選管、中間発表</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>23分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            北海道選挙管理委員会は2日、衆院選の道内小選挙区の期日前投票に...
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.hokkaido-np.co.jp/article/1270119/" target="_blank" rel="noopener noreferrer">【独自】喫煙制限区域、ススキノにも拡大　大通公園は全面禁煙　札幌市の原案判明</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>34分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            札幌市が路上喫煙者に過料を科している市中心部の喫煙制限区域...
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.hokkaido-np.co.jp/article/1270118/" target="_blank" rel="noopener noreferrer">北海道の新年度予算案　知事査定が始まる　物価高、ヒグマ対策など注目</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>38分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            鈴木直道知事は2日、北海道の2026年度予算案編成に向けた知事...
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.hokkaido-np.co.jp/article/1270096/" target="_blank" rel="noopener noreferrer">バレンタイン　推しチョコは？　函館の専門店や売り場から＜みなみ風＞</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>1時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            2月14日のバレンタインデーが近づいてきた。普段販売してい...
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.hokkaido-np.co.jp/article/1270094/" target="_blank" rel="noopener noreferrer">デコピン絵本の記事掲載　大リーグ公式サイト、大谷共著</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>1時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            【ロサンゼルス共同】米大リーグ公式サイトは1日までに、ドジャー...
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.hokkaido-np.co.jp/article/1270092/" target="_blank" rel="noopener noreferrer">大坂なおみ、世界14位に上昇　女子テニスの最新ランキング</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>1時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            女子テニスの2日付世界ランキングが発表され、大坂なおみ（フリー...
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.hokkaido-np.co.jp/article/1270080/" target="_blank" rel="noopener noreferrer">【動画解説】各社の情勢調査で判明した「リアルな戦況」　大物も続々道内入り　元首相官邸キャップが解説　全22分</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            衆院選は後半へ。各報道機関の情勢調査が出そろいました。これ...
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.hokkaido-np.co.jp/article/1270078/" target="_blank" rel="noopener noreferrer">河村は自己最多6アシスト　NBA、6リバウンドも</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            【ニューヨーク共同】米プロバスケットボールNBAは1日、各地で...
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.hokkaido-np.co.jp/article/1270066/" target="_blank" rel="noopener noreferrer">衆院選期間中、悩むむかわ町長選の関係者　公選法規定で活動制限　候補やきもき　同日の町議選にも影響</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            【むかわ】任期満了に伴う町長選と町議選（いずれも3月10日告示...
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.hokkaido-np.co.jp/article/1270065/" target="_blank" rel="noopener noreferrer">人間国宝・坂東玉三郎さんウポポイで舞う　アイヌ民族職員にも刺激　歌舞伎と初コラボ</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            【白老】アイヌ文化復興拠点「民族共生象徴空間（ウポポイ）」で1...
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+            </ul>
+        </details>
+        
+        <details >
+            <summary>
+                <div class="feed-header">
+                    <img src="https://www.google.com/s2/favicons?domain=www.asahikawa-np.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span>旭川新聞</span>
+                </div>
+                
+            </summary>
+            
+            <ul class="entry-list">
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.asahikawa-np.com/digest/2026/01/028039262/" target="_blank" rel="noopener noreferrer">15回目の旭川まちなか学生映画祭 「食」をテーマにした作品のコンテストも</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>4日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            第十五回旭川まちなか学生映画祭が二十四日、ＩＣＴパーク（三ノ八）で開催された。旭川まちなかマネジメント協議会の主催。 市内六高校（旭川東、旭川西、旭川北、旭川南、旭川工業、旭川永嶺）のほか、留萌高や、北見工大の放送局 […]
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.asahikawa-np.com/digest/2026/01/028039260/" target="_blank" rel="noopener noreferrer">佐々木ふたばさんの絵 ぐすぺりで展示中 映画『カムイのうた』を色で表現</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>4日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            映画『カムイのうた』の美術担当を務めた佐々木ふたばさん（29）が七日から、カフェ＆ホステル「ぐすぺり」（七ノ八）で同作品の内容を色で表現した絵を展示している。 佐々木さんは、妊娠二十四週未満、体重およそ六百㌘の未熟児 […]
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.asahikawa-np.com/digest/2026/01/028039258/" target="_blank" rel="noopener noreferrer">壺屋の「ＲＡＭＳ ＣＨＯＣＯＬＡＴＥ」 ベルギー文化表現したチョコなど 26年の新作を発売</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>4日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            旭川の菓子メーカー・壺屋総本店（村本暁宣社長）のチョコレートブランド「ＲＡＭＳ ＣＨＯＣＯＬＡＴＥ（ラムズチョコレート）」が、二〇二六年バレンタインの新作チョコレートを発売した。 同社常務でショコラティエの村本賢亮さ […]
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.asahikawa-np.com/digest/2026/01/028039256/" target="_blank" rel="noopener noreferrer">冬の大人が楽しむおはなし会 ２／１ 中央図書館で</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>4日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            「おはなしの森 冬の大人が楽しむおはなし会」が二月一日（日）午後一時半から、旭川中央図書館（常磐公園内）二階研修室で開かれます。旭川おはなしの会と同館の共催。 同会のメンバーが、本や道具を使わず、語り手自身の言葉で物 […]
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.asahikawa-np.com/digest/2026/01/028039254/" target="_blank" rel="noopener noreferrer">冬の常磐公園を楽しもう  ２／７</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>4日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            常磐公園の自然を考えるなかま（高野克子代表）は二月七日（土）午前十時から、「冬の常磐公園を楽しもう」をテーマに、催しを行います。 同なかまは年四回、四季折々の常磐公園で野鳥やコウモリの観察会など色々な催しを企画してい […]
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.asahikawa-np.com/digest/2026/01/028039252/" target="_blank" rel="noopener noreferrer">旭川点字図書館 音訳ボランティア参加者募集</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>4日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            旭川点字図書館（七ノ十四）は音訳ボランティア養成講座への参加者を募集します。 音訳ボランティアは視覚障がい者が利用する録音図書の製作が主な活動で、「ＮＨＫ俳句」などの雑誌や旭川市の広報誌「あさひばし」などの音訳もしま […]
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.asahikawa-np.com/digest/2026/01/028039250/" target="_blank" rel="noopener noreferrer">柳家やなぎ真打昇進記念 柳家さん喬・栁家やなぎ親子会を開催 公会堂で２月15日</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>4日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            柳家さん喬・柳家やなぎ親子会が二月十五日（日）、市公会堂（常磐公園）で行われます。旭川落語芸術協会の主催。 柳家さん喬は一九四八年、東京都生まれ。五代目柳家小さん門下で、八一年真打昇進。古典の人情噺や滑稽噺に定評があ […]
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.asahikawa-np.com/digest/2026/01/021039220/" target="_blank" rel="noopener noreferrer">ゆっきリンクＡＳＡＨＩＫＡＷＡ 17日～２月15日までオープン</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>11日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            「北彩都あさひかわ冬のガーデン」のオープニングイベントが十六日、旭川駅駅前広場（宮下通八）で開かれた。実行委員会の主催。 北彩都あさひかわ冬のガーデンは、十七日から二月十五日まで開かれる。 期間中は、スケートリンク […]
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.asahikawa-np.com/digest/2026/01/021039218/" target="_blank" rel="noopener noreferrer">三浦綾子作文賞表彰式 最優秀賞に株本眞有（まある）さん、河上公充子さん</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>11日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            三浦綾子記念文学館（神楽七ノ八）で十日、第二十七回三浦綾子作文賞の表彰式が行われた。 同賞は、三浦綾子記念文化財団が全国の小中高生を対象に、一九九九年度に開設。三浦綾子文学が多くの人に親しまれることを願うとともに、児 […]
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.asahikawa-np.com/digest/2026/01/021039216/" target="_blank" rel="noopener noreferrer">春風亭一之輔 落語独演会 ２／25 たかすメロディーホールで</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>11日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            人気、実力ともに兼ね備えた落語家・春風亭一之輔の独演会が二月二十五日（水）午後六時半から、たかすメロディーホール（鷹栖町南二ノ四）で開かれます。同町と同町教育委員会の共催。 一之輔は、ハリのある声と抑揚の効いた表現で […]
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+            </ul>
+        </details>
+        
+        <details >
+            <summary>
+                <div class="feed-header">
+                    <img src="https://www.google.com/s2/favicons?domain=www.hofm.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span>まるまるNET北海道</span>
+                </div>
+                
+            </summary>
+            
+            <ul class="entry-list">
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="http://www.hofm.co.jp/uncategorized/dohoku-sasaeai-net/" target="_blank" rel="noopener noreferrer">[道北支え愛ネット] 道北エリア支援マッチングシステム公開しました</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2090日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            「道北支え愛ネット」とは、コロナ後に道北地域の経済停滞を阻止するために、道北民同士で支え合うサイトです。 コロナに苦しむ全国で、動き始めた”支え愛”活動の紹介、道北41市町村の暮らしぶりや移住情報などをまとめて掲載、基幹産業である農業と食に関連するマッチング情報も用意しています。 地域の生活は、地域で守る。コロナがもたらした唯一・最大の気づきです。 道北支え愛ネット http://www.hofm.co.jp/dohoku 道北支え愛ネットマッチングシステムは、新型コロナウイルス感染拡大の影響によって、商品の余剰在庫や収益低下などに苦しむ道北地方で努力している企業・店舗・生産者等の各事業者様を対象とした支援サービスシステムです。 サイトにユーザー登録していただき、ログインした状態で販売促進したい製品の情報を入力することでデータベースに登録され、マッチング検索に表示されるようになります。 初期費用や月額料金は一切かかりませんので、この機会に是非ご利用ください。
+                        </div>
+                    </div>
+
+                    
+                    <img src="http://www.hofm.co.jp/wp-content/uploads/2020/05/dohoku-sasaeai-net.png" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="http://www.hofm.co.jp/recommended/photo-koshien-report/2017-closing-ceremony/" target="_blank" rel="noopener noreferrer">写真甲子園2017　表彰式・閉会式</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3110日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ※本番組は、写真甲子園実行委員会の正式な許可を得て、株式会社北海道録画センターが配信するものです。 2017年7月28日（金） 北海道東川町 東川町農村環境改善センターにて行われた、第24回全国高等学校写真選手権大会 写真甲子園2017 表彰式・閉会式の様子です。 全国高等学校写真選手権大会 写真甲子園 オフィシャルサイト 「写真の町 ひがしかわ」 北海道上川郡東川町 オフィシャルサイト
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="http://www.hofm.co.jp/recommended/photo-koshien-report/final-committee-2017/" target="_blank" rel="noopener noreferrer">写真甲子園2017　ファイナル公開審査会</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3110日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ※本番組は、写真甲子園実行委員会の正式な許可を得て、株式会社北海道録画センターが配信するものです。 2017年7月28日（金） 北海道東川町 東川町農村環境改善センターにて行われた、第24回全国高等学校写真選手権大会 写真甲子園2017 ファイナル公開審査会の様子です。 全国高等学校写真選手権大会 写真甲子園 オフィシャルサイト 「写真の町 ひがしかわ」 北海道上川郡東川町 オフィシャルサイト
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="http://www.hofm.co.jp/recommended/photo-koshien-report/2017-report-005/" target="_blank" rel="noopener noreferrer">写真甲子園2017特別番組 Part5　撮影の様子（東川町）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3110日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ※本番組は、写真甲子園実行委員会の正式な許可を得て、株式会社北海道録画センターが配信するものです。 7月28日 写真甲子園2017 ファイナルステージの様子です。 撮影ステージは東川町です。 全国高等学校写真選手権大会 写真甲子園 オフィシャルサイト 「写真の町 ひがしかわ」 北海道上川郡東川町 オフィシャルサイト
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="http://www.hofm.co.jp/recommended/photo-koshien-report/2nd-committee-2017/" target="_blank" rel="noopener noreferrer">写真甲子園2017　セカンド公開審査会</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3111日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ※本番組は、写真甲子園実行委員会の正式な許可を得て、株式会社北海道録画センターが配信するものです。 2017年7月27日（木） 北海道東川町 東川町農村環境改善センターにて行われた、第24回全国高等学校写真選手権大会 写真甲子園2017 セカンド公開審査会の様子です。 全国高等学校写真選手権大会 写真甲子園 オフィシャルサイト 「写真の町 ひがしかわ」 北海道上川郡東川町 オフィシャルサイト
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="http://www.hofm.co.jp/recommended/photo-koshien-report/2017-report-004/" target="_blank" rel="noopener noreferrer">写真甲子園2017特別番組 Part4　撮影の様子（旭川市）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3111日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ※本番組は、写真甲子園実行委員会の正式な許可を得て、株式会社北海道録画センターが配信するものです。 7月27日 写真甲子園2017 セカンドステージの様子その2です。 撮影ステージは旭川市です。 全国高等学校写真選手権大会 写真甲子園 オフィシャルサイト 「写真の町 ひがしかわ」 北海道上川郡東川町 オフィシャルサイト
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="http://www.hofm.co.jp/recommended/photo-koshien-report/2017-report-003/" target="_blank" rel="noopener noreferrer">写真甲子園2017特別番組 Part3　撮影の様子（東神楽町）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3111日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ※本番組は、写真甲子園実行委員会の正式な許可を得て、株式会社北海道録画センターが配信するものです。 7月27日 写真甲子園2017 セカンドステージの様子その1です。 撮影ステージは東神楽町です。 全国高等学校写真選手権大会 写真甲子園 オフィシャルサイト 「写真の町 ひがしかわ」 北海道上川郡東川町 オフィシャルサイト
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="http://www.hofm.co.jp/recommended/photo-koshien-report/1st-committee-2017/" target="_blank" rel="noopener noreferrer">写真甲子園2017　ファースト公開審査会</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3112日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ※本番組は、写真甲子園実行委員会の正式な許可を得て、株式会社北海道録画センターが配信するものです。 2017年7月26日（水） 北海道東川町 東川町農村環境改善センターにて行われた、第24回全国高等学校写真選手権大会 写真甲子園2017 ファースト公開審査会の様子です。 全国高等学校写真選手権大会 写真甲子園 オフィシャルサイト 「写真の町 ひがしかわ」 北海道上川郡東川町 オフィシャルサイト
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="http://www.hofm.co.jp/recommended/photo-koshien-report/2017-report-002/" target="_blank" rel="noopener noreferrer">写真甲子園2017特別番組 Part2　撮影の様子（上富良野町）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3112日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ※本番組は、写真甲子園実行委員会の正式な許可を得て、株式会社北海道録画センターが配信するものです。 7月26日 写真甲子園2017 ファーストステージの様子その2です。 撮影ステージは上富良野町です。 全国高等学校写真選手権大会 写真甲子園 オフィシャルサイト 「写真の町 ひがしかわ」 北海道上川郡東川町 オフィシャルサイト
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="http://www.hofm.co.jp/recommended/photo-koshien-report/2017-report-001/" target="_blank" rel="noopener noreferrer">写真甲子園2017特別番組 Part1　撮影の様子（美瑛町）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3112日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ※本番組は、写真甲子園実行委員会の正式な許可を得て、株式会社北海道録画センターが配信するものです。 7月26日 写真甲子園2017 ファーストステージの様子その1です。 撮影ステージは美瑛町です。 全国高等学校写真選手権大会 写真甲子園 オフィシャルサイト 「写真の町 ひがしかわ」 北海道上川郡東川町 オフィシャルサイト
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+            </ul>
+        </details>
+        
+        <details open>
+            <summary>
+                <div class="feed-header">
+                    <img src="https://www.google.com/s2/favicons?domain=www.chuo-bus.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span>中央バス</span>
+                </div>
+                
+                <span class="feed-status">● New</span>
+                
+            </summary>
+            
+            <ul class="entry-list">
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.chuo-bus.co.jp/support/stop/" target="_blank" rel="noopener noreferrer">札幌→帯広/Sapporo→Obihiro ポテトライナー 音更経由 札幌駅前（タ） 9:00/ 札幌（タ）             9:15 運休</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.chuo-bus.co.jp/support/stop/" target="_blank" rel="noopener noreferrer">札幌→帯広/Sapporo→Obihiro ポテトライナー 直行便 札幌駅前（タ）        11:00/ 札幌（タ）    11:15 運休</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.chuo-bus.co.jp/support/stop/" target="_blank" rel="noopener noreferrer">札幌→帯広/Sapporo→Obihiro ポテトライナー 直行便 札幌駅前（タ）12:30/ 札幌（タ）            12:45 運休</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.chuo-bus.co.jp/support/stop/" target="_blank" rel="noopener noreferrer">札幌→帯広/Sapporo→Obihiro ポテトライナー 音更経由 札幌駅前（タ）17:00/ 札幌（タ）            17:15 運休</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.chuo-bus.co.jp/support/stop/" target="_blank" rel="noopener noreferrer">札幌→帯広/Sapporo→Obihiro ポテトライナー 音更経由 札幌駅前（タ）19:00/ 札幌（タ）        19:15 運休</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.chuo-bus.co.jp/support/stop/" target="_blank" rel="noopener noreferrer">帯広→札幌/Obihiro→Sapporo ポテトライナー 音更経由 帯広駅前              10:00 運休</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.chuo-bus.co.jp/support/stop/" target="_blank" rel="noopener noreferrer">帯広→札幌/Obihiro→Sapporo ポテトライナー 直行便 帯広駅前              12:30 運休</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.chuo-bus.co.jp/support/stop/" target="_blank" rel="noopener noreferrer">帯広→札幌/Obihiro→Sapporo ポテトライナー 芽室経由 帯広駅前              15:30 運休</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.chuo-bus.co.jp/support/stop/" target="_blank" rel="noopener noreferrer">帯広→札幌/Obihiro→Sapporo ポテトライナー 直行便 帯広駅前              18:15 運休</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.chuo-bus.co.jp/support/stop/" target="_blank" rel="noopener noreferrer">帯広→札幌/Obihiro→Sapporo ポテトライナー 音更経由 帯広駅前              19:15 運休</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+            </ul>
+        </details>
+        
+        
+    </div>
+</body>
+</html>
