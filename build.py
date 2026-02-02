@@ -4,6 +4,7 @@ import datetime
 import pytz
 import sys
 import time
+import re
 from urllib.parse import urlparse
 from jinja2 import Environment, FileSystemLoader
 
@@ -11,7 +12,7 @@ from jinja2 import Environment, FileSystemLoader
 feeds_file = 'feeds.json'
 template_file = 'template.html'
 max_entries = 10 
-new_threshold_hours = 24  # NEWをつける基準（時間）
+new_threshold_hours = 24
 
 def load_config(path):
     try:
@@ -22,7 +23,6 @@ def load_config(path):
         sys.exit(1)
 
 def get_domain(url):
-    """URLからドメイン名を取得（ファビコン取得用）"""
     try:
         parsed = urlparse(url)
         return parsed.netloc
@@ -30,8 +30,6 @@ def get_domain(url):
         return ""
 
 def parse_date(entry):
-    """RSSの日付をdatetimeオブジェクトに変換"""
-    # feedparserが解析済みの構造化データ(struct_time)を持っている場合
     if hasattr(entry, 'published_parsed') and entry.published_parsed:
         return datetime.datetime.fromtimestamp(time.mktime(entry.published_parsed), pytz.utc)
     elif hasattr(entry, 'updated_parsed') and entry.updated_parsed:
@@ -39,21 +37,45 @@ def parse_date(entry):
     return None
 
 def format_relative_time(dt_obj, now_utc):
-    """現在時刻との差分から相対時間を生成"""
     if not dt_obj:
         return ""
-    
     diff = now_utc - dt_obj
     seconds = diff.total_seconds()
-    
     if seconds < 3600:
         return f"{int(seconds // 60)}分前"
     elif seconds < 86400:
         return f"{int(seconds // 3600)}時間前"
-    elif seconds < 172800: # 48時間以内
+    elif seconds < 172800:
         return "昨日"
     else:
         return f"{int(seconds // 86400)}日前"
+
+def extract_image(entry):
+    """RSSエントリから安全に画像URLを抽出する"""
+    # 1. media_content (多くのニュースサイトで使用)
+    if 'media_content' in entry:
+        for media in entry.media_content:
+            if 'image' in media.get('type', '') or 'medium' in media and media['medium'] == 'image':
+                return media['url']
+    
+    # 2. media_thumbnail (YouTubeや一部ブログ)
+    if 'media_thumbnail' in entry:
+        return entry.media_thumbnail[0]['url']
+    
+    # 3. links (enclosureタグ / PodcastやIT系サイト)
+    if 'links' in entry:
+        for link in entry.links:
+            if link.get('rel') == 'enclosure' and 'image' in link.get('type', ''):
+                return link['href']
+    
+    # 4. content/summary内のimgタグ (正規表現でsrcを抽出)
+    # ※アクセスは発生しないテキスト処理のみなので安全
+    content = entry.get('summary', '') + entry.get('content', [{'value': ''}])[0]['value']
+    img_match = re.search(r'<img[^>]+src=["\'](.*?)["\']', content)
+    if img_match:
+        return img_match.group(1)
+        
+    return None
 
 def fetch_feed(url, title_override=None):
     print(f"  Fetching: {url}...")
@@ -62,22 +84,18 @@ def fetch_feed(url, title_override=None):
         
         feed_title = title_override if title_override else d.feed.get('title', 'Unknown Feed')
         domain = get_domain(d.feed.get('link', url))
-        
-        # ファビコンURL (GoogleのAPIを使用)
         favicon = f"https://www.google.com/s2/favicons?domain={domain}"
 
         entries_data = []
         now_utc = datetime.datetime.now(pytz.utc)
-        has_new = False # このフィードに新着があるかフラグ
+        has_new = False
 
         for entry in d.entries[:max_entries]:
-            # 日付処理
             dt = parse_date(entry)
             is_new = False
             rel_time = ""
             
             if dt:
-                # NEW判定
                 if (now_utc - dt).total_seconds() < (new_threshold_hours * 3600):
                     is_new = True
                     has_new = True
@@ -87,6 +105,9 @@ def fetch_feed(url, title_override=None):
             summary = entry.get('summary', entry.get('description', ''))
             content = entry.get('content', [{'value': ''}])[0]['value']
             text_content = content if len(content) > len(summary) else summary
+            
+            # 画像抽出 (ここを追加)
+            image_url = extract_image(entry)
 
             entries_data.append({
                 'title': entry.get('title', 'No Title'),
@@ -94,17 +115,16 @@ def fetch_feed(url, title_override=None):
                 'is_new': is_new,
                 'relative_time': rel_time,
                 'summary': text_content,
-                # ソート用にタイムスタンプを持たせる（日付がない場合は0）
+                'image': image_url, # 画像URLを追加
                 'timestamp': dt.timestamp() if dt else 0
             })
         
-        # 新しい順にソート
         entries_data.sort(key=lambda x: x['timestamp'], reverse=True)
 
         return {
             'title': feed_title,
             'favicon': favicon,
-            'has_new': has_new, # 新着があるフィードを開いたままにするために使う
+            'has_new': has_new,
             'entries': entries_data
         }
 
