@@ -20,10 +20,6 @@
                 "url": "https://www.asahikawa-np.com/digest/feed/"
             },
             {
-                "title": "まるまるNET北海道",
-                "url": "http://www.hofm.co.jp/feed/"
-            },
-            {
                 "title": "中央バス",
                 "url": "https://www.chuo-bus.co.jp/support/stop/?ope=feed&topic=stop_top"
             }
@@ -44,6 +40,38 @@
             {
                 "title": "はてなブックマーク 人気エントリー",
                 "url": "https://b.hatena.ne.jp/hotentry.rss"
+            },
+            {
+                "title": "NHK主要ニュース",
+                "url": "https://news.web.nhk/n-data/conf/na/rss/cat0.xml"
+            },
+            {
+                "title": "NHKニュース 社会",
+                "url": "https://news.web.nhk/n-data/conf/na/rss/cat1.xml"
+            },
+            {
+                "title": "NHKニュース 文化",
+                "url": "https://news.web.nhk/n-data/conf/na/rss/cat2.xml"
+            },
+            {
+                "title": "NHKニュース 科学・医療",
+                "url": "https://news.web.nhk/n-data/conf/na/rss/cat3.xml"
+            },
+            {
+                "title": "NHKニュース 政治",
+                "url": "https://news.web.nhk/n-data/conf/na/rss/cat4.xml"
+            },
+            {
+                "title": "NHKニュース 経済",
+                "url": "https://news.web.nhk/n-data/conf/na/rss/cat5.xml"
+            },
+            {
+                "title": "NHKニュース 国際",
+                "url": "https://news.web.nhk/n-data/conf/na/rss/cat6.xml"
+            },
+            {
+                "title": "NHKニュース スポーツ",
+                "url": "https://news.web.nhk/n-data/conf/na/rss/cat7.xml"
             }
         ]
     },
@@ -152,6 +180,16 @@
             {
                 "title": "ライフハッカー・ジャパン",
                 "url": "https://www.lifehacker.jp/feed/index.xml"
+            }
+        ]
+    },
+    {
+        "page_title": "ニュース記事",
+        "filename": "yahoo.html",
+        "feeds": [
+            {
+                "title": "主要",
+                "url": "https://news.yahoo.co.jp/rss/topics/top-picks.xml"
             }
         ]
     }
