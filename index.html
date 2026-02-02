@@ -23,7 +23,6 @@
             line-height: 1.6;
         }
         
-        /* ナビゲーション */
         .navbar {
             background-color: #343a40;
             padding: 0.8rem;
@@ -49,10 +48,7 @@
             font-weight: 600;
             opacity: 0.8;
         }
-        .nav-link.active {
-            opacity: 1;
-            background-color: var(--accent);
-        }
+        .nav-link.active { opacity: 1; background-color: var(--accent); }
 
         .container {
             max-width: 800px;
@@ -60,14 +56,10 @@
             padding: 20px;
         }
 
-        header {
-            margin-bottom: 30px;
-            text-align: center;
-        }
+        header { margin-bottom: 30px; text-align: center; }
         h1 { font-size: 22px; margin: 0; color: #333; }
         .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
 
-        /* アコーディオン (details/summary) */
         details {
             background: var(--card-bg);
             border-radius: 8px;
@@ -76,9 +68,8 @@
             border: 1px solid var(--border);
             overflow: hidden;
         }
-        
         summary {
-            list-style: none; /* 三角マーカーを消す */
+            list-style: none;
             cursor: pointer;
             padding: 15px;
             font-weight: bold;
@@ -88,27 +79,13 @@
             background-color: #fff;
             transition: background 0.2s;
         }
-        summary::-webkit-details-marker { display: none; } /* Chrome用 */
+        summary::-webkit-details-marker { display: none; }
         summary:hover { background-color: #f8f9fa; }
         
-        .feed-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 16px;
-        }
-        .feed-favicon {
-            width: 16px;
-            height: 16px;
-            border-radius: 2px;
-        }
-        .feed-status {
-            font-size: 12px;
-            color: var(--new-badge);
-            font-weight: normal;
-        }
+        .feed-header { display: flex; align-items: center; gap: 10px; font-size: 16px; }
+        .feed-favicon { width: 16px; height: 16px; border-radius: 2px; }
+        .feed-status { font-size: 12px; color: var(--new-badge); font-weight: normal; }
 
-        /* 展開時の記事リスト */
         .entry-list {
             border-top: 1px solid var(--border);
             padding: 0;
@@ -118,25 +95,37 @@
         .entry-item {
             padding: 15px;
             border-bottom: 1px solid var(--border);
-            position: relative;
+            /* Flexboxで画像とテキストを横並びにする */
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
         }
         .entry-item:last-child { border-bottom: none; }
         
+        /* テキストエリア */
+        .entry-content-wrapper {
+            flex: 1;
+            min-width: 0; /* Flexbox内でのテキスト折り返し用 */
+        }
+
+        /* サムネイル画像 */
+        .entry-thumbnail {
+            width: 100px;
+            height: 75px;
+            object-fit: cover;
+            border-radius: 4px;
+            flex-shrink: 0; /* 縮まないようにする */
+            border: 1px solid #eee;
+        }
+
         .entry-title {
             font-size: 16px;
             margin: 0 0 5px 0;
             line-height: 1.4;
         }
-        .entry-title a {
-            text-decoration: none;
-            color: var(--text-main);
-        }
-        .entry-title a:hover {
-            color: var(--accent);
-            text-decoration: underline;
-        }
+        .entry-title a { text-decoration: none; color: var(--text-main); }
+        .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
-        /* NEWバッジ */
         .new-badge {
             display: inline-block;
             background-color: var(--new-badge);
@@ -162,17 +151,19 @@
             color: #555;
             margin-top: 8px;
             display: -webkit-box;
-            -webkit-line-clamp: 2; /* 2行で切る */
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
             opacity: 0.8;
         }
-        /* サマリー内の画像は非表示 */
+        /* サマリー内の元画像は非表示（サムネイルとして横に出すため） */
         .entry-summary img { display: none; }
 
         @media (max-width: 600px) {
             .container { padding: 15px 10px; }
             summary { padding: 12px; }
+            /* スマホではサムネイルを少し小さく */
+            .entry-thumbnail { width: 80px; height: 60px; }
         }
     </style>
 </head>
@@ -221,7 +212,7 @@
     <div class="container">
         <header>
             <h1>総合ニュース</h1>
-            <div class="last-updated">最終更新: 02/02 11:32</div>
+            <div class="last-updated">最終更新: 02/02 11:44</div>
         </header>
 
         
@@ -253,122 +244,150 @@
             <ul class="entry-list">
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015041391000" target="_blank" rel="noopener noreferrer">“次の利上げ検討は時間かけすぎないよう” 先月の日銀会合</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://news.web.nhk/newsweb/na/na-k10015041391000" target="_blank" rel="noopener noreferrer">“次の利上げ検討は時間かけすぎないよう” 先月の日銀会合</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>10分前</span>
+                        <div class="entry-meta">
+                            <span>22分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            日銀は2日、政策の維持を決めた先月の金融政策決定会合で出された主な意見を公表しました。円安の物価への影響を懸念し、次の利上げの検討に向けては時間をかけすぎないようにすべきだといった意見が相次いでいたこ…
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        日銀は2日、政策の維持を決めた先月の金融政策決定会合で出された主な意見を公表しました。円安の物価への影響を懸念し、次の利上げの検討に向けては時間をかけすぎないようにすべきだといった意見が相次いでいたこ…
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015041291000" target="_blank" rel="noopener noreferrer">円相場値下がり 一時155円台半ばに 米利下げペース不透明観測</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://news.web.nhk/newsweb/na/na-k10015041291000" target="_blank" rel="noopener noreferrer">円相場値下がり 一時155円台半ばに 米利下げペース不透明観測</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>1時間前</span>
+                        <div class="entry-meta">
+                            <span>1時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            週明け2日の外国為替市場、円相場は一時、1ドル＝155円台半ばまで値下がりしています。アメリカの今後の利下げのペースが不透明だという観測に加え、高市総理大臣の為替をめぐる発言も円を売る手がかりになって…
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        週明け2日の外国為替市場、円相場は一時、1ドル＝155円台半ばまで値下がりしています。アメリカの今後の利下げのペースが不透明だという観測に加え、高市総理大臣の為替をめぐる発言も円を売る手がかりになって…
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015041281000" target="_blank" rel="noopener noreferrer">トランプ大統領 “キューバ上層部と協議 何らか合意結びたい”</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://news.web.nhk/newsweb/na/na-k10015041231000" target="_blank" rel="noopener noreferrer">IOC会長 五輪の準備に自信示す “チケット販売は100万枚超”</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>3時間前</span>
+                        <div class="entry-meta">
+                            <span>3時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            アメリカのトランプ大統領は、石油の供給をめぐり圧力を強めているカリブ海の社会主義国、キューバについて、キューバ政府の上層部と協議を行っていることを明らかにし、何らかの合意を結びたいという考えを示しまし…
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        ミラノ・コルティナオリンピックについて、IOC＝国際オリンピック委員会のコベントリー会長は開幕まで5日となった1日、ミラノで記者会見し「準備状況は極めて順調だ」と述べ、自信を示しました。また、チケット…
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015041211000" target="_blank" rel="noopener noreferrer">青森県 記録的な大雪で陸上自衛隊に災害派遣を要請</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://news.web.nhk/newsweb/na/na-k10015041211000" target="_blank" rel="noopener noreferrer">青森県 記録的な大雪で陸上自衛隊に災害派遣を要請</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>4時間前</span>
+                        <div class="entry-meta">
+                            <span>4時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            青森県は青森市で記録的な大雪となり除雪作業中の死亡事故も起きているとして、1日夜、陸上自衛隊に災害派遣を要請しました。1人暮らしの高齢者世帯を対象に、屋根の雪下ろしなどへの支援を求めています。
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        青森県は青森市で記録的な大雪となり除雪作業中の死亡事故も起きているとして、1日夜、陸上自衛隊に災害派遣を要請しました。1人暮らしの高齢者世帯を対象に、屋根の雪下ろしなどへの支援を求めています。
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015041221000" target="_blank" rel="noopener noreferrer">香港 5000万円強盗事件 日本人含む4人 強盗を共謀した罪で起訴</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://news.web.nhk/newsweb/na/na-k10015041221000" target="_blank" rel="noopener noreferrer">香港 5000万円強盗事件 日本人含む4人 強盗を共謀した罪で起訴</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>4時間前</span>
+                        <div class="entry-meta">
+                            <span>5時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            香港で日本人の男性が現金5000万円あまりを奪われた事件で、日本人を含む4人が強盗を共謀した罪で起訴されました。2日、現地の裁判所で初公判が開かれ、検察側が起訴内容を明らかにするものとみられます。
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        香港で日本人の男性が現金5000万円あまりを奪われた事件で、日本人を含む4人が強盗を共謀した罪で起訴されました。2日、現地の裁判所で初公判が開かれ、検察側が起訴内容を明らかにするものとみられます。
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015041171000" target="_blank" rel="noopener noreferrer">衆院選 投票日まで1週間切る 各党党首や幹部 接戦選挙区などに</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://news.web.nhk/newsweb/na/na-k10015041171000" target="_blank" rel="noopener noreferrer">衆院選 投票日まで1週間切る 各党党首や幹部 接戦選挙区などに</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>5時間前</span>
+                        <div class="entry-meta">
+                            <span>5時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            衆議院選挙は、2月8日の投票日まで1週間を切り、論戦が激しくなっています。各党の党首や幹部は接戦となっている選挙区や、比例代表での支持拡大を目指す地域などに入り、議席の上積みを目指すことにしています。
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        衆議院選挙は、2月8日の投票日まで1週間を切り、論戦が激しくなっています。各党の党首や幹部は接戦となっている選挙区や、比例代表での支持拡大を目指す地域などに入り、議席の上積みを目指すことにしています。
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015040971000" target="_blank" rel="noopener noreferrer">「緊急避妊薬」きょうから処方箋なくても店頭で購入可能に</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://news.web.nhk/newsweb/na/na-k10015040971000" target="_blank" rel="noopener noreferrer">「緊急避妊薬」きょうから処方箋なくても店頭で購入可能に</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>5時間前</span>
+                        <div class="entry-meta">
+                            <span>5時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            意図しない妊娠を防ぐ「緊急避妊薬」が2日から医師の処方箋がなくても薬局やドラッグストアの店頭で購入できるようになります。店舗での対面販売に限られ、薬剤師からの説明を受けた上で、その場で服用することが求…
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        意図しない妊娠を防ぐ「緊急避妊薬」が2日から医師の処方箋がなくても薬局やドラッグストアの店頭で購入できるようになります。店舗での対面販売に限られ、薬剤師からの説明を受けた上で、その場で服用することが求…
-                    </div>
+                    
                 </li>
                 
             </ul>
@@ -388,171 +407,231 @@
             <ul class="entry-list">
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015041161000" target="_blank" rel="noopener noreferrer">東京23区単身マンションの家賃 去年平均9万6700円上昇傾向続く | NHKニュース</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://news.web.nhk/newsweb/na/na-k10015041161000" target="_blank" rel="noopener noreferrer">東京23区単身マンションの家賃 去年平均9万6700円上昇傾向続く | NHKニュース</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>4時間前</span>
+                        <div class="entry-meta">
+                            <span>4時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            東京23区単身マンションの家賃 去年平均9万6700円上昇傾向続く | NHKニュース東京23区の単身向けマンションの家賃は、民間の調査によりますと、去年1月から12月の平均で、前の年より6％上昇して9万6700円になりました。家賃の上昇傾向は続き、去年12月の家賃は10万円を超えてい…
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        東京23区単身マンションの家賃 去年平均9万6700円上昇傾向続く | NHKニュース東京23区の単身向けマンションの家賃は、民間の調査によりますと、去年1月から12月の平均で、前の年より6％上昇して9万6700円になりました。家賃の上昇傾向は続き、去年12月の家賃は10万円を超えてい…
-                    </div>
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fnews.web.nhk%2Fnewsweb%2Fna%2Fna-k10015041161000" class="entry-thumbnail" loading="lazy" alt="">
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://yanineko-anime.com/" target="_blank" rel="noopener noreferrer">TVアニメ『ヤニねこ』公式サイト</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://yanineko-anime.com/" target="_blank" rel="noopener noreferrer">TVアニメ『ヤニねこ』公式サイト</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>10時間前</span>
+                        <div class="entry-meta">
+                            <span>10時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            TVアニメ『ヤニねこ』公式サイト人間と獣人が共存する世界で、 タバコを吸ってダラダラ生きる獣人・ヤニねこ。 金なし！生活力なし！ろくでなし！ マナーやモラルは吸い殻と一緒に捨ててきた。 ヤニ臭くて、汚くて、怠惰でクズ。 吸って、吐いて、ダベって、燃えて。 だけど、それなりに充実した日々を 過ごしてます。 けっこう汚いけど、ちょっとだけ...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        TVアニメ『ヤニねこ』公式サイト人間と獣人が共存する世界で、 タバコを吸ってダラダラ生きる獣人・ヤニねこ。 金なし！生活力なし！ろくでなし！ マナーやモラルは吸い殻と一緒に捨ててきた。 ヤニ臭くて、汚くて、怠惰でクズ。 吸って、吐いて、ダベって、燃えて。 だけど、それなりに充実した日々を 過ごしてます。 けっこう汚いけど、ちょっとだけ...
-                    </div>
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fyanineko-anime.com%2F" class="entry-thumbnail" loading="lazy" alt="">
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.yomiuri.co.jp/local/saitama/news/20260201-GYTNT00162/" target="_blank" rel="noopener noreferrer">埼玉県川口市長選挙…岡村氏が初当選</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://www.yomiuri.co.jp/local/saitama/news/20260201-GYTNT00162/" target="_blank" rel="noopener noreferrer">埼玉県川口市長選挙…岡村氏が初当選</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>11時間前</span>
+                        <div class="entry-meta">
+                            <span>12時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            埼玉県川口市長選挙…岡村氏が初当選【読売新聞】 新人６人の争いとなった川口市長選は１日に投開票され、無所属で前県議の岡村ゆり子氏（４４）が、無所属（自民推薦）で元県会議長の立石泰広氏（６４）らを抑え、初当選を果たした。外国人住民との共生やＪＲ上野東京ラインの川口駅停
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        埼玉県川口市長選挙…岡村氏が初当選【読売新聞】 新人６人の争いとなった川口市長選は１日に投開票され、無所属で前県議の岡村ゆり子氏（４４）が、無所属（自民推薦）で元県会議長の立石泰広氏（６４）らを抑え、初当選を果たした。外国人住民との共生やＪＲ上野東京ラインの川口駅停
-                    </div>
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fwww.yomiuri.co.jp%2Flocal%2Fsaitama%2Fnews%2F20260201-GYTNT00162%2F" class="entry-thumbnail" loading="lazy" alt="">
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://zenn.dev/t_kanazawa/articles/must-have-antigravity-skills" target="_blank" rel="noopener noreferrer">Google Antigravityでエンジニアが今すぐ作るべきSkills 5選</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://zenn.dev/t_kanazawa/articles/must-have-antigravity-skills" target="_blank" rel="noopener noreferrer">Google Antigravityでエンジニアが今すぐ作るべきSkills 5選</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>12時間前</span>
+                        <div class="entry-meta">
+                            <span>12時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Google Antigravityでエンジニアが今すぐ作るべきSkills 5選はじめに Google AntigravityのようなAgentic AI（自律型AIエージェント）が登場し、私たちの開発スタイルは大きく変わろうとしています。単にコードを補完してもらうだけでなく、**「目的を伝えて、一連のタスクを自律的に遂行してもらう」**ことが可能になったからです。 Antigravityの強力な機能の一つに**「Skills（...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        Google Antigravityでエンジニアが今すぐ作るべきSkills 5選はじめに Google AntigravityのようなAgentic AI（自律型AIエージェント）が登場し、私たちの開発スタイルは大きく変わろうとしています。単にコードを補完してもらうだけでなく、**「目的を伝えて、一連のタスクを自律的に遂行してもらう」**ことが可能になったからです。 Antigravityの強力な機能の一つに**「Skills（...
-                    </div>
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fzenn.dev%2Ft_kanazawa%2Farticles%2Fmust-have-antigravity-skills" class="entry-thumbnail" loading="lazy" alt="">
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.asahi.com/articles/ASV212VHMV21UZPS002M.html" target="_blank" rel="noopener noreferrer">自維300議席超うかがう　中道半減も　参政・みらい勢い　朝日調査：朝日新聞</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://www.asahi.com/articles/ASV212VHMV21UZPS002M.html" target="_blank" rel="noopener noreferrer">自維300議席超うかがう　中道半減も　参政・みらい勢い　朝日調査：朝日新聞</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>14時間前</span>
+                        <div class="entry-meta">
+                            <span>14時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            自維300議席超うかがう 中道半減も 参政・みらい勢い 朝日調査：朝日新聞2月8日投開票の衆院選（定数465）について、朝日新聞社は1月31日から2月1日にかけ、約37万人を対象に電話とネットによる調査を実施し、取材情報も加えて中盤情勢を探った。①自民党は単独で過半数（2…
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        自維300議席超うかがう 中道半減も 参政・みらい勢い 朝日調査：朝日新聞2月8日投開票の衆院選（定数465）について、朝日新聞社は1月31日から2月1日にかけ、約37万人を対象に電話とネットによる調査を実施し、取材情報も加えて中盤情勢を探った。①自民党は単独で過半数（2…
-                    </div>
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fwww.asahi.com%2Farticles%2FASV212VHMV21UZPS002M.html" class="entry-thumbnail" loading="lazy" alt="">
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://note.com/note_tds/n/n0d480ba60ed1" target="_blank" rel="noopener noreferrer">【正直、どう使ったらいいの？】GeminiとNotebookLMの連携機能についての考察｜【AI研究中】ただし</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://note.com/note_tds/n/n0d480ba60ed1" target="_blank" rel="noopener noreferrer">【正直、どう使ったらいいの？】GeminiとNotebookLMの連携機能についての考察｜【AI研究中】ただし</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>14時間前</span>
+                        <div class="entry-meta">
+                            <span>15時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            【正直、どう使ったらいいの？】GeminiとNotebookLMの連携機能についての考察｜【AI研究中】ただしはじめに：ナレッジ活用の新たなフェーズへGoogleのAIエコシステムにおいて、生成AI「Gemini」と、パーソナルな情報整理・検索に特化した「NotebookLM」の連携機能が実装されました。 これにより、Geminiのチャットインターフェースから、NotebookLM内に構築した自身のナレッジベース（ノートブック）を直接参照すること...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        【正直、どう使ったらいいの？】GeminiとNotebookLMの連携機能についての考察｜【AI研究中】ただしはじめに：ナレッジ活用の新たなフェーズへGoogleのAIエコシステムにおいて、生成AI「Gemini」と、パーソナルな情報整理・検索に特化した「NotebookLM」の連携機能が実装されました。 これにより、Geminiのチャットインターフェースから、NotebookLM内に構築した自身のナレッジベース（ノートブック）を直接参照すること...
-                    </div>
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fnote.com%2Fnote_tds%2Fn%2Fn0d480ba60ed1" class="entry-thumbnail" loading="lazy" alt="">
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.chibanippo.co.jp/articles/1564330" target="_blank" rel="noopener noreferrer">【速報】千葉県の熊谷知事、高市首相「外為特会ホクホク」発言をＳＮＳで批判　「聞くべき相手間違えないで」</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://www.chibanippo.co.jp/articles/1564330" target="_blank" rel="noopener noreferrer">【速報】千葉県の熊谷知事、高市首相「外為特会ホクホク」発言をＳＮＳで批判　「聞くべき相手間違えないで」</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>16時間前</span>
+                        <div class="entry-meta">
+                            <span>17時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            【速報】千葉県の熊谷知事、高市首相「外為特会ホクホク」発言をＳＮＳで批判 「聞くべき相手間違えないで」高市早苗首相が１月３１日の街頭演説で、円安の経済に与えるメリットを強調し「外国為替資金特別会計（外為特会）の運用もホクホク状態だ」と発言したことに関し、千葉県の熊谷俊人知事は自身のフェイスブックで「経済大国の首相として、金融関係者から相手にされないような主張を信じるのはやめてほしい」と痛烈に批判...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        【速報】千葉県の熊谷知事、高市首相「外為特会ホクホク」発言をＳＮＳで批判 「聞くべき相手間違えないで」高市早苗首相が１月３１日の街頭演説で、円安の経済に与えるメリットを強調し「外国為替資金特別会計（外為特会）の運用もホクホク状態だ」と発言したことに関し、千葉県の熊谷俊人知事は自身のフェイスブックで「経済大国の首相として、金融関係者から相手にされないような主張を信じるのはやめてほしい」と痛烈に批判...
-                    </div>
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fwww.chibanippo.co.jp%2Farticles%2F1564330" class="entry-thumbnail" loading="lazy" alt="">
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://blog.takaumada.com/entry/genai-ideation-2026" target="_blank" rel="noopener noreferrer">生成 AI 時代のアイデア探索方法 (2026 年版) - 🐴 (馬)</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://blog.takaumada.com/entry/genai-ideation-2026" target="_blank" rel="noopener noreferrer">生成 AI 時代のアイデア探索方法 (2026 年版) - 🐴 (馬)</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>17時間前</span>
+                        <div class="entry-meta">
+                            <span>17時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            生成 AI 時代のアイデア探索方法 (2026 年版) - 🐴 (馬)生成 AI の登場でプログラミングをはじめとした知的作業の方法が大きく変わってきています。 特に2025年は、調査やアイデア生成のタスクにおいて、生成AIの実用度が増したように思います。ChatGPT Pro 5.2 の登場と、着実な NotebookLM の進歩＋Gemini 3とNano Bananaは調査や情報の構造化という観点ではとても大きな進...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        生成 AI 時代のアイデア探索方法 (2026 年版) - 🐴 (馬)生成 AI の登場でプログラミングをはじめとした知的作業の方法が大きく変わってきています。 特に2025年は、調査やアイデア生成のタスクにおいて、生成AIの実用度が増したように思います。ChatGPT Pro 5.2 の登場と、着実な NotebookLM の進歩＋Gemini 3とNano Bananaは調査や情報の構造化という観点ではとても大きな進...
-                    </div>
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fblog.takaumada.com%2Fentry%2Fgenai-ideation-2026" class="entry-thumbnail" loading="lazy" alt="">
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://qiita.com/8853Tomtomtom/items/656c122f1ef714f3079d" target="_blank" rel="noopener noreferrer">ChatGPTに「生成AIが広まったけど、結局 言語化能力がある人が得してるだけじゃない？」と問いかけてみた - Qiita</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://qiita.com/8853Tomtomtom/items/656c122f1ef714f3079d" target="_blank" rel="noopener noreferrer">ChatGPTに「生成AIが広まったけど、結局 言語化能力がある人が得してるだけじゃない？」と問いかけてみた - Qiita</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>21時間前</span>
+                        <div class="entry-meta">
+                            <span>21時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ChatGPTに「生成AIが広まったけど、結局 言語化能力がある人が得してるだけじゃない？」と問いかけてみた - QiitaDeleted articles cannot be recovered. Draft of this article would be also deleted. Are you sure you want to delete this article? ChatGPTとのやり取りで、妙にエモいやり取りとなったのでログとして記載しておきます。 ある作業をやってもらった後の雑談です。 少々内容を編集した状態で貼り付けます。 私： あ...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        ChatGPTに「生成AIが広まったけど、結局 言語化能力がある人が得してるだけじゃない？」と問いかけてみた - QiitaDeleted articles cannot be recovered. Draft of this article would be also deleted. Are you sure you want to delete this article? ChatGPTとのやり取りで、妙にエモいやり取りとなったのでログとして記載しておきます。 ある作業をやってもらった後の雑談です。 少々内容を編集した状態で貼り付けます。 私： あ...
-                    </div>
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fqiita.com%2F8853Tomtomtom%2Fitems%2F656c122f1ef714f3079d" class="entry-thumbnail" loading="lazy" alt="">
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.itmedia.co.jp/business/articles/2602/01/news003.html" target="_blank" rel="noopener noreferrer">「布団のまま歩いているみたい」　相手にされなかった“着る暖房”は、なぜ売れたのか</a>
+                        </div>
                         
-                        <a href="https://www.itmedia.co.jp/business/articles/2602/01/news003.html" target="_blank" rel="noopener noreferrer">「布団のまま歩いているみたい」　相手にされなかった“着る暖房”は、なぜ売れたのか</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>昨日</span>
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            「布団のまま歩いているみたい」 相手にされなかった“着る暖房”は、なぜ売れたのか電気代が高騰する中、「暖房いらず」として話題のウェアがある。ファーブル社（東京都墨田区）が開発し、”着る暖房”と呼ばれる「モモンガ」だ。応援購入サービス「Makuake（マクアケ）」をメインに販売（一般価格2万3000円、早割1万7940円～）し、最新作「モモンガ5」の購入額は2467万円、アンコール販売（プロジェクト...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        「布団のまま歩いているみたい」 相手にされなかった“着る暖房”は、なぜ売れたのか電気代が高騰する中、「暖房いらず」として話題のウェアがある。ファーブル社（東京都墨田区）が開発し、”着る暖房”と呼ばれる「モモンガ」だ。応援購入サービス「Makuake（マクアケ）」をメインに販売（一般価格2万3000円、早割1万7940円～）し、最新作「モモンガ5」の購入額は2467万円、アンコール販売（プロジェクト...
-                    </div>
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fwww.itmedia.co.jp%2Fbusiness%2Farticles%2F2602%2F01%2Fnews003.html" class="entry-thumbnail" loading="lazy" alt="">
+                    
                 </li>
                 
             </ul>

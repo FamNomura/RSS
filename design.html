@@ -23,7 +23,6 @@
             line-height: 1.6;
         }
         
-        /* ナビゲーション */
         .navbar {
             background-color: #343a40;
             padding: 0.8rem;
@@ -49,10 +48,7 @@
             font-weight: 600;
             opacity: 0.8;
         }
-        .nav-link.active {
-            opacity: 1;
-            background-color: var(--accent);
-        }
+        .nav-link.active { opacity: 1; background-color: var(--accent); }
 
         .container {
             max-width: 800px;
@@ -60,14 +56,10 @@
             padding: 20px;
         }
 
-        header {
-            margin-bottom: 30px;
-            text-align: center;
-        }
+        header { margin-bottom: 30px; text-align: center; }
         h1 { font-size: 22px; margin: 0; color: #333; }
         .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
 
-        /* アコーディオン (details/summary) */
         details {
             background: var(--card-bg);
             border-radius: 8px;
@@ -76,9 +68,8 @@
             border: 1px solid var(--border);
             overflow: hidden;
         }
-        
         summary {
-            list-style: none; /* 三角マーカーを消す */
+            list-style: none;
             cursor: pointer;
             padding: 15px;
             font-weight: bold;
@@ -88,27 +79,13 @@
             background-color: #fff;
             transition: background 0.2s;
         }
-        summary::-webkit-details-marker { display: none; } /* Chrome用 */
+        summary::-webkit-details-marker { display: none; }
         summary:hover { background-color: #f8f9fa; }
         
-        .feed-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 16px;
-        }
-        .feed-favicon {
-            width: 16px;
-            height: 16px;
-            border-radius: 2px;
-        }
-        .feed-status {
-            font-size: 12px;
-            color: var(--new-badge);
-            font-weight: normal;
-        }
+        .feed-header { display: flex; align-items: center; gap: 10px; font-size: 16px; }
+        .feed-favicon { width: 16px; height: 16px; border-radius: 2px; }
+        .feed-status { font-size: 12px; color: var(--new-badge); font-weight: normal; }
 
-        /* 展開時の記事リスト */
         .entry-list {
             border-top: 1px solid var(--border);
             padding: 0;
@@ -118,25 +95,37 @@
         .entry-item {
             padding: 15px;
             border-bottom: 1px solid var(--border);
-            position: relative;
+            /* Flexboxで画像とテキストを横並びにする */
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
         }
         .entry-item:last-child { border-bottom: none; }
         
+        /* テキストエリア */
+        .entry-content-wrapper {
+            flex: 1;
+            min-width: 0; /* Flexbox内でのテキスト折り返し用 */
+        }
+
+        /* サムネイル画像 */
+        .entry-thumbnail {
+            width: 100px;
+            height: 75px;
+            object-fit: cover;
+            border-radius: 4px;
+            flex-shrink: 0; /* 縮まないようにする */
+            border: 1px solid #eee;
+        }
+
         .entry-title {
             font-size: 16px;
             margin: 0 0 5px 0;
             line-height: 1.4;
         }
-        .entry-title a {
-            text-decoration: none;
-            color: var(--text-main);
-        }
-        .entry-title a:hover {
-            color: var(--accent);
-            text-decoration: underline;
-        }
+        .entry-title a { text-decoration: none; color: var(--text-main); }
+        .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
-        /* NEWバッジ */
         .new-badge {
             display: inline-block;
             background-color: var(--new-badge);
@@ -162,17 +151,19 @@
             color: #555;
             margin-top: 8px;
             display: -webkit-box;
-            -webkit-line-clamp: 2; /* 2行で切る */
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
             opacity: 0.8;
         }
-        /* サマリー内の画像は非表示 */
+        /* サマリー内の元画像は非表示（サムネイルとして横に出すため） */
         .entry-summary img { display: none; }
 
         @media (max-width: 600px) {
             .container { padding: 15px 10px; }
             summary { padding: 12px; }
+            /* スマホではサムネイルを少し小さく */
+            .entry-thumbnail { width: 80px; height: 60px; }
         }
     </style>
 </head>
@@ -221,7 +212,7 @@
     <div class="container">
         <header>
             <h1>デザイン・Web制作</h1>
-            <div class="last-updated">最終更新: 02/02 11:32</div>
+            <div class="last-updated">最終更新: 02/02 11:44</div>
         </header>
 
         
@@ -239,155 +230,195 @@
             <ul class="entry-list">
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://coliss.com/articles/products/kindle-sale-20260202.html" target="_blank" rel="noopener noreferrer">Kindle本の特大セール「イラスト技法書フェア」が開催！ 同人誌・絵師さん向けのイラストの良書がたくさんセール対象です</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://coliss.com/articles/products/kindle-sale-20260202.html" target="_blank" rel="noopener noreferrer">Kindle本の特大セール「イラスト技法書フェア」が開催！ 同人誌・絵師さん向けのイラストの良書がたくさんセール対象です</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>1時間前</span>
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ※本ページは、アフィリエイト広告を利用しています。 Kindle本の特大セール、イラスト技法書フェアが開催されています。もちろん、同人誌・絵師さん向けのイラストの良書がたくさんセール対象です！ セール期間は、2/5まで。 […]
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        ※本ページは、アフィリエイト広告を利用しています。 Kindle本の特大セール、イラスト技法書フェアが開催されています。もちろん、同人誌・絵師さん向けのイラストの良書がたくさんセール対象です！ セール期間は、2/5まで。 […]
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://coliss.com/articles/book-review/isbn-9784297150945.html" target="_blank" rel="noopener noreferrer">フリーランスの確定申告、インボイスや消費税への対応もこれ一冊で大丈夫、ベストセラーの定番書 -フリーランス＆個人事業主のための確定申告</a>
+                        </div>
                         
-                        <a href="https://coliss.com/articles/book-review/isbn-9784297150945.html" target="_blank" rel="noopener noreferrer">フリーランスの確定申告、インボイスや消費税への対応もこれ一冊で大丈夫、ベストセラーの定番書 -フリーランス＆個人事業主のための確定申告</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>3日前</span>
+                        <div class="entry-meta">
+                            <span>3日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ※本ページは、アフィリエイト広告を利用しています。 いよいよ確定申告の時期になりました。 フリーランスと個人事業主向け、2026年に提出する青色申告と白色申告に対応した最新版の確定申告の解説書を紹介します。 本書は20年 […]
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        ※本ページは、アフィリエイト広告を利用しています。 いよいよ確定申告の時期になりました。 フリーランスと個人事業主向け、2026年に提出する青色申告と白色申告に対応した最新版の確定申告の解説書を紹介します。 本書は20年 […]
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://coliss.com/articles/build-websites/operation/css/using-100vw-is-now-scrollbar-aware.html" target="_blank" rel="noopener noreferrer">CSSの100vwで水平スクロールバーが表示される問題がようやく解決！ vwにスクロールの幅が含まれなくなります</a>
+                        </div>
                         
-                        <a href="https://coliss.com/articles/build-websites/operation/css/using-100vw-is-now-scrollbar-aware.html" target="_blank" rel="noopener noreferrer">CSSの100vwで水平スクロールバーが表示される問題がようやく解決！ vwにスクロールの幅が含まれなくなります</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>4日前</span>
+                        <div class="entry-meta">
+                            <span>4日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Web制作者の長年の悩みがようやく解決されます！ CSSで100vwを使用して幅いっぱいにすると、垂直のスクロールバー分が含まれて、水平スクロールバーが表示されてしまいます。この問題はWindowsで起こり、macOSで […]
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        Web制作者の長年の悩みがようやく解決されます！ CSSで100vwを使用して幅いっぱいにすると、垂直のスクロールバー分が含まれて、水平スクロールバーが表示されてしまいます。この問題はWindowsで起こり、macOSで […]
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://coliss.com/articles/products/amazon-sale-20260127.html" target="_blank" rel="noopener noreferrer">Amazonで2026年スマイルSALEが開催！ セールで私が買ったもの、見逃しがちなお買い得品を紹介します</a>
+                        </div>
                         
-                        <a href="https://coliss.com/articles/products/amazon-sale-20260127.html" target="_blank" rel="noopener noreferrer">Amazonで2026年スマイルSALEが開催！ セールで私が買ったもの、見逃しがちなお買い得品を紹介します</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>5日前</span>
+                        <div class="entry-meta">
+                            <span>5日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ※本ページは、アフィリエイト広告を利用しています。 Amazonでビッグセール「スマイルSALE」が開催しています。このセールでは特に生活用品が数多く対象になっており、通常のセールよりもかなり安くなって、非常にお買い得で […]
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        ※本ページは、アフィリエイト広告を利用しています。 Amazonでビッグセール「スマイルSALE」が開催しています。このセールでは特に生活用品が数多く対象になっており、通常のセールよりもかなり安くなって、非常にお買い得で […]
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://coliss.com/articles/build-websites/operation/work/how-to-favicon.html" target="_blank" rel="noopener noreferrer">2026年版、ファビコン画像の作成方法とHTMLの記述方法、さまざまなデバイスに対応させるには3つのアイコンが必要</a>
+                        </div>
                         
-                        <a href="https://coliss.com/articles/build-websites/operation/work/how-to-favicon.html" target="_blank" rel="noopener noreferrer">2026年版、ファビコン画像の作成方法とHTMLの記述方法、さまざまなデバイスに対応させるには3つのアイコンが必要</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>6日前</span>
+                        <div class="entry-meta">
+                            <span>6日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            最近のデバイスやブラウザに対応させる最小限のファビコンセットには、3つのアイコンで対応できます。ブラウザはもちろん、スマホやタブレットにも対応し、さらにSVGも含めて3つだけです。 ファビコンに必要な3つのアイコン、ファ […]
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        最近のデバイスやブラウザに対応させる最小限のファビコンセットには、3つのアイコンで対応できます。ブラウザはもちろん、スマホやタブレットにも対応し、さらにSVGも含めて3つだけです。 ファビコンに必要な3つのアイコン、ファ […]
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://coliss.com/articles/build-websites/operation/work/highlight-just-the-active-indent-guide.html" target="_blank" rel="noopener noreferrer">CursorやVS Codeで、インデントのガイドラインをアクティブなガイドラインだけ表示させる方法</a>
+                        </div>
                         
-                        <a href="https://coliss.com/articles/build-websites/operation/work/highlight-just-the-active-indent-guide.html" target="_blank" rel="noopener noreferrer">CursorやVS Codeで、インデントのガイドラインをアクティブなガイドラインだけ表示させる方法</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>7日前</span>
+                        <div class="entry-meta">
+                            <span>7日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            CursorやVS Codeのエディタで、インデントのガイドラインをアクティブなガイドラインだけハイライト表示させる方法を紹介します。 通常（左）はその箇所を含むすべてのインデントのガイドラインが表示されますが、右のよう […]
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        CursorやVS Codeのエディタで、インデントのガイドラインをアクティブなガイドラインだけハイライト表示させる方法を紹介します。 通常（左）はその箇所を含むすべてのインデントのガイドラインが表示されますが、右のよう […]
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://coliss.com/articles/book-review/isbn-9784297153311.html" target="_blank" rel="noopener noreferrer">HTML Living StandardとモダンCSS、最新ブラウザに完全対応！ 目的別で分かりやすいリファレンス本 -HTML＆CSSポケットリファレンス 改訂第4版</a>
+                        </div>
                         
-                        <a href="https://coliss.com/articles/book-review/isbn-9784297153311.html" target="_blank" rel="noopener noreferrer">HTML Living StandardとモダンCSS、最新ブラウザに完全対応！ 目的別で分かりやすいリファレンス本 -HTML＆CSSポケットリファレンス 改訂第4版</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>10日前</span>
+                        <div class="entry-meta">
+                            <span>10日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ※本ページは、アフィリエイト広告を利用しています。 『HTML＆CSSポケットリファレンス』の改訂第4版が、発売されました！ 先週発売されたばかりの最新刊で、HTML Living StandardとモダンCSSに対応 […]
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        ※本ページは、アフィリエイト広告を利用しています。 『HTML＆CSSポケットリファレンス』の改訂第4版が、発売されました！ 先週発売されたばかりの最新刊で、HTML Living StandardとモダンCSSに対応 […]
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://coliss.com/articles/build-websites/operation/work/logic-driven-ui-design-tips.html" target="_blank" rel="noopener noreferrer">UIデザインのクオリティが格段にアップする！ 感覚的ではなく、論理的にデザインを改善するポイントを解説</a>
+                        </div>
                         
-                        <a href="https://coliss.com/articles/build-websites/operation/work/logic-driven-ui-design-tips.html" target="_blank" rel="noopener noreferrer">UIデザインのクオリティが格段にアップする！ 感覚的ではなく、論理的にデザインを改善するポイントを解説</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>11日前</span>
+                        <div class="entry-meta">
+                            <span>11日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            WebサイトやスマホアプリのUIを魅力的に、そして一貫性のあるデザインに改善するときに役立つUIデザインの知識とテクニックを紹介します。 直感や感覚的な曖昧なものではなく、明確で論理的なガイドラインに基づいて改善すること […]
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        WebサイトやスマホアプリのUIを魅力的に、そして一貫性のあるデザインに改善するときに役立つUIデザインの知識とテクニックを紹介します。 直感や感覚的な曖昧なものではなく、明確で論理的なガイドラインに基づいて改善すること […]
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://coliss.com/articles/build-websites/operation/work/vertical-tabs-in-chrome-native.html" target="_blank" rel="noopener noreferrer">Chromeのタブがさらに便利に進化！ 分割表示の次は、なんとタブを垂直に表示できる -Vertical Tabs</a>
+                        </div>
                         
-                        <a href="https://coliss.com/articles/build-websites/operation/work/vertical-tabs-in-chrome-native.html" target="_blank" rel="noopener noreferrer">Chromeのタブがさらに便利に進化！ 分割表示の次は、なんとタブを垂直に表示できる -Vertical Tabs</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>12日前</span>
+                        <div class="entry-meta">
+                            <span>12日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Chromeは先日のアップデートで、1つのタブ内を分割して2つのWebページを表示できるようになりましたが、さらに便利に進化して、タブを垂直で管理できるようになります！ 水平だとタブを10個くらい開くと、タイトルが小さく […]
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        Chromeは先日のアップデートで、1つのタブ内を分割して2つのWebページを表示できるようになりましたが、さらに便利に進化して、タブを垂直で管理できるようになります！ 水平だとタブを10個くらい開くと、タイトルが小さく […]
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://coliss.com/articles/build-websites/architectonics/copy-sites-design-assets.html" target="_blank" rel="noopener noreferrer">これはかなり便利！ 1クリックであらゆるWebサイトのデザインやアセットを抽出できるChromeの拡張機能 -MiroMiro</a>
+                        </div>
                         
-                        <a href="https://coliss.com/articles/build-websites/architectonics/copy-sites-design-assets.html" target="_blank" rel="noopener noreferrer">これはかなり便利！ 1クリックであらゆるWebサイトのデザインやアセットを抽出できるChromeの拡張機能 -MiroMiro</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>13日前</span>
+                        <div class="entry-meta">
+                            <span>13日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            昨年末にリリースされたばかり、Chromeの便利な拡張機能を紹介します。 MiroMiroは1クリックするだけで、表示しているサイトを分析、デザイン要素を抽出、本番環境で使えるアセットに変換するオールインワンの拡張機能で […]
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        昨年末にリリースされたばかり、Chromeの便利な拡張機能を紹介します。 MiroMiroは1クリックするだけで、表示しているサイトを分析、デザイン要素を抽出、本番環境で使えるアセットに変換するオールインワンの拡張機能で […]
-                    </div>
+                    
                 </li>
                 
             </ul>
@@ -405,153 +436,193 @@
             <ul class="entry-list">
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.webcreatorbox.com//blog/ai-phase-planner" target="_blank" rel="noopener noreferrer">Antigravityを使ってコーディング（ほぼ）なしで目標設定アプリ作った</a>
+                        </div>
                         
-                        <a href="https://www.webcreatorbox.com//blog/ai-phase-planner" target="_blank" rel="noopener noreferrer">Antigravityを使ってコーディング（ほぼ）なしで目標設定アプリ作った</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>5日前</span>
+                        <div class="entry-meta">
+                            <span>5日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            今年はWebアプリやWebサイトを10個作ってみるぞー！とやる気に満ちて新年を迎えましたよ。ということで、1つ目のアプリ。月間目標を決めたら、それを4つの段階に細分化して提案してくれるWebサイト『AI Phase Planner』を公開しました！
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        今年はWebアプリやWebサイトを10個作ってみるぞー！とやる気に満ちて新年を迎えましたよ。ということで、1つ目のアプリ。月間目標を決めたら、それを4つの段階に細分化して提案してくれるWebサイト『AI Phase Planner』を公開しました！
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.webcreatorbox.com//blog/website-2000ver" target="_blank" rel="noopener noreferrer">最新AIでイニシエのWebサイトを作ってもらった 〜2000年の君へ〜</a>
+                        </div>
                         
-                        <a href="https://www.webcreatorbox.com//blog/website-2000ver" target="_blank" rel="noopener noreferrer">最新AIでイニシエのWebサイトを作ってもらった 〜2000年の君へ〜</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>18日前</span>
+                        <div class="entry-meta">
+                            <span>18日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            AntigravityというAIツールをご存じですか？ 指示（プロンプト）を与えるだけで、いろんなWebサイトがサクッと作れてしまうのが面白くて、最近いろいろといじり倒しています。そこでふと、逆に古い技術のサイトも作れるの？と疑問が湧いたので、実験してみました。
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        AntigravityというAIツールをご存じですか？ 指示（プロンプト）を与えるだけで、いろんなWebサイトがサクッと作れてしまうのが面白くて、最近いろいろといじり倒しています。そこでふと、逆に古い技術のサイトも作れるの？と疑問が湧いたので、実験してみました。
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.webcreatorbox.com//blog/wcb-book8" target="_blank" rel="noopener noreferrer">書籍執筆しました！『1冊ですべて身につくPhotoshop入門講座』</a>
+                        </div>
                         
-                        <a href="https://www.webcreatorbox.com//blog/wcb-book8" target="_blank" rel="noopener noreferrer">書籍執筆しました！『1冊ですべて身につくPhotoshop入門講座』</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>28日前</span>
+                        <div class="entry-meta">
+                            <span>28日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            これまでHTMLやCSS、WordPress、JavaScript、デザインの入門書を書いてきた私ですが、このたび新たにAdobe Photoshopの入門書、『1冊ですべて身につくPhotoshop入門講座』という本を執筆しました！2026年2月27日発売で、予約受付中です！
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        これまでHTMLやCSS、WordPress、JavaScript、デザインの入門書を書いてきた私ですが、このたび新たにAdobe Photoshopの入門書、『1冊ですべて身につくPhotoshop入門講座』という本を執筆しました！2026年2月27日発売で、予約受付中です！
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.webcreatorbox.com//blog/wcb-2025" target="_blank" rel="noopener noreferrer">Webクリエイターボックスの2025年を振り返る</a>
+                        </div>
                         
-                        <a href="https://www.webcreatorbox.com//blog/wcb-2025" target="_blank" rel="noopener noreferrer">Webクリエイターボックスの2025年を振り返る</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>40日前</span>
+                        <div class="entry-meta">
+                            <span>40日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            今年も残りあとわずか！一年間お世話になりました！毎年思いますが早いですね。という事で例年どおり、Webクリエイターボックスが今年1年どんな変貌を遂げたのか、そしてWebクリエイターボックス内でよく読んでもらった記事やSNSでシェアした記事などを紹介しようと思います。いくつ覚えていただけてますかね？ :3
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        今年も残りあとわずか！一年間お世話になりました！毎年思いますが早いですね。という事で例年どおり、Webクリエイターボックスが今年1年どんな変貌を遂げたのか、そしてWebクリエイターボックス内でよく読んでもらった記事やSNSでシェアした記事などを紹介しようと思います。いくつ覚えていただけてますかね？ :3
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.webcreatorbox.com//blog/applewatch-1000days" target="_blank" rel="noopener noreferrer">継続をデザインする！Apple Watchのアクティビティで1000日連続達成した記録</a>
+                        </div>
                         
-                        <a href="https://www.webcreatorbox.com//blog/applewatch-1000days" target="_blank" rel="noopener noreferrer">継続をデザインする！Apple Watchのアクティビティで1000日連続達成した記録</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>45日前</span>
+                        <div class="entry-meta">
+                            <span>45日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            みなさん、運動してますか？ 我々の仕事って基本座りっぱなしで、運動しなきゃと思いつつ、なかなか実行できなかったりしますよね。実は私もそうでした。コロナ禍を経て、気づけば身体はぷくぷく…。これはまずい！と一念発起し、「継続すること」自体をデザインの課題として捉え直し、2023年1月1日から毎日運動を続けました。そしてついに、ムーブゴール連続1000日を達成！そこで、継続できた仕組みづくりと、愛用しているツールやアプリ、そして1000日の軌跡をご紹介します。
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        みなさん、運動してますか？ 我々の仕事って基本座りっぱなしで、運動しなきゃと思いつつ、なかなか実行できなかったりしますよね。実は私もそうでした。コロナ禍を経て、気づけば身体はぷくぷく…。これはまずい！と一念発起し、「継続すること」自体をデザインの課題として捉え直し、2023年1月1日から毎日運動を続けました。そしてついに、ムーブゴール連続1000日を達成！そこで、継続できた仕組みづくりと、愛用しているツールやアプリ、そして1000日の軌跡をご紹介します。
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.webcreatorbox.com//blog/card-one" target="_blank" rel="noopener noreferrer">特殊加工名刺を「カードワン」さんで作ってみた</a>
+                        </div>
                         
-                        <a href="https://www.webcreatorbox.com//blog/card-one" target="_blank" rel="noopener noreferrer">特殊加工名刺を「カードワン」さんで作ってみた</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>53日前</span>
+                        <div class="entry-meta">
+                            <span>53日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            名刺の残り枚数が少なくなってきたので「そろそろ注文しなきゃなー」とのんびり構えていたところ、ずっと利用していた印刷会社さんがまさかの閉鎖！あれこれ探し回った結果、素敵な印刷会社さんに出会い、名刺を再現していただきました。これから名刺を作りたいデザイナーさんや、自分の名刺をグレードアップさせたいフリーランスの方の参考になれば嬉しいです！
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        名刺の残り枚数が少なくなってきたので「そろそろ注文しなきゃなー」とのんびり構えていたところ、ずっと利用していた印刷会社さんがまさかの閉鎖！あれこれ探し回った結果、素敵な印刷会社さんに出会い、名刺を再現していただきました。これから名刺を作りたいデザイナーさんや、自分の名刺をグレードアップさせたいフリーランスの方の参考になれば嬉しいです！
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.webcreatorbox.com//blog/slido" target="_blank" rel="noopener noreferrer">プレゼンの質疑応答が劇的に変わる「Slido」を使ってみた</a>
+                        </div>
                         
-                        <a href="https://www.webcreatorbox.com//blog/slido" target="_blank" rel="noopener noreferrer">プレゼンの質疑応答が劇的に変わる「Slido」を使ってみた</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>62日前</span>
+                        <div class="entry-meta">
+                            <span>62日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            私は登壇するとき、なるべく質疑応答の時間を用意しています。ただ、参加者からしたら手を上げてみんなの前で質問ってなかなかハードル高いですよね。実際質問をされるのも1、2名くらい。そこで、「Slido（スライド）」というツールを使って質疑応答の時間を工夫したお話を紹介します！
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        私は登壇するとき、なるべく質疑応答の時間を用意しています。ただ、参加者からしたら手を上げてみんなの前で質問ってなかなかハードル高いですよね。実際質問をされるのも1、2名くらい。そこで、「Slido（スライド）」というツールを使って質疑応答の時間を工夫したお話を紹介します！
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.webcreatorbox.com//blog/podcast-meetup-2" target="_blank" rel="noopener noreferrer">エンジニアポッドキャストMeetup #2に参加しました！</a>
+                        </div>
                         
-                        <a href="https://www.webcreatorbox.com//blog/podcast-meetup-2" target="_blank" rel="noopener noreferrer">エンジニアポッドキャストMeetup #2に参加しました！</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>76日前</span>
+                        <div class="entry-meta">
+                            <span>76日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            先日、「エンジニアポッドキャストMeetup #2」というイベントに、私自身が運営しているポッドキャスト番組『ManaのWebクリエイターカフェ』のホストとして参加してきました！今回はイベントの様子はもちろん、耳からのインプット＝ポッドキャストがおすすめな理由や、私の登壇経験からの気づきもシェアします！
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        先日、「エンジニアポッドキャストMeetup #2」というイベントに、私自身が運営しているポッドキャスト番組『ManaのWebクリエイターカフェ』のホストとして参加してきました！今回はイベントの様子はもちろん、耳からのインプット＝ポッドキャストがおすすめな理由や、私の登壇経験からの気づきもシェアします！
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.webcreatorbox.com//blog/simplify-your-creation-2025" target="_blank" rel="noopener noreferrer">Simplify Your Creation in 広島 で登壇しました！</a>
+                        </div>
                         
-                        <a href="https://www.webcreatorbox.com//blog/simplify-your-creation-2025" target="_blank" rel="noopener noreferrer">Simplify Your Creation in 広島 で登壇しました！</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>84日前</span>
+                        <div class="entry-meta">
+                            <span>84日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            最近めっきりイベント三昧！Webやデザイン関連のイベントは新しい知識が得られたり、素敵な出会いがあったりしてワクワクしますよね！今回は、先日広島で開催された「Simplify Your Creation」というイベントで登壇したお話です！なんと、映画館で！！
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        最近めっきりイベント三昧！Webやデザイン関連のイベントは新しい知識が得られたり、素敵な出会いがあったりしてワクワクしますよね！今回は、先日広島で開催された「Simplify Your Creation」というイベントで登壇したお話です！なんと、映画館で！！
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.webcreatorbox.com//blog/webtan-forum-2025" target="_blank" rel="noopener noreferrer">Web担当者Forum ミーティング2025 秋 で登壇しました！</a>
+                        </div>
                         
-                        <a href="https://www.webcreatorbox.com//blog/webtan-forum-2025" target="_blank" rel="noopener noreferrer">Web担当者Forum ミーティング2025 秋 で登壇しました！</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>87日前</span>
+                        <div class="entry-meta">
+                            <span>87日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            先日「Web担当者Forum ミーティング2025 秋」というイベントで登壇しました！当日の様子や運営の裏側、私がプレゼンで意識したこと、そして当日お答えしきれなかった質疑応答の続きをまとめました！
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        先日「Web担当者Forum ミーティング2025 秋」というイベントで登壇しました！当日の様子や運営の裏側、私がプレゼンで意識したこと、そして当日お答えしきれなかった質疑応答の続きをまとめました！
-                    </div>
+                    
                 </li>
                 
             </ul>

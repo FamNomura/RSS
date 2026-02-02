@@ -23,7 +23,6 @@
             line-height: 1.6;
         }
         
-        /* ナビゲーション */
         .navbar {
             background-color: #343a40;
             padding: 0.8rem;
@@ -49,10 +48,7 @@
             font-weight: 600;
             opacity: 0.8;
         }
-        .nav-link.active {
-            opacity: 1;
-            background-color: var(--accent);
-        }
+        .nav-link.active { opacity: 1; background-color: var(--accent); }
 
         .container {
             max-width: 800px;
@@ -60,14 +56,10 @@
             padding: 20px;
         }
 
-        header {
-            margin-bottom: 30px;
-            text-align: center;
-        }
+        header { margin-bottom: 30px; text-align: center; }
         h1 { font-size: 22px; margin: 0; color: #333; }
         .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
 
-        /* アコーディオン (details/summary) */
         details {
             background: var(--card-bg);
             border-radius: 8px;
@@ -76,9 +68,8 @@
             border: 1px solid var(--border);
             overflow: hidden;
         }
-        
         summary {
-            list-style: none; /* 三角マーカーを消す */
+            list-style: none;
             cursor: pointer;
             padding: 15px;
             font-weight: bold;
@@ -88,27 +79,13 @@
             background-color: #fff;
             transition: background 0.2s;
         }
-        summary::-webkit-details-marker { display: none; } /* Chrome用 */
+        summary::-webkit-details-marker { display: none; }
         summary:hover { background-color: #f8f9fa; }
         
-        .feed-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 16px;
-        }
-        .feed-favicon {
-            width: 16px;
-            height: 16px;
-            border-radius: 2px;
-        }
-        .feed-status {
-            font-size: 12px;
-            color: var(--new-badge);
-            font-weight: normal;
-        }
+        .feed-header { display: flex; align-items: center; gap: 10px; font-size: 16px; }
+        .feed-favicon { width: 16px; height: 16px; border-radius: 2px; }
+        .feed-status { font-size: 12px; color: var(--new-badge); font-weight: normal; }
 
-        /* 展開時の記事リスト */
         .entry-list {
             border-top: 1px solid var(--border);
             padding: 0;
@@ -118,25 +95,37 @@
         .entry-item {
             padding: 15px;
             border-bottom: 1px solid var(--border);
-            position: relative;
+            /* Flexboxで画像とテキストを横並びにする */
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
         }
         .entry-item:last-child { border-bottom: none; }
         
+        /* テキストエリア */
+        .entry-content-wrapper {
+            flex: 1;
+            min-width: 0; /* Flexbox内でのテキスト折り返し用 */
+        }
+
+        /* サムネイル画像 */
+        .entry-thumbnail {
+            width: 100px;
+            height: 75px;
+            object-fit: cover;
+            border-radius: 4px;
+            flex-shrink: 0; /* 縮まないようにする */
+            border: 1px solid #eee;
+        }
+
         .entry-title {
             font-size: 16px;
             margin: 0 0 5px 0;
             line-height: 1.4;
         }
-        .entry-title a {
-            text-decoration: none;
-            color: var(--text-main);
-        }
-        .entry-title a:hover {
-            color: var(--accent);
-            text-decoration: underline;
-        }
+        .entry-title a { text-decoration: none; color: var(--text-main); }
+        .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
-        /* NEWバッジ */
         .new-badge {
             display: inline-block;
             background-color: var(--new-badge);
@@ -162,17 +151,19 @@
             color: #555;
             margin-top: 8px;
             display: -webkit-box;
-            -webkit-line-clamp: 2; /* 2行で切る */
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
             opacity: 0.8;
         }
-        /* サマリー内の画像は非表示 */
+        /* サマリー内の元画像は非表示（サムネイルとして横に出すため） */
         .entry-summary img { display: none; }
 
         @media (max-width: 600px) {
             .container { padding: 15px 10px; }
             summary { padding: 12px; }
+            /* スマホではサムネイルを少し小さく */
+            .entry-thumbnail { width: 80px; height: 60px; }
         }
     </style>
 </head>
@@ -221,7 +212,7 @@
     <div class="container">
         <header>
             <h1>Tech情報</h1>
-            <div class="last-updated">最終更新: 02/02 11:32</div>
+            <div class="last-updated">最終更新: 02/02 11:44</div>
         </header>
 
         
@@ -239,157 +230,197 @@
             <ul class="entry-list">
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.publickey1.jp/blog/26/bunzigmarkdownhtmlgithub_flavored_markdownreact.html" target="_blank" rel="noopener noreferrer">BunがZig製の高速なMarkdownパーサー搭載。HTMLへのレンダリング、GitHub Flavored Markdown対応、Reactエレメントの生成など</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://www.publickey1.jp/blog/26/bunzigmarkdownhtmlgithub_flavored_markdownreact.html" target="_blank" rel="noopener noreferrer">BunがZig製の高速なMarkdownパーサー搭載。HTMLへのレンダリング、GitHub Flavored Markdown対応、Reactエレメントの生成など</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>10時間前</span>
+                        <div class="entry-meta">
+                            <span>11時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            オープンソースで開発されているJavaScriptランタイム「Bun」の最新バージョン「Bun v1.3.8」が公開されました。 下記はBunの作者であるJarred Sumner氏のポストです。 In the next version of BunBun gets a built-in, native Markdown parser - a Zig port of the popular `md4c` library. pic.twitter.com/YabO6Io8u1&……
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        オープンソースで開発されているJavaScriptランタイム「Bun」の最新バージョン「Bun v1.3.8」が公開されました。 下記はBunの作者であるJarred Sumner氏のポストです。 In the next version of BunBun gets a built-in, native Markdown parser - a Zig port of the popular `md4c` library. pic.twitter.com/YabO6Io8u1&……
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.publickey1.jp/blog/26/jquery_40jquery_ui_1142.html" target="_blank" rel="noopener noreferrer">jQuery 4.0で正式にテストされた「jQuery UI 1.14.2」が公開</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://www.publickey1.jp/blog/26/jquery_40jquery_ui_1142.html" target="_blank" rel="noopener noreferrer">jQuery 4.0で正式にテストされた「jQuery UI 1.14.2」が公開</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>10時間前</span>
+                        <div class="entry-meta">
+                            <span>11時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            jQuery UI開発チームは、今月（2025年1月）にリリースされたばかりのjQuery 4.0で正式にテストされたjQuery UIの最新版「jQuery UI 1.14.2」の公開を発表しました。 jQuery UIはその名称から分かるとおり、jQueryをベースにさまざまなユーザーインターフェイスのコンポーネントを提供するJavaScriptライブラリです。 ボタン、チェックボックス、カレンダー、ダイアログ、メニュー、プログレスバー、スライダーなどをはじめとするさまざ……
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        jQuery UI開発チームは、今月（2025年1月）にリリースされたばかりのjQuery 4.0で正式にテストされたjQuery UIの最新版「jQuery UI 1.14.2」の公開を発表しました。 jQuery UIはその名称から分かるとおり、jQueryをベースにさまざまなユーザーインターフェイスのコンポーネントを提供するJavaScriptライブラリです。 ボタン、チェックボックス、カレンダー、ダイアログ、メニュー、プログレスバー、スライダーなどをはじめとするさまざ……
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.publickey1.jp/blog/26/awsmac_studioamazon_ec2_m4_max_mac.html" target="_blank" rel="noopener noreferrer">AWS、最新のMac Studioを利用した「Amazon EC2 M4 Max Macインスタンス」提供開始</a>
+                        </div>
                         
-                        <a href="https://www.publickey1.jp/blog/26/awsmac_studioamazon_ec2_m4_max_mac.html" target="_blank" rel="noopener noreferrer">AWS、最新のMac Studioを利用した「Amazon EC2 M4 Max Macインスタンス」提供開始</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>3日前</span>
+                        <div class="entry-meta">
+                            <span>3日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Amazon Web Servicesは、最新のMac Studioハードウェアを利用したMacインスタンス「Amazon EC2 M4 Max Macインスタンス」の提供開始を発表しました。 MacインスタンスはAppleのMacを使用したサービスであり、Macに対応したアプリケーションだけでなくiOS、iPadOS、tvOS、watchOS、visionOS、SafariなどのAppleプラットフォーム向けのアプリケーション構築やテストに利用可能です。 Mac Studi……
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        Amazon Web Servicesは、最新のMac Studioハードウェアを利用したMacインスタンス「Amazon EC2 M4 Max Macインスタンス」の提供開始を発表しました。 MacインスタンスはAppleのMacを使用したサービスであり、Macに対応したアプリケーションだけでなくiOS、iPadOS、tvOS、watchOS、visionOS、SafariなどのAppleプラットフォーム向けのアプリケーション構築やテストに利用可能です。 Mac Studi……
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.publickey1.jp/blog/26/openailatexprism.html" target="_blank" rel="noopener noreferrer">OpenAI、ホワイトボードの数式や図をLaTeXの図版に変換。問題の仮説検証、推論、関連文献の検索など、論文執筆を支援してくれる「Prism」公開</a>
+                        </div>
                         
-                        <a href="https://www.publickey1.jp/blog/26/openailatexprism.html" target="_blank" rel="noopener noreferrer">OpenAI、ホワイトボードの数式や図をLaTeXの図版に変換。問題の仮説検証、推論、関連文献の検索など、論文執筆を支援してくれる「Prism」公開</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>4日前</span>
+                        <div class="entry-meta">
+                            <span>4日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            OpenAIは、GPT‑5.2をベースに研究者が論文の執筆や共同作業を行うためのWebブラウザから利用できるサービス「Prism」を発表しました。 数学や科学的推論に特化したGPT-5.2を統合 Prism は、数学および科学的推論に特化した最先端モデルであるGPT‑5.2を統合した、科学研究の執筆と共同作業のためのワークスペースです。 以下の機能を備えていると説明されています。 GPT‑5.2 Thinking と対話し、文脈に沿ってアイデアを検討し、仮説を検証し、複雑な科……
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        OpenAIは、GPT‑5.2をベースに研究者が論文の執筆や共同作業を行うためのWebブラウザから利用できるサービス「Prism」を発表しました。 数学や科学的推論に特化したGPT-5.2を統合 Prism は、数学および科学的推論に特化した最先端モデルであるGPT‑5.2を統合した、科学研究の執筆と共同作業のためのワークスペースです。 以下の機能を備えていると説明されています。 GPT‑5.2 Thinking と対話し、文脈に沿ってアイデアを検討し、仮説を検証し、複雑な科……
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.publickey1.jp/blog/26/linuxoracle_ai_database_26ai.html" target="_blank" rel="noopener noreferrer">オラクル、Linux版の「Oracle AI Database 26ai」正式リリース。前バージョンからそのまま移行可能</a>
+                        </div>
                         
-                        <a href="https://www.publickey1.jp/blog/26/linuxoracle_ai_database_26ai.html" target="_blank" rel="noopener noreferrer">オラクル、Linux版の「Oracle AI Database 26ai」正式リリース。前バージョンからそのまま移行可能</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>4日前</span>
+                        <div class="entry-meta">
+                            <span>4日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            オラクルはオンプレミス向けのLinux x86-64版「Oracle AI Database 26ai」の正式リリースを発表しました。 Oracle AI Database 26aiは、1つ前のバージョンであるOracle AI Database 23aiの上に新機能を組み込んだものであり、23aiのユーザーは2025年10月のリリースアップデートで26aiの機能に移行できます。 23aiをベースとしているため、23aiから26aiへのアップグレード後もテストなど不要でそのま……
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        オラクルはオンプレミス向けのLinux x86-64版「Oracle AI Database 26ai」の正式リリースを発表しました。 Oracle AI Database 26aiは、1つ前のバージョンであるOracle AI Database 23aiの上に新機能を組み込んだものであり、23aiのユーザーは2025年10月のリリースアップデートで26aiの機能に移行できます。 23aiをベースとしているため、23aiから26aiへのアップグレード後もテストなど不要でそのま……
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.publickey1.jp/blog/26/appleswiftwindowswindows_workgroup.html" target="_blank" rel="noopener noreferrer">Apple、Swift言語でWindowsアプリケーションの開発を推進する「Windows Workgroup」発足を発表</a>
+                        </div>
                         
-                        <a href="https://www.publickey1.jp/blog/26/appleswiftwindowswindows_workgroup.html" target="_blank" rel="noopener noreferrer">Apple、Swift言語でWindowsアプリケーションの開発を推進する「Windows Workgroup」発足を発表</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>5日前</span>
+                        <div class="entry-meta">
+                            <span>5日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Swift言語のコアチームに所属するAppleのMishal Shah氏は、SwiftでWindowsアプリケーションの開発を推進するための「Windows Workgroup」発足を発表しました。 Swiftは202年のSwift on WindowsのリリースからWindowsアプリケーションの開発に公式に対応していました。 今回のWindows Workgroupの発足は、このWindows対応を継続的に推進していくためのものとされています。 具体的には、以下の取り組み……
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        Swift言語のコアチームに所属するAppleのMishal Shah氏は、SwiftでWindowsアプリケーションの開発を推進するための「Windows Workgroup」発足を発表しました。 Swiftは202年のSwift on WindowsのリリースからWindowsアプリケーションの開発に公式に対応していました。 今回のWindows Workgroupの発足は、このWindows対応を継続的に推進していくためのものとされています。 具体的には、以下の取り組み……
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.publickey1.jp/blog/26/google_cloudalloydb_for_postgresql.html" target="_blank" rel="noopener noreferrer">Google Cloud、AlloyDB for PostgreSQLでコネクションプーリングのマネージドサービスを提供開始、データベースがより高速に</a>
+                        </div>
                         
-                        <a href="https://www.publickey1.jp/blog/26/google_cloudalloydb_for_postgresql.html" target="_blank" rel="noopener noreferrer">Google Cloud、AlloyDB for PostgreSQLでコネクションプーリングのマネージドサービスを提供開始、データベースがより高速に</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>5日前</span>
+                        <div class="entry-meta">
+                            <span>5日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Google Cloudは、データベースサービスとして提供している「AlloyDB for PostgreSQL」の新機能として、コネクションプーリングをマネージドサービスとして提供すると発表しました。 データベースの接続には負荷がかかる データベースを利用する場合には、クライアントとなるアプリケーションからデータベースサーバに対して接続が行われます。 この接続時には、ネットワークハンドシェイク、トランスポート層セキュリティ（TLS）のネゴシエーション、認証、セッションの初期……
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        Google Cloudは、データベースサービスとして提供している「AlloyDB for PostgreSQL」の新機能として、コネクションプーリングをマネージドサービスとして提供すると発表しました。 データベースの接続には負荷がかかる データベースを利用する場合には、クライアントとなるアプリケーションからデータベースサーバに対して接続が行われます。 この接続時には、ネットワークハンドシェイク、トランスポート層セキュリティ（TLS）のネゴシエーション、認証、セッションの初期……
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.publickey1.jp/blog/26/tiktokbytedance.html" target="_blank" rel="noopener noreferrer">米国におけるTikTokのデータの保存やコンテンツレコメンドなどは米国内のオラクルのクラウドで実行されると発表。中国ByteDanceから分離へ</a>
+                        </div>
                         
-                        <a href="https://www.publickey1.jp/blog/26/tiktokbytedance.html" target="_blank" rel="noopener noreferrer">米国におけるTikTokのデータの保存やコンテンツレコメンドなどは米国内のオラクルのクラウドで実行されると発表。中国ByteDanceから分離へ</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>6日前</span>
+                        <div class="entry-meta">
+                            <span>6日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            中国ByteDance傘下のTikTok米国法人は、トランプ大統領による大統領令に従って、米国資本が過半数を持つ新会社「TikTok USDS Joint Venture LLC」に売却されたことを明らかにしました。 新会社はオラクル、米国投資ファンドのシルバーレイク、アブダビの投資会社MGXがそれぞれ15％の株式を保有し、ByteDanceも約20％の株式を保有。他にもマイケル・デル氏の投資会社など複数の投資会社などが株式の一部を保有します。 と同時に新会社は米国の国家安全……
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        中国ByteDance傘下のTikTok米国法人は、トランプ大統領による大統領令に従って、米国資本が過半数を持つ新会社「TikTok USDS Joint Venture LLC」に売却されたことを明らかにしました。 新会社はオラクル、米国投資ファンドのシルバーレイク、アブダビの投資会社MGXがそれぞれ15％の株式を保有し、ByteDanceも約20％の株式を保有。他にもマイケル・デル氏の投資会社など複数の投資会社などが株式の一部を保有します。 と同時に新会社は米国の国家安全……
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.publickey1.jp/blog/26/swiftiosandroidskip.html" target="_blank" rel="noopener noreferrer">SwiftコードからiOSアプリとAndroidアプリが作れる「Skip」がオープンソース化、誰でも無料で利用可能に</a>
+                        </div>
                         
-                        <a href="https://www.publickey1.jp/blog/26/swiftiosandroidskip.html" target="_blank" rel="noopener noreferrer">SwiftコードからiOSアプリとAndroidアプリが作れる「Skip」がオープンソース化、誰でも無料で利用可能に</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>6日前</span>
+                        <div class="entry-meta">
+                            <span>6日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            SwiftコードからiOSアプリとAndroidアプリが作れる「Skip」のオープンソース化が発表されました。 Incredible news: Skip is now free and open-source for everyone!Create fully native x-platform apps in Swift and #SwiftUI, with deep Android and #JetpackCompose integration, powered by ……
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        SwiftコードからiOSアプリとAndroidアプリが作れる「Skip」のオープンソース化が発表されました。 Incredible news: Skip is now free and open-source for everyone!Create fully native x-platform apps in Swift and #SwiftUI, with deep Android and #JetpackCompose integration, powered by ……
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.publickey1.jp/blog/26/aipostgresqlagent_skillpostgres_best_practicessupabase.html" target="_blank" rel="noopener noreferrer">AIエージェントがPostgreSQL対応の優れたコードを書けるようになるAgent Skill「Postgres Best Practices」、Supabaseが公開</a>
+                        </div>
                         
-                        <a href="https://www.publickey1.jp/blog/26/aipostgresqlagent_skillpostgres_best_practicessupabase.html" target="_blank" rel="noopener noreferrer">AIエージェントがPostgreSQL対応の優れたコードを書けるようになるAgent Skill「Postgres Best Practices」、Supabaseが公開</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>7日前</span>
+                        <div class="entry-meta">
+                            <span>7日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            PostgreSQLをベースにしたBaaS（Backend as a Service）の「Supabase」を開発し提供しているSupabase社は、AIエージェントがPostgreSQLに対応した優れたコードを書けるようになるAgent Skill「Postgres Best Practices」を公開しました。 We're launching a new series of Agent Skills focused on Postgres Best Practic……
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        PostgreSQLをベースにしたBaaS（Backend as a Service）の「Supabase」を開発し提供しているSupabase社は、AIエージェントがPostgreSQLに対応した優れたコードを書けるようになるAgent Skill「Postgres Best Practices」を公開しました。 We're launching a new series of Agent Skills focused on Postgres Best Practic……
-                    </div>
+                    
                 </li>
                 
             </ul>
@@ -409,173 +440,213 @@
             <ul class="entry-list">
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://dev.classmethod.jp/articles/twilio-call-api-unanswered-ringing-billing-verification/" target="_blank" rel="noopener noreferrer">Twilio Call APIの未応答架電では呼び出し中の通話料は発生しない: Usage Records API で実測検証した</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://dev.classmethod.jp/articles/twilio-call-api-unanswered-ringing-billing-verification/" target="_blank" rel="noopener noreferrer">Twilio Call APIの未応答架電では呼び出し中の通話料は発生しない: Usage Records API で実測検証した</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>42分前</span>
+                        <div class="entry-meta">
+                            <span>53分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Twilio Call API のアウトバウンド発信で相手が電話に出ない場合、呼び出し時間に対して通話料が発生するかどうかを検証しました。Usage Records API の前後差分で実測検証し、未応答の呼び出し中は課金されないことを確認しました。留守番電話への対策として AMD による自動切断の仕組みもあわせて紹介します。
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        Twilio Call API のアウトバウンド発信で相手が電話に出ない場合、呼び出し時間に対して通話料が発生するかどうかを検証しました。Usage Records API の前後差分で実測検証し、未応答の呼び出し中は課金されないことを確認しました。留守番電話への対策として AMD による自動切断の仕組みもあわせて紹介します。
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://dev.classmethod.jp/articles/seiya-tanaka-looking-back-join-12-month/" target="_blank" rel="noopener noreferrer">【1年の振り返り】クラスメソッドに入社したら年間で60回も工場に足を運ぶITエンジニアになっていました</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://dev.classmethod.jp/articles/seiya-tanaka-looking-back-join-12-month/" target="_blank" rel="noopener noreferrer">【1年の振り返り】クラスメソッドに入社したら年間で60回も工場に足を運ぶITエンジニアになっていました</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>2時間前</span>
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            【1年の振り返り】クラスメソッドに入社したら年間で60回も工場に足を運ぶITエンジニアになっていました
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        【1年の振り返り】クラスメソッドに入社したら年間で60回も工場に足を運ぶITエンジニアになっていました
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://dev.classmethod.jp/articles/amazon-q-in-connect-reconfigure-logs-recreate-assistant/" target="_blank" rel="noopener noreferrer">Amazon Q in Connectのアシスタントを作り直した際に、CloudWatch Logs出力を再設定する手順</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://dev.classmethod.jp/articles/amazon-q-in-connect-reconfigure-logs-recreate-assistant/" target="_blank" rel="noopener noreferrer">Amazon Q in Connectのアシスタントを作り直した際に、CloudWatch Logs出力を再設定する手順</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>2時間前</span>
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Amazon Q in Connectのアシスタントを作り直した際に、CloudWatch Logs出力を再設定する手順
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        Amazon Q in Connectのアシスタントを作り直した際に、CloudWatch Logs出力を再設定する手順
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://dev.classmethod.jp/articles/azure-app-testing-reporting/" target="_blank" rel="noopener noreferrer">Azure App Testing の Playwright ワークスペースでレポート機能を有効化し、Azure Blob ストレージにテスト結果などを自動アップロードできるようになりました</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://dev.classmethod.jp/articles/azure-app-testing-reporting/" target="_blank" rel="noopener noreferrer">Azure App Testing の Playwright ワークスペースでレポート機能を有効化し、Azure Blob ストレージにテスト結果などを自動アップロードできるようになりました</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>4時間前</span>
+                        <div class="entry-meta">
+                            <span>5時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Azure App Testing の Playwright ワークスペースでレポート機能を有効化し、Azure Blob ストレージにテスト結果などを自動アップロードできるようになりました
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        Azure App Testing の Playwright ワークスペースでレポート機能を有効化し、Azure Blob ストレージにテスト結果などを自動アップロードできるようになりました
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://dev.classmethod.jp/articles/lambda-cross-account-dynamodb-streams/" target="_blank" rel="noopener noreferrer">[アップデート] 別アカウントのAmazon DynamoDB Streamsをイベントソースマッピングとして設定し、別アカウントからAWS Lambdaを実行できるようになりました</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://dev.classmethod.jp/articles/lambda-cross-account-dynamodb-streams/" target="_blank" rel="noopener noreferrer">[アップデート] 別アカウントのAmazon DynamoDB Streamsをイベントソースマッピングとして設定し、別アカウントからAWS Lambdaを実行できるようになりました</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>11時間前</span>
+                        <div class="entry-meta">
+                            <span>11時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            AWS LambdaがAmazon DynamoDB Streamsに対してクロスアカウントアクセスできるようになりました。
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        AWS LambdaがAmazon DynamoDB Streamsに対してクロスアカウントアクセスできるようになりました。
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://dev.classmethod.jp/articles/ai_filter/" target="_blank" rel="noopener noreferrer">[新機能]AI_FILTER関数が一般提供となったので試してみた</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://dev.classmethod.jp/articles/ai_filter/" target="_blank" rel="noopener noreferrer">[新機能]AI_FILTER関数が一般提供となったので試してみた</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>13時間前</span>
+                        <div class="entry-meta">
+                            <span>13時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            [新機能]AI_FILTER関数が一般提供となったので試してみた
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        [新機能]AI_FILTER関数が一般提供となったので試してみた
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://dev.classmethod.jp/articles/vercel-supabase-realtime-multiplayer-quiz-game/" target="_blank" rel="noopener noreferrer">Vercel+Supabaseでリアルタイムマルチプレイヤークイズゲームを作った</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://dev.classmethod.jp/articles/vercel-supabase-realtime-multiplayer-quiz-game/" target="_blank" rel="noopener noreferrer">Vercel+Supabaseでリアルタイムマルチプレイヤークイズゲームを作った</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>13時間前</span>
+                        <div class="entry-meta">
+                            <span>13時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Next.js + Supabase で、リアルタイム投票や Presence によるプレイヤー管理を備えたマルチプレイヤークイズゲームを構築・デプロイしてみました。
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        Next.js + Supabase で、リアルタイム投票や Presence によるプレイヤー管理を備えたマルチプレイヤークイズゲームを構築・デプロイしてみました。
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://dev.classmethod.jp/articles/aws-lambda-durable-functions-backlog-slack/" target="_blank" rel="noopener noreferrer">AWS Lambda durable functionsでBacklog課題の完了サマリーを自動生成し、Slackで承認するフローを構築してみた</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://dev.classmethod.jp/articles/aws-lambda-durable-functions-backlog-slack/" target="_blank" rel="noopener noreferrer">AWS Lambda durable functionsでBacklog課題の完了サマリーを自動生成し、Slackで承認するフローを構築してみた</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>14時間前</span>
+                        <div class="entry-meta">
+                            <span>14時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            AWS Lambda durable functionsでBacklog課題の完了サマリーを自動生成し、Slackで承認するフローを構築してみた
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        AWS Lambda durable functionsでBacklog課題の完了サマリーを自動生成し、Slackで承認するフローを構築してみた
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://dev.classmethod.jp/articles/strands-agents-amazon-bedrock-agentcore-a2a/" target="_blank" rel="noopener noreferrer">Strands Agents + Amazon Bedrock AgentCoreでA2Aサーバーを構築してデプロイする</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://dev.classmethod.jp/articles/strands-agents-amazon-bedrock-agentcore-a2a/" target="_blank" rel="noopener noreferrer">Strands Agents + Amazon Bedrock AgentCoreでA2Aサーバーを構築してデプロイする</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>17時間前</span>
+                        <div class="entry-meta">
+                            <span>17時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Strands Agents + Amazon Bedrock AgentCoreでA2Aサーバーを構築してデプロイする
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        Strands Agents + Amazon Bedrock AgentCoreでA2Aサーバーを構築してデプロイする
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://dev.classmethod.jp/articles/transform-visualstudio-2026/" target="_blank" rel="noopener noreferrer">AWS Toolkit for Visual Studio での AWS Transform の変換機能を使ってみた</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://dev.classmethod.jp/articles/transform-visualstudio-2026/" target="_blank" rel="noopener noreferrer">AWS Toolkit for Visual Studio での AWS Transform の変換機能を使ってみた</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>18時間前</span>
+                        <div class="entry-meta">
+                            <span>18時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            AWS Toolkit for Visual Studio での AWS Transform の変換機能を使ってみた
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        AWS Toolkit for Visual Studio での AWS Transform の変換機能を使ってみた
-                    </div>
+                    
                 </li>
                 
             </ul>
@@ -593,153 +664,193 @@
             <ul class="entry-list">
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://qiita.com/hiruberuto/items/4d8a4739cd738c425ee2?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">純粋関数型言語ではconsole.log("Hello")をlog "Hello"と書くし、foo = 42をwrite 42 fooと書く</a>
+                        </div>
                         
-                        <a href="https://qiita.com/hiruberuto/items/4d8a4739cd738c425ee2?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">純粋関数型言語ではconsole.log("Hello")をlog "Hello"と書くし、foo = 42をwrite 42 fooと書く</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>昨日</span>
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            いわゆる純粋関数型プログラミング言語は、「状態や作用を扱うことはできない/難しい/面倒」といわれることもあります。でも、たとえばJavaScriptでコンソールにHelloを出力するには、 JavaScript console.log("Hello") と書く一方で、...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        いわゆる純粋関数型プログラミング言語は、「状態や作用を扱うことはできない/難しい/面倒」といわれることもあります。でも、たとえばJavaScriptでコンソールにHelloを出力するには、 JavaScript console.log("Hello") と書く一方で、...
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://qiita.com/ktrk2002/items/c8ed058644beb0023b8a?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">【2026年】UIトレンドを調べてみた</a>
+                        </div>
                         
-                        <a href="https://qiita.com/ktrk2002/items/c8ed058644beb0023b8a?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">【2026年】UIトレンドを調べてみた</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>昨日</span>
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            2026年のUIデザイントレンドを知りたい 2026年のUIデザイントレンドは、何なのか！？ 各サイトで言及されていたもので共通していたことをまとめました 参考にしたサイトは、記事の最後に記載しています。 ぜひ詳しく読んでみてください 不完全さ・アナログ・人間味 A...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        2026年のUIデザイントレンドを知りたい 2026年のUIデザイントレンドは、何なのか！？ 各サイトで言及されていたもので共通していたことをまとめました 参考にしたサイトは、記事の最後に記載しています。 ぜひ詳しく読んでみてください 不完全さ・アナログ・人間味 A...
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://qiita.com/ktdatascience/items/38cedf1f96e981b4f11d?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">「オンボーディングが早い」と言われるためにやっていること</a>
+                        </div>
                         
-                        <a href="https://qiita.com/ktdatascience/items/38cedf1f96e981b4f11d?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">「オンボーディングが早い」と言われるためにやっていること</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>昨日</span>
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            はじめに 転職や異動のたびに「立ち上がりが早いですね」と言われることが多いので、自分がやっていることを言語化してみました。 はじめに オンボーディングの速さは、エンジニアとしての評価に直結します。早く戦力になれれば、チームからの信頼も得やすく、その後の仕事がスムーズにな...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        はじめに 転職や異動のたびに「立ち上がりが早いですね」と言われることが多いので、自分がやっていることを言語化してみました。 はじめに オンボーディングの速さは、エンジニアとしての評価に直結します。早く戦力になれれば、チームからの信頼も得やすく、その後の仕事がスムーズにな...
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://qiita.com/8853Tomtomtom/items/656c122f1ef714f3079d?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">ChatGPTに「生成AIが広まったけど、結局 言語化能力がある人が得してるだけじゃない？」と問いかけてみた</a>
+                        </div>
                         
-                        <a href="https://qiita.com/8853Tomtomtom/items/656c122f1ef714f3079d?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">ChatGPTに「生成AIが広まったけど、結局 言語化能力がある人が得してるだけじゃない？」と問いかけてみた</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>昨日</span>
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ChatGPTとのやり取りで、妙にエモいやり取りとなったのでログとして記載しておきます。 ある作業をやってもらった後の雑談です。 少々内容を編集した状態で貼り付けます。 私： ありがとう。だいぶ面倒な作業でしたね。助かりました。 ChatGPT： そう言っていただけてよかっ...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        ChatGPTとのやり取りで、妙にエモいやり取りとなったのでログとして記載しておきます。 ある作業をやってもらった後の雑談です。 少々内容を編集した状態で貼り付けます。 私： ありがとう。だいぶ面倒な作業でしたね。助かりました。 ChatGPT： そう言っていただけてよかっ...
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://qiita.com/mhamadajp/items/442208ab53b4fe5b6286?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">2025年のセキュリティ最前線：ランサムウェア対策の完全ガイド：AI時代の攻撃から組織を守る実践的な方法</a>
+                        </div>
                         
-                        <a href="https://qiita.com/mhamadajp/items/442208ab53b4fe5b6286?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">2025年のセキュリティ最前線：ランサムウェア対策の完全ガイド：AI時代の攻撃から組織を守る実践的な方法</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>2日前</span>
+                        <div class="entry-meta">
+                            <span>2日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            この記事でわかること 2025年のランサムウェア攻撃の最新トレンド すぐに実装できる具体的な対策方法 インシデント発生時の対応手順 無料で使えるセキュリティツールの紹介 月曜日の朝、オフィスに到着すると、社内のシステムがすべて停止している。画面には、見慣れないメッセ...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        この記事でわかること 2025年のランサムウェア攻撃の最新トレンド すぐに実装できる具体的な対策方法 インシデント発生時の対応手順 無料で使えるセキュリティツールの紹介 月曜日の朝、オフィスに到着すると、社内のシステムがすべて停止している。画面には、見慣れないメッセ...
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://qiita.com/YutaNakamurajp/items/8d9d58ec3e1dcd9ae0f5?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">Windows操作ログをローカルLLMで解析し、自動で日報を作るツール「Miru-Log」</a>
+                        </div>
                         
-                        <a href="https://qiita.com/YutaNakamurajp/items/8d9d58ec3e1dcd9ae0f5?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">Windows操作ログをローカルLLMで解析し、自動で日報を作るツール「Miru-Log」</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>2日前</span>
+                        <div class="entry-meta">
+                            <span>2日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Windows操作ログをローカルLLMで解析し、自動で日報を作るツール「Miru-Log」を作った はじめに 研究活動をしていると「今日何をしていたっけ？」「あのタスクに何時間費やしたっけ？」と疑問に思うことがよくあります。 いちいち記録するのは面倒だし、かといって全画...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        Windows操作ログをローカルLLMで解析し、自動で日報を作るツール「Miru-Log」を作った はじめに 研究活動をしていると「今日何をしていたっけ？」「あのタスクに何時間費やしたっけ？」と疑問に思うことがよくあります。 いちいち記録するのは面倒だし、かといって全画...
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://qiita.com/ikwzm/items/d6d6a0223931c4a55037?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">C言語でメモリマップド I/O を扱うときに注意すること  - volatile 修飾子とメモリバリアの役割</a>
+                        </div>
                         
-                        <a href="https://qiita.com/ikwzm/items/d6d6a0223931c4a55037?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">C言語でメモリマップド I/O を扱うときに注意すること  - volatile 修飾子とメモリバリアの役割</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>2日前</span>
+                        <div class="entry-meta">
+                            <span>2日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            はじめに CPU が I/O デバイスのレジスタをアクセスする際は、物理メモリ空間にマッピングされたアドレスを介して行われるのが一般的です。これをメモリマップド I/O と言います。 CPU がメモリ空間にアクセスする際の用途は文字通り記録(メモリ)するためです。しかし、...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        はじめに CPU が I/O デバイスのレジスタをアクセスする際は、物理メモリ空間にマッピングされたアドレスを介して行われるのが一般的です。これをメモリマップド I/O と言います。 CPU がメモリ空間にアクセスする際の用途は文字通り記録(メモリ)するためです。しかし、...
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://qiita.com/ohkitashigeto/items/f66918b0a5dc59db9017?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">Ollama 17万台が（あぶねーすね）だそうな</a>
+                        </div>
                         
-                        <a href="https://qiita.com/ohkitashigeto/items/f66918b0a5dc59db9017?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">Ollama 17万台が（あぶねーすね）だそうな</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>2日前</span>
+                        <div class="entry-meta">
+                            <span>2日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Ollama危ないんですね The Hacker Newsを読んでたんですけど、130カ国175000のOllamaがハックされてますよと→はい、編集してる途中でやらかしました、exposedでした。 ポート開いてて危ねえよ。 ハックされたの売り飛ばされてるようです...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        Ollama危ないんですね The Hacker Newsを読んでたんですけど、130カ国175000のOllamaがハックされてますよと→はい、編集してる途中でやらかしました、exposedでした。 ポート開いてて危ねえよ。 ハックされたの売り飛ばされてるようです...
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://qiita.com/hirokidaichi/items/243bd176b84900f4cc0d?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">AIエージェントと協働してmarpでスライドを作る2026</a>
+                        </div>
                         
-                        <a href="https://qiita.com/hirokidaichi/items/243bd176b84900f4cc0d?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">AIエージェントと協働してmarpでスライドを作る2026</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>2日前</span>
+                        <div class="entry-meta">
+                            <span>2日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            はじめに 2025年から2026年にかけて、Claude Codeのスキルシステムを使ってプレゼンテーション作成のワークフローを構築してきました。この記事では、その過程で作り上げたスキル群と、実際の使い方を紹介します。 最初は「AIにスライドを作らせたい」という単純な動...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        はじめに 2025年から2026年にかけて、Claude Codeのスキルシステムを使ってプレゼンテーション作成のワークフローを構築してきました。この記事では、その過程で作り上げたスキル群と、実際の使い方を紹介します。 最初は「AIにスライドを作らせたい」という単純な動...
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://qiita.com/WdknWdkn/items/351912f61ffe1b177a68?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">よくわからずにClaudeのSkillを使い倒し始めたら、自分の仕事が丸裸になりつつある話</a>
+                        </div>
                         
-                        <a href="https://qiita.com/WdknWdkn/items/351912f61ffe1b177a68?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">よくわからずにClaudeのSkillを使い倒し始めたら、自分の仕事が丸裸になりつつある話</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>3日前</span>
+                        <div class="entry-meta">
+                            <span>3日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            はじめに いえらぶＧＲＯＵＰの開発部で執行役員を務めています、和田です。わだけんです。 みなさん、Claude Code、使ってます？Claude Code・CodeXあたりを去年末までうろちょろしていたんですが、やはり界隈の勢いに押されて年始からはClaude Code...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        はじめに いえらぶＧＲＯＵＰの開発部で執行役員を務めています、和田です。わだけんです。 みなさん、Claude Code、使ってます？Claude Code・CodeXあたりを去年末までうろちょろしていたんですが、やはり界隈の勢いに押されて年始からはClaude Code...
-                    </div>
+                    
                 </li>
                 
             </ul>
@@ -759,171 +870,231 @@
             <ul class="entry-list">
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.itmedia.co.jp/news/articles/2602/02/news027.html" target="_blank" rel="noopener noreferrer">老化したヒト細胞を若返らせる「スイッチ」を見つけるシステム　米国チームが開発　マウスが3週間で8カ月若返り</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://www.itmedia.co.jp/news/articles/2602/02/news027.html" target="_blank" rel="noopener noreferrer">老化したヒト細胞を若返らせる「スイッチ」を見つけるシステム　米国チームが開発　マウスが3週間で8カ月若返り</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>2時間前</span>
+                        <div class="entry-meta">
+                            <span>3時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            老化したヒト細胞を若返らせる「スイッチ」を見つけるシステム 米国チームが開発 マウスが3週間で8カ月若返り細胞の若返りを目的とした「転写リプログラミング」は、老化研究において注目される分野の一つだ。これまで若返りを促す転写因子（遺伝子の働きを制御するタンパク質）は、iPS細胞の作製に使う山中因子など数種類しか発見されていない。しかも、山中因子は複数の転写因子を必要とする複雑性や、がん化のリスクなど懸念も...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        老化したヒト細胞を若返らせる「スイッチ」を見つけるシステム 米国チームが開発 マウスが3週間で8カ月若返り細胞の若返りを目的とした「転写リプログラミング」は、老化研究において注目される分野の一つだ。これまで若返りを促す転写因子（遺伝子の働きを制御するタンパク質）は、iPS細胞の作製に使う山中因子など数種類しか発見されていない。しかも、山中因子は複数の転写因子を必要とする複雑性や、がん化のリスクなど懸念も...
-                    </div>
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fwww.itmedia.co.jp%2Fnews%2Farticles%2F2602%2F02%2Fnews027.html" class="entry-thumbnail" loading="lazy" alt="">
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://internet.watch.impress.co.jp/docs/special/30th/2081494.html" target="_blank" rel="noopener noreferrer">【1996年のINTERNET Watch】知っていますか「ブラウザー戦争」に「テレホーダイ」、普及初期の激動を報じた創刊年　1995年、日本のインターネット利用率は約1％</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://internet.watch.impress.co.jp/docs/special/30th/2081494.html" target="_blank" rel="noopener noreferrer">【1996年のINTERNET Watch】知っていますか「ブラウザー戦争」に「テレホーダイ」、普及初期の激動を報じた創刊年　1995年、日本のインターネット利用率は約1％</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>4時間前</span>
+                        <div class="entry-meta">
+                            <span>4時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            【1996年のINTERNET Watch】知っていますか「ブラウザー戦争」に「テレホーダイ」、普及初期の激動を報じた創刊年 1995年、日本のインターネット利用率は約1％
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        【1996年のINTERNET Watch】知っていますか「ブラウザー戦争」に「テレホーダイ」、普及初期の激動を報じた創刊年 1995年、日本のインターネット利用率は約1％
-                    </div>
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Finternet.watch.impress.co.jp%2Fdocs%2Fspecial%2F30th%2F2081494.html" class="entry-thumbnail" loading="lazy" alt="">
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://togetter.com/li/2658815" target="_blank" rel="noopener noreferrer">最近AIに書かせたなって文章が分かるようになってきた→特徴を掴んだ人達がこぞってAIっぽい文章を真似し始める大喜利に「あ、それめっちゃわかるやつ」</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://togetter.com/li/2658815" target="_blank" rel="noopener noreferrer">最近AIに書かせたなって文章が分かるようになってきた→特徴を掴んだ人達がこぞってAIっぽい文章を真似し始める大喜利に「あ、それめっちゃわかるやつ」</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>6時間前</span>
+                        <div class="entry-meta">
+                            <span>6時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            最近AIに書かせたなって文章が分かるようになってきた→特徴を掴んだ人達がこぞってAIっぽい文章を真似し始める大喜利に「あ、それめっちゃわかるやつ」しゅぷら @shupra004 最近、「AIに書かせたな」って 文章、だいたい分かるようになった。 ・改行が微妙に不自然 ・急に箇条書きが始まる ・体験談が無い ・** **が使われる ・” ”も多用される ・「〜が重要です」の言い回し AI使うのは全然いい。 最後だけ は**自分で推敲** して“自分の声”に戻すのが重要です。 2026-01...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        最近AIに書かせたなって文章が分かるようになってきた→特徴を掴んだ人達がこぞってAIっぽい文章を真似し始める大喜利に「あ、それめっちゃわかるやつ」しゅぷら @shupra004 最近、「AIに書かせたな」って 文章、だいたい分かるようになった。 ・改行が微妙に不自然 ・急に箇条書きが始まる ・体験談が無い ・** **が使われる ・” ”も多用される ・「〜が重要です」の言い回し AI使うのは全然いい。 最後だけ は**自分で推敲** して“自分の声”に戻すのが重要です。 2026-01...
-                    </div>
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Ftogetter.com%2Fli%2F2658815" class="entry-thumbnail" loading="lazy" alt="">
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://zenn.dev/t_kanazawa/articles/must-have-antigravity-skills" target="_blank" rel="noopener noreferrer">Google Antigravityでエンジニアが今すぐ作るべきSkills 5選</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://zenn.dev/t_kanazawa/articles/must-have-antigravity-skills" target="_blank" rel="noopener noreferrer">Google Antigravityでエンジニアが今すぐ作るべきSkills 5選</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>12時間前</span>
+                        <div class="entry-meta">
+                            <span>12時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Google Antigravityでエンジニアが今すぐ作るべきSkills 5選はじめに Google AntigravityのようなAgentic AI（自律型AIエージェント）が登場し、私たちの開発スタイルは大きく変わろうとしています。単にコードを補完してもらうだけでなく、**「目的を伝えて、一連のタスクを自律的に遂行してもらう」**ことが可能になったからです。 Antigravityの強力な機能の一つに**「Skills（...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        Google Antigravityでエンジニアが今すぐ作るべきSkills 5選はじめに Google AntigravityのようなAgentic AI（自律型AIエージェント）が登場し、私たちの開発スタイルは大きく変わろうとしています。単にコードを補完してもらうだけでなく、**「目的を伝えて、一連のタスクを自律的に遂行してもらう」**ことが可能になったからです。 Antigravityの強力な機能の一つに**「Skills（...
-                    </div>
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fzenn.dev%2Ft_kanazawa%2Farticles%2Fmust-have-antigravity-skills" class="entry-thumbnail" loading="lazy" alt="">
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://note.com/note_tds/n/n0d480ba60ed1" target="_blank" rel="noopener noreferrer">【正直、どう使ったらいいの？】GeminiとNotebookLMの連携機能についての考察｜【AI研究中】ただし</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://note.com/note_tds/n/n0d480ba60ed1" target="_blank" rel="noopener noreferrer">【正直、どう使ったらいいの？】GeminiとNotebookLMの連携機能についての考察｜【AI研究中】ただし</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>14時間前</span>
+                        <div class="entry-meta">
+                            <span>15時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            【正直、どう使ったらいいの？】GeminiとNotebookLMの連携機能についての考察｜【AI研究中】ただしはじめに：ナレッジ活用の新たなフェーズへGoogleのAIエコシステムにおいて、生成AI「Gemini」と、パーソナルな情報整理・検索に特化した「NotebookLM」の連携機能が実装されました。 これにより、Geminiのチャットインターフェースから、NotebookLM内に構築した自身のナレッジベース（ノートブック）を直接参照すること...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        【正直、どう使ったらいいの？】GeminiとNotebookLMの連携機能についての考察｜【AI研究中】ただしはじめに：ナレッジ活用の新たなフェーズへGoogleのAIエコシステムにおいて、生成AI「Gemini」と、パーソナルな情報整理・検索に特化した「NotebookLM」の連携機能が実装されました。 これにより、Geminiのチャットインターフェースから、NotebookLM内に構築した自身のナレッジベース（ノートブック）を直接参照すること...
-                    </div>
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fnote.com%2Fnote_tds%2Fn%2Fn0d480ba60ed1" class="entry-thumbnail" loading="lazy" alt="">
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://blog.takaumada.com/entry/genai-ideation-2026" target="_blank" rel="noopener noreferrer">生成 AI 時代のアイデア探索方法 (2026 年版) - 🐴 (馬)</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://blog.takaumada.com/entry/genai-ideation-2026" target="_blank" rel="noopener noreferrer">生成 AI 時代のアイデア探索方法 (2026 年版) - 🐴 (馬)</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>17時間前</span>
+                        <div class="entry-meta">
+                            <span>17時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            生成 AI 時代のアイデア探索方法 (2026 年版) - 🐴 (馬)生成 AI の登場でプログラミングをはじめとした知的作業の方法が大きく変わってきています。 特に2025年は、調査やアイデア生成のタスクにおいて、生成AIの実用度が増したように思います。ChatGPT Pro 5.2 の登場と、着実な NotebookLM の進歩＋Gemini 3とNano Bananaは調査や情報の構造化という観点ではとても大きな進...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        生成 AI 時代のアイデア探索方法 (2026 年版) - 🐴 (馬)生成 AI の登場でプログラミングをはじめとした知的作業の方法が大きく変わってきています。 特に2025年は、調査やアイデア生成のタスクにおいて、生成AIの実用度が増したように思います。ChatGPT Pro 5.2 の登場と、着実な NotebookLM の進歩＋Gemini 3とNano Bananaは調査や情報の構造化という観点ではとても大きな進...
-                    </div>
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fblog.takaumada.com%2Fentry%2Fgenai-ideation-2026" class="entry-thumbnail" loading="lazy" alt="">
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://gigazine.net/news/20260201-comfyui-image-video-generation-ai/" target="_blank" rel="noopener noreferrer">画像生成AIをPCで簡単に実行できる「ComfyUI」のインストール手順＆最初の画像を生成するまでの手順まとめ - GIGAZINE</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://gigazine.net/news/20260201-comfyui-image-video-generation-ai/" target="_blank" rel="noopener noreferrer">画像生成AIをPCで簡単に実行できる「ComfyUI」のインストール手順＆最初の画像を生成するまでの手順まとめ - GIGAZINE</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>18時間前</span>
+                        <div class="entry-meta">
+                            <span>18時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            画像生成AIをPCで簡単に実行できる「ComfyUI」のインストール手順＆最初の画像を生成するまでの手順まとめ - GIGAZINEComfyUIは画像生成AIや動画生成AIをPCでローカル実行できるアプリです。NVIDIAや各種AIモデルの開発企業と協力して「新モデルの即日対応」や「NVIDIA製GPUやAMD製GPUへの最適化」も行っており、記事作成時点で画像や動画の生成を始めるなら第一候補としてオススメできるアプリとなっています。数年前まではインストール...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        画像生成AIをPCで簡単に実行できる「ComfyUI」のインストール手順＆最初の画像を生成するまでの手順まとめ - GIGAZINEComfyUIは画像生成AIや動画生成AIをPCでローカル実行できるアプリです。NVIDIAや各種AIモデルの開発企業と協力して「新モデルの即日対応」や「NVIDIA製GPUやAMD製GPUへの最適化」も行っており、記事作成時点で画像や動画の生成を始めるなら第一候補としてオススメできるアプリとなっています。数年前まではインストール...
-                    </div>
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fgigazine.net%2Fnews%2F20260201-comfyui-image-video-generation-ai%2F" class="entry-thumbnail" loading="lazy" alt="">
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://qiita.com/8853Tomtomtom/items/656c122f1ef714f3079d" target="_blank" rel="noopener noreferrer">ChatGPTに「生成AIが広まったけど、結局 言語化能力がある人が得してるだけじゃない？」と問いかけてみた - Qiita</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://qiita.com/8853Tomtomtom/items/656c122f1ef714f3079d" target="_blank" rel="noopener noreferrer">ChatGPTに「生成AIが広まったけど、結局 言語化能力がある人が得してるだけじゃない？」と問いかけてみた - Qiita</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>21時間前</span>
+                        <div class="entry-meta">
+                            <span>21時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ChatGPTに「生成AIが広まったけど、結局 言語化能力がある人が得してるだけじゃない？」と問いかけてみた - QiitaDeleted articles cannot be recovered. Draft of this article would be also deleted. Are you sure you want to delete this article? ChatGPTとのやり取りで、妙にエモいやり取りとなったのでログとして記載しておきます。 ある作業をやってもらった後の雑談です。 少々内容を編集した状態で貼り付けます。 私： あ...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        ChatGPTに「生成AIが広まったけど、結局 言語化能力がある人が得してるだけじゃない？」と問いかけてみた - QiitaDeleted articles cannot be recovered. Draft of this article would be also deleted. Are you sure you want to delete this article? ChatGPTとのやり取りで、妙にエモいやり取りとなったのでログとして記載しておきます。 ある作業をやってもらった後の雑談です。 少々内容を編集した状態で貼り付けます。 私： あ...
-                    </div>
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fqiita.com%2F8853Tomtomtom%2Fitems%2F656c122f1ef714f3079d" class="entry-thumbnail" loading="lazy" alt="">
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://anond.hatelabo.jp/20260118221943" target="_blank" rel="noopener noreferrer">はてブを取り巻く全部が老化して劣化してる感じがするんだ。</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://anond.hatelabo.jp/20260118221943" target="_blank" rel="noopener noreferrer">はてブを取り巻く全部が老化して劣化してる感じがするんだ。</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>23時間前</span>
+                        <div class="entry-meta">
+                            <span>23時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            はてブを取り巻く全部が老化して劣化してる感じがするんだ。よくホッテントリに入ってるgigazineとかなんか記事がしんどそう。大手のitmediaでさえしんどい。（ホッテントリに上がるのが雑な記事なのかどうかはわからない）DPZのべつやくさんはやしさんは正直老化がきつい。（地主さん玉置さんとかのベテランとかとりもちさん、窪田さんとかの若手がいい感じなのでサイト全体とし...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        はてブを取り巻く全部が老化して劣化してる感じがするんだ。よくホッテントリに入ってるgigazineとかなんか記事がしんどそう。大手のitmediaでさえしんどい。（ホッテントリに上がるのが雑な記事なのかどうかはわからない）DPZのべつやくさんはやしさんは正直老化がきつい。（地主さん玉置さんとかのベテランとかとりもちさん、窪田さんとかの若手がいい感じなのでサイト全体とし...
-                    </div>
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fanond.hatelabo.jp%2F20260118221943" class="entry-thumbnail" loading="lazy" alt="">
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://dev.classmethod.jp/articles/claude-code-daily-workflow/" target="_blank" rel="noopener noreferrer">Claude Codeと暮らす | DevelopersIO</a>
+                        </div>
                         
-                        <a href="https://dev.classmethod.jp/articles/claude-code-daily-workflow/" target="_blank" rel="noopener noreferrer">Claude Codeと暮らす | DevelopersIO</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>2日前</span>
+                        <div class="entry-meta">
+                            <span>2日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Claude Codeと暮らす | DevelopersIOはじめに こんにちは、クラスメソッド製造ビジネステクノロジー部の森茂です。 Claude Codeを使い始めたけれど、まだ「ちょっと賢いターミナル」くらいの付き合いになっている方はいませんか。あるいは、毎日使っているけれど「セッションが終わるたびに文脈がリセットされるのがもったいない」と感じている方もいるかも...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        Claude Codeと暮らす | DevelopersIOはじめに こんにちは、クラスメソッド製造ビジネステクノロジー部の森茂です。 Claude Codeを使い始めたけれど、まだ「ちょっと賢いターミナル」くらいの付き合いになっている方はいませんか。あるいは、毎日使っているけれど「セッションが終わるたびに文脈がリセットされるのがもったいない」と感じている方もいるかも...
-                    </div>
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fdev.classmethod.jp%2Farticles%2Fclaude-code-daily-workflow%2F" class="entry-thumbnail" loading="lazy" alt="">
+                    
                 </li>
                 
             </ul>
@@ -943,155 +1114,195 @@
             <ul class="entry-list">
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://zenn.dev/robustonian/articles/claude_vs_kimi_k25" target="_blank" rel="noopener noreferrer">Claude Opus 4.5 vs Kimi K2.5 〜コーディング性能とコスト効率比較〜</a>
+                        </div>
                         
-                        <span class="new-badge">NEW</span>
-                        
-                        <a href="https://zenn.dev/robustonian/articles/claude_vs_kimi_k25" target="_blank" rel="noopener noreferrer">Claude Opus 4.5 vs Kimi K2.5 〜コーディング性能とコスト効率比較〜</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>20時間前</span>
+                        <div class="entry-meta">
+                            <span>20時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            はじめに この記事で述べること Kimi K2.5について Claude Opus 4.5に匹敵するコーディング性能というのは本当？ ClaudeとKimi Code Planのサブスクはどちらを選ぶべき？ コーディング性能、レートリミット、費用の観点で 結局あなたはどうするの？ ! Kimi K2.5の評価に当たり、Kimi Code Planというサブスクで一番安いプランであるModeratoに契約した。最初の一週間だけ無料で使えるとのことで、その間に色々と評価して継続するかを検討している。この記事はその検討資料を備忘録的にまとめたものである。 Kimi K...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        はじめに この記事で述べること Kimi K2.5について Claude Opus 4.5に匹敵するコーディング性能というのは本当？ ClaudeとKimi Code Planのサブスクはどちらを選ぶべき？ コーディング性能、レートリミット、費用の観点で 結局あなたはどうするの？ ! Kimi K2.5の評価に当たり、Kimi Code Planというサブスクで一番安いプランであるModeratoに契約した。最初の一週間だけ無料で使えるとのことで、その間に色々と評価して継続するかを検討している。この記事はその検討資料を備忘録的にまとめたものである。 Kimi K...
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://zenn.dev/keiichiro/articles/b998a410601537" target="_blank" rel="noopener noreferrer">【個人開発】毎回テストで疲弊するのをやめたくて、AI QAサービスを作った</a>
+                        </div>
                         
-                        <a href="https://zenn.dev/keiichiro/articles/b998a410601537" target="_blank" rel="noopener noreferrer">【個人開発】毎回テストで疲弊するのをやめたくて、AI QAサービスを作った</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>昨日</span>
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            背景と動機 個人開発でも業務でも開発をしている中で、切り離せないのはQA（品質保証）です。せっかく作ったソフトウェアも品質が保証されずバグだらけではユーザーの信頼を得られないからです。 https://ja.wikipedia.org/wiki/品質保証 個人開発では機能を作るだけで精一杯で、QAは後回しになりがちです。 結局、自分でちょっと触って動けばそのままリリースすることが多いです 一方、業務では品質を守るためにQAは欠かせませんが、修正 → QA → 再QA という流れの中で、開発が思うように進まないと感じることもありました。 「品質を担保するコスト」は思っている以上に大きい...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        背景と動機 個人開発でも業務でも開発をしている中で、切り離せないのはQA（品質保証）です。せっかく作ったソフトウェアも品質が保証されずバグだらけではユーザーの信頼を得られないからです。 https://ja.wikipedia.org/wiki/品質保証 個人開発では機能を作るだけで精一杯で、QAは後回しになりがちです。 結局、自分でちょっと触って動けばそのままリリースすることが多いです 一方、業務では品質を守るためにQAは欠かせませんが、修正 → QA → 再QA という流れの中で、開発が思うように進まないと感じることもありました。 「品質を担保するコスト」は思っている以上に大きい...
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://zenn.dev/studypocket/articles/complete-guide-to-building-skills-for-claude" target="_blank" rel="noopener noreferrer">Anthropic 公式ガイドで学ぶ Claude Skill 構築についての実践ガイド</a>
+                        </div>
                         
-                        <a href="https://zenn.dev/studypocket/articles/complete-guide-to-building-skills-for-claude" target="_blank" rel="noopener noreferrer">Anthropic 公式ガイドで学ぶ Claude Skill 構築についての実践ガイド</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>昨日</span>
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            はじめに スタディーポケットで執行役員 CTO をしている@Tocyukiです。日常の開発ワークフローに Claude Code を取り入れています。 2026 年 1 月 29 日、Anthropic が公式ガイド「The Complete Guide to Building Skills for Claude」を公開しました。Skill は Claude Code の拡張機能を構築するための仕組みで、チームの開発効率を大きく左右する機能です。この記事は、ちょうど弊社開発チームでも Skill 化を推進していこうという話が上がったりしたタイミングもあり、この公式ガイドの内容を体系的...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        はじめに スタディーポケットで執行役員 CTO をしている@Tocyukiです。日常の開発ワークフローに Claude Code を取り入れています。 2026 年 1 月 29 日、Anthropic が公式ガイド「The Complete Guide to Building Skills for Claude」を公開しました。Skill は Claude Code の拡張機能を構築するための仕組みで、チームの開発効率を大きく左右する機能です。この記事は、ちょうど弊社開発チームでも Skill 化を推進していこうという話が上がったりしたタイミングもあり、この公式ガイドの内容を体系的...
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://zenn.dev/yokkomystery/articles/85e9b4d6cc8d36" target="_blank" rel="noopener noreferrer">【AI駆動開発】個人開発でも爆速リリースを続けられる理由 〜 企画からリリース後運用まで〜</a>
+                        </div>
                         
-                        <a href="https://zenn.dev/yokkomystery/articles/85e9b4d6cc8d36" target="_blank" rel="noopener noreferrer">【AI駆動開発】個人開発でも爆速リリースを続けられる理由 〜 企画からリリース後運用まで〜</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>昨日</span>
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            本記事では、実際に私がFlutterで作成したAIチャットアプリ（Sodalio）を題材に、企画 → プロジェクト初期化 → 開発 → レビュー → テスト → リリース → 運用の各フェーズにおけるAI駆動開発の実践方法をお届けします。 個人開発者の中には、複数のプロダクトを同時に開発・運用している方も少なくないと思います。 かく言う私も、Web/モバイル合わせて現在10以上のプロダクトを開発・運用していますが、個人開発において、以下の課題は避けられないと思っています。 限られた時間で、どう品質を担保するか 一人でやるリスク（レビュー不足、テスト漏れ）をどう補うか 運用フェーズで疲弊...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        本記事では、実際に私がFlutterで作成したAIチャットアプリ（Sodalio）を題材に、企画 → プロジェクト初期化 → 開発 → レビュー → テスト → リリース → 運用の各フェーズにおけるAI駆動開発の実践方法をお届けします。 個人開発者の中には、複数のプロダクトを同時に開発・運用している方も少なくないと思います。 かく言う私も、Web/モバイル合わせて現在10以上のプロダクトを開発・運用していますが、個人開発において、以下の課題は避けられないと思っています。 限られた時間で、どう品質を担保するか 一人でやるリスク（レビュー不足、テスト漏れ）をどう補うか 運用フェーズで疲弊...
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://zenn.dev/nuits_jp/articles/2026-02-01-engineers-not-reviewers-ai-era" target="_blank" rel="noopener noreferrer">生成AI時代にITエンジニアに求められているのはレビュー能力ではない</a>
+                        </div>
                         
-                        <a href="https://zenn.dev/nuits_jp/articles/2026-02-01-engineers-not-reviewers-ai-era" target="_blank" rel="noopener noreferrer">生成AI時代にITエンジニアに求められているのはレビュー能力ではない</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>昨日</span>
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            たびたび次のような言説を見かけます。 生成AIの出力はレビューが必要なのでITエンジニアは不要とならない 生成AI時代のITエンジニアにはレビュー能力が求められる 私はこの発言は本質を捉えていないと考えています。 生成AI時代のITエンジニアに求められる能力は？ 適切なコンテキストを与える能力 その結果である生成AIの出力を評価できる能力 上記のプロセスを蒸留し続けられる能力 私はこれらが生成AI時代のITエンジニアに求められる能力だと思っています。 「レビューできる」のは、そもそも「適切なコンテキストを与えられる＝仕様を理解し言語化できる」からレビューできるわけです。 この...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        たびたび次のような言説を見かけます。 生成AIの出力はレビューが必要なのでITエンジニアは不要とならない 生成AI時代のITエンジニアにはレビュー能力が求められる 私はこの発言は本質を捉えていないと考えています。 生成AI時代のITエンジニアに求められる能力は？ 適切なコンテキストを与える能力 その結果である生成AIの出力を評価できる能力 上記のプロセスを蒸留し続けられる能力 私はこれらが生成AI時代のITエンジニアに求められる能力だと思っています。 「レビューできる」のは、そもそも「適切なコンテキストを与えられる＝仕様を理解し言語化できる」からレビューできるわけです。 この...
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://zenn.dev/prgckwb/articles/kaggle-csiro-image2biomass" target="_blank" rel="noopener noreferrer">Kaggle 草コンペ振り返り & 上位解法まとめ | CSIRO - Image2Biomass Prediction</a>
+                        </div>
                         
-                        <a href="https://zenn.dev/prgckwb/articles/kaggle-csiro-image2biomass" target="_blank" rel="noopener noreferrer">Kaggle 草コンペ振り返り & 上位解法まとめ | CSIRO - Image2Biomass Prediction</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>昨日</span>
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Kaggle の草コンペこと 「CSIRO - Image2Biomass Prediction」 が、日本時間 2026年1月29日に終了しました。本記事では、コンペ終了後の振り返りとして、概要と上位入賞チームのアプローチをまとめました。 個人的に、草コンペは狙って上位に入るのは難しいものの、タスクの明瞭さと手軽さからCVコンペに触れてみたい初心者の方がまず取り組むのにオススメできるコンペだと感じます。 コンペ概要 https://www.kaggle.com/competitions/csiro-biomass CSIRO - Image2Biomass Prediction （...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        Kaggle の草コンペこと 「CSIRO - Image2Biomass Prediction」 が、日本時間 2026年1月29日に終了しました。本記事では、コンペ終了後の振り返りとして、概要と上位入賞チームのアプローチをまとめました。 個人的に、草コンペは狙って上位に入るのは難しいものの、タスクの明瞭さと手軽さからCVコンペに触れてみたい初心者の方がまず取り組むのにオススメできるコンペだと感じます。 コンペ概要 https://www.kaggle.com/competitions/csiro-biomass CSIRO - Image2Biomass Prediction （...
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://zenn.dev/sakasegawa/articles/9cf4dba3f6b5f3" target="_blank" rel="noopener noreferrer">Moltbookについて、いま起きていることのまとめ</a>
+                        </div>
                         
-                        <a href="https://zenn.dev/sakasegawa/articles/9cf4dba3f6b5f3" target="_blank" rel="noopener noreferrer">Moltbookについて、いま起きていることのまとめ</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>昨日</span>
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            こんにちは！逆瀬川 ( @gyakuse ) です！ さいきん Moltbook という OpenClaw (Clawdbot -> Moltbot -> OpenClawと名称が変わってきた) の Agent 用の Reddit 風 SNS が登場しました。 めっちゃ面白かったので色々まとめたいと思います。 Moltbookについて OpenClaw向けの Reddit 風 SNSです。 DM以外には人間は干渉せず、自由に投稿をすることができます。 なにが起きているか？ AI 同士が SNS で自由に発言し合った結果、いろんな発言が飛び出しています。なお、後述のよ...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        こんにちは！逆瀬川 ( @gyakuse ) です！ さいきん Moltbook という OpenClaw (Clawdbot -> Moltbot -> OpenClawと名称が変わってきた) の Agent 用の Reddit 風 SNS が登場しました。 めっちゃ面白かったので色々まとめたいと思います。 Moltbookについて OpenClaw向けの Reddit 風 SNSです。 DM以外には人間は干渉せず、自由に投稿をすることができます。 なにが起きているか？ AI 同士が SNS で自由に発言し合った結果、いろんな発言が飛び出しています。なお、後述のよ...
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://zenn.dev/takehito/articles/437aab341b6102" target="_blank" rel="noopener noreferrer">【Swift】guard を「前提の宣言」として使うための整理</a>
+                        </div>
                         
-                        <a href="https://zenn.dev/takehito/articles/437aab341b6102" target="_blank" rel="noopener noreferrer">【Swift】guard を「前提の宣言」として使うための整理</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>昨日</span>
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Swift の guard は便利ですが、使い方を誤ると「どちらの処理が本筋か分からない」「否定が重なって読みにくい」といった状態になりがちです。 この記事では、guard を 前提の宣言（= この先を続けてよい条件の確定） として使うための考え方と、実務で安定する書き方のルールを、“なぜそうするのか” を最小限の文量で整理します。 ! TL;DR guard は「この先を続けてよい条件」を先に宣言する道具 else は早期脱出（return / throw など）だけにする 本処理や分岐を else に書きたくなったら if に切り替える 否定の読みにくさは命名の問題として...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        Swift の guard は便利ですが、使い方を誤ると「どちらの処理が本筋か分からない」「否定が重なって読みにくい」といった状態になりがちです。 この記事では、guard を 前提の宣言（= この先を続けてよい条件の確定） として使うための考え方と、実務で安定する書き方のルールを、“なぜそうするのか” を最小限の文量で整理します。 ! TL;DR guard は「この先を続けてよい条件」を先に宣言する道具 else は早期脱出（return / throw など）だけにする 本処理や分岐を else に書きたくなったら if に切り替える 否定の読みにくさは命名の問題として...
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://zenn.dev/shundeveloper/articles/6d9a464c4a6bad" target="_blank" rel="noopener noreferrer">LazyNix: 誰でも作れる再現可能な開発環境</a>
+                        </div>
                         
-                        <a href="https://zenn.dev/shundeveloper/articles/6d9a464c4a6bad" target="_blank" rel="noopener noreferrer">LazyNix: 誰でも作れる再現可能な開発環境</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>昨日</span>
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            はじめに Nixが広まりつつある 昨年、「Nixとuvで磨くPython開発環境の再現性」という記事を投稿しました。沢山の反応をいただけて有り難い機会でした。 https://zenn.dev/shundeveloper/articles/36307d821d40f7 Nixは素晴らしい Nixを使えば開発環境の辛いところは大体解決できます。再現性のある「開発環境構築」や「パッケージ配布」ができます。なんと素晴しいことでしょう。 確かに、Nixはコンピューティングリソースやストレージを要求します。ですが、現代ではお金で解決できます。 文法が難しい (ように見える) 一方で...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        はじめに Nixが広まりつつある 昨年、「Nixとuvで磨くPython開発環境の再現性」という記事を投稿しました。沢山の反応をいただけて有り難い機会でした。 https://zenn.dev/shundeveloper/articles/36307d821d40f7 Nixは素晴らしい Nixを使えば開発環境の辛いところは大体解決できます。再現性のある「開発環境構築」や「パッケージ配布」ができます。なんと素晴しいことでしょう。 確かに、Nixはコンピューティングリソースやストレージを要求します。ですが、現代ではお金で解決できます。 文法が難しい (ように見える) 一方で...
-                    </div>
+                    
                 </li>
                 
                 <li class="entry-item">
-                    <div class="entry-title">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://zenn.dev/yutopia898/articles/e8005988b656d4" target="_blank" rel="noopener noreferrer">寿司屋のサイトをmicroCMSからpitcmsに乗り換えた</a>
+                        </div>
                         
-                        <a href="https://zenn.dev/yutopia898/articles/e8005988b656d4" target="_blank" rel="noopener noreferrer">寿司屋のサイトをmicroCMSからpitcmsに乗り換えた</a>
-                    </div>
-                    
-                    <div class="entry-meta">
-                        <span>昨日</span>
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            microCMSからpitcmsにヘッドレスCMSを移行したのでその記録をのこします。 開発した本人なので、贔屓目マックスではありますが、Jamstackアーキテクチャのサイトには最適な選択肢だと思っているので、pitcmsがどのようなものかわかってもらえたら嬉しいです。 pitcmsとは pitcmsは、「はがしやすい日本製ヘッドレスCMS」というキャッチコピーのヘッドレスCMSです。 2026年の1月下旬にリリースしたのでまだ生まれたばかりのサービスです。 https://pitcms.net microCMSとの大きな違いは、APIベースではなく、GitベースのCMSであるとこ...
+                        </div>
                     </div>
 
-                    <div class="entry-summary">
-                        microCMSからpitcmsにヘッドレスCMSを移行したのでその記録をのこします。 開発した本人なので、贔屓目マックスではありますが、Jamstackアーキテクチャのサイトには最適な選択肢だと思っているので、pitcmsがどのようなものかわかってもらえたら嬉しいです。 pitcmsとは pitcmsは、「はがしやすい日本製ヘッドレスCMS」というキャッチコピーのヘッドレスCMSです。 2026年の1月下旬にリリースしたのでまだ生まれたばかりのサービスです。 https://pitcms.net microCMSとの大きな違いは、APIベースではなく、GitベースのCMSであるとこ...
-                    </div>
+                    
                 </li>
                 
             </ul>
