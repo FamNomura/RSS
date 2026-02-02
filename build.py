@@ -8,13 +8,10 @@ from jinja2 import Environment, FileSystemLoader
 # 設定
 feeds_file = 'feeds.json'
 template_file = 'template.html'
-max_entries = 5  # 各フィードからの最大取得記事数
+max_entries = 10  # 画像を取得しないので、記事数を増やしても高速です
 
 def load_config(path):
-    """設定ファイルを読み込む"""
     try:
-        # 修正: encoding='utf-8' を 'utf-8-sig' に変更
-        # これによりBOM付き/なし両方のUTF-8ファイルを正しく読み込めます
         with open(path, 'r', encoding='utf-8-sig') as f:
             return json.load(f)
     except Exception as e:
@@ -22,7 +19,6 @@ def load_config(path):
         sys.exit(1)
 
 def fetch_feed(url, title_override=None):
-    """RSSフィードを取得してパースする"""
     print(f"  Fetching: {url}...")
     try:
         d = feedparser.parse(url)
@@ -34,13 +30,18 @@ def fetch_feed(url, title_override=None):
 
         for entry in d.entries[:max_entries]:
             published = entry.get('published', entry.get('updated', ''))
+            # descriptionかsummaryの長い方を採用するロジック
             summary = entry.get('summary', entry.get('description', ''))
+            content = entry.get('content', [{'value': ''}])[0]['value']
             
+            # content（全文に近いもの）があればそれを優先、なければsummaryを使う
+            text_content = content if len(content) > len(summary) else summary
+
             feed_data['entries'].append({
                 'title': entry.get('title', 'No Title'),
                 'link': entry.get('link', '#'),
                 'published': published,
-                'summary': summary
+                'summary': text_content  # ここに一番リッチなテキストが入ります
             })
         
         return feed_data
@@ -49,10 +50,8 @@ def fetch_feed(url, title_override=None):
         return None
 
 def main():
-    # 1. 設定の読み込み
     pages_config = load_config(feeds_file)
     
-    # 2. ナビゲーション情報の作成（テンプレートに渡す用）
     navigation = []
     for page in pages_config:
         navigation.append({
@@ -60,14 +59,10 @@ def main():
             'filename': page['filename']
         })
     
-    # 3. 現在時刻 (JST)
     jst = pytz.timezone('Asia/Tokyo')
     now = datetime.datetime.now(jst).strftime('%Y/%m/%d %H:%M:%S JST')
     
-    # 4. ページごとの生成処理
     env = Environment(loader=FileSystemLoader('.', encoding='utf-8'))
-    # テンプレート読み込み時も安全のため utf-8-sig を指定する手もありますが、
-    # Jinja2のLoaderはデフォルトutf-8です。通常テンプレートはコードエディタで触るためそのままで行きます。
     template = env.get_template(template_file)
     
     for page_config in pages_config:
@@ -80,7 +75,6 @@ def main():
             if data:
                 page_feeds_data.append(data)
         
-        # レンダリング
         try:
             html_output = template.render(
                 navigation=navigation,

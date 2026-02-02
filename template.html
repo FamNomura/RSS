@@ -3,123 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ current_page.page_title }} - My RSS Reader</title>
+    <title>{{ current_page.page_title }} - My Reader</title>
     <style>
         :root {
-            --bg-color: #f4f4f9;
-            --card-bg: #ffffff;
-            --text-color: #333;
-            --meta-color: #666;
-            --accent-color: #007bff;
-            --nav-bg: #2c3e50;
+            --bg-color: #ffffff;
+            --text-main: #333333;
+            --text-sub: #666666;
+            --link-color: #0066cc;
+            --border-color: #eeeeee;
+            --nav-bg: #333333;
             --nav-text: #ffffff;
         }
         body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Yu Gothic", YuGothic, sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-color);
+            color: var(--text-main);
             margin: 0;
-            padding-bottom: 40px;
+            padding-bottom: 60px;
+            line-height: 1.8; /* 読みやすい行間 */
         }
         
-        /* ナビゲーションバーのスタイル */
+        /* ナビゲーション */
         .navbar {
             background-color: var(--nav-bg);
-            padding: 1rem;
+            padding: 0.8rem 1rem;
             position: sticky;
             top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 100;
         }
         .nav-container {
             max-width: 800px;
             margin: 0 auto;
             display: flex;
-            gap: 20px;
+            gap: 15px;
             overflow-x: auto;
             white-space: nowrap;
         }
         .nav-link {
             color: var(--nav-text);
             text-decoration: none;
-            padding: 8px 12px;
+            padding: 6px 12px;
             border-radius: 4px;
-            font-weight: bold;
             font-size: 14px;
-            opacity: 0.8;
-            transition: opacity 0.2s, background-color 0.2s;
+            font-weight: bold;
+            opacity: 0.7;
+            transition: opacity 0.2s;
         }
-        .nav-link:hover {
-            opacity: 1;
-            background-color: rgba(255,255,255,0.1);
-        }
-        .nav-link.active {
-            opacity: 1;
-            background-color: var(--accent-color);
-        }
+        .nav-link:hover { opacity: 1; }
+        .nav-link.active { opacity: 1; background-color: rgba(255,255,255,0.2); }
 
         .container {
-            max-width: 800px;
-            margin: 20px auto;
+            max-width: 700px; /* 読みやすい幅に制限 */
+            margin: 0 auto;
             padding: 0 20px;
         }
-        
+
         header {
-            text-align: center;
-            margin-bottom: 30px;
+            margin: 40px 0;
+            border-bottom: 1px solid var(--border-color);
             padding-bottom: 20px;
-            border-bottom: 1px solid #ddd;
         }
-        h1 { margin: 0; font-size: 24px; color: #2c3e50; }
-        .update-time { font-size: 0.9em; color: var(--meta-color); margin-top: 5px; }
-        
-        .feed-section { margin-bottom: 40px; }
+        h1 { font-size: 24px; margin: 0; }
+        .update-time { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
+
+        .feed-section { margin-bottom: 60px; }
         .feed-title {
-            font-size: 20px;
-            border-left: 5px solid var(--accent-color);
-            padding-left: 10px;
-            margin-bottom: 15px;
-            color: #2c3e50;
-        }
-        
-        .article-card {
-            background: var(--card-bg);
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
-        }
-        .article-card:hover { transform: translateY(-2px); }
-        .article-title {
             font-size: 18px;
+            color: var(--text-sub);
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+            margin-bottom: 25px;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+        }
+
+        .article-item {
+            margin-bottom: 40px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .article-item:last-child { border-bottom: none; }
+
+        .article-title {
+            font-size: 20px;
             margin: 0 0 10px 0;
+            line-height: 1.4;
         }
         .article-title a {
             text-decoration: none;
-            color: #2c3e50;
+            color: var(--text-main);
             font-weight: bold;
         }
-        .article-title a:hover { color: var(--accent-color); }
+        .article-title a:hover {
+            color: var(--link-color);
+            text-decoration: underline;
+        }
+
         .article-meta {
             font-size: 12px;
-            color: var(--meta-color);
-            display: flex;
-            justify-content: space-between;
+            color: var(--text-sub);
+            margin-bottom: 15px;
         }
-        .summary {
-            font-size: 14px;
-            color: #555;
+
+        .article-body {
+            font-size: 15px;
+            color: #444;
+        }
+        /* RSSに含まれる画像が大きすぎる場合の制御 */
+        .article-body img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: none; /* 画像はいらないとのことなので非表示にする */
+        }
+        .read-more {
+            display: inline-block;
             margin-top: 10px;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+            font-size: 14px;
+            color: var(--link-color);
+            text-decoration: none;
         }
-        
+        .read-more:hover { text-decoration: underline; }
+
         @media (max-width: 600px) {
-            .container { padding: 0 10px; }
-            .article-title { font-size: 16px; }
+            .container { padding: 0 15px; }
+            .article-title { font-size: 18px; }
         }
     </style>
 </head>
@@ -138,28 +147,33 @@
     <div class="container">
         <header>
             <h1>{{ current_page.page_title }}</h1>
-            <div class="update-time">最終更新: {{ last_updated }}</div>
+            <div class="update-time">{{ last_updated }} 更新</div>
         </header>
 
         {% for feed in feeds_data %}
         <div class="feed-section">
             <h2 class="feed-title">{{ feed.title }}</h2>
+            
             {% for entry in feed.entries %}
-            <div class="article-card">
+            <article class="article-item">
                 <h3 class="article-title">
                     <a href="{{ entry.link }}" target="_blank" rel="noopener noreferrer">{{ entry.title }}</a>
                 </h3>
-                <div class="summary">{{ entry.summary }}</div>
-                <div class="article-meta">
-                    <span>{{ entry.published }}</span>
+                <div class="article-meta">{{ entry.published }}</div>
+                
+                <div class="article-body">
+                    {{ entry.summary }}
                 </div>
-            </div>
+                
+                <a href="{{ entry.link }}" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
             {% endfor %}
+            
         </div>
         {% endfor %}
         
-        <footer style="text-align: center; margin-top: 50px; font-size: 12px; color: #999;">
-            Powered by GitHub Actions & Python
+        <footer style="text-align: center; font-size: 12px; color: #ccc;">
+            Personal RSS Reader
         </footer>
     </div>
 </body>
