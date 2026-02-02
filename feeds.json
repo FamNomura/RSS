@@ -1,4 +1,4 @@
-﻿[
+[
     {
         "page_title": "総合ニュース",
         "filename": "index.html",
@@ -10,6 +10,10 @@
             {
                 "title": "NHKニュース",
                 "url": "https://www.nhk.or.jp/rss/news/cat0.xml"
+            },
+            {
+                "title": "はてなブックマーク 人気エントリー",
+                "url": "https://b.hatena.ne.jp/hotentry.rss"
             }
         ]
     },
@@ -24,6 +28,10 @@
             {
                 "title": "オレンジページnet",
                 "url": "https://www.orangepage.net/feed/recipes/new.rss"
+            },
+            {
+                "title": "きょうの料理",
+                "url": "https://www.kyounoryouri.jp/feed/rss"
             }
         ]
     },
@@ -38,6 +46,82 @@
             {
                 "title": "DevelopersIO",
                 "url": "https://dev.classmethod.jp/feed/"
+            },
+            {
+                "title": "Qiita トレンド",
+                "url": "https://qiita.com/popular-items/feed"
+            },
+            {
+                "title": "はてなブックマーク IT",
+                "url": "https://b.hatena.ne.jp/hotentry/it.rss"
+            },
+            {
+                "title": "Zenn トレンド",
+                "url": "https://zenn.dev/feed"
+            }
+        ]
+    },
+    {
+        "page_title": "ビジネス・経済",
+        "filename": "business.html",
+        "feeds": [
+            {
+                "title": "東洋経済オンライン",
+                "url": "https://toyokeizai.net/list/feed/rss"
+            },
+            {
+                "title": "ダイヤモンド・オンライン",
+                "url": "https://diamond.jp/list/feed/rss"
+            },
+            {
+                "title": "ITmedia ビジネスオンライン",
+                "url": "https://rss.itmedia.co.jp/rss/2.0/business.xml"
+            }
+        ]
+    },
+    {
+        "page_title": "ガジェット・モノ",
+        "filename": "gadget.html",
+        "feeds": [
+            {
+                "title": "ギズモード・ジャパン",
+                "url": "https://www.gizmodo.jp/index.xml"
+            },
+            {
+                "title": "PC Watch",
+                "url": "https://pc.watch.impress.co.jp/data/rss/1.0/pcw/feed.rdf"
+            },
+            {
+                "title": "ケータイ Watch",
+                "url": "https://k-tai.watch.impress.co.jp/data/rss/1.0/ktw/feed.rdf"
+            }
+        ]
+    },
+    {
+        "page_title": "デザイン・Web制作",
+        "filename": "design.html",
+        "feeds": [
+            {
+                "title": "コリス",
+                "url": "https://coliss.com/feed"
+            },
+            {
+                "title": "Webクリエイターボックス",
+                "url": "https://www.webcreatorbox.com/feed"
+            }
+        ]
+    },
+    {
+        "page_title": "エンタメ・コラム",
+        "filename": "entertainment.html",
+        "feeds": [
+            {
+                "title": "ロケットニュース24",
+                "url": "https://rocketnews24.com/feed/"
+            },
+            {
+                "title": "ライフハッカー・ジャパン",
+                "url": "https://www.lifehacker.jp/feed/index.xml"
             }
         ]
     }
