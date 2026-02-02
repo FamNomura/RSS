@@ -2,20 +2,22 @@ name: Update RSS Feed
 
 on:
   schedule:
-    # cron構文: 分 時 日 月 曜日 (UTC)
-    # '0 * * * *' は「毎時0分」を意味します
-    - cron: '0 * * * *'
+    # 日本時間 7:00～23:00 の間だけ、1時間ごとに実行
+    # UTC表記: 22:00～23:00 および 0:00～14:00
+    - cron: '0 0-14,22-23 * * *'
   
-  # 手動実行ボタンを引き続き有効化
   workflow_dispatch:
   
-  # 設定ファイルをいじった時も更新
   push:
     paths:
       - 'feeds.json'
       - 'template.html'
       - 'build.py'
       - '.github/workflows/update_rss.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -46,5 +48,4 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add *.html
-        # 変更がある場合のみコミット
         git diff --quiet && git diff --staged --quiet || (git commit -m "Update RSS feed [skip ci]" && git push)
