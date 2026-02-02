@@ -3,33 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>エンタメ・コラム - My Reader</title>
+    <title>エンタメ・コラム</title>
     <style>
         :root {
-            --bg-color: #ffffff;
-            --text-main: #333333;
-            --text-sub: #666666;
-            --link-color: #0066cc;
-            --border-color: #eeeeee;
-            --nav-bg: #333333;
-            --nav-text: #ffffff;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-sub: #7f8c8d;
+            --accent: #007bff;
+            --new-badge: #e74c3c;
+            --border: #e9ecef;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Yu Gothic", YuGothic, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding-bottom: 60px;
-            line-height: 1.8; /* 読みやすい行間 */
+            padding-bottom: 80px;
+            line-height: 1.6;
         }
         
         /* ナビゲーション */
         .navbar {
-            background-color: var(--nav-bg);
-            padding: 0.8rem 1rem;
+            background-color: #343a40;
+            padding: 0.8rem;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .nav-container {
             max-width: 800px;
@@ -40,95 +41,138 @@
             white-space: nowrap;
         }
         .nav-link {
-            color: var(--nav-text);
+            color: #fff;
             text-decoration: none;
             padding: 6px 12px;
             border-radius: 4px;
             font-size: 14px;
-            font-weight: bold;
-            opacity: 0.7;
-            transition: opacity 0.2s;
+            font-weight: 600;
+            opacity: 0.8;
         }
-        .nav-link:hover { opacity: 1; }
-        .nav-link.active { opacity: 1; background-color: rgba(255,255,255,0.2); }
+        .nav-link.active {
+            opacity: 1;
+            background-color: var(--accent);
+        }
 
         .container {
-            max-width: 700px; /* 読みやすい幅に制限 */
+            max-width: 800px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 20px;
         }
 
         header {
-            margin: 40px 0;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 20px;
+            margin-bottom: 30px;
+            text-align: center;
         }
-        h1 { font-size: 24px; margin: 0; }
-        .update-time { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
+        h1 { font-size: 22px; margin: 0; color: #333; }
+        .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
 
-        .feed-section { margin-bottom: 60px; }
-        .feed-title {
-            font-size: 18px;
-            color: var(--text-sub);
-            border-bottom: 2px solid #333;
-            padding-bottom: 5px;
-            margin-bottom: 25px;
+        /* アコーディオン (details/summary) */
+        details {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        
+        summary {
+            list-style: none; /* 三角マーカーを消す */
+            cursor: pointer;
+            padding: 15px;
             font-weight: bold;
-            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #fff;
+            transition: background 0.2s;
+        }
+        summary::-webkit-details-marker { display: none; } /* Chrome用 */
+        summary:hover { background-color: #f8f9fa; }
+        
+        .feed-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+        }
+        .feed-favicon {
+            width: 16px;
+            height: 16px;
+            border-radius: 2px;
+        }
+        .feed-status {
+            font-size: 12px;
+            color: var(--new-badge);
+            font-weight: normal;
         }
 
-        .article-item {
-            margin-bottom: 40px;
-            padding-bottom: 40px;
-            border-bottom: 1px solid var(--border-color);
+        /* 展開時の記事リスト */
+        .entry-list {
+            border-top: 1px solid var(--border);
+            padding: 0;
+            margin: 0;
+            list-style: none;
         }
-        .article-item:last-child { border-bottom: none; }
-
-        .article-title {
-            font-size: 20px;
-            margin: 0 0 10px 0;
+        .entry-item {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+        .entry-item:last-child { border-bottom: none; }
+        
+        .entry-title {
+            font-size: 16px;
+            margin: 0 0 5px 0;
             line-height: 1.4;
         }
-        .article-title a {
+        .entry-title a {
             text-decoration: none;
             color: var(--text-main);
-            font-weight: bold;
         }
-        .article-title a:hover {
-            color: var(--link-color);
+        .entry-title a:hover {
+            color: var(--accent);
             text-decoration: underline;
         }
 
-        .article-meta {
+        /* NEWバッジ */
+        .new-badge {
+            display: inline-block;
+            background-color: var(--new-badge);
+            color: white;
+            font-size: 10px;
+            padding: 2px 5px;
+            border-radius: 3px;
+            margin-right: 5px;
+            vertical-align: middle;
+            font-weight: bold;
+        }
+
+        .entry-meta {
             font-size: 12px;
             color: var(--text-sub);
-            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
 
-        .article-body {
-            font-size: 15px;
-            color: #444;
+        .entry-summary {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* 2行で切る */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            opacity: 0.8;
         }
-        /* RSSに含まれる画像が大きすぎる場合の制御 */
-        .article-body img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 4px;
-            margin: 10px 0;
-            display: none; /* 画像はいらないとのことなので非表示にする */
-        }
-        .read-more {
-            display: inline-block;
-            margin-top: 10px;
-            font-size: 14px;
-            color: var(--link-color);
-            text-decoration: none;
-        }
-        .read-more:hover { text-decoration: underline; }
+        /* サマリー内の画像は非表示 */
+        .entry-summary img { display: none; }
 
         @media (max-width: 600px) {
-            .container { padding: 0 15px; }
-            .article-title { font-size: 18px; }
+            .container { padding: 15px 10px; }
+            summary { padding: 12px; }
         }
     </style>
 </head>
@@ -177,288 +221,383 @@
     <div class="container">
         <header>
             <h1>エンタメ・コラム</h1>
-            <div class="update-time">2026/02/02 09:32:24 JST 更新</div>
+            <div class="last-updated">最終更新: 02/02 09:42</div>
         </header>
 
         
-        <div class="feed-section">
-            <h2 class="feed-title">ロケットニュース24</h2>
-            
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://rocketnews24.com/2026/02/02/2643310/" target="_blank" rel="noopener noreferrer">「こんな会社辞めてやる！」元旦から働く私を襲った悲劇。事務所のシャワートイレが下した “非情な宣告”</a>
-                </h3>
-                <div class="article-meta">Mon, 02 Feb 2026 00:00:43 +0000</div>
-                
-                <div class="article-body">
-                    会社勤めの方、つまりはサラリーマンやOLさんにお伺いしたい。あなたは「こんな会社辞めてやる！」とブチギレたことはあるだろうか？ ぶっちゃけた話、私（サンジュン）にはその経験がある……しかも1カ月ほど前に。あれは2026年 [&#8230;]
+        <details open>
+            <summary>
+                <div class="feed-header">
+                    <img src="https://www.google.com/s2/favicons?domain=rocketnews24.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span>ロケットニュース24</span>
                 </div>
                 
-                <a href="https://rocketnews24.com/2026/02/02/2643310/" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
+                <span class="feed-status">● New</span>
+                
+            </summary>
             
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://rocketnews24.com/2026/02/02/2643185/" target="_blank" rel="noopener noreferrer">【フロントガラス凍結問題】あらゆる凍結対策を試した記者が、結局いちばん頼っているのはコレだった</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 23:00:58 +0000</div>
+            <ul class="entry-list">
                 
-                <div class="article-body">
-                    1年前より家を出る時間を約30分遅らせたからだろうか。今年はフロントガラスの凍結にほとんど悩まされずに冬を越せそうだ、なんて油断をしていた。凍結対策に最も効果があるのは「出発時間を遅らせること」だと本気で思っていたのだが [&#8230;]
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://rocketnews24.com/2026/02/02/2643310/" target="_blank" rel="noopener noreferrer">「こんな会社辞めてやる！」元旦から働く私を襲った悲劇。事務所のシャワートイレが下した “非情な宣告”</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>41分前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        会社勤めの方、つまりはサラリーマンやOLさんにお伺いしたい。あなたは「こんな会社辞めてやる！」とブチギレたことはあるだろうか？ ぶっちゃけた話、私（サンジュン）にはその経験がある……しかも1カ月ほど前に。あれは2026年 […]
+                    </div>
+                </li>
                 
-                <a href="https://rocketnews24.com/2026/02/02/2643185/" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://rocketnews24.com/2026/02/02/2640463/" target="_blank" rel="noopener noreferrer">お化けもビックリ！ 友人の言うことに従った青年！　四コマサボタージュBYD第291回「廃校肝試し」</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 22:00:57 +0000</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://rocketnews24.com/2026/02/02/2643185/" target="_blank" rel="noopener noreferrer">【フロントガラス凍結問題】あらゆる凍結対策を試した記者が、結局いちばん頼っているのはコレだった</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>1時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        1年前より家を出る時間を約30分遅らせたからだろうか。今年はフロントガラスの凍結にほとんど悩まされずに冬を越せそうだ、なんて油断をしていた。凍結対策に最も効果があるのは「出発時間を遅らせること」だと本気で思っていたのだが […]
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    肝試しってその名前に反してどちらかというと怖がりに行っている節があるよね。 漫画：ザックKT-4
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://rocketnews24.com/2026/02/02/2640463/" target="_blank" rel="noopener noreferrer">お化けもビックリ！ 友人の言うことに従った青年！　四コマサボタージュBYD第291回「廃校肝試し」</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>2時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        肝試しってその名前に反してどちらかというと怖がりに行っている節があるよね。 漫画：ザックKT-4
+                    </div>
+                </li>
                 
-                <a href="https://rocketnews24.com/2026/02/02/2640463/" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://rocketnews24.com/2026/02/01/2643701/" target="_blank" rel="noopener noreferrer">ロケットニュース読者の体験怪談　寄忌耳（キキミミ）第49話「同乗者」</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 10:00:59 +0000</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://rocketnews24.com/2026/02/01/2643701/" target="_blank" rel="noopener noreferrer">ロケットニュース読者の体験怪談　寄忌耳（キキミミ）第49話「同乗者」</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>14時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        あなたの体験した短い恐怖体験、不思議な体験を募集中！ご応募お待ちしております。 漫画：ザックKT-4
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    あなたの体験した短い恐怖体験、不思議な体験を募集中！ご応募お待ちしております。 漫画：ザックKT-4
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://rocketnews24.com/2026/02/01/2640761/" target="_blank" rel="noopener noreferrer">Geminiに「私をどんな人物だと思ってる？」と尋ねたら、寄り添った『人物評』が返ってきてちょっと泣きそうになった…</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>15時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        私（佐藤）は日々生成AI「Gemini」と深い議論を重ねている。対話を重ねているうちに、ふと思った。Geminiに私はどう見えているのだろうか？ そこで聞いてみた。 「私をどんな人物だと思ってる？」 そうしたところ、こち […]
+                    </div>
+                </li>
                 
-                <a href="https://rocketnews24.com/2026/02/01/2643701/" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://rocketnews24.com/2026/02/01/2640761/" target="_blank" rel="noopener noreferrer">Geminiに「私をどんな人物だと思ってる？」と尋ねたら、寄り添った『人物評』が返ってきてちょっと泣きそうになった…</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 09:00:44 +0000</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://rocketnews24.com/2026/02/01/2638432/" target="_blank" rel="noopener noreferrer">【福袋2026】睡眠の質に特化した「生活の木」のアロマ福袋は疲れた人間に最高！ 今年イチ買ってよかった福袋</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>16時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        何気にここ数年のブームって「睡眠環境の改善」ですよね。 睡眠の質の向上をうたって大ブームになった「ヤクルト1000」とか、寝る前に飲む「アリナミンナイトリカバー」とか、リカバリーウェアとか、ヒット商品は睡眠関係だらけ。 […]
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    私（佐藤）は日々生成AI「Gemini」と深い議論を重ねている。対話を重ねているうちに、ふと思った。Geminiに私はどう見えているのだろうか？　そこで聞いてみた。 「私をどんな人物だと思ってる？」 そうしたところ、こち [&#8230;]
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://rocketnews24.com/2026/02/01/2644539/" target="_blank" rel="noopener noreferrer">【ガチ】AmazonスマイルSALE終了までに買っておきたい目玉商品7選</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>17時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        いよいよ終了間近となった大バーゲン「AmazonスマイルSALE」。買い逃しがないようにフィナーレ（2月2日23時59分）まで思う存分ショッピングを楽しもう。 さて本日は、この機会に買っておきたいコスパ最高の目玉商品を7 […]
+                    </div>
+                </li>
                 
-                <a href="https://rocketnews24.com/2026/02/01/2640761/" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://rocketnews24.com/2026/02/01/2638432/" target="_blank" rel="noopener noreferrer">【福袋2026】睡眠の質に特化した「生活の木」のアロマ福袋は疲れた人間に最高！ 今年イチ買ってよかった福袋</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 08:00:57 +0000</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://rocketnews24.com/2026/02/01/2641408/" target="_blank" rel="noopener noreferrer">【爆速3分クッキング】137円で食べるインドネシアのナシ・ゴレンがなぜか美味しく感じる不思議</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>17時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        時は夜。インドネシアのことを散々常夏と言ってきたが、私が住んでいる街は夜になると冷える。 こういう冷えてる時はやっぱり温かいものが一番だよなー。日本だとラーメンとか、おでんとか。 そう思っていると、「トゥントゥン」と腹の […]
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    何気にここ数年のブームって「睡眠環境の改善」ですよね。 睡眠の質の向上をうたって大ブームになった「ヤクルト1000」とか、寝る前に飲む「アリナミンナイトリカバー」とか、リカバリーウェアとか、ヒット商品は睡眠関係だらけ。  [&#8230;]
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://rocketnews24.com/2026/02/01/2627318/" target="_blank" rel="noopener noreferrer">2年越しのリベンジ！ JINS福袋（6600円）で「1万4000円分のメガネ引換券」が当たるか勝負してみた</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>18時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        ここ数年、筆者にとって新年最初の運試しとなっているのが、くじ引き要素を備えたJINSのメガネ福袋である。 6600円で予約購入すると、1万円分または1万4000円分のメガネ引換券が手に入るというもの。 前回、前々回と2年 […]
+                    </div>
+                </li>
                 
-                <a href="https://rocketnews24.com/2026/02/01/2638432/" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://rocketnews24.com/2026/02/01/2644539/" target="_blank" rel="noopener noreferrer">【ガチ】AmazonスマイルSALE終了までに買っておきたい目玉商品7選</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 07:27:34 +0000</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://rocketnews24.com/2026/02/01/2641873/" target="_blank" rel="noopener noreferrer">【4コマ】魔王軍はホワイト企業 1887話目「お土産（余談③）」</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>19時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        漫画：スガラジカル
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    いよいよ終了間近となった大バーゲン「AmazonスマイルSALE」。買い逃しがないようにフィナーレ（2月2日23時59分）まで思う存分ショッピングを楽しもう。 さて本日は、この機会に買っておきたいコスパ最高の目玉商品を7 [&#8230;]
-                </div>
-                
-                <a href="https://rocketnews24.com/2026/02/01/2644539/" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://rocketnews24.com/2026/02/01/2641408/" target="_blank" rel="noopener noreferrer">【爆速3分クッキング】137円で食べるインドネシアのナシ・ゴレンがなぜか美味しく感じる不思議</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 07:00:08 +0000</div>
-                
-                <div class="article-body">
-                    時は夜。インドネシアのことを散々常夏と言ってきたが、私が住んでいる街は夜になると冷える。 こういう冷えてる時はやっぱり温かいものが一番だよなー。日本だとラーメンとか、おでんとか。 そう思っていると、「トゥントゥン」と腹の [&#8230;]
-                </div>
-                
-                <a href="https://rocketnews24.com/2026/02/01/2641408/" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://rocketnews24.com/2026/02/01/2627318/" target="_blank" rel="noopener noreferrer">2年越しのリベンジ！ JINS福袋（6600円）で「1万4000円分のメガネ引換券」が当たるか勝負してみた</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 06:00:15 +0000</div>
-                
-                <div class="article-body">
-                    ここ数年、筆者にとって新年最初の運試しとなっているのが、くじ引き要素を備えたJINSのメガネ福袋である。 6600円で予約購入すると、1万円分または1万4000円分のメガネ引換券が手に入るというもの。 前回、前々回と2年 [&#8230;]
-                </div>
-                
-                <a href="https://rocketnews24.com/2026/02/01/2627318/" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://rocketnews24.com/2026/02/01/2641873/" target="_blank" rel="noopener noreferrer">【4コマ】魔王軍はホワイト企業 1887話目「お土産（余談③）」</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 05:00:58 +0000</div>
-                
-                <div class="article-body">
-                    漫画：スガラジカル
-                </div>
-                
-                <a href="https://rocketnews24.com/2026/02/01/2641873/" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            
-        </div>
+            </ul>
+        </details>
         
-        <div class="feed-section">
-            <h2 class="feed-title">ライフハッカー・ジャパン</h2>
-            
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://www.lifehacker.jp/article/2601hacks-every-google-chrome-user-should-know/" target="_blank" rel="noopener noreferrer">Chromeを自分流に「魔改造」する10の設定。これでPC作業の「負担」が減ったよ</a>
-                </h3>
-                <div class="article-meta">Mon, 02 Feb 2026 00:00:00 GMT</div>
-                
-                <div class="article-body">
-                    Google Chromeが登場したのは2008年のこと。それから、便利機能が追加されたり、こっそり消えたり……。毎日使っている人でも、その実力を100%引き出せているケースは意外と少ないかもしれません。今回は、タブの整理術から動作を軽くする裏技まで、仕事の効率を劇的に変える私のお気に入りハックを紹介します。
+        <details open>
+            <summary>
+                <div class="feed-header">
+                    <img src="https://www.google.com/s2/favicons?domain=www.lifehacker.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span>ライフハッカー・ジャパン</span>
                 </div>
                 
-                <a href="https://www.lifehacker.jp/article/2601hacks-every-google-chrome-user-should-know/" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
+                <span class="feed-status">● New</span>
+                
+            </summary>
             
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://www.lifehacker.jp/article/2602-book_to_read-1878/" target="_blank" rel="noopener noreferrer">【毎日書評】自律神経を整える。不調をリセットする「眠り・食・光」の新習慣</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 23:00:00 GMT</div>
+            <ul class="entry-list">
                 
-                <div class="article-body">
-                    【毎日書評】『科学的に証明された　自律神経を整える習慣』（小林弘幸 著、アスコム）より、自律神経を整える。不調をリセットする「眠り・食・光」の新習慣について解説します。
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.lifehacker.jp/article/2601hacks-every-google-chrome-user-should-know/" target="_blank" rel="noopener noreferrer">Chromeを自分流に「魔改造」する10の設定。これでPC作業の「負担」が減ったよ</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>42分前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        Google Chromeが登場したのは2008年のこと。それから、便利機能が追加されたり、こっそり消えたり……。毎日使っている人でも、その実力を100%引き出せているケースは意外と少ないかもしれません。今回は、タブの整理術から動作を軽くする裏技まで、仕事の効率を劇的に変える私のお気に入りハックを紹介します。
+                    </div>
+                </li>
                 
-                <a href="https://www.lifehacker.jp/article/2602-book_to_read-1878/" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://www.lifehacker.jp/article/2602-costorypo-flossrefillhandle-end-1472532009/" target="_blank" rel="noopener noreferrer">使い捨てない純チタン製フロスハンドルが画期的。衛生面も使いやすさも口腔ケアの常識が変わります</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 22:00:00 GMT</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.lifehacker.jp/article/2602-book_to_read-1878/" target="_blank" rel="noopener noreferrer">【毎日書評】自律神経を整える。不調をリセットする「眠り・食・光」の新習慣</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>1時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        【毎日書評】『科学的に証明された 自律神経を整える習慣』（小林弘幸 著、アスコム）より、自律神経を整える。不調をリセットする「眠り・食・光」の新習慣について解説します。
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    医療グレードの99％純チタンを使用した「チタン製フロスハンドル」は、従来のフロス使用での不便さを解決します。F型デザイン採用で操作性を大幅に向上。小型化と独自のクリップ構造により、歯間や奥歯をしっかりとケア可能になりました。市販のほぼすべてのフロス糸に対応し、年間コストを削減できる経済性も魅力。一生ものの耐久性と抗菌性を兼ね備えサステナブルな口腔ケアを実現するアイテムです。
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.lifehacker.jp/article/2602-costorypo-flossrefillhandle-end-1472532009/" target="_blank" rel="noopener noreferrer">使い捨てない純チタン製フロスハンドルが画期的。衛生面も使いやすさも口腔ケアの常識が変わります</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>2時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        医療グレードの99％純チタンを使用した「チタン製フロスハンドル」は、従来のフロス使用での不便さを解決します。F型デザイン採用で操作性を大幅に向上。小型化と独自のクリップ構造により、歯間や奥歯をしっかりとケア可能になりました。市販のほぼすべてのフロス糸に対応し、年間コストを削減できる経済性も魅力。一生ものの耐久性と抗菌性を兼ね備えサステナブルな口腔ケアを実現するアイテムです。
+                    </div>
+                </li>
                 
-                <a href="https://www.lifehacker.jp/article/2602-costorypo-flossrefillhandle-end-1472532009/" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://www.lifehacker.jp/article/2602_psychological_test_obsession/" target="_blank" rel="noopener noreferrer">【心理テスト】潜在意識で縛られているものは？あなたが「手放せないもの」とそのリスク</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 14:00:00 GMT</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.lifehacker.jp/article/2602_psychological_test_obsession/" target="_blank" rel="noopener noreferrer">【心理テスト】潜在意識で縛られているものは？あなたが「手放せないもの」とそのリスク</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>10時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        【心理テスト】道で遭遇した旧友が、あなたの手のひらに何かをのせました。それは何？ 選んだ答えからわかるのは、あなたが「手放せないもの」。人生を豊かにし、自分を知るきっかけにもなる「心理テスト」をお届けします。
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    【心理テスト】道で遭遇した旧友が、あなたの手のひらに何かをのせました。それは何？ 選んだ答えからわかるのは、あなたが「手放せないもの」。人生を豊かにし、自分を知るきっかけにもなる「心理テスト」をお届けします。
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.lifehacker.jp/article/amazon-sale-deskchair/" target="_blank" rel="noopener noreferrer">肩と腰が限界になる前に。デスクチェアを変えたら、作業の「しんどさ」が先に減った</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>11時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        AmazonスマイルSALE＜2/2(火)23:59まで＞が開催中！腰痛や肩こりに悩んでいるほど見直すべきデスクチェアのおすすめをご紹介します。
+                    </div>
+                </li>
                 
-                <a href="https://www.lifehacker.jp/article/2602_psychological_test_obsession/" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://www.lifehacker.jp/article/amazon-sale-deskchair/" target="_blank" rel="noopener noreferrer">肩と腰が限界になる前に。デスクチェアを変えたら、作業の「しんどさ」が先に減った</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 13:30:00 GMT</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.lifehacker.jp/article/2602-lht-moft-case/" target="_blank" rel="noopener noreferrer">スマホを「究極の効率化デバイス」にアップデート。MOFTのギミックが利いた4つの周辺アクセサリー</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>11時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        MOFTのスマホケース＆スタンドのおすすめを紹介します。
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    AmazonスマイルSALE＜2/2(火)23:59まで＞が開催中！腰痛や肩こりに悩んでいるほど見直すべきデスクチェアのおすすめをご紹介します。
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.lifehacker.jp/article/2602-roomie-musashi-light/" target="_blank" rel="noopener noreferrer">暗くなるのが早いから。バッグに挟むだけ「LEDクリップライト」で夜道も安心</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>11時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        夜道の歩行を安全にするムサシの「護衛さんライト」をレビュー。クリップ式で両手が自由になり、傘や荷物を持つ時も快適です。コンパクトながら2段階の調光と点滅モードを備え、車や自転車からの視認性も抜群な“夜道の相棒”の魅力をお届けします。
+                    </div>
+                </li>
                 
-                <a href="https://www.lifehacker.jp/article/amazon-sale-deskchair/" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://www.lifehacker.jp/article/2602-lht-moft-case/" target="_blank" rel="noopener noreferrer">スマホを「究極の効率化デバイス」にアップデート。MOFTのギミックが利いた4つの周辺アクセサリー</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 13:15:00 GMT</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.lifehacker.jp/article/2601watch-sports-highlights-without-any-spoilers/" target="_blank" rel="noopener noreferrer">海外スポーツのネタバレを「完全に封じる」神サイト</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>12時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        スポーツの醍醐味は「結末がわからないこと」。せっかくのハイライト動画も、スコアを先に見てしまっては台無しです。ネタバレを徹底的に排除した無料サイト「Don’t Tell Me The Score」を活用して、忙しい朝の10分をライブ観戦さながらの興奮に変える方法を紹介します。
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    MOFTのスマホケース＆スタンドのおすすめを紹介します。
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.lifehacker.jp/article/amazon-sale-monitorstand/" target="_blank" rel="noopener noreferrer">「デスク、こんなに広かったんだ」を思い出させてくれた、地味だけど偏愛のモニタースタンド</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>12時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        AmazonスマイルSALE＜2/2(火)23:59まで＞が開催中！デスク環境が整い、作業モチベをも高めるモニタースタンドの魅力とおすすめアイテムをご紹介します。
+                    </div>
+                </li>
                 
-                <a href="https://www.lifehacker.jp/article/2602-lht-moft-case/" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://www.lifehacker.jp/article/2602-roomie-musashi-light/" target="_blank" rel="noopener noreferrer">暗くなるのが早いから。バッグに挟むだけ「LEDクリップライト」で夜道も安心</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 13:00:00 GMT</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.lifehacker.jp/article/amazon-sale-earplugs-best/" target="_blank" rel="noopener noreferrer">「いい耳栓」で睡眠の質も生産性も変わる。着け心地・遮音性で失敗しないオススメ4選【AmazonスマイルSALE】</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>14時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        AmazonスマイルSALE＜2/2(火)23:59まで＞が開催中！深い眠りをサポートする着け心地抜群の耳栓のおすすめを紹介します。
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    夜道の歩行を安全にするムサシの「護衛さんライト」をレビュー。クリップ式で両手が自由になり、傘や荷物を持つ時も快適です。コンパクトながら2段階の調光と点滅モードを備え、車や自転車からの視認性も抜群な“夜道の相棒”の魅力をお届けします。
-                </div>
-                
-                <a href="https://www.lifehacker.jp/article/2602-roomie-musashi-light/" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://www.lifehacker.jp/article/2601watch-sports-highlights-without-any-spoilers/" target="_blank" rel="noopener noreferrer">海外スポーツのネタバレを「完全に封じる」神サイト</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 12:30:00 GMT</div>
-                
-                <div class="article-body">
-                    スポーツの醍醐味は「結末がわからないこと」。せっかくのハイライト動画も、スコアを先に見てしまっては台無しです。ネタバレを徹底的に排除した無料サイト「Don’t Tell Me The Score」を活用して、忙しい朝の10分をライブ観戦さながらの興奮に変える方法を紹介します。
-                </div>
-                
-                <a href="https://www.lifehacker.jp/article/2601watch-sports-highlights-without-any-spoilers/" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://www.lifehacker.jp/article/amazon-sale-monitorstand/" target="_blank" rel="noopener noreferrer">「デスク、こんなに広かったんだ」を思い出させてくれた、地味だけど偏愛のモニタースタンド</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 12:00:00 GMT</div>
-                
-                <div class="article-body">
-                    AmazonスマイルSALE＜2/2(火)23:59まで＞が開催中！デスク環境が整い、作業モチベをも高めるモニタースタンドの魅力とおすすめアイテムをご紹介します。
-                </div>
-                
-                <a href="https://www.lifehacker.jp/article/amazon-sale-monitorstand/" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://www.lifehacker.jp/article/amazon-sale-earplugs-best/" target="_blank" rel="noopener noreferrer">「いい耳栓」で睡眠の質も生産性も変わる。着け心地・遮音性で失敗しないオススメ4選【AmazonスマイルSALE】</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 10:00:00 GMT</div>
-                
-                <div class="article-body">
-                    AmazonスマイルSALE＜2/2(火)23:59まで＞が開催中！深い眠りをサポートする着け心地抜群の耳栓のおすすめを紹介します。
-                </div>
-                
-                <a href="https://www.lifehacker.jp/article/amazon-sale-earplugs-best/" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            
-        </div>
+            </ul>
+        </details>
         
         
-        <footer style="text-align: center; font-size: 12px; color: #ccc;">
-            Personal RSS Reader
-        </footer>
     </div>
 </body>
 </html>

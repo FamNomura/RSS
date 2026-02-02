@@ -3,33 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ガジェット・モノ - My Reader</title>
+    <title>ガジェット・モノ</title>
     <style>
         :root {
-            --bg-color: #ffffff;
-            --text-main: #333333;
-            --text-sub: #666666;
-            --link-color: #0066cc;
-            --border-color: #eeeeee;
-            --nav-bg: #333333;
-            --nav-text: #ffffff;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-sub: #7f8c8d;
+            --accent: #007bff;
+            --new-badge: #e74c3c;
+            --border: #e9ecef;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Yu Gothic", YuGothic, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding-bottom: 60px;
-            line-height: 1.8; /* 読みやすい行間 */
+            padding-bottom: 80px;
+            line-height: 1.6;
         }
         
         /* ナビゲーション */
         .navbar {
-            background-color: var(--nav-bg);
-            padding: 0.8rem 1rem;
+            background-color: #343a40;
+            padding: 0.8rem;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .nav-container {
             max-width: 800px;
@@ -40,95 +41,138 @@
             white-space: nowrap;
         }
         .nav-link {
-            color: var(--nav-text);
+            color: #fff;
             text-decoration: none;
             padding: 6px 12px;
             border-radius: 4px;
             font-size: 14px;
-            font-weight: bold;
-            opacity: 0.7;
-            transition: opacity 0.2s;
+            font-weight: 600;
+            opacity: 0.8;
         }
-        .nav-link:hover { opacity: 1; }
-        .nav-link.active { opacity: 1; background-color: rgba(255,255,255,0.2); }
+        .nav-link.active {
+            opacity: 1;
+            background-color: var(--accent);
+        }
 
         .container {
-            max-width: 700px; /* 読みやすい幅に制限 */
+            max-width: 800px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 20px;
         }
 
         header {
-            margin: 40px 0;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 20px;
+            margin-bottom: 30px;
+            text-align: center;
         }
-        h1 { font-size: 24px; margin: 0; }
-        .update-time { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
+        h1 { font-size: 22px; margin: 0; color: #333; }
+        .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
 
-        .feed-section { margin-bottom: 60px; }
-        .feed-title {
-            font-size: 18px;
-            color: var(--text-sub);
-            border-bottom: 2px solid #333;
-            padding-bottom: 5px;
-            margin-bottom: 25px;
+        /* アコーディオン (details/summary) */
+        details {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        
+        summary {
+            list-style: none; /* 三角マーカーを消す */
+            cursor: pointer;
+            padding: 15px;
             font-weight: bold;
-            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #fff;
+            transition: background 0.2s;
+        }
+        summary::-webkit-details-marker { display: none; } /* Chrome用 */
+        summary:hover { background-color: #f8f9fa; }
+        
+        .feed-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+        }
+        .feed-favicon {
+            width: 16px;
+            height: 16px;
+            border-radius: 2px;
+        }
+        .feed-status {
+            font-size: 12px;
+            color: var(--new-badge);
+            font-weight: normal;
         }
 
-        .article-item {
-            margin-bottom: 40px;
-            padding-bottom: 40px;
-            border-bottom: 1px solid var(--border-color);
+        /* 展開時の記事リスト */
+        .entry-list {
+            border-top: 1px solid var(--border);
+            padding: 0;
+            margin: 0;
+            list-style: none;
         }
-        .article-item:last-child { border-bottom: none; }
-
-        .article-title {
-            font-size: 20px;
-            margin: 0 0 10px 0;
+        .entry-item {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+        .entry-item:last-child { border-bottom: none; }
+        
+        .entry-title {
+            font-size: 16px;
+            margin: 0 0 5px 0;
             line-height: 1.4;
         }
-        .article-title a {
+        .entry-title a {
             text-decoration: none;
             color: var(--text-main);
-            font-weight: bold;
         }
-        .article-title a:hover {
-            color: var(--link-color);
+        .entry-title a:hover {
+            color: var(--accent);
             text-decoration: underline;
         }
 
-        .article-meta {
+        /* NEWバッジ */
+        .new-badge {
+            display: inline-block;
+            background-color: var(--new-badge);
+            color: white;
+            font-size: 10px;
+            padding: 2px 5px;
+            border-radius: 3px;
+            margin-right: 5px;
+            vertical-align: middle;
+            font-weight: bold;
+        }
+
+        .entry-meta {
             font-size: 12px;
             color: var(--text-sub);
-            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
 
-        .article-body {
-            font-size: 15px;
-            color: #444;
+        .entry-summary {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* 2行で切る */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            opacity: 0.8;
         }
-        /* RSSに含まれる画像が大きすぎる場合の制御 */
-        .article-body img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 4px;
-            margin: 10px 0;
-            display: none; /* 画像はいらないとのことなので非表示にする */
-        }
-        .read-more {
-            display: inline-block;
-            margin-top: 10px;
-            font-size: 14px;
-            color: var(--link-color);
-            text-decoration: none;
-        }
-        .read-more:hover { text-decoration: underline; }
+        /* サマリー内の画像は非表示 */
+        .entry-summary img { display: none; }
 
         @media (max-width: 600px) {
-            .container { padding: 0 15px; }
-            .article-title { font-size: 18px; }
+            .container { padding: 15px 10px; }
+            summary { padding: 12px; }
         }
     </style>
 </head>
@@ -177,425 +221,543 @@
     <div class="container">
         <header>
             <h1>ガジェット・モノ</h1>
-            <div class="update-time">2026/02/02 09:32:24 JST 更新</div>
+            <div class="last-updated">最終更新: 02/02 09:42</div>
         </header>
 
         
-        <div class="feed-section">
-            <h2 class="feed-title">ギズモード・ジャパン</h2>
-            
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://www.gizmodo.jp/2026/02/xreal-1s.html" target="_blank" rel="noopener noreferrer">差額1,500円なら買いでしょ。XREAL 1Sの攻殻機動隊コラボモデル</a>
-                </h3>
-                <div class="article-meta">Mon, 02 Feb 2026 09:00:00 +0900</div>
-                
-                <div class="article-body">
-                    Image:XREALたったの1,500円アップで、攻殻機動隊の公式グッズつきなんだもの。先日からTOKYONODE（虎ノ門）で始まった「攻殻機動隊展GhostandtheShell」では、XREALAir2Ultraを使ったAR展示が行なわれていまして。これがとってもおもしろい。光学シースルー＆6DoFというARグラスのスキルを活かした、今までにはない電脳展示会になっていました。光学シースルー&
+        <details open>
+            <summary>
+                <div class="feed-header">
+                    <img src="https://www.google.com/s2/favicons?domain=www.gizmodo.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span>ギズモード・ジャパン</span>
                 </div>
                 
-                <a href="https://www.gizmodo.jp/2026/02/xreal-1s.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
+                <span class="feed-status">● New</span>
+                
+            </summary>
             
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://www.gizmodo.jp/2026/02/a-man-looking-for-a-lost-hammer-accidentally-found-an-ancient-roman-hoard.html" target="_blank" rel="noopener noreferrer">失くしたハンマーを金属探知機で探していた男性、古代ローマの財宝を発見する</a>
-                </h3>
-                <div class="article-meta">Mon, 02 Feb 2026 08:00:00 +0900</div>
+            <ul class="entry-list">
                 
-                <div class="article-body">
-                    Image:Shutterstock写真はイメージです。経済的不安から、「宝くじ当たらないかなー」とか「どっかに大金おこっちてないかなー」なんてどうしようもない妄想を繰り返す日々。無駄だとわかっていつつも、過去には本当にとんでもないお宝を発見しちゃった人がいるんだから、夢を見ちゃうんですよね。たとえば、1992年のイギリス・サフォーク州ホクスンでは、畑で失くしたハンマーを探していた男性が、思いがけ
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.gizmodo.jp/2026/02/xreal-1s.html" target="_blank" rel="noopener noreferrer">差額1,500円なら買いでしょ。XREAL 1Sの攻殻機動隊コラボモデル</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>42分前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        Image:XREALたったの1,500円アップで、攻殻機動隊の公式グッズつきなんだもの。先日からTOKYONODE（虎ノ門）で始まった「攻殻機動隊展GhostandtheShell」では、XREALAir2Ultraを使ったAR展示が行なわれていまして。これがとってもおもしろい。光学シースルー＆6DoFというARグラスのスキルを活かした、今までにはない電脳展示会になっていました。光学シースルー&
+                    </div>
+                </li>
                 
-                <a href="https://www.gizmodo.jp/2026/02/a-man-looking-for-a-lost-hammer-accidentally-found-an-ancient-roman-hoard.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://www.gizmodo.jp/2026/02/energy-youkan-kc1.html" target="_blank" rel="noopener noreferrer">非常食にも甘い物：バッグの隅に放置してもOKな「ようかん」</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 23:00:00 +0900</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.gizmodo.jp/2026/02/a-man-looking-for-a-lost-hammer-accidentally-found-an-ancient-roman-hoard.html" target="_blank" rel="noopener noreferrer">失くしたハンマーを金属探知機で探していた男性、古代ローマの財宝を発見する</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>1時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        Image:Shutterstock写真はイメージです。経済的不安から、「宝くじ当たらないかなー」とか「どっかに大金おこっちてないかなー」なんてどうしようもない妄想を繰り返す日々。無駄だとわかっていつつも、過去には本当にとんでもないお宝を発見しちゃった人がいるんだから、夢を見ちゃうんですよね。たとえば、1992年のイギリス・サフォーク州ホクスンでは、畑で失くしたハンマーを探していた男性が、思いがけ
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    Photo:そうこ2024年5月26日の記事を編集して再掲載しています。非常食になる甘味として、井村屋の「えいようかん」を購入しました。えいようかんは、あずきバーや、やわもちアイス、カリーぱんでお馴染みの井村屋の備蓄保存食。和菓子好きな自分にはぴったりの非常食でした。私がえいようかんを購入したのは、避難所の炊き出しでは温かいもの、お肉、甘い物が喜ばれるというニュースを震災特集で見たことがきっかけで
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.gizmodo.jp/2026/02/energy-youkan-kc1.html" target="_blank" rel="noopener noreferrer">非常食にも甘い物：バッグの隅に放置してもOKな「ようかん」</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>10時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        Photo:そうこ2024年5月26日の記事を編集して再掲載しています。非常食になる甘味として、井村屋の「えいようかん」を購入しました。えいようかんは、あずきバーや、やわもちアイス、カリーぱんでお馴染みの井村屋の備蓄保存食。和菓子好きな自分にはぴったりの非常食でした。私がえいようかんを購入したのは、避難所の炊き出しでは温かいもの、お肉、甘い物が喜ばれるというニュースを震災特集で見たことがきっかけで
+                    </div>
+                </li>
                 
-                <a href="https://www.gizmodo.jp/2026/02/energy-youkan-kc1.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://www.gizmodo.jp/2026/02/llbean-personalorganizer.html" target="_blank" rel="noopener noreferrer">14個のポケットに、脱着できるポーチ付き。旅や出張で活躍するオーガナイザー</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 22:30:00 +0900</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.gizmodo.jp/2026/02/llbean-personalorganizer.html" target="_blank" rel="noopener noreferrer">14個のポケットに、脱着できるポーチ付き。旅や出張で活躍するオーガナイザー</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>11時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        Photo:富沢ビルキャンプや旅行に行くときに、必要な細々としたモノたちをどうやって持ち運ぶのが「正解」かずっと分からずにいました。そんなときにたどり着いたのが、老舗アウトドアブランドL.L.Bean（エルエルビーン）の「パーソナル・オーガナイザー」（税込5,390円／スモールサイズ）。これが最適解かもしれません。このコンパクトさで驚きの収納力Photo:富沢ビルさまざまなメーカーから販売されてい
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    Photo:富沢ビルキャンプや旅行に行くときに、必要な細々としたモノたちをどうやって持ち運ぶのが「正解」かずっと分からずにいました。そんなときにたどり着いたのが、老舗アウトドアブランドL.L.Bean（エルエルビーン）の「パーソナル・オーガナイザー」（税込5,390円／スモールサイズ）。これが最適解かもしれません。このコンパクトさで驚きの収納力Photo:富沢ビルさまざまなメーカーから販売されてい
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.gizmodo.jp/2026/02/amaz9-sale-elecom-natrium-ion-mobile-battery.html" target="_blank" rel="noopener noreferrer">マイナス35度の極寒対応。10年使えるバッテリーが 5,000円台なら安いもんだ</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>12時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        Image:Amazon雪山に持っていくならコレね。僕らの必需品、モバイルバッテリー。さまざまなモバイルバッテリーが売られていますが、その素材開発も日進月歩で進んでいます。中でもコレは注目。エレコムが発売した、世界初となるナトリウムイオン電池を採用したモバイルバッテリーです。エレコムモバイルバッテリー9000mAh45W【世界初】ナトリウムイオン電池5,790円Amazonで見るPR発表時にはさす
+                    </div>
+                </li>
                 
-                <a href="https://www.gizmodo.jp/2026/02/llbean-personalorganizer.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://www.gizmodo.jp/2026/02/amaz9-sale-elecom-natrium-ion-mobile-battery.html" target="_blank" rel="noopener noreferrer">マイナス35度の極寒対応。10年使えるバッテリーが 5,000円台なら安いもんだ</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 21:00:00 +0900</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.gizmodo.jp/2026/02/asus-zenbook-duo-review.html" target="_blank" rel="noopener noreferrer">大画面より2画面がいい！縦列2画面PCのASUS Zenbook Duoで実感した</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>13時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        Image:RaymondWong/GizmodoUS折りたたみスマートフォンで画面が倍になり、さらに三つ折りスマホで3倍になってきた今日この頃。やっぱり画面って大きいほうが、多いほうが正義なのでしょうか…？米Gizmodoが14インチスクリーンを縦に2枚配置したノートPC、ASUSZenbookDuoをレビューしました。2024年リリースのZenbookDuoからアップデートした2026年モデル
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    Image:Amazon雪山に持っていくならコレね。僕らの必需品、モバイルバッテリー。さまざまなモバイルバッテリーが売られていますが、その素材開発も日進月歩で進んでいます。中でもコレは注目。エレコムが発売した、世界初となるナトリウムイオン電池を採用したモバイルバッテリーです。エレコムモバイルバッテリー9000mAh45W【世界初】ナトリウムイオン電池5,790円Amazonで見るPR発表時にはさす
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.gizmodo.jp/2026/02/brooks_hyperion-max3.html" target="_blank" rel="noopener noreferrer">プレート入りシューズデビューはブルックス。スピードが出るのに扱いやすい優等生</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>14時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        Photo:山田卓立ランニングも続けていくうちに、「もう少しいいシューズを試してみよう」「シューズを変えればタイムも伸びるかも」と、物欲が湧いてくる。そのひとつの段階が「プレート入りか否か」というところ。いきなりカーボンプレートは…という不安があったなかで、ご提供いただいたのがブルックス「ハイペリオンマックス3」（税込30,800円）。樹脂製プレートならではの感覚は、プレート入りシューズデビューに
+                    </div>
+                </li>
                 
-                <a href="https://www.gizmodo.jp/2026/02/amaz9-sale-elecom-natrium-ion-mobile-battery.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://www.gizmodo.jp/2026/02/asus-zenbook-duo-review.html" target="_blank" rel="noopener noreferrer">大画面より2画面がいい！縦列2画面PCのASUS Zenbook Duoで実感した</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 20:00:00 +0900</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.gizmodo.jp/2026/02/rubik-cube-tetris.html" target="_blank" rel="noopener noreferrer">ブロック同士の奇跡のコラボ。ルービックキューブでテトリス作ろう</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>14時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        Image:メガハウス色合わせではなく形合わせ。落ちゲーパズルの元祖『テトリス』は、テトリミノと呼ばれるブロックを隙間なく重ねて列を消すのがルールですよね。でも画面の中では2次元でペッタンコ。ふと考えると立体感はありません。現実世界では、色を合わせるパズル「ルービックキューブ」がありますが…なんと両者が奇跡のコラボを果たし、立体的な「ルービックキューブテトリス」が爆誕しました。テトリミノで形合わせ
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    Image:RaymondWong/GizmodoUS折りたたみスマートフォンで画面が倍になり、さらに三つ折りスマホで3倍になってきた今日この頃。やっぱり画面って大きいほうが、多いほうが正義なのでしょうか…？米Gizmodoが14インチスクリーンを縦に2枚配置したノートPC、ASUSZenbookDuoをレビューしました。2024年リリースのZenbookDuoからアップデートした2026年モデル
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.gizmodo.jp/2026/02/items_for_packing.html" target="_blank" rel="noopener noreferrer">パッキングが苦手な人へ。荷造りのストレスをグッと下げる優秀ギア</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>15時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        Photo:SUMA-KIYO旅行は好きなんですけど、荷造りって腰が重いんですよね。小物類をスッキリ収納するのが難しいし、冬場は服が溢れるし…。そんな荷造りが億劫なみなさんに、旅好きライターたちがおすすめする優秀ギアを3つ紹介します。荷物の重さをカンタン計測Photo:SUMA-KIYO旅行の際、心配になるのが荷物の重さ。特に飛行機に乗るときは重量制限があるので、しっかり把握しておきたいところです
+                    </div>
+                </li>
                 
-                <a href="https://www.gizmodo.jp/2026/02/asus-zenbook-duo-review.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://www.gizmodo.jp/2026/02/brooks_hyperion-max3.html" target="_blank" rel="noopener noreferrer">プレート入りシューズデビューはブルックス。スピードが出るのに扱いやすい優等生</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 19:00:00 +0900</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.gizmodo.jp/2026/02/daiso-tgc-mushijingi-y2m.html" target="_blank" rel="noopener noreferrer">話題の「DAISOトレカ」を大人買い。年齢問わずハマる理由がわかった</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>16時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        Photo:はらいさん2025年2月16日の記事を編集して再掲載しています。100円とは思えないクオリティ。ここ数年、大きな話題を集めているトレーディングカードゲーム。実は100円ショップのDAISO(ダイソー)からもオリジナルトレカが販売されていることはご存知でしょうか。今回遊んでみたのはその中の1つ『蟲神器(むしじんぎ)』。スターターセット（デッキ2つ入り）とブースターパック（5枚入り）がそれ
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    Photo:山田卓立ランニングも続けていくうちに、「もう少しいいシューズを試してみよう」「シューズを変えればタイムも伸びるかも」と、物欲が湧いてくる。そのひとつの段階が「プレート入りか否か」というところ。いきなりカーボンプレートは…という不安があったなかで、ご提供いただいたのがブルックス「ハイペリオンマックス3」（税込30,800円）。樹脂製プレートならではの感覚は、プレート入りシューズデビューに
-                </div>
-                
-                <a href="https://www.gizmodo.jp/2026/02/brooks_hyperion-max3.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://www.gizmodo.jp/2026/02/rubik-cube-tetris.html" target="_blank" rel="noopener noreferrer">ブロック同士の奇跡のコラボ。ルービックキューブでテトリス作ろう</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 19:00:00 +0900</div>
-                
-                <div class="article-body">
-                    Image:メガハウス色合わせではなく形合わせ。落ちゲーパズルの元祖『テトリス』は、テトリミノと呼ばれるブロックを隙間なく重ねて列を消すのがルールですよね。でも画面の中では2次元でペッタンコ。ふと考えると立体感はありません。現実世界では、色を合わせるパズル「ルービックキューブ」がありますが…なんと両者が奇跡のコラボを果たし、立体的な「ルービックキューブテトリス」が爆誕しました。テトリミノで形合わせ
-                </div>
-                
-                <a href="https://www.gizmodo.jp/2026/02/rubik-cube-tetris.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://www.gizmodo.jp/2026/02/items_for_packing.html" target="_blank" rel="noopener noreferrer">パッキングが苦手な人へ。荷造りのストレスをグッと下げる優秀ギア</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 18:00:00 +0900</div>
-                
-                <div class="article-body">
-                    Photo:SUMA-KIYO旅行は好きなんですけど、荷造りって腰が重いんですよね。小物類をスッキリ収納するのが難しいし、冬場は服が溢れるし…。そんな荷造りが億劫なみなさんに、旅好きライターたちがおすすめする優秀ギアを3つ紹介します。荷物の重さをカンタン計測Photo:SUMA-KIYO旅行の際、心配になるのが荷物の重さ。特に飛行機に乗るときは重量制限があるので、しっかり把握しておきたいところです
-                </div>
-                
-                <a href="https://www.gizmodo.jp/2026/02/items_for_packing.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://www.gizmodo.jp/2026/02/daiso-tgc-mushijingi-y2m.html" target="_blank" rel="noopener noreferrer">話題の「DAISOトレカ」を大人買い。年齢問わずハマる理由がわかった</a>
-                </h3>
-                <div class="article-meta">Sun, 01 Feb 2026 17:35:00 +0900</div>
-                
-                <div class="article-body">
-                    Photo:はらいさん2025年2月16日の記事を編集して再掲載しています。100円とは思えないクオリティ。ここ数年、大きな話題を集めているトレーディングカードゲーム。実は100円ショップのDAISO(ダイソー)からもオリジナルトレカが販売されていることはご存知でしょうか。今回遊んでみたのはその中の1つ『蟲神器(むしじんぎ)』。スターターセット（デッキ2つ入り）とブースターパック（5枚入り）がそれ
-                </div>
-                
-                <a href="https://www.gizmodo.jp/2026/02/daiso-tgc-mushijingi-y2m.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            
-        </div>
+            </ul>
+        </details>
         
-        <div class="feed-section">
-            <h2 class="feed-title">PC Watch</h2>
-            
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://pc.watch.impress.co.jp/docs/column/short-review/2082422.html" target="_blank" rel="noopener noreferrer">【PC短評】GeForce RTX 5070搭載でどこにも設置できる超薄いゲーミングPC「AtomMan G7 Pro」</a>
-                </h3>
-                <div class="article-meta">2026-02-02T06:11:00+09:00</div>
-                
-                <div class="article-body">
-                    MINISFORUMの「AtomMan G7 Pro」は、GeForce RTX 5070 Laptop GPUを搭載した超薄型のゲーミングPCだ。現在公式サイトで販売されており、価格はメモリ32GB+1TB SSD+Windows 11 Pro搭載で28万7,999円となっている。今回サンプルを入手したので、簡単に紹介したい。
+        <details open>
+            <summary>
+                <div class="feed-header">
+                    <img src="https://www.google.com/s2/favicons?domain=pc.watch.impress.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span>PC Watch</span>
                 </div>
                 
-                <a href="https://pc.watch.impress.co.jp/docs/column/short-review/2082422.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
+                <span class="feed-status">● New</span>
+                
+            </summary>
             
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://pc.watch.impress.co.jp/docs/topic/feature/2082553.html" target="_blank" rel="noopener noreferrer">メモリ16GBペアが11万円超え!? 2026年1月、パソコン市場を襲う「5倍高騰」</a>
-                </h3>
-                <div class="article-meta">2026-02-02T06:02:00+09:00</div>
+            <ul class="entry-list">
                 
-                <div class="article-body">
-                    2025年後半以降、PC業界で衝撃が走っている“メモリとストレージの高騰”。2025年11月からメモリは大きな値上がりを見せ、SSDも12月には大幅な値上がり傾向となった。ここでは、2025年6月から2026年1月後半までの価格推移をまとめている。
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://pc.watch.impress.co.jp/docs/column/short-review/2082422.html" target="_blank" rel="noopener noreferrer">【PC短評】GeForce RTX 5070搭載でどこにも設置できる超薄いゲーミングPC「AtomMan G7 Pro」</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>3時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        MINISFORUMの「AtomMan G7 Pro」は、GeForce RTX 5070 Laptop GPUを搭載した超薄型のゲーミングPCだ。現在公式サイトで販売されており、価格はメモリ32GB+1TB SSD+Windows 11 Pro搭載で28万7,999円となっている。今回サンプルを入手したので、簡単に紹介したい。
+                    </div>
+                </li>
                 
-                <a href="https://pc.watch.impress.co.jp/docs/topic/feature/2082553.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082517.html" target="_blank" rel="noopener noreferrer">【本日みつけたお買い得品】GigaCrystaのゲーミングモニターが2,800円引きなど！Amazonセールまとめ</a>
-                </h3>
-                <div class="article-meta">2026-01-31T15:17:00+09:00</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://pc.watch.impress.co.jp/docs/topic/feature/2082553.html" target="_blank" rel="noopener noreferrer">メモリ16GBペアが11万円超え!? 2026年1月、パソコン市場を襲う「5倍高騰」</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>3時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        2025年後半以降、PC業界で衝撃が走っている“メモリとストレージの高騰”。2025年11月からメモリは大きな値上がりを見せ、SSDも12月には大幅な値上がり傾向となった。ここでは、2025年6月から2026年1月後半までの価格推移をまとめている。
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    Amazonは2月2日までスマイルSALEを開催中。PC Watchではすでにいくつかの商品を取り上げているが、ここではお得になっているゲーミングモニターについて改めて掲載している。
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082517.html" target="_blank" rel="noopener noreferrer">【本日みつけたお買い得品】GigaCrystaのゲーミングモニターが2,800円引きなど！Amazonセールまとめ</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>昨日</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        Amazonは2月2日までスマイルSALEを開催中。PC Watchではすでにいくつかの商品を取り上げているが、ここではお得になっているゲーミングモニターについて改めて掲載している。
+                    </div>
+                </li>
                 
-                <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082517.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082515.html" target="_blank" rel="noopener noreferrer">【本日みつけたお買い得品】Androidタブレットが1万2,896円など！Amazonセールまとめ</a>
-                </h3>
-                <div class="article-meta">2026-01-31T14:48:51+09:00</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082515.html" target="_blank" rel="noopener noreferrer">【本日みつけたお買い得品】Androidタブレットが1万2,896円など！Amazonセールまとめ</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>昨日</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        Amazonは2月2日までスマイルSALEを開催中。PC Watchではすでにいくつかの商品を取り上げているが、ここではお得になっているAndroidタブレットについて改めて掲載している。
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    Amazonは2月2日までスマイルSALEを開催中。PC Watchではすでにいくつかの商品を取り上げているが、ここではお得になっているAndroidタブレットについて改めて掲載している。
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082514.html" target="_blank" rel="noopener noreferrer">【本日みつけたお買い得品】モトローラのAndroidスマホが2万5,920円！Amazonセールまとめ</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>昨日</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        Amazonは2月2日までスマイルSALEを開催中。PC Watchではすでにいくつかの商品を取り上げているが、ここではお得になっているAndroidスマホについて改めて掲載している。
+                    </div>
+                </li>
                 
-                <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082515.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082514.html" target="_blank" rel="noopener noreferrer">【本日みつけたお買い得品】モトローラのAndroidスマホが2万5,920円！Amazonセールまとめ</a>
-                </h3>
-                <div class="article-meta">2026-01-31T14:31:32+09:00</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082511.html" target="_blank" rel="noopener noreferrer">【本日みつけたお買い得品】カラー表示の「Kindle Colorsoft」が8,000円引き！ほかのKindleもセール中</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>昨日</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        AmazonはスマイルSALEを開催中。この中で、電子書籍リーダのKindleシリーズがセール対象となっている。カラー表示に対応する「Kindle Colorsoft」は8,000円引きの3万1,980円だ。
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    Amazonは2月2日までスマイルSALEを開催中。PC Watchではすでにいくつかの商品を取り上げているが、ここではお得になっているAndroidスマホについて改めて掲載している。
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082510.html" target="_blank" rel="noopener noreferrer">【本日みつけたお買い得品】GeForce RTX 5060とRyzen 9のゲーミングノートが3万円引きなど！Amazonセールまとめ</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>昨日</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        Amazonは2月2日までスマイルSALEを開催中。PC Watchではすでにいくつかの商品を取り上げているが、ここではお得になっているゲーミングノート製品について改めて掲載している。
+                    </div>
+                </li>
                 
-                <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082514.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082511.html" target="_blank" rel="noopener noreferrer">【本日みつけたお買い得品】カラー表示の「Kindle Colorsoft」が8,000円引き！ほかのKindleもセール中</a>
-                </h3>
-                <div class="article-meta">2026-01-31T13:11:37+09:00</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082505.html" target="_blank" rel="noopener noreferrer">【本日みつけたお買い得品】メモリ32GB/1TB SSDのデル製ノートが2万円引きなど！Amazonセールまとめ</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>昨日</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        Amazonは2月2日までスマイルSALEを開催中。PC Watchではすでにいくつかの商品を取り上げているが、ここではお得になっているノートPC製品について改めて掲載している。
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    AmazonはスマイルSALEを開催中。この中で、電子書籍リーダのKindleシリーズがセール対象となっている。カラー表示に対応する「Kindle Colorsoft」は8,000円引きの3万1,980円だ。
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082503.html" target="_blank" rel="noopener noreferrer">【本日みつけたお買い得品】Mac miniが最大1万円引き！Amazonセールまとめ</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>昨日</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        Amazonは2月2日までスマイルSALEを開催中。PC Watchではすでにいくつかの商品を取り上げているが、ここではお得になっているApple製品について改めて掲載している。なお、iPad miniおよびiPadも当初割引されていたが、現在は価格が戻ってしまっている。Mac miniは引き続きお買い得に購入できる状態だ。
+                    </div>
+                </li>
                 
-                <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082511.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082510.html" target="_blank" rel="noopener noreferrer">【本日みつけたお買い得品】GeForce RTX 5060とRyzen 9のゲーミングノートが3万円引きなど！Amazonセールまとめ</a>
-                </h3>
-                <div class="article-meta">2026-01-31T13:02:47+09:00</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082500.html" target="_blank" rel="noopener noreferrer">【本日みつけたお買い得品】ミニPCが約2万7千円オフなど！Amazonセールまとめ</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>昨日</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        Amazonは2月2日までスマイルSALEを開催中。PC Watchではすでにいくつかの商品を取り上げているが、ここではお得になっているミニPCについて改めて掲載している。
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    Amazonは2月2日までスマイルSALEを開催中。PC Watchではすでにいくつかの商品を取り上げているが、ここではお得になっているゲーミングノート製品について改めて掲載している。
-                </div>
-                
-                <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082510.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082505.html" target="_blank" rel="noopener noreferrer">【本日みつけたお買い得品】メモリ32GB/1TB SSDのデル製ノートが2万円引きなど！Amazonセールまとめ</a>
-                </h3>
-                <div class="article-meta">2026-01-31T11:49:32+09:00</div>
-                
-                <div class="article-body">
-                    Amazonは2月2日までスマイルSALEを開催中。PC Watchではすでにいくつかの商品を取り上げているが、ここではお得になっているノートPC製品について改めて掲載している。
-                </div>
-                
-                <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082505.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082503.html" target="_blank" rel="noopener noreferrer">【本日みつけたお買い得品】Mac miniが最大1万円引き！Amazonセールまとめ</a>
-                </h3>
-                <div class="article-meta">2026-01-31T11:04:43+09:00</div>
-                
-                <div class="article-body">
-                    Amazonは2月2日までスマイルSALEを開催中。PC Watchではすでにいくつかの商品を取り上げているが、ここではお得になっているApple製品について改めて掲載している。なお、iPad miniおよびiPadも当初割引されていたが、現在は価格が戻ってしまっている。Mac miniは引き続きお買い得に購入できる状態だ。
-                </div>
-                
-                <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082503.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082500.html" target="_blank" rel="noopener noreferrer">【本日みつけたお買い得品】ミニPCが約2万7千円オフなど！Amazonセールまとめ</a>
-                </h3>
-                <div class="article-meta">2026-01-31T10:46:58+09:00</div>
-                
-                <div class="article-body">
-                    Amazonは2月2日までスマイルSALEを開催中。PC Watchではすでにいくつかの商品を取り上げているが、ここではお得になっているミニPCについて改めて掲載している。
-                </div>
-                
-                <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082500.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            
-        </div>
+            </ul>
+        </details>
         
-        <div class="feed-section">
-            <h2 class="feed-title">ケータイ Watch</h2>
-            
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://k-tai.watch.impress.co.jp/docs/news/2082393.html" target="_blank" rel="noopener noreferrer">Google、ブラウザ上で仮想世界を探索できる「Project Genie」を提供開始</a>
-                </h3>
-                <div class="article-meta">2026-02-02T08:00:00+09:00</div>
-                
-                <div class="article-body">
-                    Googleは、簡単なプロンプトで世界を作成・探索できるプロトタイプ「Project Genie」を、18歳以上の米国のGoogle AI Ultra加入者向けに提供開始した。
+        <details open>
+            <summary>
+                <div class="feed-header">
+                    <img src="https://www.google.com/s2/favicons?domain=k-tai.watch.impress.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span>ケータイ Watch</span>
                 </div>
                 
-                <a href="https://k-tai.watch.impress.co.jp/docs/news/2082393.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
+                <span class="feed-status">● New</span>
+                
+            </summary>
             
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://k-tai.watch.impress.co.jp/docs/column/minna/2082377.html" target="_blank" rel="noopener noreferrer">[みんなのケータイ]モバイルバッテリーを家での充電に活用、寿命を延ばす</a>
-                </h3>
-                <div class="article-meta">2026-02-02T00:00:00+09:00</div>
+            <ul class="entry-list">
                 
-                <div class="article-body">
-                    ここ最近、モバイルバッテリーが発火し火災になったり、それが理由で公共交通機関が遅延するといった事故が増えています。
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://k-tai.watch.impress.co.jp/docs/news/2082393.html" target="_blank" rel="noopener noreferrer">Google、ブラウザ上で仮想世界を探索できる「Project Genie」を提供開始</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>1時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        Googleは、簡単なプロンプトで世界を作成・探索できるプロトタイプ「Project Genie」を、18歳以上の米国のGoogle AI Ultra加入者向けに提供開始した。
+                    </div>
+                </li>
                 
-                <a href="https://k-tai.watch.impress.co.jp/docs/column/minna/2082377.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://k-tai.watch.impress.co.jp/docs/column/stapa/2082364.html" target="_blank" rel="noopener noreferrer">[スタパ齋藤の「スタパトロニクスMobile」]ATOKのサブスクを辞めて「かわせみ4」へ乗り換えたら効率アップした話</a>
-                </h3>
-                <div class="article-meta">2026-02-02T00:00:00+09:00</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://k-tai.watch.impress.co.jp/docs/column/minna/2082377.html" target="_blank" rel="noopener noreferrer">[みんなのケータイ]モバイルバッテリーを家での充電に活用、寿命を延ばす</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>9時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        ここ最近、モバイルバッテリーが発火し火災になったり、それが理由で公共交通機関が遅延するといった事故が増えています。
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    ジャストシステムの「ATOK」を使うのをやめ、物書堂の「かわせみ4」というMac用の日本語IMEを使い始めた。まず手っ取り早く現時点での俺的結論を書いてしまうと、「かわせみ4」はサイコーにイイっ!!!　というか、俺にとっての「かわせみ4」はサイコーに都合がよくて実に使いやすいッ!!!　と思った。
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://k-tai.watch.impress.co.jp/docs/column/stapa/2082364.html" target="_blank" rel="noopener noreferrer">[スタパ齋藤の「スタパトロニクスMobile」]ATOKのサブスクを辞めて「かわせみ4」へ乗り換えたら効率アップした話</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>9時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        ジャストシステムの「ATOK」を使うのをやめ、物書堂の「かわせみ4」というMac用の日本語IMEを使い始めた。まず手っ取り早く現時点での俺的結論を書いてしまうと、「かわせみ4」はサイコーにイイっ!!! というか、俺にとっての「かわせみ4」はサイコーに都合がよくて実に使いやすいッ!!! と思った。
+                    </div>
+                </li>
                 
-                <a href="https://k-tai.watch.impress.co.jp/docs/column/stapa/2082364.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://k-tai.watch.impress.co.jp/docs/column/todays_goods/2082340.html" target="_blank" rel="noopener noreferrer">[本日の一品]「爆発の恐怖」への終止符か？　次世代・マクセル半固体電池がモバイルバッテリーの正解かもしれない</a>
-                </h3>
-                <div class="article-meta">2026-02-02T00:00:00+09:00</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://k-tai.watch.impress.co.jp/docs/column/todays_goods/2082340.html" target="_blank" rel="noopener noreferrer">[本日の一品]「爆発の恐怖」への終止符か？　次世代・マクセル半固体電池がモバイルバッテリーの正解かもしれない</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>9時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        昨今、モバイルバッテリーの発火や炎上事件が後を絶たない。大手メーカーによる数十万台単位のリコールも記憶に新しく、利便性と引き換えに我々は常に「火種」をバッグに忍ばせているのが実情だ。
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    昨今、モバイルバッテリーの発火や炎上事件が後を絶たない。大手メーカーによる数十万台単位のリコールも記憶に新しく、利便性と引き換えに我々は常に「火種」をバッグに忍ばせているのが実情だ。
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://k-tai.watch.impress.co.jp/docs/news/2082323.html" target="_blank" rel="noopener noreferrer">PayPay、ミニアプリ「PayPay資産運用」の名称を「PayPay証券」へ変更　2月9日～</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>22時間前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        PayPayは、キャッシュレス決済アプリ「PayPay」内で提供しているミニアプリ「PayPay資産運用」の名称を、2月9日に「PayPay証券」へ変更する。あわせて、アプリ上の表示名も現在の「資産運用/NISA」から「PayPay証券」に変更される。
+                    </div>
+                </li>
                 
-                <a href="https://k-tai.watch.impress.co.jp/docs/column/todays_goods/2082340.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://k-tai.watch.impress.co.jp/docs/news/2082323.html" target="_blank" rel="noopener noreferrer">PayPay、ミニアプリ「PayPay資産運用」の名称を「PayPay証券」へ変更　2月9日～</a>
-                </h3>
-                <div class="article-meta">2026-02-01T11:00:00+09:00</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <a href="https://k-tai.watch.impress.co.jp/docs/news/2082244.html" target="_blank" rel="noopener noreferrer">ドコモ、旅行予約サイト「じゃらんnet」利用で最大全額ポイント還元</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>昨日</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        NTTドコモは、旅行予約サイト「じゃらんnet」において、抽選で利用額の最大全額分をポイント還元する「最大全額ポイント還元キャンペーン」を開始した。エントリーを含めたキャンペーン期間は2月28日までで、サービス利用期間は5月6日まで。
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    PayPayは、キャッシュレス決済アプリ「PayPay」内で提供しているミニアプリ「PayPay資産運用」の名称を、2月9日に「PayPay証券」へ変更する。あわせて、アプリ上の表示名も現在の「資産運用/NISA」から「PayPay証券」に変更される。
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <a href="https://k-tai.watch.impress.co.jp/docs/column/mca/2082445.html" target="_blank" rel="noopener noreferrer">[DATAで見るケータイ業界] 総務省データから見える携帯各社の基地局戦略</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>昨日</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        総務省は1月13日に「令和7年度携帯電話及び全国BWA等に係る電波の利用状況調査」の結果を公表した。今回は、同報告書に記載されている携帯各社の基地局展開の状況について、見ていきたい。なお、本レポートの情報は、 2025年3月時点の各社データに基づく点にご留意いただきたい 。
+                    </div>
+                </li>
                 
-                <a href="https://k-tai.watch.impress.co.jp/docs/news/2082323.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://k-tai.watch.impress.co.jp/docs/news/2082244.html" target="_blank" rel="noopener noreferrer">ドコモ、旅行予約サイト「じゃらんnet」利用で最大全額ポイント還元</a>
-                </h3>
-                <div class="article-meta">2026-02-01T09:00:00+09:00</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <a href="https://k-tai.watch.impress.co.jp/docs/news/2082392.html" target="_blank" rel="noopener noreferrer">「IIJmioモバイルプラスサービス 従量制プラン」新規契約受付を3月末で終了</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>昨日</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        インターネットイニシアティブ（IIJ）は、MVNOサービス「IIJmio」の「IIJmioモバイルプラスサービス 従量制プラン」の新規契約受付を3月31日で終了する。
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    NTTドコモは、旅行予約サイト「じゃらんnet」において、抽選で利用額の最大全額分をポイント還元する「最大全額ポイント還元キャンペーン」を開始した。エントリーを含めたキャンペーン期間は2月28日までで、サービス利用期間は5月6日まで。
-                </div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <a href="https://k-tai.watch.impress.co.jp/docs/news/2082413.html" target="_blank" rel="noopener noreferrer">楽天モバイル、5G基盤にEコア搭載「Xeon 6」を検証　消費電力を3割削減</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>2日前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        楽天モバイルは29日、Eコア搭載インテルXeon 6プロセッサーの商用展開に向け、インテルと共同で性能を検証したと発表した。
+                    </div>
+                </li>
                 
-                <a href="https://k-tai.watch.impress.co.jp/docs/news/2082244.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://k-tai.watch.impress.co.jp/docs/column/mca/2082445.html" target="_blank" rel="noopener noreferrer">[DATAで見るケータイ業界] 総務省データから見える携帯各社の基地局戦略</a>
-                </h3>
-                <div class="article-meta">2026-02-01T06:00:00+09:00</div>
+                <li class="entry-item">
+                    <div class="entry-title">
+                        
+                        <a href="https://k-tai.watch.impress.co.jp/docs/news/2080876.html" target="_blank" rel="noopener noreferrer">ソフトバンクの「SoftBank Free Style」って何が違うの？　メリット・デメリットを徹底解説</a>
+                    </div>
+                    
+                    <div class="entry-meta">
+                        <span>2日前</span>
+                    </div>
+
+                    <div class="entry-summary">
+                        ソフトバンクは、ソフトバンクオンラインショップで「SoftBank Free Style」を提供している。2025年11月のサービス開始以降、シャオミやOPPO、REDMAGICといったハイエンドモデルやゲーミングモデルがラインアップに加わってきた。
+                    </div>
+                </li>
                 
-                <div class="article-body">
-                    総務省は1月13日に「令和7年度携帯電話及び全国BWA等に係る電波の利用状況調査」の結果を公表した。今回は、同報告書に記載されている携帯各社の基地局展開の状況について、見ていきたい。なお、本レポートの情報は、 2025年3月時点の各社データに基づく点にご留意いただきたい 。
-                </div>
-                
-                <a href="https://k-tai.watch.impress.co.jp/docs/column/mca/2082445.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://k-tai.watch.impress.co.jp/docs/news/2082392.html" target="_blank" rel="noopener noreferrer">「IIJmioモバイルプラスサービス 従量制プラン」新規契約受付を3月末で終了</a>
-                </h3>
-                <div class="article-meta">2026-01-31T10:00:00+09:00</div>
-                
-                <div class="article-body">
-                    インターネットイニシアティブ（IIJ）は、MVNOサービス「IIJmio」の「IIJmioモバイルプラスサービス 従量制プラン」の新規契約受付を3月31日で終了する。
-                </div>
-                
-                <a href="https://k-tai.watch.impress.co.jp/docs/news/2082392.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://k-tai.watch.impress.co.jp/docs/news/2082413.html" target="_blank" rel="noopener noreferrer">楽天モバイル、5G基盤にEコア搭載「Xeon 6」を検証　消費電力を3割削減</a>
-                </h3>
-                <div class="article-meta">2026-01-31T09:00:00+09:00</div>
-                
-                <div class="article-body">
-                    楽天モバイルは29日、Eコア搭載インテルXeon 6プロセッサーの商用展開に向け、インテルと共同で性能を検証したと発表した。
-                </div>
-                
-                <a href="https://k-tai.watch.impress.co.jp/docs/news/2082413.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            <article class="article-item">
-                <h3 class="article-title">
-                    <a href="https://k-tai.watch.impress.co.jp/docs/news/2080876.html" target="_blank" rel="noopener noreferrer">ソフトバンクの「SoftBank Free Style」って何が違うの？　メリット・デメリットを徹底解説</a>
-                </h3>
-                <div class="article-meta">2026-01-31T07:00:00+09:00</div>
-                
-                <div class="article-body">
-                    ソフトバンクは、ソフトバンクオンラインショップで「SoftBank Free Style」を提供している。2025年11月のサービス開始以降、シャオミやOPPO、REDMAGICといったハイエンドモデルやゲーミングモデルがラインアップに加わってきた。
-                </div>
-                
-                <a href="https://k-tai.watch.impress.co.jp/docs/news/2080876.html" target="_blank" class="read-more">記事を読む &rarr;</a>
-            </article>
-            
-            
-        </div>
+            </ul>
+        </details>
         
         
-        <footer style="text-align: center; font-size: 12px; color: #ccc;">
-            Personal RSS Reader
-        </footer>
     </div>
 </body>
 </html>
