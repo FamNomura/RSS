@@ -13,7 +13,9 @@ max_entries = 5  # 各フィードからの最大取得記事数
 def load_config(path):
     """設定ファイルを読み込む"""
     try:
-        with open(path, 'r', encoding='utf-8') as f:
+        # 修正: encoding='utf-8' を 'utf-8-sig' に変更
+        # これによりBOM付き/なし両方のUTF-8ファイルを正しく読み込めます
+        with open(path, 'r', encoding='utf-8-sig') as f:
             return json.load(f)
     except Exception as e:
         print(f"Error loading config: {e}")
@@ -64,6 +66,8 @@ def main():
     
     # 4. ページごとの生成処理
     env = Environment(loader=FileSystemLoader('.', encoding='utf-8'))
+    # テンプレート読み込み時も安全のため utf-8-sig を指定する手もありますが、
+    # Jinja2のLoaderはデフォルトutf-8です。通常テンプレートはコードエディタで触るためそのままで行きます。
     template = env.get_template(template_file)
     
     for page_config in pages_config:
