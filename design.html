@@ -1,0 +1,464 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>デザイン・Web制作 - My Reader</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-main: #333333;
+            --text-sub: #666666;
+            --link-color: #0066cc;
+            --border-color: #eeeeee;
+            --nav-bg: #333333;
+            --nav-text: #ffffff;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Yu Gothic", YuGothic, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding-bottom: 60px;
+            line-height: 1.8; /* 読みやすい行間 */
+        }
+        
+        /* ナビゲーション */
+        .navbar {
+            background-color: var(--nav-bg);
+            padding: 0.8rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .nav-link {
+            color: var(--nav-text);
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .nav-link:hover { opacity: 1; }
+        .nav-link.active { opacity: 1; background-color: rgba(255,255,255,0.2); }
+
+        .container {
+            max-width: 700px; /* 読みやすい幅に制限 */
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            margin: 40px 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+        h1 { font-size: 24px; margin: 0; }
+        .update-time { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
+
+        .feed-section { margin-bottom: 60px; }
+        .feed-title {
+            font-size: 18px;
+            color: var(--text-sub);
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+            margin-bottom: 25px;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+        }
+
+        .article-item {
+            margin-bottom: 40px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .article-item:last-child { border-bottom: none; }
+
+        .article-title {
+            font-size: 20px;
+            margin: 0 0 10px 0;
+            line-height: 1.4;
+        }
+        .article-title a {
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: bold;
+        }
+        .article-title a:hover {
+            color: var(--link-color);
+            text-decoration: underline;
+        }
+
+        .article-meta {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-bottom: 15px;
+        }
+
+        .article-body {
+            font-size: 15px;
+            color: #444;
+        }
+        /* RSSに含まれる画像が大きすぎる場合の制御 */
+        .article-body img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: none; /* 画像はいらないとのことなので非表示にする */
+        }
+        .read-more {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--link-color);
+            text-decoration: none;
+        }
+        .read-more:hover { text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            .container { padding: 0 15px; }
+            .article-title { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            
+            <a href="index.html" 
+               class="nav-link ">
+                総合ニュース
+            </a>
+            
+            <a href="recipes.html" 
+               class="nav-link ">
+                レシピ・料理
+            </a>
+            
+            <a href="tech.html" 
+               class="nav-link ">
+                Tech情報
+            </a>
+            
+            <a href="business.html" 
+               class="nav-link ">
+                ビジネス・経済
+            </a>
+            
+            <a href="gadget.html" 
+               class="nav-link ">
+                ガジェット・モノ
+            </a>
+            
+            <a href="design.html" 
+               class="nav-link active">
+                デザイン・Web制作
+            </a>
+            
+            <a href="entertainment.html" 
+               class="nav-link ">
+                エンタメ・コラム
+            </a>
+            
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>デザイン・Web制作</h1>
+            <div class="update-time">2026/02/02 09:27:53 JST 更新</div>
+        </header>
+
+        
+        <div class="feed-section">
+            <h2 class="feed-title">コリス</h2>
+            
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://coliss.com/articles/book-review/isbn-9784297150945.html" target="_blank" rel="noopener noreferrer">フリーランスの確定申告、インボイスや消費税への対応もこれ一冊で大丈夫、ベストセラーの定番書 -フリーランス＆個人事業主のための確定申告</a>
+                </h3>
+                <div class="article-meta">Fri, 30 Jan 2026 00:36:52 +0000</div>
+                
+                <div class="article-body">
+                    ※本ページは、アフィリエイト広告を利用しています。 いよいよ確定申告の時期になりました。 フリーランスと個人事業主向け、2026年に提出する青色申告と白色申告に対応した最新版の確定申告の解説書を紹介します。 本書は20年 [&#8230;]
+                </div>
+                
+                <a href="https://coliss.com/articles/book-review/isbn-9784297150945.html" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://coliss.com/articles/build-websites/operation/css/using-100vw-is-now-scrollbar-aware.html" target="_blank" rel="noopener noreferrer">CSSの100vwで水平スクロールバーが表示される問題がようやく解決！ vwにスクロールの幅が含まれなくなります</a>
+                </h3>
+                <div class="article-meta">Thu, 29 Jan 2026 00:36:38 +0000</div>
+                
+                <div class="article-body">
+                    Web制作者の長年の悩みがようやく解決されます！ CSSで100vwを使用して幅いっぱいにすると、垂直のスクロールバー分が含まれて、水平スクロールバーが表示されてしまいます。この問題はWindowsで起こり、macOSで [&#8230;]
+                </div>
+                
+                <a href="https://coliss.com/articles/build-websites/operation/css/using-100vw-is-now-scrollbar-aware.html" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://coliss.com/articles/products/amazon-sale-20260127.html" target="_blank" rel="noopener noreferrer">Amazonで2026年スマイルSALEが開催！ セールで私が買ったもの、見逃しがちなお買い得品を紹介します</a>
+                </h3>
+                <div class="article-meta">Wed, 28 Jan 2026 00:36:55 +0000</div>
+                
+                <div class="article-body">
+                    ※本ページは、アフィリエイト広告を利用しています。 Amazonでビッグセール「スマイルSALE」が開催しています。このセールでは特に生活用品が数多く対象になっており、通常のセールよりもかなり安くなって、非常にお買い得で [&#8230;]
+                </div>
+                
+                <a href="https://coliss.com/articles/products/amazon-sale-20260127.html" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://coliss.com/articles/build-websites/operation/work/how-to-favicon.html" target="_blank" rel="noopener noreferrer">2026年版、ファビコン画像の作成方法とHTMLの記述方法、さまざまなデバイスに対応させるには3つのアイコンが必要</a>
+                </h3>
+                <div class="article-meta">Tue, 27 Jan 2026 00:36:58 +0000</div>
+                
+                <div class="article-body">
+                    最近のデバイスやブラウザに対応させる最小限のファビコンセットには、3つのアイコンで対応できます。ブラウザはもちろん、スマホやタブレットにも対応し、さらにSVGも含めて3つだけです。 ファビコンに必要な3つのアイコン、ファ [&#8230;]
+                </div>
+                
+                <a href="https://coliss.com/articles/build-websites/operation/work/how-to-favicon.html" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://coliss.com/articles/build-websites/operation/work/highlight-just-the-active-indent-guide.html" target="_blank" rel="noopener noreferrer">CursorやVS Codeで、インデントのガイドラインをアクティブなガイドラインだけ表示させる方法</a>
+                </h3>
+                <div class="article-meta">Mon, 26 Jan 2026 00:36:53 +0000</div>
+                
+                <div class="article-body">
+                    CursorやVS Codeのエディタで、インデントのガイドラインをアクティブなガイドラインだけハイライト表示させる方法を紹介します。 通常（左）はその箇所を含むすべてのインデントのガイドラインが表示されますが、右のよう [&#8230;]
+                </div>
+                
+                <a href="https://coliss.com/articles/build-websites/operation/work/highlight-just-the-active-indent-guide.html" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://coliss.com/articles/book-review/isbn-9784297153311.html" target="_blank" rel="noopener noreferrer">HTML Living StandardとモダンCSS、最新ブラウザに完全対応！ 目的別で分かりやすいリファレンス本 -HTML＆CSSポケットリファレンス 改訂第4版</a>
+                </h3>
+                <div class="article-meta">Fri, 23 Jan 2026 00:36:04 +0000</div>
+                
+                <div class="article-body">
+                    ※本ページは、アフィリエイト広告を利用しています。 『HTML＆CSSポケットリファレンス』の改訂第4版が、発売されました！ 先週発売されたばかりの最新刊で、HTML Living StandardとモダンCSSに対応 [&#8230;]
+                </div>
+                
+                <a href="https://coliss.com/articles/book-review/isbn-9784297153311.html" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://coliss.com/articles/build-websites/operation/work/logic-driven-ui-design-tips.html" target="_blank" rel="noopener noreferrer">UIデザインのクオリティが格段にアップする！ 感覚的ではなく、論理的にデザインを改善するポイントを解説</a>
+                </h3>
+                <div class="article-meta">Thu, 22 Jan 2026 00:36:44 +0000</div>
+                
+                <div class="article-body">
+                    WebサイトやスマホアプリのUIを魅力的に、そして一貫性のあるデザインに改善するときに役立つUIデザインの知識とテクニックを紹介します。 直感や感覚的な曖昧なものではなく、明確で論理的なガイドラインに基づいて改善すること [&#8230;]
+                </div>
+                
+                <a href="https://coliss.com/articles/build-websites/operation/work/logic-driven-ui-design-tips.html" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://coliss.com/articles/build-websites/operation/work/vertical-tabs-in-chrome-native.html" target="_blank" rel="noopener noreferrer">Chromeのタブがさらに便利に進化！ 分割表示の次は、なんとタブを垂直に表示できる -Vertical Tabs</a>
+                </h3>
+                <div class="article-meta">Wed, 21 Jan 2026 00:36:54 +0000</div>
+                
+                <div class="article-body">
+                    Chromeは先日のアップデートで、1つのタブ内を分割して2つのWebページを表示できるようになりましたが、さらに便利に進化して、タブを垂直で管理できるようになります！ 水平だとタブを10個くらい開くと、タイトルが小さく [&#8230;]
+                </div>
+                
+                <a href="https://coliss.com/articles/build-websites/operation/work/vertical-tabs-in-chrome-native.html" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://coliss.com/articles/build-websites/architectonics/copy-sites-design-assets.html" target="_blank" rel="noopener noreferrer">これはかなり便利！ 1クリックであらゆるWebサイトのデザインやアセットを抽出できるChromeの拡張機能 -MiroMiro</a>
+                </h3>
+                <div class="article-meta">Tue, 20 Jan 2026 00:36:39 +0000</div>
+                
+                <div class="article-body">
+                    昨年末にリリースされたばかり、Chromeの便利な拡張機能を紹介します。 MiroMiroは1クリックするだけで、表示しているサイトを分析、デザイン要素を抽出、本番環境で使えるアセットに変換するオールインワンの拡張機能で [&#8230;]
+                </div>
+                
+                <a href="https://coliss.com/articles/build-websites/architectonics/copy-sites-design-assets.html" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://coliss.com/articles/products/adobe-cc-amazon-202601-sale.html" target="_blank" rel="noopener noreferrer">Amazonでアドビセールが開催！ Creative Cloud Proが51％オフ、アドビの株価は52週最安値の300割れに</a>
+                </h3>
+                <div class="article-meta">Mon, 19 Jan 2026 00:36:22 +0000</div>
+                
+                <div class="article-body">
+                    ※本ページは、アフィリエイト広告を利用しています。 Amazonで、アドビの新年スタート応援セールが開催されています！ セール期間は1/29（木）まで。前回のセールはブラックフライデーでしたが、こんなに早いタイミングで半 [&#8230;]
+                </div>
+                
+                <a href="https://coliss.com/articles/products/adobe-cc-amazon-202601-sale.html" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            
+        </div>
+        
+        <div class="feed-section">
+            <h2 class="feed-title">Webクリエイターボックス</h2>
+            
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://www.webcreatorbox.com//blog/ai-phase-planner" target="_blank" rel="noopener noreferrer">Antigravityを使ってコーディング（ほぼ）なしで目標設定アプリ作った</a>
+                </h3>
+                <div class="article-meta">Tue, 27 Jan 2026 23:29:30 GMT</div>
+                
+                <div class="article-body">
+                    今年はWebアプリやWebサイトを10個作ってみるぞー！とやる気に満ちて新年を迎えましたよ。ということで、1つ目のアプリ。月間目標を決めたら、それを4つの段階に細分化して提案してくれるWebサイト『AI Phase Planner』を公開しました！
+                </div>
+                
+                <a href="https://www.webcreatorbox.com//blog/ai-phase-planner" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://www.webcreatorbox.com//blog/website-2000ver" target="_blank" rel="noopener noreferrer">最新AIでイニシエのWebサイトを作ってもらった 〜2000年の君へ〜</a>
+                </h3>
+                <div class="article-meta">Wed, 14 Jan 2026 23:14:38 GMT</div>
+                
+                <div class="article-body">
+                    AntigravityというAIツールをご存じですか？ 指示（プロンプト）を与えるだけで、いろんなWebサイトがサクッと作れてしまうのが面白くて、最近いろいろといじり倒しています。そこでふと、逆に古い技術のサイトも作れるの？と疑問が湧いたので、実験してみました。
+                </div>
+                
+                <a href="https://www.webcreatorbox.com//blog/website-2000ver" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://www.webcreatorbox.com//blog/wcb-book8" target="_blank" rel="noopener noreferrer">書籍執筆しました！『1冊ですべて身につくPhotoshop入門講座』</a>
+                </h3>
+                <div class="article-meta">Sun, 04 Jan 2026 23:50:15 GMT</div>
+                
+                <div class="article-body">
+                    これまでHTMLやCSS、WordPress、JavaScript、デザインの入門書を書いてきた私ですが、このたび新たにAdobe Photoshopの入門書、『1冊ですべて身につくPhotoshop入門講座』という本を執筆しました！2026年2月27日発売で、予約受付中です！
+                </div>
+                
+                <a href="https://www.webcreatorbox.com//blog/wcb-book8" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://www.webcreatorbox.com//blog/wcb-2025" target="_blank" rel="noopener noreferrer">Webクリエイターボックスの2025年を振り返る</a>
+                </h3>
+                <div class="article-meta">Tue, 23 Dec 2025 23:10:07 GMT</div>
+                
+                <div class="article-body">
+                    今年も残りあとわずか！一年間お世話になりました！毎年思いますが早いですね。という事で例年どおり、Webクリエイターボックスが今年1年どんな変貌を遂げたのか、そしてWebクリエイターボックス内でよく読んでもらった記事やSNSでシェアした記事などを紹介しようと思います。いくつ覚えていただけてますかね？ :3
+                </div>
+                
+                <a href="https://www.webcreatorbox.com//blog/wcb-2025" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://www.webcreatorbox.com//blog/applewatch-1000days" target="_blank" rel="noopener noreferrer">継続をデザインする！Apple Watchのアクティビティで1000日連続達成した記録</a>
+                </h3>
+                <div class="article-meta">Thu, 18 Dec 2025 22:45:30 GMT</div>
+                
+                <div class="article-body">
+                    みなさん、運動してますか？ 我々の仕事って基本座りっぱなしで、運動しなきゃと思いつつ、なかなか実行できなかったりしますよね。実は私もそうでした。コロナ禍を経て、気づけば身体はぷくぷく…。これはまずい！と一念発起し、「継続すること」自体をデザインの課題として捉え直し、2023年1月1日から毎日運動を続けました。そしてついに、ムーブゴール連続1000日を達成！そこで、継続できた仕組みづくりと、愛用しているツールやアプリ、そして1000日の軌跡をご紹介します。
+                </div>
+                
+                <a href="https://www.webcreatorbox.com//blog/applewatch-1000days" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://www.webcreatorbox.com//blog/card-one" target="_blank" rel="noopener noreferrer">特殊加工名刺を「カードワン」さんで作ってみた</a>
+                </h3>
+                <div class="article-meta">Wed, 10 Dec 2025 22:43:55 GMT</div>
+                
+                <div class="article-body">
+                    名刺の残り枚数が少なくなってきたので「そろそろ注文しなきゃなー」とのんびり構えていたところ、ずっと利用していた印刷会社さんがまさかの閉鎖！あれこれ探し回った結果、素敵な印刷会社さんに出会い、名刺を再現していただきました。これから名刺を作りたいデザイナーさんや、自分の名刺をグレードアップさせたいフリーランスの方の参考になれば嬉しいです！
+                </div>
+                
+                <a href="https://www.webcreatorbox.com//blog/card-one" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://www.webcreatorbox.com//blog/slido" target="_blank" rel="noopener noreferrer">プレゼンの質疑応答が劇的に変わる「Slido」を使ってみた</a>
+                </h3>
+                <div class="article-meta">Mon, 01 Dec 2025 23:17:26 GMT</div>
+                
+                <div class="article-body">
+                    私は登壇するとき、なるべく質疑応答の時間を用意しています。ただ、参加者からしたら手を上げてみんなの前で質問ってなかなかハードル高いですよね。実際質問をされるのも1、2名くらい。そこで、「Slido（スライド）」というツールを使って質疑応答の時間を工夫したお話を紹介します！
+                </div>
+                
+                <a href="https://www.webcreatorbox.com//blog/slido" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://www.webcreatorbox.com//blog/podcast-meetup-2" target="_blank" rel="noopener noreferrer">エンジニアポッドキャストMeetup #2に参加しました！</a>
+                </h3>
+                <div class="article-meta">Mon, 17 Nov 2025 23:18:36 GMT</div>
+                
+                <div class="article-body">
+                    先日、「エンジニアポッドキャストMeetup #2」というイベントに、私自身が運営しているポッドキャスト番組『ManaのWebクリエイターカフェ』のホストとして参加してきました！今回はイベントの様子はもちろん、耳からのインプット＝ポッドキャストがおすすめな理由や、私の登壇経験からの気づきもシェアします！
+                </div>
+                
+                <a href="https://www.webcreatorbox.com//blog/podcast-meetup-2" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://www.webcreatorbox.com//blog/simplify-your-creation-2025" target="_blank" rel="noopener noreferrer">Simplify Your Creation in 広島 で登壇しました！</a>
+                </h3>
+                <div class="article-meta">Sun, 09 Nov 2025 22:52:27 GMT</div>
+                
+                <div class="article-body">
+                    最近めっきりイベント三昧！Webやデザイン関連のイベントは新しい知識が得られたり、素敵な出会いがあったりしてワクワクしますよね！今回は、先日広島で開催された「Simplify Your Creation」というイベントで登壇したお話です！なんと、映画館で！！
+                </div>
+                
+                <a href="https://www.webcreatorbox.com//blog/simplify-your-creation-2025" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://www.webcreatorbox.com//blog/webtan-forum-2025" target="_blank" rel="noopener noreferrer">Web担当者Forum ミーティング2025 秋 で登壇しました！</a>
+                </h3>
+                <div class="article-meta">Fri, 07 Nov 2025 00:13:20 GMT</div>
+                
+                <div class="article-body">
+                    先日「Web担当者Forum ミーティング2025 秋」というイベントで登壇しました！当日の様子や運営の裏側、私がプレゼンで意識したこと、そして当日お答えしきれなかった質疑応答の続きをまとめました！
+                </div>
+                
+                <a href="https://www.webcreatorbox.com//blog/webtan-forum-2025" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            
+        </div>
+        
+        
+        <footer style="text-align: center; font-size: 12px; color: #ccc;">
+            Personal RSS Reader
+        </footer>
+    </div>
+</body>
+</html>

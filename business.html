@@ -1,0 +1,471 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ビジネス・経済 - My Reader</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-main: #333333;
+            --text-sub: #666666;
+            --link-color: #0066cc;
+            --border-color: #eeeeee;
+            --nav-bg: #333333;
+            --nav-text: #ffffff;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Yu Gothic", YuGothic, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding-bottom: 60px;
+            line-height: 1.8; /* 読みやすい行間 */
+        }
+        
+        /* ナビゲーション */
+        .navbar {
+            background-color: var(--nav-bg);
+            padding: 0.8rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .nav-link {
+            color: var(--nav-text);
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .nav-link:hover { opacity: 1; }
+        .nav-link.active { opacity: 1; background-color: rgba(255,255,255,0.2); }
+
+        .container {
+            max-width: 700px; /* 読みやすい幅に制限 */
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            margin: 40px 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+        h1 { font-size: 24px; margin: 0; }
+        .update-time { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
+
+        .feed-section { margin-bottom: 60px; }
+        .feed-title {
+            font-size: 18px;
+            color: var(--text-sub);
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+            margin-bottom: 25px;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+        }
+
+        .article-item {
+            margin-bottom: 40px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .article-item:last-child { border-bottom: none; }
+
+        .article-title {
+            font-size: 20px;
+            margin: 0 0 10px 0;
+            line-height: 1.4;
+        }
+        .article-title a {
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: bold;
+        }
+        .article-title a:hover {
+            color: var(--link-color);
+            text-decoration: underline;
+        }
+
+        .article-meta {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-bottom: 15px;
+        }
+
+        .article-body {
+            font-size: 15px;
+            color: #444;
+        }
+        /* RSSに含まれる画像が大きすぎる場合の制御 */
+        .article-body img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: none; /* 画像はいらないとのことなので非表示にする */
+        }
+        .read-more {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--link-color);
+            text-decoration: none;
+        }
+        .read-more:hover { text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            .container { padding: 0 15px; }
+            .article-title { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            
+            <a href="index.html" 
+               class="nav-link ">
+                総合ニュース
+            </a>
+            
+            <a href="recipes.html" 
+               class="nav-link ">
+                レシピ・料理
+            </a>
+            
+            <a href="tech.html" 
+               class="nav-link ">
+                Tech情報
+            </a>
+            
+            <a href="business.html" 
+               class="nav-link active">
+                ビジネス・経済
+            </a>
+            
+            <a href="gadget.html" 
+               class="nav-link ">
+                ガジェット・モノ
+            </a>
+            
+            <a href="design.html" 
+               class="nav-link ">
+                デザイン・Web制作
+            </a>
+            
+            <a href="entertainment.html" 
+               class="nav-link ">
+                エンタメ・コラム
+            </a>
+            
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>ビジネス・経済</h1>
+            <div class="update-time">2026/02/02 09:27:53 JST 更新</div>
+        </header>
+
+        
+        <div class="feed-section">
+            <h2 class="feed-title">東洋経済オンライン</h2>
+            
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://toyokeizai.net/articles/-/931902?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer">【不登校】親世代より令和の子どもが疲弊する訳 | 子育て | 東洋経済オンライン</a>
+                </h3>
+                <div class="article-meta">Mon, 02 Feb 2026 09:00:00 +0900</div>
+                
+                <div class="article-body">
+                    「まさか自分の子が」――。不登校に直面し、自分を責める親は少なくありません。しかし、現代の子どもが…
+                </div>
+                
+                <a href="https://toyokeizai.net/articles/-/931902?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://toyokeizai.net/articles/-/932265?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer">商談を無断欠席し…Z世代｢リベンジ退職｣の真因 | 自衛隊員も学ぶ！メンタルチューニング | 東洋経済オンライン</a>
+                </h3>
+                <div class="article-meta">Mon, 02 Feb 2026 08:00:00 +0900</div>
+                
+                <div class="article-body">
+                    定時退勤時刻。新人のAさんは、上司から「明日までに全部直しておいて」と投げられた大量の資料を前に、…
+                </div>
+                
+                <a href="https://toyokeizai.net/articles/-/932265?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://toyokeizai.net/articles/-/933271?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer">｢日経平均株価6万円到達｣への道は見えている | 市場観測 | 東洋経済オンライン</a>
+                </h3>
+                <div class="article-meta">Mon, 02 Feb 2026 07:30:00 +0900</div>
+                
+                <div class="article-body">
+                    まずは直近の相場から振り返ってみよう。先週末（1月30日）の日経平均株価は5万3322円で引けたが、方向感…
+                </div>
+                
+                <a href="https://toyokeizai.net/articles/-/933271?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://toyokeizai.net/articles/-/922260?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer">銀行を欺く｢住宅ローン不正利用｣の"巧妙な手口" | 正直不動産 | 東洋経済オンライン</a>
+                </h3>
+                <div class="article-meta">Mon, 02 Feb 2026 07:00:00 +0900</div>
+                
+                <div class="article-body">
+                    不動産会社・登坂不動産のエース営業である永瀬財地（ながせ・さいち）、35歳。「売るためだけ」の情報を…
+                </div>
+                
+                <a href="https://toyokeizai.net/articles/-/922260?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://toyokeizai.net/articles/-/931942?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer">社長から直接｢業務連絡｣すぐに返信は危うい訳 | 東洋経済Tech×サイバーセキュリティ | 東洋経済オンライン</a>
+                </h3>
+                <div class="article-meta">Mon, 02 Feb 2026 06:00:00 +0900</div>
+                
+                <div class="article-body">
+                    2025年末から新たなネット詐欺が猛威を振るっています。企業のトップである最高経営責任者（CEO）や社長…
+                </div>
+                
+                <a href="https://toyokeizai.net/articles/-/931942?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://toyokeizai.net/articles/-/933008?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer">興収最高2744億円の映画市場｢主役交代｣の深層 | メディア業界 | 東洋経済オンライン</a>
+                </h3>
+                <div class="article-meta">Mon, 02 Feb 2026 05:30:00 +0900</div>
+                
+                <div class="article-body">
+                    1月28日、日本映画製作者連盟が「2025年日本映画産業統計」を発表した。その内容を読んで、私は25年が日…
+                </div>
+                
+                <a href="https://toyokeizai.net/articles/-/933008?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://toyokeizai.net/articles/-/932679?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer">｢休み連絡がLINEで来た｣部長激怒"若手の言い分" | リーダーシップ・教養・資格・スキル | 東洋経済オンライン</a>
+                </h3>
+                <div class="article-meta">Mon, 02 Feb 2026 05:00:00 +0900</div>
+                
+                <div class="article-body">
+                    「信じられない。休みの連絡がLINEで来たんです……」ある物流会社の営業部長（52歳）が、呆れた表情でそ…
+                </div>
+                
+                <a href="https://toyokeizai.net/articles/-/932679?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://toyokeizai.net/articles/-/932917?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer">JR東海･静岡県･国交省｢リニア工事で握手｣の意味 | 新幹線 | 東洋経済オンライン</a>
+                </h3>
+                <div class="article-meta">Mon, 02 Feb 2026 04:30:00 +0900</div>
+                
+                <div class="article-body">
+                    土曜日の朝、人影のない静岡県庁の敷地内で、東館1階の通用口だけは報道関係者でごったがえしていた。10時…
+                </div>
+                
+                <a href="https://toyokeizai.net/articles/-/932917?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://toyokeizai.net/articles/-/933264?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer">【25年間コツコツ！インデックス投資で1億… | 東洋経済オンラインYouTube | 東洋経済オンライン</a>
+                </h3>
+                <div class="article-meta">Sun, 01 Feb 2026 19:00:00 +0900</div>
+                
+                <div class="article-body">
+                    元高校球児でフリーアナウンサーの上重聡がお送りする資産運用をテーマにした動画シリーズ。いつか「億り…
+                </div>
+                
+                <a href="https://toyokeizai.net/articles/-/933264?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://toyokeizai.net/articles/-/932523?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer">遺族を傷つける｢若すぎる死｣という言葉の無意識 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン</a>
+                </h3>
+                <div class="article-meta">Sun, 01 Feb 2026 14:00:00 +0900</div>
+                
+                <div class="article-body">
+                    「悲しみは乗り越えるものではなく、抱えながら共生していくものだと思います」。そう穏やかに語るのは、…
+                </div>
+                
+                <a href="https://toyokeizai.net/articles/-/932523?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            
+        </div>
+        
+        <div class="feed-section">
+            <h2 class="feed-title">ダイヤモンド・オンライン</h2>
+            
+            
+            
+        </div>
+        
+        <div class="feed-section">
+            <h2 class="feed-title">ITmedia ビジネスオンライン</h2>
+            
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://www.itmedia.co.jp/business/articles/2602/02/news007.html" target="_blank" rel="noopener noreferrer">会社経営の不安、「事業継承」を抑えた1位は？　経営者に調査</a>
+                </h3>
+                <div class="article-meta">Mon, 02 Feb 2026 08:30:00 +0900</div>
+                
+                <div class="article-body">
+                    経営者はどのような会社経営の不安を抱えているのか？　メットライフ生命保険の調査から明らかになった。
+                </div>
+                
+                <a href="https://www.itmedia.co.jp/business/articles/2602/02/news007.html" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://www.itmedia.co.jp/business/articles/2602/02/news040.html" target="_blank" rel="noopener noreferrer">国内のイノベーション実施率、10年で3.5ポイント低下　「意欲はあるが動けない」企業が抱えるジレンマ</a>
+                </h3>
+                <div class="article-meta">Mon, 02 Feb 2026 08:00:00 +0900</div>
+                
+                <div class="article-body">
+                    「イノベーションは、企業の競争力を高めるために欠かせない」。そう語られる場面は多いが、実際に行動に移せている企業はどれほどあるのか。帝国データバンクの調査から、国内企業のイノベーションの現在地が見えてきた。
+                </div>
+                
+                <a href="https://www.itmedia.co.jp/business/articles/2602/02/news040.html" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://www.itmedia.co.jp/business/articles/2602/02/news010.html" target="_blank" rel="noopener noreferrer">「まいばすけっと」が都心に増え続けるワケ　イオンが仕掛けた“ちょっと変なスーパー”の正体</a>
+                </h3>
+                <div class="article-meta">Mon, 02 Feb 2026 08:00:00 +0900</div>
+                
+                <div class="article-body">
+                    まいばすけっとが京浜間で急増している。そほ背後には、イオンの巧みな“小規模スーパー展開”の戦略があった……。
+                </div>
+                
+                <a href="https://www.itmedia.co.jp/business/articles/2602/02/news010.html" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://www.itmedia.co.jp/business/articles/2602/02/news008.html" target="_blank" rel="noopener noreferrer">「用事がないと話せない……」　気が小さい上司ほど“相談”という名の「高度な雑談」を活用すべき</a>
+                </h3>
+                <div class="article-meta">Mon, 02 Feb 2026 08:00:00 +0900</div>
+                
+                <div class="article-body">
+                    用もないのに話しかけるのが、どうしても苦手だ……。このように悩む上司は珍しくないのではないか。
+                </div>
+                
+                <a href="https://www.itmedia.co.jp/business/articles/2602/02/news008.html" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://www.itmedia.co.jp/business/articles/2602/02/news038.html" target="_blank" rel="noopener noreferrer">「顧客の声」を宝の持ち腐れにしない　武器にできる企業は何が違うのか？</a>
+                </h3>
+                <div class="article-meta">Mon, 02 Feb 2026 07:00:00 +0900</div>
+                
+                <div class="article-body">
+                    顧客の声を集めている企業は多いが、それを成果につなげられている企業は限られている。ラーニングイットが実施した「VoC（顧客の声）活用実態調査」から、VoC活用の実態と課題が明らかになった。
+                </div>
+                
+                <a href="https://www.itmedia.co.jp/business/articles/2602/02/news038.html" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://www.itmedia.co.jp/business/articles/2602/02/news024.html" target="_blank" rel="noopener noreferrer">ココイチも参入した「夜パフェ専門店」　壱番屋はなぜ“甘い夜”に乗り出したのか</a>
+                </h3>
+                <div class="article-meta">Mon, 02 Feb 2026 07:00:00 +0900</div>
+                
+                <div class="article-body">
+                    「カレーハウス CoCo 壱番屋」などを展開する壱番屋が、M＆Aを通じてスイーツ事業に参入した。買収したのは、全国9店舗の「夜パフェ専門店」を運営するGAKU（ガク）だ。その狙いを取材したところ……。
+                </div>
+                
+                <a href="https://www.itmedia.co.jp/business/articles/2602/02/news024.html" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://www.itmedia.co.jp/business/articles/2602/02/news019.html" target="_blank" rel="noopener noreferrer">「貧乏人の食べ物だ」　“スープの巨人”キャンベル社が防げなかった「顧客蔑視」の末路</a>
+                </h3>
+                <div class="article-meta">Mon, 02 Feb 2026 07:00:00 +0900</div>
+                
+                <div class="article-body">
+                    「スープの代名詞」、ザ・キャンベルズ・カンパニーの副社長（当時）であるマーティン・バリー氏が口にした「貧乏人のためのクソみたいな食べ物」。通報者はわずか20日後に会社を解雇された。同社の対応は、有事における企業対応のケーススタディとして極めて示唆に富んでいる。時系列で追う。
+                </div>
+                
+                <a href="https://www.itmedia.co.jp/business/articles/2602/02/news019.html" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://www.itmedia.co.jp/business/articles/2602/02/news018.html" target="_blank" rel="noopener noreferrer">民鉄の経営は2極化　多角化経営が生き残りのカギに</a>
+                </h3>
+                <div class="article-meta">Mon, 02 Feb 2026 07:00:00 +0900</div>
+                
+                <div class="article-body">
+                    中小民営鉄道41社の9割近くが増収となった2025年3月期。インバウンド回復が追い風となる一方、コスト増を吸収できず減益に転じる企業も増え、業績の二極化が鮮明になった。多角化経営の成否が、地域鉄道の命運を分け始めている。
+                </div>
+                
+                <a href="https://www.itmedia.co.jp/business/articles/2602/02/news018.html" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://www.itmedia.co.jp/business/articles/2602/02/news025.html" target="_blank" rel="noopener noreferrer">AIを活用した就活、ES突破率は高いが面接で苦戦　内定への影響は？</a>
+                </h3>
+                <div class="article-meta">Mon, 02 Feb 2026 05:00:00 +0900</div>
+                
+                <div class="article-body">
+                    ネオキャリアの調査で、生成AIを活用した就活生は書類選考や一次面接など初期選考で通過率が高い傾向があると分かった。最終的な内定率への影響はどうだったのだろうか？
+                </div>
+                
+                <a href="https://www.itmedia.co.jp/business/articles/2602/02/news025.html" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            <article class="article-item">
+                <h3 class="article-title">
+                    <a href="https://www.itmedia.co.jp/business/articles/2602/02/news009.html" target="_blank" rel="noopener noreferrer">メモリ価格の高騰、ゲーム機への影響は？ 「スイッチ2」「PS5」で値上げはなさそうだと言えるワケ</a>
+                </h3>
+                <div class="article-meta">Mon, 02 Feb 2026 05:00:00 +0900</div>
+                
+                <div class="article-body">
+                    2025年秋からメモリ価格の高騰が続いている。PCの値上げなども懸念される中、ゲーム機にも影響がありそうだ。
+                </div>
+                
+                <a href="https://www.itmedia.co.jp/business/articles/2602/02/news009.html" target="_blank" class="read-more">記事を読む &rarr;</a>
+            </article>
+            
+            
+        </div>
+        
+        
+        <footer style="text-align: center; font-size: 12px; color: #ccc;">
+            Personal RSS Reader
+        </footer>
+    </div>
+</body>
+</html>
