@@ -126,20 +126,7 @@
         {
             "page_title": "レシピ・料理",
             "filename": "recipes.html",
-            "feeds": [
-                {
-                    "title": "Lifehacker (Food)",
-                    "url": "https://www.lifehacker.jp/tag/food/feed/index.xml"
-                },
-                {
-                    "title": "オレンジページnet",
-                    "url": "https://www.orangepage.net/feed/recipes/new.rss"
-                },
-                {
-                    "title": "きょうの料理",
-                    "url": "https://www.kyounoryouri.jp/feed/rss"
-                }
-            ]
+            "feeds": []
         },
         {
             "page_title": "Tech情報",

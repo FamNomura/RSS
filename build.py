@@ -101,19 +101,16 @@ def process_entry(entry, feed_title, feed_link, now_utc):
         'summary': text_content,
         'image': image_url,
         'timestamp': timestamp,
-        'source_title': feed_title
+        'source_title': feed_title # 出典表示に使用
     }
 
 def fetch_all_feeds(config):
     url_map = {}
     all_urls = set()
     
-    # ページ設定とウォッチ設定の両方からURLを収集
     for page in config.get('pages', []):
         for feed in page.get('feeds', []):
             all_urls.add((feed['url'], feed.get('title')))
-    
-    # ウォッチリストは既存URLからの抽出が主だが、将来的に独立したURLを指定する場合に備えて探索（現状はpages依存でも可）
     
     print(f"Fetching {len(all_urls)} unique feeds...")
     
@@ -147,16 +144,14 @@ def fetch_all_feeds(config):
 def main():
     config = load_config(feeds_file)
     
-    # 1. ナビゲーション作成（★修正点：ウォッチリストを先頭に追加）
     navigation = []
-    # ウォッチページ（先頭）
+    # ウォッチページ
     for watch in config.get('watches', []):
         navigation.append({'page_title': watch['page_title'], 'filename': watch['filename']})
-    # 通常ページ（後続）
+    # 通常ページ
     for page in config.get('pages', []):
         navigation.append({'page_title': page['page_title'], 'filename': page['filename']})
     
-    # 2. 全フィード取得
     all_feeds_data = fetch_all_feeds(config)
     
     jst = pytz.timezone('Asia/Tokyo')
@@ -170,6 +165,9 @@ def main():
         target_filename = page_config['filename']
         print(f"Building Page: {target_filename}")
         
+        # フラグ設定: これは通常ページ
+        page_config['is_topic'] = False 
+        
         ng_keywords = page_config.get('ng_keywords', [])
         page_feeds_display = []
         
@@ -180,7 +178,6 @@ def main():
             if source_data:
                 valid_entries = [e for e in source_data['entries'] if not is_ng_content(e, ng_keywords)]
                 
-                # ★修正点：件数を計算
                 total_count = len(valid_entries)
                 new_count = sum(1 for e in valid_entries if e['is_new'])
                 has_new = new_count > 0
@@ -189,8 +186,8 @@ def main():
                     'title': source_data['title'],
                     'favicon': source_data['favicon'],
                     'has_new': has_new,
-                    'total_count': total_count, # 追加
-                    'new_count': new_count,     # 追加
+                    'total_count': total_count,
+                    'new_count': new_count,
                     'entries': valid_entries
                 })
         
@@ -206,6 +203,9 @@ def main():
     for watch_config in config.get('watches', []):
         target_filename = watch_config['filename']
         print(f"Building Watch Page: {target_filename}")
+        
+        # フラグ設定: これはトピックページ
+        watch_config['is_topic'] = True
         
         keywords = watch_config.get('keywords', [])
         ng_keywords = watch_config.get('ng_keywords', [])
@@ -228,20 +228,16 @@ def main():
             matched_entries.sort(key=lambda x: x['timestamp'], reverse=True)
             
             if matched_entries:
-                # ★修正点：件数を計算
                 total_count = len(matched_entries)
                 new_count = sum(1 for e in matched_entries if e['is_new'])
                 has_new = new_count > 0
-                
-                # 虫眼鏡アイコン（簡易）
-                search_icon = "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" 
                 
                 watch_feeds_display.append({
                     'title': f"Keyword: {kw}",
                     'favicon': '', 
                     'has_new': has_new,
-                    'total_count': total_count, # 追加
-                    'new_count': new_count,     # 追加
+                    'total_count': total_count,
+                    'new_count': new_count,
                     'entries': matched_entries
                 })
 
