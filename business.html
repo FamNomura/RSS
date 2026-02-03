@@ -13,7 +13,8 @@
             --accent: #007bff;
             --new-badge: #e74c3c;
             --border: #e9ecef;
-            --highlight: #fff3cd; /* ハイライト色 */
+            --highlight: #fff3cd;
+            --read-color: #b0b0b0; /* 既読記事の色 */
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -33,124 +34,80 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .nav-container {
-            max-width: 800px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between; /* 検索窓とリンクを左右に配置 */
-            flex-wrap: wrap;
-            gap: 10px;
+            max-width: 800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
         }
-        .nav-links {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
+        .nav-links { display: flex; gap: 10px; overflow-x: auto; white-space: nowrap; }
         .nav-link {
-            color: #fff;
-            text-decoration: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 600;
-            opacity: 0.8;
+            color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 14px; font-weight: 600; opacity: 0.8;
         }
         .nav-link.active { opacity: 1; background-color: var(--accent); }
 
-        /* 検索ボックスのデザイン */
-        .search-box {
-            position: relative;
-            flex-grow: 1;
-            max-width: 300px;
-        }
+        .search-box { position: relative; flex-grow: 1; max-width: 300px; }
         .search-input {
-            width: 100%;
-            padding: 6px 10px;
-            border-radius: 4px;
-            border: none;
-            font-size: 14px;
-            background-color: rgba(255,255,255,0.9);
-            box-sizing: border-box;
+            width: 100%; padding: 6px 10px; border-radius: 4px; border: none; font-size: 14px; background-color: rgba(255,255,255,0.9); box-sizing: border-box;
         }
         .search-input:focus { outline: 2px solid var(--accent); }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         header { margin-bottom: 20px; text-align: center; }
         h1 { font-size: 22px; margin: 0; color: #333; }
         .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
 
         details {
-            background: var(--card-bg);
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
-            border: 1px solid var(--border);
-            overflow: hidden;
+            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
         }
         summary {
-            list-style: none;
-            cursor: pointer;
-            padding: 15px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: #fff;
-            transition: background 0.2s;
+            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff; transition: background 0.2s;
         }
-        summary::-webkit-details-marker { display: none; }
         summary:hover { background-color: #f8f9fa; }
+        summary::-webkit-details-marker { display: none; }
         
         .feed-header { display: flex; align-items: center; gap: 10px; font-size: 16px; }
         .feed-favicon { width: 16px; height: 16px; border-radius: 2px; }
         .feed-status { font-size: 12px; color: var(--new-badge); font-weight: normal; }
 
-        .entry-list {
-            border-top: 1px solid var(--border);
-            padding: 0;
-            margin: 0;
-            list-style: none;
-        }
+        .entry-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
         .entry-item {
-            padding: 15px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            gap: 15px;
-            align-items: flex-start;
+            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start; transition: background-color 0.2s;
         }
         .entry-item:last-child { border-bottom: none; }
+
+        /* ▼▼▼ 既読記事のスタイル ▼▼▼ */
+        .entry-item.read {
+            background-color: #fcfcfc;
+        }
+        .entry-item.read .entry-title a {
+            color: var(--read-color);
+        }
+        .entry-item.read .entry-summary {
+            color: #d0d0d0;
+        }
+        .entry-item.read .entry-thumbnail {
+            opacity: 0.5;
+            filter: grayscale(100%);
+        }
+        .entry-item.read .new-badge {
+            background-color: #ccc; /* NEWバッジもグレーに */
+        }
+        /* ▲▲▲ 既読記事のスタイル ▲▲▲ */
         
         .entry-content-wrapper { flex: 1; min-width: 0; }
-        .entry-thumbnail {
-            width: 100px; height: 75px; object-fit: cover;
-            border-radius: 4px; flex-shrink: 0; border: 1px solid #eee;
-        }
+        .entry-thumbnail { width: 100px; height: 75px; object-fit: cover; border-radius: 4px; flex-shrink: 0; border: 1px solid #eee; }
 
         .entry-title { font-size: 16px; margin: 0 0 5px 0; line-height: 1.4; }
         .entry-title a { text-decoration: none; color: var(--text-main); }
         .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
         .new-badge {
-            display: inline-block; background-color: var(--new-badge); color: white;
-            font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px;
-            vertical-align: middle; font-weight: bold;
+            display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold;
         }
 
         .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; }
         .entry-summary {
-            font-size: 13px; color: #555; margin-top: 8px;
-            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-            overflow: hidden; opacity: 0.8;
+            font-size: 13px; color: #555; margin-top: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.8;
         }
         .entry-summary img { display: none; }
 
-        /* ハイライト用スタイル */
         mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
 
         @media (max-width: 600px) {
@@ -222,7 +179,7 @@
     <div class="container">
         <header>
             <h1>ビジネス・経済</h1>
-            <div class="last-updated">最終更新: 02/03 11:31</div>
+            <div class="last-updated">最終更新: 02/03 11:53</div>
         </header>
 
         
@@ -239,17 +196,40 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-title="日独､年264時間の労働時間差を生む仕組みの違い | リーダーシップ・教養・資格・スキル | 東洋経済オンライン" data-summary="日本企業の多くは残業が常態化しています。ただ、こうした働き方は必ずしも世界標準ではありません。例え…">
+                <li class="entry-item" data-link="https://toyokeizai.net/articles/-/931124?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="Rソックス吉田 妻が見た勝負師のチャリティ精神 | スポーツ | 東洋経済オンライン" data-summary="2023年のWBCで日本を世界一に導き、メジャーリーグ挑戦初年度から首位打者争いに食い込む活躍を見せたボ…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://toyokeizai.net/articles/-/932782?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer">日独､年264時間の労働時間差を生む仕組みの違い | リーダーシップ・教養・資格・スキル | 東洋経済オンライン</a>
+                            <a href="https://toyokeizai.net/articles/-/931124?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">Rソックス吉田 妻が見た勝負師のチャリティ精神 | スポーツ | 東洋経済オンライン</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>31分前</span>
+                            <span>23分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            2023年のWBCで日本を世界一に導き、メジャーリーグ挑戦初年度から首位打者争いに食い込む活躍を見せたボ…
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://tk.ismcdn.jp/mwimgs/2/f/1200w/img_2ffc1e74409b77ec196d271d62f5cc22769367.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://toyokeizai.net/articles/-/932782?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="日独､年264時間の労働時間差を生む仕組みの違い | リーダーシップ・教養・資格・スキル | 東洋経済オンライン" data-summary="日本企業の多くは残業が常態化しています。ただ、こうした働き方は必ずしも世界標準ではありません。例え…">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://toyokeizai.net/articles/-/932782?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">日独､年264時間の労働時間差を生む仕組みの違い | リーダーシップ・教養・資格・スキル | 東洋経済オンライン</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>53分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -262,13 +242,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="｢技術による先進｣変えぬアウディの製品戦略 | トレンド | 東洋経済オンライン" data-summary="自動車メーカーが市場で生き残るためになにが必要か……といえば、最も重要なのは魅力あるプロダクトの提…">
+                <li class="entry-item" data-link="https://toyokeizai.net/articles/-/933099?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="｢技術による先進｣変えぬアウディの製品戦略 | トレンド | 東洋経済オンライン" data-summary="自動車メーカーが市場で生き残るためになにが必要か……といえば、最も重要なのは魅力あるプロダクトの提…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://toyokeizai.net/articles/-/933099?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer">｢技術による先進｣変えぬアウディの製品戦略 | トレンド | 東洋経済オンライン</a>
+                            <a href="https://toyokeizai.net/articles/-/933099?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">｢技術による先進｣変えぬアウディの製品戦略 | トレンド | 東洋経済オンライン</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -285,13 +265,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="ゲーム長寿化で｢買い切り型ゲーム｣は消えるのか | ゲーム・エンタメ | 東洋経済オンライン" data-summary="2026年1月29日に、Nintendo Switch向けタイトル『スプラトゥーン3』にアップデートが行われた。これがか…">
+                <li class="entry-item" data-link="https://toyokeizai.net/articles/-/932761?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="ゲーム長寿化で｢買い切り型ゲーム｣は消えるのか | ゲーム・エンタメ | 東洋経済オンライン" data-summary="2026年1月29日に、Nintendo Switch向けタイトル『スプラトゥーン3』にアップデートが行われた。これがか…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://toyokeizai.net/articles/-/932761?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer">ゲーム長寿化で｢買い切り型ゲーム｣は消えるのか | ゲーム・エンタメ | 東洋経済オンライン</a>
+                            <a href="https://toyokeizai.net/articles/-/932761?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">ゲーム長寿化で｢買い切り型ゲーム｣は消えるのか | ゲーム・エンタメ | 東洋経済オンライン</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -308,13 +288,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="学生の青田買いから青田創りに向かう企業の本音 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン" data-summary="エッジソン・マネジメント協会の代表理事であり、若手採用・育成のコンサルタントでもある樫原洋平氏は、…">
+                <li class="entry-item" data-link="https://toyokeizai.net/articles/-/928879?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="学生の青田買いから青田創りに向かう企業の本音 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン" data-summary="エッジソン・マネジメント協会の代表理事であり、若手採用・育成のコンサルタントでもある樫原洋平氏は、…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://toyokeizai.net/articles/-/928879?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer">学生の青田買いから青田創りに向かう企業の本音 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン</a>
+                            <a href="https://toyokeizai.net/articles/-/928879?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">学生の青田買いから青田創りに向かう企業の本音 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -331,13 +311,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="3Kイメージ払拭｢みやじ豚｣育てた4代目の経営思想 | 外食 | 東洋経済オンライン" data-summary="「うわっ、やわらかい」逗子の定食屋さんで、はじめて「みやじ豚」のトンカツを口にしたとき、思わず声が…">
+                <li class="entry-item" data-link="https://toyokeizai.net/articles/-/931223?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="3Kイメージ払拭｢みやじ豚｣育てた4代目の経営思想 | 外食 | 東洋経済オンライン" data-summary="「うわっ、やわらかい」逗子の定食屋さんで、はじめて「みやじ豚」のトンカツを口にしたとき、思わず声が…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://toyokeizai.net/articles/-/931223?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer">3Kイメージ払拭｢みやじ豚｣育てた4代目の経営思想 | 外食 | 東洋経済オンライン</a>
+                            <a href="https://toyokeizai.net/articles/-/931223?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">3Kイメージ払拭｢みやじ豚｣育てた4代目の経営思想 | 外食 | 東洋経済オンライン</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -354,13 +334,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="｢経済成長の正体は借金｣という不都合な真実 | 経済学 | 東洋経済オンライン" data-summary="現代社会において「GDP成長率」は国家の健全性を示す絶対的な指標だ。しかし、その華々しい数字を裏側で…">
+                <li class="entry-item" data-link="https://toyokeizai.net/articles/-/931574?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="｢経済成長の正体は借金｣という不都合な真実 | 経済学 | 東洋経済オンライン" data-summary="現代社会において「GDP成長率」は国家の健全性を示す絶対的な指標だ。しかし、その華々しい数字を裏側で…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://toyokeizai.net/articles/-/931574?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer">｢経済成長の正体は借金｣という不都合な真実 | 経済学 | 東洋経済オンライン</a>
+                            <a href="https://toyokeizai.net/articles/-/931574?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">｢経済成長の正体は借金｣という不都合な真実 | 経済学 | 東洋経済オンライン</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -377,13 +357,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="ハローワークで号泣…救いとなった職員のひと言 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン" data-summary="「今の会社で一生働く自信がない。でも転職活動もうまくいかない……」「特別なスキルがない自分には価値…">
+                <li class="entry-item" data-link="https://toyokeizai.net/articles/-/932193?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="ハローワークで号泣…救いとなった職員のひと言 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン" data-summary="「今の会社で一生働く自信がない。でも転職活動もうまくいかない……」「特別なスキルがない自分には価値…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://toyokeizai.net/articles/-/932193?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer">ハローワークで号泣…救いとなった職員のひと言 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン</a>
+                            <a href="https://toyokeizai.net/articles/-/932193?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">ハローワークで号泣…救いとなった職員のひと言 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -400,13 +380,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="トヨタ･ダイハツ･ホンダ注目スポーツカー3選 | スポーツカー | 東洋経済オンライン" data-summary="近年、国内ラインナップ的には少数派といえる国産スポーツカー。だが、2026年から2027年にかけては、興味…">
+                <li class="entry-item" data-link="https://toyokeizai.net/articles/-/932433?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="トヨタ･ダイハツ･ホンダ注目スポーツカー3選 | スポーツカー | 東洋経済オンライン" data-summary="近年、国内ラインナップ的には少数派といえる国産スポーツカー。だが、2026年から2027年にかけては、興味…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://toyokeizai.net/articles/-/932433?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer">トヨタ･ダイハツ･ホンダ注目スポーツカー3選 | スポーツカー | 東洋経済オンライン</a>
+                            <a href="https://toyokeizai.net/articles/-/932433?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">トヨタ･ダイハツ･ホンダ注目スポーツカー3選 | スポーツカー | 東洋経済オンライン</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -423,13 +403,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="｢東大は滑り止め｣一般に勝る､推薦合格者の学力 | 生まれつきの才能は不要 東大｢逆転合格｣の作法 | 東洋経済オンライン" data-summary="「頭がいい」といわれる人の特徴になるような能力というのは、先天的に決められている部分があると考える…">
+                <li class="entry-item" data-link="https://toyokeizai.net/articles/-/930097?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="｢東大は滑り止め｣一般に勝る､推薦合格者の学力 | 生まれつきの才能は不要 東大｢逆転合格｣の作法 | 東洋経済オンライン" data-summary="「頭がいい」といわれる人の特徴になるような能力というのは、先天的に決められている部分があると考える…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://toyokeizai.net/articles/-/930097?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer">｢東大は滑り止め｣一般に勝る､推薦合格者の学力 | 生まれつきの才能は不要 東大｢逆転合格｣の作法 | 東洋経済オンライン</a>
+                            <a href="https://toyokeizai.net/articles/-/930097?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">｢東大は滑り止め｣一般に勝る､推薦合格者の学力 | 生まれつきの才能は不要 東大｢逆転合格｣の作法 | 東洋経済オンライン</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -443,29 +423,6 @@
 
                     
                     <img src="https://tk.ismcdn.jp/mwimgs/a/4/1200w/img_a4cdbbb27fa15e297c5611e0b20fb0dc115189.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
-                <li class="entry-item" data-title="｢唐揚げ店→麻辣湯店｣転換映すブーム終焉の兆し | 外食 | 東洋経済オンライン" data-summary="近所の唐揚げ専門店が麻辣湯店になっていた……。こんな入れ替わりを、街で繰り返し見かける。もちろん唐…">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://toyokeizai.net/articles/-/932586?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer">｢唐揚げ店→麻辣湯店｣転換映すブーム終焉の兆し | 外食 | 東洋経済オンライン</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>5時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            近所の唐揚げ専門店が麻辣湯店になっていた……。こんな入れ替わりを、街で繰り返し見かける。もちろん唐…
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://tk.ismcdn.jp/mwimgs/4/4/1200w/img_447934e625dc0d5a847976fd450ba72b407657.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
                     
                 </li>
                 
@@ -499,13 +456,13 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-title="中小企業、8割が「DXを進めたことで作業が増えた」経験　なぜ中小のDXは進まない？" data-summary="中小企業のDXはなぜ進まないのか？ 実際、中小企業の8割が「DXを進めたことで作業が増えた」とも回答している。">
+                <li class="entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/03/news004.html" data-title="中小企業、8割が「DXを進めたことで作業が増えた」経験　なぜ中小のDXは進まない？" data-summary="中小企業のDXはなぜ進まないのか？ 実際、中小企業の8割が「DXを進めたことで作業が増えた」とも回答している。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.itmedia.co.jp/business/articles/2602/03/news004.html" target="_blank" rel="noopener noreferrer">中小企業、8割が「DXを進めたことで作業が増えた」経験　なぜ中小のDXは進まない？</a>
+                            <a href="https://www.itmedia.co.jp/business/articles/2602/03/news004.html" target="_blank" rel="noopener noreferrer" class="entry-link">中小企業、8割が「DXを進めたことで作業が増えた」経験　なぜ中小のDXは進まない？</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -520,13 +477,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="AIを組織に根付かせるには？　インサイダー情報検知AIを、現場の抵抗なく進められたワケ" data-summary="生成AIの導入は、多くの企業で頓挫している。しかし、大和アセットマネジメントは、LegalOn Technologiesと共同でAIシステムの開発を行い、順調に導入を進めている。その秘訣は何なのか？">
+                <li class="entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/03/news009.html" data-title="AIを組織に根付かせるには？　インサイダー情報検知AIを、現場の抵抗なく進められたワケ" data-summary="生成AIの導入は、多くの企業で頓挫している。しかし、大和アセットマネジメントは、LegalOn Technologiesと共同でAIシステムの開発を行い、順調に導入を進めている。その秘訣は何なのか？">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.itmedia.co.jp/business/articles/2602/03/news009.html" target="_blank" rel="noopener noreferrer">AIを組織に根付かせるには？　インサイダー情報検知AIを、現場の抵抗なく進められたワケ</a>
+                            <a href="https://www.itmedia.co.jp/business/articles/2602/03/news009.html" target="_blank" rel="noopener noreferrer" class="entry-link">AIを組織に根付かせるには？　インサイダー情報検知AIを、現場の抵抗なく進められたワケ</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -541,13 +498,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="6万円で苦戦したのに、なぜ8万円でヒットしたのか　イワタニが炊飯器の“居場所”を変えたワケ" data-summary="アウトドア向け炊飯器として登場し、6万円で苦戦したイワタニの炊飯器。機能はほぼ変えず、価格は8万円に引き上げた新モデルがヒットした。その背景には、用途や競合を見直し、商品の“居場所”を家庭に移した戦略があった。">
+                <li class="entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/03/news019.html" data-title="6万円で苦戦したのに、なぜ8万円でヒットしたのか　イワタニが炊飯器の“居場所”を変えたワケ" data-summary="アウトドア向け炊飯器として登場し、6万円で苦戦したイワタニの炊飯器。機能はほぼ変えず、価格は8万円に引き上げた新モデルがヒットした。その背景には、用途や競合を見直し、商品の“居場所”を家庭に移した戦略があった。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.itmedia.co.jp/business/articles/2602/03/news019.html" target="_blank" rel="noopener noreferrer">6万円で苦戦したのに、なぜ8万円でヒットしたのか　イワタニが炊飯器の“居場所”を変えたワケ</a>
+                            <a href="https://www.itmedia.co.jp/business/articles/2602/03/news019.html" target="_blank" rel="noopener noreferrer" class="entry-link">6万円で苦戦したのに、なぜ8万円でヒットしたのか　イワタニが炊飯器の“居場所”を変えたワケ</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -562,13 +519,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="私立大学の半数が赤字　売上高1位は「順天堂」、医療大学が勝ち残り" data-summary="私立大学を経営する545法人のうち、2025年3月期決算で半数超が赤字に陥った。売上高は増えたものの、物価高や人件費増で利益は急減。地方や小規模大学ほど苦境が深まり、医療系との格差が鮮明になっている。">
+                <li class="entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/03/news011.html" data-title="私立大学の半数が赤字　売上高1位は「順天堂」、医療大学が勝ち残り" data-summary="私立大学を経営する545法人のうち、2025年3月期決算で半数超が赤字に陥った。売上高は増えたものの、物価高や人件費増で利益は急減。地方や小規模大学ほど苦境が深まり、医療系との格差が鮮明になっている。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.itmedia.co.jp/business/articles/2602/03/news011.html" target="_blank" rel="noopener noreferrer">私立大学の半数が赤字　売上高1位は「順天堂」、医療大学が勝ち残り</a>
+                            <a href="https://www.itmedia.co.jp/business/articles/2602/03/news011.html" target="_blank" rel="noopener noreferrer" class="entry-link">私立大学の半数が赤字　売上高1位は「順天堂」、医療大学が勝ち残り</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -583,13 +540,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="2月の飲食料品値上げは674品目　前年から6割減、値上げペースに一服感" data-summary="帝国データバンクの調査によると、2月の飲食料品値上げは674品目にとどまり、前年同月から大幅に減少した。">
+                <li class="entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/03/news027.html" data-title="2月の飲食料品値上げは674品目　前年から6割減、値上げペースに一服感" data-summary="帝国データバンクの調査によると、2月の飲食料品値上げは674品目にとどまり、前年同月から大幅に減少した。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.itmedia.co.jp/business/articles/2602/03/news027.html" target="_blank" rel="noopener noreferrer">2月の飲食料品値上げは674品目　前年から6割減、値上げペースに一服感</a>
+                            <a href="https://www.itmedia.co.jp/business/articles/2602/03/news027.html" target="_blank" rel="noopener noreferrer" class="entry-link">2月の飲食料品値上げは674品目　前年から6割減、値上げペースに一服感</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -604,13 +561,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="島民「乗りたくても乗れない」沖縄の離島便　“マイル修行”で利用集中、航空会社が対策" data-summary="沖縄県内で離島便を運航する琉球エアーコミューターは2日、連日満席が続いている沖縄県の宮古島と多良間島を結ぶ航空路線について、日本航空グループのポイントキャンペーンの対象外にすると明らかにした。">
+                <li class="entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/02/news103.html" data-title="島民「乗りたくても乗れない」沖縄の離島便　“マイル修行”で利用集中、航空会社が対策" data-summary="沖縄県内で離島便を運航する琉球エアーコミューターは2日、連日満席が続いている沖縄県の宮古島と多良間島を結ぶ航空路線について、日本航空グループのポイントキャンペーンの対象外にすると明らかにした。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.itmedia.co.jp/business/articles/2602/02/news103.html" target="_blank" rel="noopener noreferrer">島民「乗りたくても乗れない」沖縄の離島便　“マイル修行”で利用集中、航空会社が対策</a>
+                            <a href="https://www.itmedia.co.jp/business/articles/2602/02/news103.html" target="_blank" rel="noopener noreferrer" class="entry-link">島民「乗りたくても乗れない」沖縄の離島便　“マイル修行”で利用集中、航空会社が対策</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -625,13 +582,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="軽EV戦国時代が始まる　ダイハツ参入で「3強＋BYD」が出そろう" data-summary="ダイハツ工業は2日、同社初の量産EVとなる軽商用車「e－ハイゼット カーゴ」と「e－アトレー」を発売したと発表した。">
+                <li class="entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/02/news101.html" data-title="軽EV戦国時代が始まる　ダイハツ参入で「3強＋BYD」が出そろう" data-summary="ダイハツ工業は2日、同社初の量産EVとなる軽商用車「e－ハイゼット カーゴ」と「e－アトレー」を発売したと発表した。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.itmedia.co.jp/business/articles/2602/02/news101.html" target="_blank" rel="noopener noreferrer">軽EV戦国時代が始まる　ダイハツ参入で「3強＋BYD」が出そろう</a>
+                            <a href="https://www.itmedia.co.jp/business/articles/2602/02/news101.html" target="_blank" rel="noopener noreferrer" class="entry-link">軽EV戦国時代が始まる　ダイハツ参入で「3強＋BYD」が出そろう</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -646,11 +603,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="生成AIを使って不安に感じること　2位「誤った情報に気付かないまま使う」、1位は？" data-summary="LINEヤフーは、過去1年以内に生成AIサービスを利用したことがある人を対象に「生成AI利用に関する意識調査」を発表した。調査によると……。">
+                <li class="entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/02/news057.html" data-title="生成AIを使って不安に感じること　2位「誤った情報に気付かないまま使う」、1位は？" data-summary="LINEヤフーは、過去1年以内に生成AIサービスを利用したことがある人を対象に「生成AI利用に関する意識調査」を発表した。調査によると……。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://www.itmedia.co.jp/business/articles/2602/02/news057.html" target="_blank" rel="noopener noreferrer">生成AIを使って不安に感じること　2位「誤った情報に気付かないまま使う」、1位は？</a>
+                            <a href="https://www.itmedia.co.jp/business/articles/2602/02/news057.html" target="_blank" rel="noopener noreferrer" class="entry-link">生成AIを使って不安に感じること　2位「誤った情報に気付かないまま使う」、1位は？</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -665,11 +622,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="会社経営の不安、「事業継承」を抑えた1位は？　経営者に調査" data-summary="経営者はどのような会社経営の不安を抱えているのか？ メットライフ生命保険の調査から明らかになった。">
+                <li class="entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/02/news007.html" data-title="会社経営の不安、「事業継承」を抑えた1位は？　経営者に調査" data-summary="経営者はどのような会社経営の不安を抱えているのか？ メットライフ生命保険の調査から明らかになった。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://www.itmedia.co.jp/business/articles/2602/02/news007.html" target="_blank" rel="noopener noreferrer">会社経営の不安、「事業継承」を抑えた1位は？　経営者に調査</a>
+                            <a href="https://www.itmedia.co.jp/business/articles/2602/02/news007.html" target="_blank" rel="noopener noreferrer" class="entry-link">会社経営の不安、「事業継承」を抑えた1位は？　経営者に調査</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -684,11 +641,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="国内のイノベーション実施率、10年で3.5ポイント低下　「意欲はあるが動けない」企業が抱えるジレンマ" data-summary="「イノベーションは、企業の競争力を高めるために欠かせない」。そう語られる場面は多いが、実際に行動に移せている企業はどれほどあるのか。帝国データバンクの調査から、国内企業のイノベーションの現在地が見えてきた。">
+                <li class="entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/02/news040.html" data-title="国内のイノベーション実施率、10年で3.5ポイント低下　「意欲はあるが動けない」企業が抱えるジレンマ" data-summary="「イノベーションは、企業の競争力を高めるために欠かせない」。そう語られる場面は多いが、実際に行動に移せている企業はどれほどあるのか。帝国データバンクの調査から、国内企業のイノベーションの現在地が見えてきた。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://www.itmedia.co.jp/business/articles/2602/02/news040.html" target="_blank" rel="noopener noreferrer">国内のイノベーション実施率、10年で3.5ポイント低下　「意欲はあるが動けない」企業が抱えるジレンマ</a>
+                            <a href="https://www.itmedia.co.jp/business/articles/2602/02/news040.html" target="_blank" rel="noopener noreferrer" class="entry-link">国内のイノベーション実施率、10年で3.5ポイント低下　「意欲はあるが動けない」企業が抱えるジレンマ</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -711,12 +668,47 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // ▼▼▼ 既読管理機能 ▼▼▼
+            const STORAGE_KEY = 'rss_read_items';
+            // LocalStorageから既読リストを取得 (Setで管理して高速化)
+            let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+
+            const entryItems = document.querySelectorAll('.entry-item');
+            
+            // 初期表示: 既読状態の反映
+            entryItems.forEach(item => {
+                const link = item.dataset.link;
+                if (readItems.has(link)) {
+                    item.classList.add('read');
+                }
+                
+                // クリックイベントの登録
+                const anchor = item.querySelector('a.entry-link');
+                anchor.addEventListener('click', function() {
+                    markAsRead(link, item);
+                });
+            });
+
+            function markAsRead(link, itemElement) {
+                // UIを即座に更新
+                itemElement.classList.add('read');
+                
+                // ストレージに保存
+                readItems.add(link);
+                // 容量制限のため、古いものから消す (最大1000件保持)
+                if (readItems.size > 1000) {
+                    const array = Array.from(readItems);
+                    readItems = new Set(array.slice(array.length - 1000));
+                }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
+            }
+            // ▲▲▲ 既読管理機能 ▲▲▲
+
+            // 検索機能
             const searchInput = document.getElementById('searchInput');
-            const entries = document.querySelectorAll('.entry-item');
             const sections = document.querySelectorAll('.feed-section');
 
-            // 元のHTMLを保存（ハイライト解除用）
-            entries.forEach(entry => {
+            entryItems.forEach(entry => {
                 const titleLink = entry.querySelector('.entry-title a');
                 const summaryDiv = entry.querySelector('.entry-summary');
                 entry.dataset.originalTitleHtml = titleLink.innerHTML;
@@ -726,15 +718,13 @@
             searchInput.addEventListener('input', function(e) {
                 const term = e.target.value.trim().toLowerCase();
 
-                // 検索リセット時の処理
                 if (term === '') {
                     sections.forEach(sec => {
                         sec.style.display = '';
-                        sec.open = false; // 全て閉じる
+                        sec.open = false;
                     });
-                    entries.forEach(entry => {
+                    entryItems.forEach(entry => {
                         entry.style.display = '';
-                        // ハイライト解除
                         const titleLink = entry.querySelector('.entry-title a');
                         const summaryDiv = entry.querySelector('.entry-summary');
                         titleLink.innerHTML = entry.dataset.originalTitleHtml;
@@ -743,7 +733,6 @@
                     return;
                 }
 
-                // 検索実行
                 sections.forEach(section => {
                     let hasVisibleEntry = false;
                     const sectionEntries = section.querySelectorAll('.entry-item');
@@ -755,15 +744,12 @@
                         if (titleText.includes(term) || summaryText.includes(term)) {
                             entry.style.display = '';
                             hasVisibleEntry = true;
-                            
-                            // ハイライト処理
                             highlightText(entry, term);
                         } else {
                             entry.style.display = 'none';
                         }
                     });
 
-                    // ヒットする記事があればセクションを開いて表示
                     if (hasVisibleEntry) {
                         section.style.display = '';
                         section.open = true;
@@ -776,17 +762,12 @@
             function highlightText(entry, term) {
                 const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
                 const highlightMark = '<mark>$1</mark>';
-
-                // タイトルのハイライト
                 const titleLink = entry.querySelector('.entry-title a');
                 titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
-
-                // サマリーのハイライト
                 const summaryDiv = entry.querySelector('.entry-summary');
                 summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
             }
 
-            // 正規表現のエスケープ処理
             function escapeRegExp(string) {
                 return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             }

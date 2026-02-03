@@ -13,7 +13,8 @@
             --accent: #007bff;
             --new-badge: #e74c3c;
             --border: #e9ecef;
-            --highlight: #fff3cd; /* ハイライト色 */
+            --highlight: #fff3cd;
+            --read-color: #b0b0b0; /* 既読記事の色 */
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -33,124 +34,80 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .nav-container {
-            max-width: 800px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between; /* 検索窓とリンクを左右に配置 */
-            flex-wrap: wrap;
-            gap: 10px;
+            max-width: 800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
         }
-        .nav-links {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
+        .nav-links { display: flex; gap: 10px; overflow-x: auto; white-space: nowrap; }
         .nav-link {
-            color: #fff;
-            text-decoration: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 600;
-            opacity: 0.8;
+            color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 14px; font-weight: 600; opacity: 0.8;
         }
         .nav-link.active { opacity: 1; background-color: var(--accent); }
 
-        /* 検索ボックスのデザイン */
-        .search-box {
-            position: relative;
-            flex-grow: 1;
-            max-width: 300px;
-        }
+        .search-box { position: relative; flex-grow: 1; max-width: 300px; }
         .search-input {
-            width: 100%;
-            padding: 6px 10px;
-            border-radius: 4px;
-            border: none;
-            font-size: 14px;
-            background-color: rgba(255,255,255,0.9);
-            box-sizing: border-box;
+            width: 100%; padding: 6px 10px; border-radius: 4px; border: none; font-size: 14px; background-color: rgba(255,255,255,0.9); box-sizing: border-box;
         }
         .search-input:focus { outline: 2px solid var(--accent); }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         header { margin-bottom: 20px; text-align: center; }
         h1 { font-size: 22px; margin: 0; color: #333; }
         .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
 
         details {
-            background: var(--card-bg);
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
-            border: 1px solid var(--border);
-            overflow: hidden;
+            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
         }
         summary {
-            list-style: none;
-            cursor: pointer;
-            padding: 15px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: #fff;
-            transition: background 0.2s;
+            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff; transition: background 0.2s;
         }
-        summary::-webkit-details-marker { display: none; }
         summary:hover { background-color: #f8f9fa; }
+        summary::-webkit-details-marker { display: none; }
         
         .feed-header { display: flex; align-items: center; gap: 10px; font-size: 16px; }
         .feed-favicon { width: 16px; height: 16px; border-radius: 2px; }
         .feed-status { font-size: 12px; color: var(--new-badge); font-weight: normal; }
 
-        .entry-list {
-            border-top: 1px solid var(--border);
-            padding: 0;
-            margin: 0;
-            list-style: none;
-        }
+        .entry-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
         .entry-item {
-            padding: 15px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            gap: 15px;
-            align-items: flex-start;
+            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start; transition: background-color 0.2s;
         }
         .entry-item:last-child { border-bottom: none; }
+
+        /* ▼▼▼ 既読記事のスタイル ▼▼▼ */
+        .entry-item.read {
+            background-color: #fcfcfc;
+        }
+        .entry-item.read .entry-title a {
+            color: var(--read-color);
+        }
+        .entry-item.read .entry-summary {
+            color: #d0d0d0;
+        }
+        .entry-item.read .entry-thumbnail {
+            opacity: 0.5;
+            filter: grayscale(100%);
+        }
+        .entry-item.read .new-badge {
+            background-color: #ccc; /* NEWバッジもグレーに */
+        }
+        /* ▲▲▲ 既読記事のスタイル ▲▲▲ */
         
         .entry-content-wrapper { flex: 1; min-width: 0; }
-        .entry-thumbnail {
-            width: 100px; height: 75px; object-fit: cover;
-            border-radius: 4px; flex-shrink: 0; border: 1px solid #eee;
-        }
+        .entry-thumbnail { width: 100px; height: 75px; object-fit: cover; border-radius: 4px; flex-shrink: 0; border: 1px solid #eee; }
 
         .entry-title { font-size: 16px; margin: 0 0 5px 0; line-height: 1.4; }
         .entry-title a { text-decoration: none; color: var(--text-main); }
         .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
         .new-badge {
-            display: inline-block; background-color: var(--new-badge); color: white;
-            font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px;
-            vertical-align: middle; font-weight: bold;
+            display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold;
         }
 
         .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; }
         .entry-summary {
-            font-size: 13px; color: #555; margin-top: 8px;
-            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-            overflow: hidden; opacity: 0.8;
+            font-size: 13px; color: #555; margin-top: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.8;
         }
         .entry-summary img { display: none; }
 
-        /* ハイライト用スタイル */
         mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
 
         @media (max-width: 600px) {
@@ -222,7 +179,7 @@
     <div class="container">
         <header>
             <h1>エンタメ・コラム</h1>
-            <div class="last-updated">最終更新: 02/03 11:31</div>
+            <div class="last-updated">最終更新: 02/03 11:53</div>
         </header>
 
         
@@ -239,17 +196,17 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-title="『鳥貴族』40周年で初めて発売した福袋を買ってみた / 忘れた頃に届いたが充実の内容" data-summary="焼き鳥屋の鳥貴族が、創業40年を迎えたらしい。周年を祝して、トリキ初となる福袋を販売。昨年（2025）11月頭に、3万セット限定で予約がはじまった（2026年現在終了）。発売日に、店頭で申し込みチケットを購入した記者。あ […]">
+                <li class="entry-item" data-link="https://rocketnews24.com/2026/02/03/2644546/" data-title="『鳥貴族』40周年で初めて発売した福袋を買ってみた / 忘れた頃に届いたが充実の内容" data-summary="焼き鳥屋の鳥貴族が、創業40年を迎えたらしい。周年を祝して、トリキ初となる福袋を販売。昨年（2025）11月頭に、3万セット限定で予約がはじまった（2026年現在終了）。発売日に、店頭で申し込みチケットを購入した記者。あ […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://rocketnews24.com/2026/02/03/2644546/" target="_blank" rel="noopener noreferrer">『鳥貴族』40周年で初めて発売した福袋を買ってみた / 忘れた頃に届いたが充実の内容</a>
+                            <a href="https://rocketnews24.com/2026/02/03/2644546/" target="_blank" rel="noopener noreferrer" class="entry-link">『鳥貴族』40周年で初めて発売した福袋を買ってみた / 忘れた頃に届いたが充実の内容</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1分前</span>
+                            <span>23分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -262,17 +219,17 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="「オリーブの丘」が忘れられなくて再び豪遊 →『1人用カウンター席』が最強すぎて引っ越しを考えた" data-summary="ずっと忘れられないでいた。去年の11月に初めて出会って以来、私（あひるねこ）はキミに首ったけさ。ああ、早くまた会いたい。「イタリア食堂 オリーブの丘」に。 私は重度のサイゼ信者であるが、昨年初めてオリーブの丘に行ってみた […]">
+                <li class="entry-item" data-link="https://rocketnews24.com/2026/02/03/2642811/" data-title="「オリーブの丘」が忘れられなくて再び豪遊 →『1人用カウンター席』が最強すぎて引っ越しを考えた" data-summary="ずっと忘れられないでいた。去年の11月に初めて出会って以来、私（あひるねこ）はキミに首ったけさ。ああ、早くまた会いたい。「イタリア食堂 オリーブの丘」に。 私は重度のサイゼ信者であるが、昨年初めてオリーブの丘に行ってみた […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://rocketnews24.com/2026/02/03/2642811/" target="_blank" rel="noopener noreferrer">「オリーブの丘」が忘れられなくて再び豪遊 →『1人用カウンター席』が最強すぎて引っ越しを考えた</a>
+                            <a href="https://rocketnews24.com/2026/02/03/2642811/" target="_blank" rel="noopener noreferrer" class="entry-link">「オリーブの丘」が忘れられなくて再び豪遊 →『1人用カウンター席』が最強すぎて引っ越しを考えた</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>31分前</span>
+                            <span>53分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -285,13 +242,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="食が細くなったので叙々苑で高い肉を一皿だけ食べて帰ってみた / 加齢を逆手にとった逆転グルメ" data-summary="これは加齢によるものなのか、妊娠によるものなのか……。 体質が変わって、いきなり食が細くなってしまった。脂っこいもの、味の濃いもの、量が多いものは全然ダメ。円安と物価高の影響で食べ放題が人気らしいけど、今、食べ放題なんか […]">
+                <li class="entry-item" data-link="https://rocketnews24.com/2026/02/03/2642127/" data-title="食が細くなったので叙々苑で高い肉を一皿だけ食べて帰ってみた / 加齢を逆手にとった逆転グルメ" data-summary="これは加齢によるものなのか、妊娠によるものなのか……。 体質が変わって、いきなり食が細くなってしまった。脂っこいもの、味の濃いもの、量が多いものは全然ダメ。円安と物価高の影響で食べ放題が人気らしいけど、今、食べ放題なんか […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://rocketnews24.com/2026/02/03/2642127/" target="_blank" rel="noopener noreferrer">食が細くなったので叙々苑で高い肉を一皿だけ食べて帰ってみた / 加齢を逆手にとった逆転グルメ</a>
+                            <a href="https://rocketnews24.com/2026/02/03/2642127/" target="_blank" rel="noopener noreferrer" class="entry-link">食が細くなったので叙々苑で高い肉を一皿だけ食べて帰ってみた / 加齢を逆手にとった逆転グルメ</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -308,13 +265,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="なぜハーゲンダッツは年末年始に “いちご味” を出すのか聞いてみた。新作「贅沢いちごミルク」と「ロイヤルミルクティークランチ」も実食" data-summary="気づいているだろうか。 ハーゲンダッツは実は毎年、年末年始にいちごフレーバーを投入していることを（とはいえ、同時期にいちご味を出すメーカーは他にもあるのだが）。 2026年1月20日にも、クリスピーサンド「贅沢いちごミル […]">
+                <li class="entry-item" data-link="https://rocketnews24.com/2026/02/03/264479/" data-title="なぜハーゲンダッツは年末年始に “いちご味” を出すのか聞いてみた。新作「贅沢いちごミルク」と「ロイヤルミルクティークランチ」も実食" data-summary="気づいているだろうか。 ハーゲンダッツは実は毎年、年末年始にいちごフレーバーを投入していることを（とはいえ、同時期にいちご味を出すメーカーは他にもあるのだが）。 2026年1月20日にも、クリスピーサンド「贅沢いちごミル […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://rocketnews24.com/2026/02/03/264479/" target="_blank" rel="noopener noreferrer">なぜハーゲンダッツは年末年始に “いちご味” を出すのか聞いてみた。新作「贅沢いちごミルク」と「ロイヤルミルクティークランチ」も実食</a>
+                            <a href="https://rocketnews24.com/2026/02/03/264479/" target="_blank" rel="noopener noreferrer" class="entry-link">なぜハーゲンダッツは年末年始に “いちご味” を出すのか聞いてみた。新作「贅沢いちごミルク」と「ロイヤルミルクティークランチ」も実食</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -331,13 +288,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="Geminiに「私の『脳内の部屋』のイメージを描いて」とお願いすると面白い / 夢占いのような深い回答を得られる" data-summary="私（佐藤）は日々Geniniと対話している。自分の考えを整理したり、アイディアやヒントを得るために言葉を投げ続けている。いわゆる「壁打ち」というヤツだ。あちらこちらに話題が飛んでも、必ず返してくれる。そのやり取りが心地よ […]">
+                <li class="entry-item" data-link="https://rocketnews24.com/2026/02/03/2644121/" data-title="Geminiに「私の『脳内の部屋』のイメージを描いて」とお願いすると面白い / 夢占いのような深い回答を得られる" data-summary="私（佐藤）は日々Geniniと対話している。自分の考えを整理したり、アイディアやヒントを得るために言葉を投げ続けている。いわゆる「壁打ち」というヤツだ。あちらこちらに話題が飛んでも、必ず返してくれる。そのやり取りが心地よ […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://rocketnews24.com/2026/02/03/2644121/" target="_blank" rel="noopener noreferrer">Geminiに「私の『脳内の部屋』のイメージを描いて」とお願いすると面白い / 夢占いのような深い回答を得られる</a>
+                            <a href="https://rocketnews24.com/2026/02/03/2644121/" target="_blank" rel="noopener noreferrer" class="entry-link">Geminiに「私の『脳内の部屋』のイメージを描いて」とお願いすると面白い / 夢占いのような深い回答を得られる</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -354,13 +311,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="いつ撮ったの!? 盗撮をされていた青年！　四コマサボタージュBYD第292回「ストーカーの部屋」" data-summary="ドラマとかで見るストーカーの部屋で大量の大小様々なサイズの写真が貼ってあったりするのだけど、明らかにそのサイズは業者さんに頼まないとプリントできないだろってのがあったりするよね。 漫画：ザックKT-4">
+                <li class="entry-item" data-link="https://rocketnews24.com/2026/02/03/2640464/" data-title="いつ撮ったの!? 盗撮をされていた青年！　四コマサボタージュBYD第292回「ストーカーの部屋」" data-summary="ドラマとかで見るストーカーの部屋で大量の大小様々なサイズの写真が貼ってあったりするのだけど、明らかにそのサイズは業者さんに頼まないとプリントできないだろってのがあったりするよね。 漫画：ザックKT-4">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://rocketnews24.com/2026/02/03/2640464/" target="_blank" rel="noopener noreferrer">いつ撮ったの!? 盗撮をされていた青年！　四コマサボタージュBYD第292回「ストーカーの部屋」</a>
+                            <a href="https://rocketnews24.com/2026/02/03/2640464/" target="_blank" rel="noopener noreferrer" class="entry-link">いつ撮ったの!? 盗撮をされていた青年！　四コマサボタージュBYD第292回「ストーカーの部屋」</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -377,13 +334,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="【女ひとり飲み】激安焼肉屋で飲み放題！ 読者に勧められた「ともさんかく」に突撃したら終電を失った / 千葉県柏" data-summary="ある日、編集部にこんなリクエストが届いた。 なんでも「柏にある『ともさんかく』というお店が、焼肉屋なのに飲み屋感覚で使えて、コスパも良く、ひとり飲みにも向いている店」とのこと。 しかも、ひとりでも飲み放題が付けられるらし […]">
+                <li class="entry-item" data-link="https://rocketnews24.com/2026/02/02/2643652/" data-title="【女ひとり飲み】激安焼肉屋で飲み放題！ 読者に勧められた「ともさんかく」に突撃したら終電を失った / 千葉県柏" data-summary="ある日、編集部にこんなリクエストが届いた。 なんでも「柏にある『ともさんかく』というお店が、焼肉屋なのに飲み屋感覚で使えて、コスパも良く、ひとり飲みにも向いている店」とのこと。 しかも、ひとりでも飲み放題が付けられるらし […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://rocketnews24.com/2026/02/02/2643652/" target="_blank" rel="noopener noreferrer">【女ひとり飲み】激安焼肉屋で飲み放題！ 読者に勧められた「ともさんかく」に突撃したら終電を失った / 千葉県柏</a>
+                            <a href="https://rocketnews24.com/2026/02/02/2643652/" target="_blank" rel="noopener noreferrer" class="entry-link">【女ひとり飲み】激安焼肉屋で飲み放題！ 読者に勧められた「ともさんかく」に突撃したら終電を失った / 千葉県柏</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -400,13 +357,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="【節分】ケンタッキーの「フライドチキンの皮」で恵方巻きを作ると美味しい / 注文は必ずオリジナルチキンで" data-summary="2月3日は節分、もう明日だ。恵方巻きを予約していないのなら、おすすめのレシピがあるぞ。それはケンタッキーを使うレシピだ。チキンをのり巻きの具材にするレシピではなく、フライドチキンの皮でご飯を巻くのり巻きである。 思いつき […]">
+                <li class="entry-item" data-link="https://rocketnews24.com/2026/02/02/2644874/" data-title="【節分】ケンタッキーの「フライドチキンの皮」で恵方巻きを作ると美味しい / 注文は必ずオリジナルチキンで" data-summary="2月3日は節分、もう明日だ。恵方巻きを予約していないのなら、おすすめのレシピがあるぞ。それはケンタッキーを使うレシピだ。チキンをのり巻きの具材にするレシピではなく、フライドチキンの皮でご飯を巻くのり巻きである。 思いつき […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://rocketnews24.com/2026/02/02/2644874/" target="_blank" rel="noopener noreferrer">【節分】ケンタッキーの「フライドチキンの皮」で恵方巻きを作ると美味しい / 注文は必ずオリジナルチキンで</a>
+                            <a href="https://rocketnews24.com/2026/02/02/2644874/" target="_blank" rel="noopener noreferrer" class="entry-link">【節分】ケンタッキーの「フライドチキンの皮」で恵方巻きを作ると美味しい / 注文は必ずオリジナルチキンで</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -423,13 +380,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="そういえばセブンが「焼きたてピザを提供するサービス」を始めていたので、初体験してみた / 店舗限定なれど一食の価値あり" data-summary="先日、とあるセブンイレブンを訪れた時のことである。カウンターの前に、「お店で焼いたピザ」を提供しているとの表示があった。そういえばと、同店が店舗限定で「焼きたてのピザを販売するサービス」を開始していたことを、その時になっ […]">
+                <li class="entry-item" data-link="https://rocketnews24.com/2026/02/02/2642789/" data-title="そういえばセブンが「焼きたてピザを提供するサービス」を始めていたので、初体験してみた / 店舗限定なれど一食の価値あり" data-summary="先日、とあるセブンイレブンを訪れた時のことである。カウンターの前に、「お店で焼いたピザ」を提供しているとの表示があった。そういえばと、同店が店舗限定で「焼きたてのピザを販売するサービス」を開始していたことを、その時になっ […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://rocketnews24.com/2026/02/02/2642789/" target="_blank" rel="noopener noreferrer">そういえばセブンが「焼きたてピザを提供するサービス」を始めていたので、初体験してみた / 店舗限定なれど一食の価値あり</a>
+                            <a href="https://rocketnews24.com/2026/02/02/2642789/" target="_blank" rel="noopener noreferrer" class="entry-link">そういえばセブンが「焼きたてピザを提供するサービス」を始めていたので、初体験してみた / 店舗限定なれど一食の価値あり</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -446,13 +403,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="楽天で「平成女児ガチャ福袋2026」を買ってみたら、シールとシール帳と “懐かしい記憶” が入っていた" data-summary="「平成一桁ガチばばあ」や「平成レトロ」といったワードが話題になって久しいが、まさにぴったりな福袋を楽天にて発見した。 その名も、「平成女児ガチャ福袋2026（1500円）」である。 シール交換に代表されるように平成女児文 […]">
+                <li class="entry-item" data-link="https://rocketnews24.com/2026/02/02/2643141/" data-title="楽天で「平成女児ガチャ福袋2026」を買ってみたら、シールとシール帳と “懐かしい記憶” が入っていた" data-summary="「平成一桁ガチばばあ」や「平成レトロ」といったワードが話題になって久しいが、まさにぴったりな福袋を楽天にて発見した。 その名も、「平成女児ガチャ福袋2026（1500円）」である。 シール交換に代表されるように平成女児文 […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://rocketnews24.com/2026/02/02/2643141/" target="_blank" rel="noopener noreferrer">楽天で「平成女児ガチャ福袋2026」を買ってみたら、シールとシール帳と “懐かしい記憶” が入っていた</a>
+                            <a href="https://rocketnews24.com/2026/02/02/2643141/" target="_blank" rel="noopener noreferrer" class="entry-link">楽天で「平成女児ガチャ福袋2026」を買ってみたら、シールとシール帳と “懐かしい記憶” が入っていた</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -485,13 +442,13 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-title="Microsoftの名前で届く偽メール。高額請求に焦る前に確認したいこと" data-summary="ブランドのなりすまし詐欺が巧妙化する中、たとえ送信元が大手企業のドメインであっても、油断できない時代がやってきました。今回、Ars Technicaが明らかにしたのは、Microsoftのサブスクリプション機能を逆手に取った悪質な手口です。">
+                <li class="entry-item" data-link="https://www.lifehacker.jp/article/2602microsoft-phishing-email-scam/" data-title="Microsoftの名前で届く偽メール。高額請求に焦る前に確認したいこと" data-summary="ブランドのなりすまし詐欺が巧妙化する中、たとえ送信元が大手企業のドメインであっても、油断できない時代がやってきました。今回、Ars Technicaが明らかにしたのは、Microsoftのサブスクリプション機能を逆手に取った悪質な手口です。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.lifehacker.jp/article/2602microsoft-phishing-email-scam/" target="_blank" rel="noopener noreferrer">Microsoftの名前で届く偽メール。高額請求に焦る前に確認したいこと</a>
+                            <a href="https://www.lifehacker.jp/article/2602microsoft-phishing-email-scam/" target="_blank" rel="noopener noreferrer" class="entry-link">Microsoftの名前で届く偽メール。高額請求に焦る前に確認したいこと</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -506,13 +463,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="【毎日書評】ノルマなし、競争なし。それでも業績が伸び続ける「自立型組織」のつくり方" data-summary="【毎日書評】『社員が幸せと感じてくれる会社のつくり方』（野嶋康敬 著、日本実業出版社）より、ノルマなし、競争なし。それでも業績が伸び続ける「自立型組織」はなぜ幸せなのか？解説します。">
+                <li class="entry-item" data-link="https://www.lifehacker.jp/article/2602-book_to_read-1879/" data-title="【毎日書評】ノルマなし、競争なし。それでも業績が伸び続ける「自立型組織」のつくり方" data-summary="【毎日書評】『社員が幸せと感じてくれる会社のつくり方』（野嶋康敬 著、日本実業出版社）より、ノルマなし、競争なし。それでも業績が伸び続ける「自立型組織」はなぜ幸せなのか？解説します。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.lifehacker.jp/article/2602-book_to_read-1879/" target="_blank" rel="noopener noreferrer">【毎日書評】ノルマなし、競争なし。それでも業績が伸び続ける「自立型組織」のつくり方</a>
+                            <a href="https://www.lifehacker.jp/article/2602-book_to_read-1879/" target="_blank" rel="noopener noreferrer" class="entry-link">【毎日書評】ノルマなし、競争なし。それでも業績が伸び続ける「自立型組織」のつくり方</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -527,13 +484,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="寝室寒すぎ…に終止符うてた！断熱カーテンライナーはひっかけるだけ簡単、早く使えばよかった…" data-summary="年内最後のビッグセール「Amazon ブラックフライデー＜12/1(月)23:59まで＞」が開催中！昨年導入した明和グラビアの断熱カーテンライナーを1年使って「これはいい！」と実感中。カーテンライナーを導入するメリットをお伝えします。">
+                <li class="entry-item" data-link="https://www.lifehacker.jp/article/amazon-curtain-liner/" data-title="寝室寒すぎ…に終止符うてた！断熱カーテンライナーはひっかけるだけ簡単、早く使えばよかった…" data-summary="年内最後のビッグセール「Amazon ブラックフライデー＜12/1(月)23:59まで＞」が開催中！昨年導入した明和グラビアの断熱カーテンライナーを1年使って「これはいい！」と実感中。カーテンライナーを導入するメリットをお伝えします。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.lifehacker.jp/article/amazon-curtain-liner/" target="_blank" rel="noopener noreferrer">寝室寒すぎ…に終止符うてた！断熱カーテンライナーはひっかけるだけ簡単、早く使えばよかった…</a>
+                            <a href="https://www.lifehacker.jp/article/amazon-curtain-liner/" target="_blank" rel="noopener noreferrer" class="entry-link">寝室寒すぎ…に終止符うてた！断熱カーテンライナーはひっかけるだけ簡単、早く使えばよかった…</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -548,13 +505,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="「カード3枚だけで暮らす」ってアリ。持ち物を棚卸しするスマホ背面アクセサリー" data-summary="Nothing Phone (3a)＋MagSafe対応ケースで「M-Pull Tab Stand」を試用。プルタブでカードがサッと出て、スタンド＆バンドで“出す・置く・持つ”が背面に集約。もう、財布を持たずに外出できちゃうかも？">
+                <li class="entry-item" data-link="https://www.lifehacker.jp/article/2602-lht-sinjimoru-phone-case/" data-title="「カード3枚だけで暮らす」ってアリ。持ち物を棚卸しするスマホ背面アクセサリー" data-summary="Nothing Phone (3a)＋MagSafe対応ケースで「M-Pull Tab Stand」を試用。プルタブでカードがサッと出て、スタンド＆バンドで“出す・置く・持つ”が背面に集約。もう、財布を持たずに外出できちゃうかも？">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.lifehacker.jp/article/2602-lht-sinjimoru-phone-case/" target="_blank" rel="noopener noreferrer">「カード3枚だけで暮らす」ってアリ。持ち物を棚卸しするスマホ背面アクセサリー</a>
+                            <a href="https://www.lifehacker.jp/article/2602-lht-sinjimoru-phone-case/" target="_blank" rel="noopener noreferrer" class="entry-link">「カード3枚だけで暮らす」ってアリ。持ち物を棚卸しするスマホ背面アクセサリー</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -569,13 +526,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="立てかけながらスマホ充電＋αをかなえる！「高スぺパ」の充電ツール厳選してみた" data-summary="AmazonスマイルSALE＜2/2(火)23:59まで＞が開催中！">
+                <li class="entry-item" data-link="https://www.lifehacker.jp/article/amazon-sale-phone-battery-stand/" data-title="立てかけながらスマホ充電＋αをかなえる！「高スぺパ」の充電ツール厳選してみた" data-summary="AmazonスマイルSALE＜2/2(火)23:59まで＞が開催中！">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.lifehacker.jp/article/amazon-sale-phone-battery-stand/" target="_blank" rel="noopener noreferrer">立てかけながらスマホ充電＋αをかなえる！「高スぺパ」の充電ツール厳選してみた</a>
+                            <a href="https://www.lifehacker.jp/article/amazon-sale-phone-battery-stand/" target="_blank" rel="noopener noreferrer" class="entry-link">立てかけながらスマホ充電＋αをかなえる！「高スぺパ」の充電ツール厳選してみた</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -590,13 +547,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="Gemini×勉強術：毎日20時に問題をつくって送ってもらおう" data-summary="Geminiを最強の学習パートナーに変える活用術を公開。薬剤師国家試験の過去問を使ったクイズ化ハックや、学習の「摩擦」を減らすスケジュール管理術をプロの視点で解説します。AIに「代わりに学ばせる」のではなく、自らの能力を増幅させるための思考法とは。">
+                <li class="entry-item" data-link="https://www.lifehacker.jp/article/2602-this-gemini-study-trick-works-way-better-than-rereading-notes/" data-title="Gemini×勉強術：毎日20時に問題をつくって送ってもらおう" data-summary="Geminiを最強の学習パートナーに変える活用術を公開。薬剤師国家試験の過去問を使ったクイズ化ハックや、学習の「摩擦」を減らすスケジュール管理術をプロの視点で解説します。AIに「代わりに学ばせる」のではなく、自らの能力を増幅させるための思考法とは。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.lifehacker.jp/article/2602-this-gemini-study-trick-works-way-better-than-rereading-notes/" target="_blank" rel="noopener noreferrer">Gemini×勉強術：毎日20時に問題をつくって送ってもらおう</a>
+                            <a href="https://www.lifehacker.jp/article/2602-this-gemini-study-trick-works-way-better-than-rereading-notes/" target="_blank" rel="noopener noreferrer" class="entry-link">Gemini×勉強術：毎日20時に問題をつくって送ってもらおう</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -611,13 +568,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="Googleドキュメントなしではもう書けない！ ライターが愛用する4つの必須機能" data-summary="編集者やライターなら、毎日のように使うGoogleドキュメント。文章を扱う人間として、手放せない機能が盛りだくさんです。共有の便利さやバックアップの安心感などはありつつ…、忙しいビジネスパーソンの皆さんに「地味だけど最強」な機能を4つご紹介させてください！">
+                <li class="entry-item" data-link="https://www.lifehacker.jp/article/2601-matome-google-document/" data-title="Googleドキュメントなしではもう書けない！ ライターが愛用する4つの必須機能" data-summary="編集者やライターなら、毎日のように使うGoogleドキュメント。文章を扱う人間として、手放せない機能が盛りだくさんです。共有の便利さやバックアップの安心感などはありつつ…、忙しいビジネスパーソンの皆さんに「地味だけど最強」な機能を4つご紹介させてください！">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.lifehacker.jp/article/2601-matome-google-document/" target="_blank" rel="noopener noreferrer">Googleドキュメントなしではもう書けない！ ライターが愛用する4つの必須機能</a>
+                            <a href="https://www.lifehacker.jp/article/2601-matome-google-document/" target="_blank" rel="noopener noreferrer" class="entry-link">Googleドキュメントなしではもう書けない！ ライターが愛用する4つの必須機能</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -632,17 +589,17 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="貼るだけでシャワー位置自由自在。山崎実業のマグネットフックが31%オフ" data-summary="Amazon（アマゾン）では、2026年1月27日（火）9時から2月2日（木）23時59分まで「AmazonスマイルSALE」を開催中。 現在、ネジや吸盤を使わず、設置後も上下左右に自由に動かせる、山崎実業（Yamazaki）の「マグネットバスルームシャワーフック ミスト」がお得に登場しています。">
+                <li class="entry-item" data-link="https://www.lifehacker.jp/article/amazon-timesale-fes-2026-0202-4/" data-title="貼るだけでシャワー位置自由自在。山崎実業のマグネットフックが31%オフ" data-summary="Amazon（アマゾン）では、2026年1月27日（火）9時から2月2日（木）23時59分まで「AmazonスマイルSALE」を開催中。 現在、ネジや吸盤を使わず、設置後も上下左右に自由に動かせる、山崎実業（Yamazaki）の「マグネットバスルームシャワーフック ミスト」がお得に登場しています。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.lifehacker.jp/article/amazon-timesale-fes-2026-0202-4/" target="_blank" rel="noopener noreferrer">貼るだけでシャワー位置自由自在。山崎実業のマグネットフックが31%オフ</a>
+                            <a href="https://www.lifehacker.jp/article/amazon-timesale-fes-2026-0202-4/" target="_blank" rel="noopener noreferrer" class="entry-link">貼るだけでシャワー位置自由自在。山崎実業のマグネットフックが31%オフ</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>14時間前</span>
+                            <span>15時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -653,13 +610,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="WindowsノートPCが明らかに速くなりました。買い替える前に試したい「3つの秘策」" data-summary="「最近PCが遅い」と感じたら、買い替えの前に試してほしい設定があります。無料＆標準機能だけでPCを軽くする、誰でもできる高速化テクニックを紹介します。">
+                <li class="entry-item" data-link="https://www.lifehacker.jp/article/2602-these-settings-made-my-slow-windows-laptop-noticeably-faster/" data-title="WindowsノートPCが明らかに速くなりました。買い替える前に試したい「3つの秘策」" data-summary="「最近PCが遅い」と感じたら、買い替えの前に試してほしい設定があります。無料＆標準機能だけでPCを軽くする、誰でもできる高速化テクニックを紹介します。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.lifehacker.jp/article/2602-these-settings-made-my-slow-windows-laptop-noticeably-faster/" target="_blank" rel="noopener noreferrer">WindowsノートPCが明らかに速くなりました。買い替える前に試したい「3つの秘策」</a>
+                            <a href="https://www.lifehacker.jp/article/2602-these-settings-made-my-slow-windows-laptop-noticeably-faster/" target="_blank" rel="noopener noreferrer" class="entry-link">WindowsノートPCが明らかに速くなりました。買い替える前に試したい「3つの秘策」</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -674,17 +631,17 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="ついにChromeがAI秘書化。面倒なネット操作や入力を「Geminiが丸ごと代行する」新時代へ" data-summary="Google Chrome版Geminiが大幅刷新！常駐型サイドパネルや画像編集モデル「Nano Banana」の統合に加え、ネットサーフィンを代行する自律型AI「Auto Browse」が登場。進化したAIアシスタントの利便性と、気になる倫理的リスクについて徹底解説します。">
+                <li class="entry-item" data-link="https://www.lifehacker.jp/article/2602-now-chrome-can-use-ai-to-browse-for-you/" data-title="ついにChromeがAI秘書化。面倒なネット操作や入力を「Geminiが丸ごと代行する」新時代へ" data-summary="Google Chrome版Geminiが大幅刷新！常駐型サイドパネルや画像編集モデル「Nano Banana」の統合に加え、ネットサーフィンを代行する自律型AI「Auto Browse」が登場。進化したAIアシスタントの利便性と、気になる倫理的リスクについて徹底解説します。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.lifehacker.jp/article/2602-now-chrome-can-use-ai-to-browse-for-you/" target="_blank" rel="noopener noreferrer">ついにChromeがAI秘書化。面倒なネット操作や入力を「Geminiが丸ごと代行する」新時代へ</a>
+                            <a href="https://www.lifehacker.jp/article/2602-now-chrome-can-use-ai-to-browse-for-you/" target="_blank" rel="noopener noreferrer" class="entry-link">ついにChromeがAI秘書化。面倒なネット操作や入力を「Geminiが丸ごと代行する」新時代へ</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>15時間前</span>
+                            <span>16時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -703,12 +660,47 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // ▼▼▼ 既読管理機能 ▼▼▼
+            const STORAGE_KEY = 'rss_read_items';
+            // LocalStorageから既読リストを取得 (Setで管理して高速化)
+            let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+
+            const entryItems = document.querySelectorAll('.entry-item');
+            
+            // 初期表示: 既読状態の反映
+            entryItems.forEach(item => {
+                const link = item.dataset.link;
+                if (readItems.has(link)) {
+                    item.classList.add('read');
+                }
+                
+                // クリックイベントの登録
+                const anchor = item.querySelector('a.entry-link');
+                anchor.addEventListener('click', function() {
+                    markAsRead(link, item);
+                });
+            });
+
+            function markAsRead(link, itemElement) {
+                // UIを即座に更新
+                itemElement.classList.add('read');
+                
+                // ストレージに保存
+                readItems.add(link);
+                // 容量制限のため、古いものから消す (最大1000件保持)
+                if (readItems.size > 1000) {
+                    const array = Array.from(readItems);
+                    readItems = new Set(array.slice(array.length - 1000));
+                }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
+            }
+            // ▲▲▲ 既読管理機能 ▲▲▲
+
+            // 検索機能
             const searchInput = document.getElementById('searchInput');
-            const entries = document.querySelectorAll('.entry-item');
             const sections = document.querySelectorAll('.feed-section');
 
-            // 元のHTMLを保存（ハイライト解除用）
-            entries.forEach(entry => {
+            entryItems.forEach(entry => {
                 const titleLink = entry.querySelector('.entry-title a');
                 const summaryDiv = entry.querySelector('.entry-summary');
                 entry.dataset.originalTitleHtml = titleLink.innerHTML;
@@ -718,15 +710,13 @@
             searchInput.addEventListener('input', function(e) {
                 const term = e.target.value.trim().toLowerCase();
 
-                // 検索リセット時の処理
                 if (term === '') {
                     sections.forEach(sec => {
                         sec.style.display = '';
-                        sec.open = false; // 全て閉じる
+                        sec.open = false;
                     });
-                    entries.forEach(entry => {
+                    entryItems.forEach(entry => {
                         entry.style.display = '';
-                        // ハイライト解除
                         const titleLink = entry.querySelector('.entry-title a');
                         const summaryDiv = entry.querySelector('.entry-summary');
                         titleLink.innerHTML = entry.dataset.originalTitleHtml;
@@ -735,7 +725,6 @@
                     return;
                 }
 
-                // 検索実行
                 sections.forEach(section => {
                     let hasVisibleEntry = false;
                     const sectionEntries = section.querySelectorAll('.entry-item');
@@ -747,15 +736,12 @@
                         if (titleText.includes(term) || summaryText.includes(term)) {
                             entry.style.display = '';
                             hasVisibleEntry = true;
-                            
-                            // ハイライト処理
                             highlightText(entry, term);
                         } else {
                             entry.style.display = 'none';
                         }
                     });
 
-                    // ヒットする記事があればセクションを開いて表示
                     if (hasVisibleEntry) {
                         section.style.display = '';
                         section.open = true;
@@ -768,17 +754,12 @@
             function highlightText(entry, term) {
                 const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
                 const highlightMark = '<mark>$1</mark>';
-
-                // タイトルのハイライト
                 const titleLink = entry.querySelector('.entry-title a');
                 titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
-
-                // サマリーのハイライト
                 const summaryDiv = entry.querySelector('.entry-summary');
                 summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
             }
 
-            // 正規表現のエスケープ処理
             function escapeRegExp(string) {
                 return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             }

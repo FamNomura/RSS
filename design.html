@@ -13,7 +13,8 @@
             --accent: #007bff;
             --new-badge: #e74c3c;
             --border: #e9ecef;
-            --highlight: #fff3cd; /* ハイライト色 */
+            --highlight: #fff3cd;
+            --read-color: #b0b0b0; /* 既読記事の色 */
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -33,124 +34,80 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .nav-container {
-            max-width: 800px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between; /* 検索窓とリンクを左右に配置 */
-            flex-wrap: wrap;
-            gap: 10px;
+            max-width: 800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
         }
-        .nav-links {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
+        .nav-links { display: flex; gap: 10px; overflow-x: auto; white-space: nowrap; }
         .nav-link {
-            color: #fff;
-            text-decoration: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 600;
-            opacity: 0.8;
+            color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 14px; font-weight: 600; opacity: 0.8;
         }
         .nav-link.active { opacity: 1; background-color: var(--accent); }
 
-        /* 検索ボックスのデザイン */
-        .search-box {
-            position: relative;
-            flex-grow: 1;
-            max-width: 300px;
-        }
+        .search-box { position: relative; flex-grow: 1; max-width: 300px; }
         .search-input {
-            width: 100%;
-            padding: 6px 10px;
-            border-radius: 4px;
-            border: none;
-            font-size: 14px;
-            background-color: rgba(255,255,255,0.9);
-            box-sizing: border-box;
+            width: 100%; padding: 6px 10px; border-radius: 4px; border: none; font-size: 14px; background-color: rgba(255,255,255,0.9); box-sizing: border-box;
         }
         .search-input:focus { outline: 2px solid var(--accent); }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         header { margin-bottom: 20px; text-align: center; }
         h1 { font-size: 22px; margin: 0; color: #333; }
         .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
 
         details {
-            background: var(--card-bg);
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
-            border: 1px solid var(--border);
-            overflow: hidden;
+            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
         }
         summary {
-            list-style: none;
-            cursor: pointer;
-            padding: 15px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: #fff;
-            transition: background 0.2s;
+            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff; transition: background 0.2s;
         }
-        summary::-webkit-details-marker { display: none; }
         summary:hover { background-color: #f8f9fa; }
+        summary::-webkit-details-marker { display: none; }
         
         .feed-header { display: flex; align-items: center; gap: 10px; font-size: 16px; }
         .feed-favicon { width: 16px; height: 16px; border-radius: 2px; }
         .feed-status { font-size: 12px; color: var(--new-badge); font-weight: normal; }
 
-        .entry-list {
-            border-top: 1px solid var(--border);
-            padding: 0;
-            margin: 0;
-            list-style: none;
-        }
+        .entry-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
         .entry-item {
-            padding: 15px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            gap: 15px;
-            align-items: flex-start;
+            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start; transition: background-color 0.2s;
         }
         .entry-item:last-child { border-bottom: none; }
+
+        /* ▼▼▼ 既読記事のスタイル ▼▼▼ */
+        .entry-item.read {
+            background-color: #fcfcfc;
+        }
+        .entry-item.read .entry-title a {
+            color: var(--read-color);
+        }
+        .entry-item.read .entry-summary {
+            color: #d0d0d0;
+        }
+        .entry-item.read .entry-thumbnail {
+            opacity: 0.5;
+            filter: grayscale(100%);
+        }
+        .entry-item.read .new-badge {
+            background-color: #ccc; /* NEWバッジもグレーに */
+        }
+        /* ▲▲▲ 既読記事のスタイル ▲▲▲ */
         
         .entry-content-wrapper { flex: 1; min-width: 0; }
-        .entry-thumbnail {
-            width: 100px; height: 75px; object-fit: cover;
-            border-radius: 4px; flex-shrink: 0; border: 1px solid #eee;
-        }
+        .entry-thumbnail { width: 100px; height: 75px; object-fit: cover; border-radius: 4px; flex-shrink: 0; border: 1px solid #eee; }
 
         .entry-title { font-size: 16px; margin: 0 0 5px 0; line-height: 1.4; }
         .entry-title a { text-decoration: none; color: var(--text-main); }
         .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
         .new-badge {
-            display: inline-block; background-color: var(--new-badge); color: white;
-            font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px;
-            vertical-align: middle; font-weight: bold;
+            display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold;
         }
 
         .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; }
         .entry-summary {
-            font-size: 13px; color: #555; margin-top: 8px;
-            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-            overflow: hidden; opacity: 0.8;
+            font-size: 13px; color: #555; margin-top: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.8;
         }
         .entry-summary img { display: none; }
 
-        /* ハイライト用スタイル */
         mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
 
         @media (max-width: 600px) {
@@ -222,7 +179,7 @@
     <div class="container">
         <header>
             <h1>デザイン・Web制作</h1>
-            <div class="last-updated">最終更新: 02/03 11:31</div>
+            <div class="last-updated">最終更新: 02/03 11:53</div>
         </header>
 
         
@@ -239,17 +196,17 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-title="「まだそんな古いCSSを使ってるの？」現在では必要のない古いCSSを見つけて、仕様に準拠したCSSを提案してくれるツール -ReliCSS" data-summary="CSSの新機能を早く使ってみたいと思うかもしれませんが、その前に古いCSSのメンテナンスをしなくてはと思っている人にお勧めの無料ツールを紹介します。 CSSをコピペするだけで、現在では必要のない古いCSSのハックを検出し […]">
+                <li class="entry-item" data-link="https://coliss.com/articles/build-websites/operation/css/detect-css-hacks-relicss.html" data-title="「まだそんな古いCSSを使ってるの？」現在では必要のない古いCSSを見つけて、仕様に準拠したCSSを提案してくれるツール -ReliCSS" data-summary="CSSの新機能を早く使ってみたいと思うかもしれませんが、その前に古いCSSのメンテナンスをしなくてはと思っている人にお勧めの無料ツールを紹介します。 CSSをコピペするだけで、現在では必要のない古いCSSのハックを検出し […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://coliss.com/articles/build-websites/operation/css/detect-css-hacks-relicss.html" target="_blank" rel="noopener noreferrer">「まだそんな古いCSSを使ってるの？」現在では必要のない古いCSSを見つけて、仕様に準拠したCSSを提案してくれるツール -ReliCSS</a>
+                            <a href="https://coliss.com/articles/build-websites/operation/css/detect-css-hacks-relicss.html" target="_blank" rel="noopener noreferrer" class="entry-link">「まだそんな古いCSSを使ってるの？」現在では必要のない古いCSSを見つけて、仕様に準拠したCSSを提案してくれるツール -ReliCSS</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -260,11 +217,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="Kindle本の特大セール「イラスト技法書フェア」が開催！ 同人誌・絵師さん向けのイラストの良書がたくさんセール対象です" data-summary="※本ページは、アフィリエイト広告を利用しています。 Kindle本の特大セール、イラスト技法書フェアが開催されています。もちろん、同人誌・絵師さん向けのイラストの良書がたくさんセール対象です！ セール期間は、2/5まで。 […]">
+                <li class="entry-item" data-link="https://coliss.com/articles/products/kindle-sale-20260202.html" data-title="Kindle本の特大セール「イラスト技法書フェア」が開催！ 同人誌・絵師さん向けのイラストの良書がたくさんセール対象です" data-summary="※本ページは、アフィリエイト広告を利用しています。 Kindle本の特大セール、イラスト技法書フェアが開催されています。もちろん、同人誌・絵師さん向けのイラストの良書がたくさんセール対象です！ セール期間は、2/5まで。 […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://coliss.com/articles/products/kindle-sale-20260202.html" target="_blank" rel="noopener noreferrer">Kindle本の特大セール「イラスト技法書フェア」が開催！ 同人誌・絵師さん向けのイラストの良書がたくさんセール対象です</a>
+                            <a href="https://coliss.com/articles/products/kindle-sale-20260202.html" target="_blank" rel="noopener noreferrer" class="entry-link">Kindle本の特大セール「イラスト技法書フェア」が開催！ 同人誌・絵師さん向けのイラストの良書がたくさんセール対象です</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -279,11 +236,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="フリーランスの確定申告、インボイスや消費税への対応もこれ一冊で大丈夫、ベストセラーの定番書 -フリーランス＆個人事業主のための確定申告" data-summary="※本ページは、アフィリエイト広告を利用しています。 いよいよ確定申告の時期になりました。 フリーランスと個人事業主向け、2026年に提出する青色申告と白色申告に対応した最新版の確定申告の解説書を紹介します。 本書は20年 […]">
+                <li class="entry-item" data-link="https://coliss.com/articles/book-review/isbn-9784297150945.html" data-title="フリーランスの確定申告、インボイスや消費税への対応もこれ一冊で大丈夫、ベストセラーの定番書 -フリーランス＆個人事業主のための確定申告" data-summary="※本ページは、アフィリエイト広告を利用しています。 いよいよ確定申告の時期になりました。 フリーランスと個人事業主向け、2026年に提出する青色申告と白色申告に対応した最新版の確定申告の解説書を紹介します。 本書は20年 […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://coliss.com/articles/book-review/isbn-9784297150945.html" target="_blank" rel="noopener noreferrer">フリーランスの確定申告、インボイスや消費税への対応もこれ一冊で大丈夫、ベストセラーの定番書 -フリーランス＆個人事業主のための確定申告</a>
+                            <a href="https://coliss.com/articles/book-review/isbn-9784297150945.html" target="_blank" rel="noopener noreferrer" class="entry-link">フリーランスの確定申告、インボイスや消費税への対応もこれ一冊で大丈夫、ベストセラーの定番書 -フリーランス＆個人事業主のための確定申告</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -298,11 +255,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="CSSの100vwで水平スクロールバーが表示される問題がようやく解決！ vwにスクロールの幅が含まれなくなります" data-summary="Web制作者の長年の悩みがようやく解決されます！ CSSで100vwを使用して幅いっぱいにすると、垂直のスクロールバー分が含まれて、水平スクロールバーが表示されてしまいます。この問題はWindowsで起こり、macOSで […]">
+                <li class="entry-item" data-link="https://coliss.com/articles/build-websites/operation/css/using-100vw-is-now-scrollbar-aware.html" data-title="CSSの100vwで水平スクロールバーが表示される問題がようやく解決！ vwにスクロールの幅が含まれなくなります" data-summary="Web制作者の長年の悩みがようやく解決されます！ CSSで100vwを使用して幅いっぱいにすると、垂直のスクロールバー分が含まれて、水平スクロールバーが表示されてしまいます。この問題はWindowsで起こり、macOSで […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://coliss.com/articles/build-websites/operation/css/using-100vw-is-now-scrollbar-aware.html" target="_blank" rel="noopener noreferrer">CSSの100vwで水平スクロールバーが表示される問題がようやく解決！ vwにスクロールの幅が含まれなくなります</a>
+                            <a href="https://coliss.com/articles/build-websites/operation/css/using-100vw-is-now-scrollbar-aware.html" target="_blank" rel="noopener noreferrer" class="entry-link">CSSの100vwで水平スクロールバーが表示される問題がようやく解決！ vwにスクロールの幅が含まれなくなります</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -317,11 +274,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="Amazonで2026年スマイルSALEが開催！ セールで私が買ったもの、見逃しがちなお買い得品を紹介します" data-summary="※本ページは、アフィリエイト広告を利用しています。 Amazonでビッグセール「スマイルSALE」が開催しています。このセールでは特に生活用品が数多く対象になっており、通常のセールよりもかなり安くなって、非常にお買い得で […]">
+                <li class="entry-item" data-link="https://coliss.com/articles/products/amazon-sale-20260127.html" data-title="Amazonで2026年スマイルSALEが開催！ セールで私が買ったもの、見逃しがちなお買い得品を紹介します" data-summary="※本ページは、アフィリエイト広告を利用しています。 Amazonでビッグセール「スマイルSALE」が開催しています。このセールでは特に生活用品が数多く対象になっており、通常のセールよりもかなり安くなって、非常にお買い得で […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://coliss.com/articles/products/amazon-sale-20260127.html" target="_blank" rel="noopener noreferrer">Amazonで2026年スマイルSALEが開催！ セールで私が買ったもの、見逃しがちなお買い得品を紹介します</a>
+                            <a href="https://coliss.com/articles/products/amazon-sale-20260127.html" target="_blank" rel="noopener noreferrer" class="entry-link">Amazonで2026年スマイルSALEが開催！ セールで私が買ったもの、見逃しがちなお買い得品を紹介します</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -336,11 +293,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="2026年版、ファビコン画像の作成方法とHTMLの記述方法、さまざまなデバイスに対応させるには3つのアイコンが必要" data-summary="最近のデバイスやブラウザに対応させる最小限のファビコンセットには、3つのアイコンで対応できます。ブラウザはもちろん、スマホやタブレットにも対応し、さらにSVGも含めて3つだけです。 ファビコンに必要な3つのアイコン、ファ […]">
+                <li class="entry-item" data-link="https://coliss.com/articles/build-websites/operation/work/how-to-favicon.html" data-title="2026年版、ファビコン画像の作成方法とHTMLの記述方法、さまざまなデバイスに対応させるには3つのアイコンが必要" data-summary="最近のデバイスやブラウザに対応させる最小限のファビコンセットには、3つのアイコンで対応できます。ブラウザはもちろん、スマホやタブレットにも対応し、さらにSVGも含めて3つだけです。 ファビコンに必要な3つのアイコン、ファ […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://coliss.com/articles/build-websites/operation/work/how-to-favicon.html" target="_blank" rel="noopener noreferrer">2026年版、ファビコン画像の作成方法とHTMLの記述方法、さまざまなデバイスに対応させるには3つのアイコンが必要</a>
+                            <a href="https://coliss.com/articles/build-websites/operation/work/how-to-favicon.html" target="_blank" rel="noopener noreferrer" class="entry-link">2026年版、ファビコン画像の作成方法とHTMLの記述方法、さまざまなデバイスに対応させるには3つのアイコンが必要</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -355,11 +312,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="CursorやVS Codeで、インデントのガイドラインをアクティブなガイドラインだけ表示させる方法" data-summary="CursorやVS Codeのエディタで、インデントのガイドラインをアクティブなガイドラインだけハイライト表示させる方法を紹介します。 通常（左）はその箇所を含むすべてのインデントのガイドラインが表示されますが、右のよう […]">
+                <li class="entry-item" data-link="https://coliss.com/articles/build-websites/operation/work/highlight-just-the-active-indent-guide.html" data-title="CursorやVS Codeで、インデントのガイドラインをアクティブなガイドラインだけ表示させる方法" data-summary="CursorやVS Codeのエディタで、インデントのガイドラインをアクティブなガイドラインだけハイライト表示させる方法を紹介します。 通常（左）はその箇所を含むすべてのインデントのガイドラインが表示されますが、右のよう […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://coliss.com/articles/build-websites/operation/work/highlight-just-the-active-indent-guide.html" target="_blank" rel="noopener noreferrer">CursorやVS Codeで、インデントのガイドラインをアクティブなガイドラインだけ表示させる方法</a>
+                            <a href="https://coliss.com/articles/build-websites/operation/work/highlight-just-the-active-indent-guide.html" target="_blank" rel="noopener noreferrer" class="entry-link">CursorやVS Codeで、インデントのガイドラインをアクティブなガイドラインだけ表示させる方法</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -374,11 +331,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="HTML Living StandardとモダンCSS、最新ブラウザに完全対応！ 目的別で分かりやすいリファレンス本 -HTML＆CSSポケットリファレンス 改訂第4版" data-summary="※本ページは、アフィリエイト広告を利用しています。 『HTML＆CSSポケットリファレンス』の改訂第4版が、発売されました！ 先週発売されたばかりの最新刊で、HTML Living StandardとモダンCSSに対応 […]">
+                <li class="entry-item" data-link="https://coliss.com/articles/book-review/isbn-9784297153311.html" data-title="HTML Living StandardとモダンCSS、最新ブラウザに完全対応！ 目的別で分かりやすいリファレンス本 -HTML＆CSSポケットリファレンス 改訂第4版" data-summary="※本ページは、アフィリエイト広告を利用しています。 『HTML＆CSSポケットリファレンス』の改訂第4版が、発売されました！ 先週発売されたばかりの最新刊で、HTML Living StandardとモダンCSSに対応 […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://coliss.com/articles/book-review/isbn-9784297153311.html" target="_blank" rel="noopener noreferrer">HTML Living StandardとモダンCSS、最新ブラウザに完全対応！ 目的別で分かりやすいリファレンス本 -HTML＆CSSポケットリファレンス 改訂第4版</a>
+                            <a href="https://coliss.com/articles/book-review/isbn-9784297153311.html" target="_blank" rel="noopener noreferrer" class="entry-link">HTML Living StandardとモダンCSS、最新ブラウザに完全対応！ 目的別で分かりやすいリファレンス本 -HTML＆CSSポケットリファレンス 改訂第4版</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -393,11 +350,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="UIデザインのクオリティが格段にアップする！ 感覚的ではなく、論理的にデザインを改善するポイントを解説" data-summary="WebサイトやスマホアプリのUIを魅力的に、そして一貫性のあるデザインに改善するときに役立つUIデザインの知識とテクニックを紹介します。 直感や感覚的な曖昧なものではなく、明確で論理的なガイドラインに基づいて改善すること […]">
+                <li class="entry-item" data-link="https://coliss.com/articles/build-websites/operation/work/logic-driven-ui-design-tips.html" data-title="UIデザインのクオリティが格段にアップする！ 感覚的ではなく、論理的にデザインを改善するポイントを解説" data-summary="WebサイトやスマホアプリのUIを魅力的に、そして一貫性のあるデザインに改善するときに役立つUIデザインの知識とテクニックを紹介します。 直感や感覚的な曖昧なものではなく、明確で論理的なガイドラインに基づいて改善すること […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://coliss.com/articles/build-websites/operation/work/logic-driven-ui-design-tips.html" target="_blank" rel="noopener noreferrer">UIデザインのクオリティが格段にアップする！ 感覚的ではなく、論理的にデザインを改善するポイントを解説</a>
+                            <a href="https://coliss.com/articles/build-websites/operation/work/logic-driven-ui-design-tips.html" target="_blank" rel="noopener noreferrer" class="entry-link">UIデザインのクオリティが格段にアップする！ 感覚的ではなく、論理的にデザインを改善するポイントを解説</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -412,11 +369,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="Chromeのタブがさらに便利に進化！ 分割表示の次は、なんとタブを垂直に表示できる -Vertical Tabs" data-summary="Chromeは先日のアップデートで、1つのタブ内を分割して2つのWebページを表示できるようになりましたが、さらに便利に進化して、タブを垂直で管理できるようになります！ 水平だとタブを10個くらい開くと、タイトルが小さく […]">
+                <li class="entry-item" data-link="https://coliss.com/articles/build-websites/operation/work/vertical-tabs-in-chrome-native.html" data-title="Chromeのタブがさらに便利に進化！ 分割表示の次は、なんとタブを垂直に表示できる -Vertical Tabs" data-summary="Chromeは先日のアップデートで、1つのタブ内を分割して2つのWebページを表示できるようになりましたが、さらに便利に進化して、タブを垂直で管理できるようになります！ 水平だとタブを10個くらい開くと、タイトルが小さく […]">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://coliss.com/articles/build-websites/operation/work/vertical-tabs-in-chrome-native.html" target="_blank" rel="noopener noreferrer">Chromeのタブがさらに便利に進化！ 分割表示の次は、なんとタブを垂直に表示できる -Vertical Tabs</a>
+                            <a href="https://coliss.com/articles/build-websites/operation/work/vertical-tabs-in-chrome-native.html" target="_blank" rel="noopener noreferrer" class="entry-link">Chromeのタブがさらに便利に進化！ 分割表示の次は、なんとタブを垂直に表示できる -Vertical Tabs</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -447,17 +404,17 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-title="CSSカスタムプロパティをグリグリ動かせる「slideVars」が便利" data-summary="Webデザインの勉強や実験をしているとき、色や余白を微調整しながら試行錯誤すること、ありますよね。そのたびにCSSの数値を書き換えて、プレビューが更新されるのを待って…というのは、正直ちょっと面倒だったりします。今回は、そんな悩みを解決してくれる「slideVars」というライブラリを紹介します！これを使うと、CSSカスタムプロパティをブラウザー上で直接いじれるコントローラーが自動で生成されますよ！">
+                <li class="entry-item" data-link="https://www.webcreatorbox.com//blog/slidevars" data-title="CSSカスタムプロパティをグリグリ動かせる「slideVars」が便利" data-summary="Webデザインの勉強や実験をしているとき、色や余白を微調整しながら試行錯誤すること、ありますよね。そのたびにCSSの数値を書き換えて、プレビューが更新されるのを待って…というのは、正直ちょっと面倒だったりします。今回は、そんな悩みを解決してくれる「slideVars」というライブラリを紹介します！これを使うと、CSSカスタムプロパティをブラウザー上で直接いじれるコントローラーが自動で生成されますよ！">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.webcreatorbox.com//blog/slidevars" target="_blank" rel="noopener noreferrer">CSSカスタムプロパティをグリグリ動かせる「slideVars」が便利</a>
+                            <a href="https://www.webcreatorbox.com//blog/slidevars" target="_blank" rel="noopener noreferrer" class="entry-link">CSSカスタムプロパティをグリグリ動かせる「slideVars」が便利</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3時間前</span>
+                            <span>4時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -468,11 +425,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="Antigravityを使ってコーディング（ほぼ）なしで目標設定アプリ作った" data-summary="今年はWebアプリやWebサイトを10個作ってみるぞー！とやる気に満ちて新年を迎えましたよ。ということで、1つ目のアプリ。月間目標を決めたら、それを4つの段階に細分化して提案してくれるWebサイト『AI Phase Planner』を公開しました！">
+                <li class="entry-item" data-link="https://www.webcreatorbox.com//blog/ai-phase-planner" data-title="Antigravityを使ってコーディング（ほぼ）なしで目標設定アプリ作った" data-summary="今年はWebアプリやWebサイトを10個作ってみるぞー！とやる気に満ちて新年を迎えましたよ。ということで、1つ目のアプリ。月間目標を決めたら、それを4つの段階に細分化して提案してくれるWebサイト『AI Phase Planner』を公開しました！">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://www.webcreatorbox.com//blog/ai-phase-planner" target="_blank" rel="noopener noreferrer">Antigravityを使ってコーディング（ほぼ）なしで目標設定アプリ作った</a>
+                            <a href="https://www.webcreatorbox.com//blog/ai-phase-planner" target="_blank" rel="noopener noreferrer" class="entry-link">Antigravityを使ってコーディング（ほぼ）なしで目標設定アプリ作った</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -487,11 +444,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="最新AIでイニシエのWebサイトを作ってもらった 〜2000年の君へ〜" data-summary="AntigravityというAIツールをご存じですか？ 指示（プロンプト）を与えるだけで、いろんなWebサイトがサクッと作れてしまうのが面白くて、最近いろいろといじり倒しています。そこでふと、逆に古い技術のサイトも作れるの？と疑問が湧いたので、実験してみました。">
+                <li class="entry-item" data-link="https://www.webcreatorbox.com//blog/website-2000ver" data-title="最新AIでイニシエのWebサイトを作ってもらった 〜2000年の君へ〜" data-summary="AntigravityというAIツールをご存じですか？ 指示（プロンプト）を与えるだけで、いろんなWebサイトがサクッと作れてしまうのが面白くて、最近いろいろといじり倒しています。そこでふと、逆に古い技術のサイトも作れるの？と疑問が湧いたので、実験してみました。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://www.webcreatorbox.com//blog/website-2000ver" target="_blank" rel="noopener noreferrer">最新AIでイニシエのWebサイトを作ってもらった 〜2000年の君へ〜</a>
+                            <a href="https://www.webcreatorbox.com//blog/website-2000ver" target="_blank" rel="noopener noreferrer" class="entry-link">最新AIでイニシエのWebサイトを作ってもらった 〜2000年の君へ〜</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -506,11 +463,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="書籍執筆しました！『1冊ですべて身につくPhotoshop入門講座』" data-summary="これまでHTMLやCSS、WordPress、JavaScript、デザインの入門書を書いてきた私ですが、このたび新たにAdobe Photoshopの入門書、『1冊ですべて身につくPhotoshop入門講座』という本を執筆しました！2026年2月27日発売で、予約受付中です！">
+                <li class="entry-item" data-link="https://www.webcreatorbox.com//blog/wcb-book8" data-title="書籍執筆しました！『1冊ですべて身につくPhotoshop入門講座』" data-summary="これまでHTMLやCSS、WordPress、JavaScript、デザインの入門書を書いてきた私ですが、このたび新たにAdobe Photoshopの入門書、『1冊ですべて身につくPhotoshop入門講座』という本を執筆しました！2026年2月27日発売で、予約受付中です！">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://www.webcreatorbox.com//blog/wcb-book8" target="_blank" rel="noopener noreferrer">書籍執筆しました！『1冊ですべて身につくPhotoshop入門講座』</a>
+                            <a href="https://www.webcreatorbox.com//blog/wcb-book8" target="_blank" rel="noopener noreferrer" class="entry-link">書籍執筆しました！『1冊ですべて身につくPhotoshop入門講座』</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -525,11 +482,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="Webクリエイターボックスの2025年を振り返る" data-summary="今年も残りあとわずか！一年間お世話になりました！毎年思いますが早いですね。という事で例年どおり、Webクリエイターボックスが今年1年どんな変貌を遂げたのか、そしてWebクリエイターボックス内でよく読んでもらった記事やSNSでシェアした記事などを紹介しようと思います。いくつ覚えていただけてますかね？ :3">
+                <li class="entry-item" data-link="https://www.webcreatorbox.com//blog/wcb-2025" data-title="Webクリエイターボックスの2025年を振り返る" data-summary="今年も残りあとわずか！一年間お世話になりました！毎年思いますが早いですね。という事で例年どおり、Webクリエイターボックスが今年1年どんな変貌を遂げたのか、そしてWebクリエイターボックス内でよく読んでもらった記事やSNSでシェアした記事などを紹介しようと思います。いくつ覚えていただけてますかね？ :3">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://www.webcreatorbox.com//blog/wcb-2025" target="_blank" rel="noopener noreferrer">Webクリエイターボックスの2025年を振り返る</a>
+                            <a href="https://www.webcreatorbox.com//blog/wcb-2025" target="_blank" rel="noopener noreferrer" class="entry-link">Webクリエイターボックスの2025年を振り返る</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -544,11 +501,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="継続をデザインする！Apple Watchのアクティビティで1000日連続達成した記録" data-summary="みなさん、運動してますか？ 我々の仕事って基本座りっぱなしで、運動しなきゃと思いつつ、なかなか実行できなかったりしますよね。実は私もそうでした。コロナ禍を経て、気づけば身体はぷくぷく…。これはまずい！と一念発起し、「継続すること」自体をデザインの課題として捉え直し、2023年1月1日から毎日運動を続けました。そしてついに、ムーブゴール連続1000日を達成！そこで、継続できた仕組みづくりと、愛用しているツールやアプリ、そして1000日の軌跡をご紹介します。">
+                <li class="entry-item" data-link="https://www.webcreatorbox.com//blog/applewatch-1000days" data-title="継続をデザインする！Apple Watchのアクティビティで1000日連続達成した記録" data-summary="みなさん、運動してますか？ 我々の仕事って基本座りっぱなしで、運動しなきゃと思いつつ、なかなか実行できなかったりしますよね。実は私もそうでした。コロナ禍を経て、気づけば身体はぷくぷく…。これはまずい！と一念発起し、「継続すること」自体をデザインの課題として捉え直し、2023年1月1日から毎日運動を続けました。そしてついに、ムーブゴール連続1000日を達成！そこで、継続できた仕組みづくりと、愛用しているツールやアプリ、そして1000日の軌跡をご紹介します。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://www.webcreatorbox.com//blog/applewatch-1000days" target="_blank" rel="noopener noreferrer">継続をデザインする！Apple Watchのアクティビティで1000日連続達成した記録</a>
+                            <a href="https://www.webcreatorbox.com//blog/applewatch-1000days" target="_blank" rel="noopener noreferrer" class="entry-link">継続をデザインする！Apple Watchのアクティビティで1000日連続達成した記録</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -563,11 +520,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="特殊加工名刺を「カードワン」さんで作ってみた" data-summary="名刺の残り枚数が少なくなってきたので「そろそろ注文しなきゃなー」とのんびり構えていたところ、ずっと利用していた印刷会社さんがまさかの閉鎖！あれこれ探し回った結果、素敵な印刷会社さんに出会い、名刺を再現していただきました。これから名刺を作りたいデザイナーさんや、自分の名刺をグレードアップさせたいフリーランスの方の参考になれば嬉しいです！">
+                <li class="entry-item" data-link="https://www.webcreatorbox.com//blog/card-one" data-title="特殊加工名刺を「カードワン」さんで作ってみた" data-summary="名刺の残り枚数が少なくなってきたので「そろそろ注文しなきゃなー」とのんびり構えていたところ、ずっと利用していた印刷会社さんがまさかの閉鎖！あれこれ探し回った結果、素敵な印刷会社さんに出会い、名刺を再現していただきました。これから名刺を作りたいデザイナーさんや、自分の名刺をグレードアップさせたいフリーランスの方の参考になれば嬉しいです！">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://www.webcreatorbox.com//blog/card-one" target="_blank" rel="noopener noreferrer">特殊加工名刺を「カードワン」さんで作ってみた</a>
+                            <a href="https://www.webcreatorbox.com//blog/card-one" target="_blank" rel="noopener noreferrer" class="entry-link">特殊加工名刺を「カードワン」さんで作ってみた</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -582,11 +539,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="プレゼンの質疑応答が劇的に変わる「Slido」を使ってみた" data-summary="私は登壇するとき、なるべく質疑応答の時間を用意しています。ただ、参加者からしたら手を上げてみんなの前で質問ってなかなかハードル高いですよね。実際質問をされるのも1、2名くらい。そこで、「Slido（スライド）」というツールを使って質疑応答の時間を工夫したお話を紹介します！">
+                <li class="entry-item" data-link="https://www.webcreatorbox.com//blog/slido" data-title="プレゼンの質疑応答が劇的に変わる「Slido」を使ってみた" data-summary="私は登壇するとき、なるべく質疑応答の時間を用意しています。ただ、参加者からしたら手を上げてみんなの前で質問ってなかなかハードル高いですよね。実際質問をされるのも1、2名くらい。そこで、「Slido（スライド）」というツールを使って質疑応答の時間を工夫したお話を紹介します！">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://www.webcreatorbox.com//blog/slido" target="_blank" rel="noopener noreferrer">プレゼンの質疑応答が劇的に変わる「Slido」を使ってみた</a>
+                            <a href="https://www.webcreatorbox.com//blog/slido" target="_blank" rel="noopener noreferrer" class="entry-link">プレゼンの質疑応答が劇的に変わる「Slido」を使ってみた</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -601,11 +558,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="エンジニアポッドキャストMeetup #2に参加しました！" data-summary="先日、「エンジニアポッドキャストMeetup #2」というイベントに、私自身が運営しているポッドキャスト番組『ManaのWebクリエイターカフェ』のホストとして参加してきました！今回はイベントの様子はもちろん、耳からのインプット＝ポッドキャストがおすすめな理由や、私の登壇経験からの気づきもシェアします！">
+                <li class="entry-item" data-link="https://www.webcreatorbox.com//blog/podcast-meetup-2" data-title="エンジニアポッドキャストMeetup #2に参加しました！" data-summary="先日、「エンジニアポッドキャストMeetup #2」というイベントに、私自身が運営しているポッドキャスト番組『ManaのWebクリエイターカフェ』のホストとして参加してきました！今回はイベントの様子はもちろん、耳からのインプット＝ポッドキャストがおすすめな理由や、私の登壇経験からの気づきもシェアします！">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://www.webcreatorbox.com//blog/podcast-meetup-2" target="_blank" rel="noopener noreferrer">エンジニアポッドキャストMeetup #2に参加しました！</a>
+                            <a href="https://www.webcreatorbox.com//blog/podcast-meetup-2" target="_blank" rel="noopener noreferrer" class="entry-link">エンジニアポッドキャストMeetup #2に参加しました！</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -620,11 +577,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="Simplify Your Creation in 広島 で登壇しました！" data-summary="最近めっきりイベント三昧！Webやデザイン関連のイベントは新しい知識が得られたり、素敵な出会いがあったりしてワクワクしますよね！今回は、先日広島で開催された「Simplify Your Creation」というイベントで登壇したお話です！なんと、映画館で！！">
+                <li class="entry-item" data-link="https://www.webcreatorbox.com//blog/simplify-your-creation-2025" data-title="Simplify Your Creation in 広島 で登壇しました！" data-summary="最近めっきりイベント三昧！Webやデザイン関連のイベントは新しい知識が得られたり、素敵な出会いがあったりしてワクワクしますよね！今回は、先日広島で開催された「Simplify Your Creation」というイベントで登壇したお話です！なんと、映画館で！！">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://www.webcreatorbox.com//blog/simplify-your-creation-2025" target="_blank" rel="noopener noreferrer">Simplify Your Creation in 広島 で登壇しました！</a>
+                            <a href="https://www.webcreatorbox.com//blog/simplify-your-creation-2025" target="_blank" rel="noopener noreferrer" class="entry-link">Simplify Your Creation in 広島 で登壇しました！</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -647,12 +604,47 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // ▼▼▼ 既読管理機能 ▼▼▼
+            const STORAGE_KEY = 'rss_read_items';
+            // LocalStorageから既読リストを取得 (Setで管理して高速化)
+            let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+
+            const entryItems = document.querySelectorAll('.entry-item');
+            
+            // 初期表示: 既読状態の反映
+            entryItems.forEach(item => {
+                const link = item.dataset.link;
+                if (readItems.has(link)) {
+                    item.classList.add('read');
+                }
+                
+                // クリックイベントの登録
+                const anchor = item.querySelector('a.entry-link');
+                anchor.addEventListener('click', function() {
+                    markAsRead(link, item);
+                });
+            });
+
+            function markAsRead(link, itemElement) {
+                // UIを即座に更新
+                itemElement.classList.add('read');
+                
+                // ストレージに保存
+                readItems.add(link);
+                // 容量制限のため、古いものから消す (最大1000件保持)
+                if (readItems.size > 1000) {
+                    const array = Array.from(readItems);
+                    readItems = new Set(array.slice(array.length - 1000));
+                }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
+            }
+            // ▲▲▲ 既読管理機能 ▲▲▲
+
+            // 検索機能
             const searchInput = document.getElementById('searchInput');
-            const entries = document.querySelectorAll('.entry-item');
             const sections = document.querySelectorAll('.feed-section');
 
-            // 元のHTMLを保存（ハイライト解除用）
-            entries.forEach(entry => {
+            entryItems.forEach(entry => {
                 const titleLink = entry.querySelector('.entry-title a');
                 const summaryDiv = entry.querySelector('.entry-summary');
                 entry.dataset.originalTitleHtml = titleLink.innerHTML;
@@ -662,15 +654,13 @@
             searchInput.addEventListener('input', function(e) {
                 const term = e.target.value.trim().toLowerCase();
 
-                // 検索リセット時の処理
                 if (term === '') {
                     sections.forEach(sec => {
                         sec.style.display = '';
-                        sec.open = false; // 全て閉じる
+                        sec.open = false;
                     });
-                    entries.forEach(entry => {
+                    entryItems.forEach(entry => {
                         entry.style.display = '';
-                        // ハイライト解除
                         const titleLink = entry.querySelector('.entry-title a');
                         const summaryDiv = entry.querySelector('.entry-summary');
                         titleLink.innerHTML = entry.dataset.originalTitleHtml;
@@ -679,7 +669,6 @@
                     return;
                 }
 
-                // 検索実行
                 sections.forEach(section => {
                     let hasVisibleEntry = false;
                     const sectionEntries = section.querySelectorAll('.entry-item');
@@ -691,15 +680,12 @@
                         if (titleText.includes(term) || summaryText.includes(term)) {
                             entry.style.display = '';
                             hasVisibleEntry = true;
-                            
-                            // ハイライト処理
                             highlightText(entry, term);
                         } else {
                             entry.style.display = 'none';
                         }
                     });
 
-                    // ヒットする記事があればセクションを開いて表示
                     if (hasVisibleEntry) {
                         section.style.display = '';
                         section.open = true;
@@ -712,17 +698,12 @@
             function highlightText(entry, term) {
                 const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
                 const highlightMark = '<mark>$1</mark>';
-
-                // タイトルのハイライト
                 const titleLink = entry.querySelector('.entry-title a');
                 titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
-
-                // サマリーのハイライト
                 const summaryDiv = entry.querySelector('.entry-summary');
                 summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
             }
 
-            // 正規表現のエスケープ処理
             function escapeRegExp(string) {
                 return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             }

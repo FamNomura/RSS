@@ -13,7 +13,8 @@
             --accent: #007bff;
             --new-badge: #e74c3c;
             --border: #e9ecef;
-            --highlight: #fff3cd; /* ハイライト色 */
+            --highlight: #fff3cd;
+            --read-color: #b0b0b0; /* 既読記事の色 */
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -33,124 +34,80 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .nav-container {
-            max-width: 800px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between; /* 検索窓とリンクを左右に配置 */
-            flex-wrap: wrap;
-            gap: 10px;
+            max-width: 800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
         }
-        .nav-links {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
+        .nav-links { display: flex; gap: 10px; overflow-x: auto; white-space: nowrap; }
         .nav-link {
-            color: #fff;
-            text-decoration: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 600;
-            opacity: 0.8;
+            color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 14px; font-weight: 600; opacity: 0.8;
         }
         .nav-link.active { opacity: 1; background-color: var(--accent); }
 
-        /* 検索ボックスのデザイン */
-        .search-box {
-            position: relative;
-            flex-grow: 1;
-            max-width: 300px;
-        }
+        .search-box { position: relative; flex-grow: 1; max-width: 300px; }
         .search-input {
-            width: 100%;
-            padding: 6px 10px;
-            border-radius: 4px;
-            border: none;
-            font-size: 14px;
-            background-color: rgba(255,255,255,0.9);
-            box-sizing: border-box;
+            width: 100%; padding: 6px 10px; border-radius: 4px; border: none; font-size: 14px; background-color: rgba(255,255,255,0.9); box-sizing: border-box;
         }
         .search-input:focus { outline: 2px solid var(--accent); }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         header { margin-bottom: 20px; text-align: center; }
         h1 { font-size: 22px; margin: 0; color: #333; }
         .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
 
         details {
-            background: var(--card-bg);
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
-            border: 1px solid var(--border);
-            overflow: hidden;
+            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
         }
         summary {
-            list-style: none;
-            cursor: pointer;
-            padding: 15px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: #fff;
-            transition: background 0.2s;
+            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff; transition: background 0.2s;
         }
-        summary::-webkit-details-marker { display: none; }
         summary:hover { background-color: #f8f9fa; }
+        summary::-webkit-details-marker { display: none; }
         
         .feed-header { display: flex; align-items: center; gap: 10px; font-size: 16px; }
         .feed-favicon { width: 16px; height: 16px; border-radius: 2px; }
         .feed-status { font-size: 12px; color: var(--new-badge); font-weight: normal; }
 
-        .entry-list {
-            border-top: 1px solid var(--border);
-            padding: 0;
-            margin: 0;
-            list-style: none;
-        }
+        .entry-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
         .entry-item {
-            padding: 15px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            gap: 15px;
-            align-items: flex-start;
+            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start; transition: background-color 0.2s;
         }
         .entry-item:last-child { border-bottom: none; }
+
+        /* ▼▼▼ 既読記事のスタイル ▼▼▼ */
+        .entry-item.read {
+            background-color: #fcfcfc;
+        }
+        .entry-item.read .entry-title a {
+            color: var(--read-color);
+        }
+        .entry-item.read .entry-summary {
+            color: #d0d0d0;
+        }
+        .entry-item.read .entry-thumbnail {
+            opacity: 0.5;
+            filter: grayscale(100%);
+        }
+        .entry-item.read .new-badge {
+            background-color: #ccc; /* NEWバッジもグレーに */
+        }
+        /* ▲▲▲ 既読記事のスタイル ▲▲▲ */
         
         .entry-content-wrapper { flex: 1; min-width: 0; }
-        .entry-thumbnail {
-            width: 100px; height: 75px; object-fit: cover;
-            border-radius: 4px; flex-shrink: 0; border: 1px solid #eee;
-        }
+        .entry-thumbnail { width: 100px; height: 75px; object-fit: cover; border-radius: 4px; flex-shrink: 0; border: 1px solid #eee; }
 
         .entry-title { font-size: 16px; margin: 0 0 5px 0; line-height: 1.4; }
         .entry-title a { text-decoration: none; color: var(--text-main); }
         .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
         .new-badge {
-            display: inline-block; background-color: var(--new-badge); color: white;
-            font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px;
-            vertical-align: middle; font-weight: bold;
+            display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold;
         }
 
         .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; }
         .entry-summary {
-            font-size: 13px; color: #555; margin-top: 8px;
-            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-            overflow: hidden; opacity: 0.8;
+            font-size: 13px; color: #555; margin-top: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.8;
         }
         .entry-summary img { display: none; }
 
-        /* ハイライト用スタイル */
         mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
 
         @media (max-width: 600px) {
@@ -222,7 +179,7 @@
     <div class="container">
         <header>
             <h1>ガジェット・モノ</h1>
-            <div class="last-updated">最終更新: 02/03 11:31</div>
+            <div class="last-updated">最終更新: 02/03 11:53</div>
         </header>
 
         
@@ -239,17 +196,40 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-title="この価格でこのコトコト感！ 身近すぎるガスケットキーボード「Alto Keys K98M」" data-summary="指が心地良い、あまりにも。ロジクールから新しいワイヤレスキーボード「AltoKeysK98M」が発表されました。2026年2月26日発売で、価格は税込み1万8590円。カラーはグラファイトとホワイトの2色。この「AltoKeysK98M」ですが、ロジクールにとって久しぶりのメカニカルキーボードになります。メカニカルキーボードとは、各キーがバネとスイッチの機械式で動作する仕組みのこと。キーボードにこ">
+                <li class="entry-item" data-link="https://www.gizmodo.jp/2026/02/iodata-stickssd-sspe-usc1-review-1r4.html" data-title="iPhoneに直接刺せるSSD、PC要らずで写真のバックアップできちゃいました" data-summary="Photo:小暮ひさのり2023年11月24日の記事を編集して再掲載しています。これ、ひとつ持っておいた方が良いですよ。いや、ほんと現代において絶対必須なアイテムだと思うんですよ。そのくらい推したいのがこのアイ・オー・データ機器のスティック形状の超小型SSD。こんなUSBメモリサイズですけど500GB〜2TBもの容量ラインナップがあります。このサイズで2TB入るってエグくない？アイ・オー・データI">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.gizmodo.jp/2026/02/alto-keys-k98m.html" target="_blank" rel="noopener noreferrer">この価格でこのコトコト感！ 身近すぎるガスケットキーボード「Alto Keys K98M」</a>
+                            <a href="https://www.gizmodo.jp/2026/02/iodata-stickssd-sspe-usc1-review-1r4.html" target="_blank" rel="noopener noreferrer" class="entry-link">iPhoneに直接刺せるSSD、PC要らずで写真のバックアップできちゃいました</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>31分前</span>
+                            <span>19分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Photo:小暮ひさのり2023年11月24日の記事を編集して再掲載しています。これ、ひとつ持っておいた方が良いですよ。いや、ほんと現代において絶対必須なアイテムだと思うんですよ。そのくらい推したいのがこのアイ・オー・データ機器のスティック形状の超小型SSD。こんなUSBメモリサイズですけど500GB〜2TBもの容量ラインナップがあります。このサイズで2TB入るってエグくない？アイ・オー・データI
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://media.loom-app.com/gizmodo/dist/images/2023/11/16/2023-11-16SSDk00A.jpg" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://www.gizmodo.jp/2026/02/alto-keys-k98m.html" data-title="この価格でこのコトコト感！ 身近すぎるガスケットキーボード「Alto Keys K98M」" data-summary="指が心地良い、あまりにも。ロジクールから新しいワイヤレスキーボード「AltoKeysK98M」が発表されました。2026年2月26日発売で、価格は税込み1万8590円。カラーはグラファイトとホワイトの2色。この「AltoKeysK98M」ですが、ロジクールにとって久しぶりのメカニカルキーボードになります。メカニカルキーボードとは、各キーがバネとスイッチの機械式で動作する仕組みのこと。キーボードにこ">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.gizmodo.jp/2026/02/alto-keys-k98m.html" target="_blank" rel="noopener noreferrer" class="entry-link">この価格でこのコトコト感！ 身近すぎるガスケットキーボード「Alto Keys K98M」</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>54分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -262,17 +242,17 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="バッグの中で除湿剤がゴロゴロしない。機材を傷つけない「固定できる除湿石」がいい感じ" data-summary="電子レンジで繰り返し使える除湿石「PIONEER+」はカメラやレンズなど大切な機材を湿気から守る強力な除湿剤です。ナノ多孔質シリコンが最適湿度をキープしクリップ付きでバッグ内に固定可能。持ち運びも安心で経済的な新しい湿気対策です。">
+                <li class="entry-item" data-link="https://www.gizmodo.jp/2026/02/machi-ya-pioneer-review-876737.html" data-title="バッグの中で除湿剤がゴロゴロしない。機材を傷つけない「固定できる除湿石」がいい感じ" data-summary="電子レンジで繰り返し使える除湿石「PIONEER+」はカメラやレンズなど大切な機材を湿気から守る強力な除湿剤です。ナノ多孔質シリコンが最適湿度をキープしクリップ付きでバッグ内に固定可能。持ち運びも安心で経済的な新しい湿気対策です。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.gizmodo.jp/2026/02/machi-ya-pioneer-review-876737.html" target="_blank" rel="noopener noreferrer">バッグの中で除湿剤がゴロゴロしない。機材を傷つけない「固定できる除湿石」がいい感じ</a>
+                            <a href="https://www.gizmodo.jp/2026/02/machi-ya-pioneer-review-876737.html" target="_blank" rel="noopener noreferrer" class="entry-link">バッグの中で除湿剤がゴロゴロしない。機材を傷つけない「固定できる除湿石」がいい感じ</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>36分前</span>
+                            <span>59分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -285,13 +265,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="駆け込め！ ProGradeのカードは2月3日に価格改定。値上げ率最大61.8％…" data-summary="Image:Amazonま、まだ上がるのかッ…！もう財布が持たんぞ！プロやハイアマチュアの御用達メモリカード、ProGradeシリーズ。皆さんの中にも利用している人も多いと思うのですが、メモリカード製品の多くが価格改定です。詳しくは発表されたPDFの表を見てほしいのですが、基本的にガン値上げです。一番値上げ率が高いのが、CFExpress4.0TypeBIRIDIUM400GBのカード。4万610">
+                <li class="entry-item" data-link="https://www.gizmodo.jp/2026/02/prograde-price-increase.html" data-title="駆け込め！ ProGradeのカードは2月3日に価格改定。値上げ率最大61.8％…" data-summary="Image:Amazonま、まだ上がるのかッ…！もう財布が持たんぞ！プロやハイアマチュアの御用達メモリカード、ProGradeシリーズ。皆さんの中にも利用している人も多いと思うのですが、メモリカード製品の多くが価格改定です。詳しくは発表されたPDFの表を見てほしいのですが、基本的にガン値上げです。一番値上げ率が高いのが、CFExpress4.0TypeBIRIDIUM400GBのカード。4万610">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.gizmodo.jp/2026/02/prograde-price-increase.html" target="_blank" rel="noopener noreferrer">駆け込め！ ProGradeのカードは2月3日に価格改定。値上げ率最大61.8％…</a>
+                            <a href="https://www.gizmodo.jp/2026/02/prograde-price-increase.html" target="_blank" rel="noopener noreferrer" class="entry-link">駆け込め！ ProGradeのカードは2月3日に価格改定。値上げ率最大61.8％…</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -308,13 +288,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="EVも宇宙もAIも。イーロン・マスクがSpaceXと自社企業を統合？" data-summary="Image:FotoField/Shutterstock.com複数メディア（Bloomberg・Reuters）が報じたところによると、イーロン・マスク氏は、自分のもつ企業同士の統合を検討しているといいます。合併の肝となるのは宇宙事業のSpaceX。電気自動車のTesla、またはXのAIであるGrokを開発するxAIをSpaceXに統合していく可能性があるのだとか。IPOを控えるSpaceXSp">
+                <li class="entry-item" data-link="https://www.gizmodo.jp/2026/02/elon-musk-considers-merging-spacex-with-xai-as-he-races-to-beat-sam-altman-to-ipo-jpn.html" data-title="EVも宇宙もAIも。イーロン・マスクがSpaceXと自社企業を統合？" data-summary="Image:FotoField/Shutterstock.com複数メディア（Bloomberg・Reuters）が報じたところによると、イーロン・マスク氏は、自分のもつ企業同士の統合を検討しているといいます。合併の肝となるのは宇宙事業のSpaceX。電気自動車のTesla、またはXのAIであるGrokを開発するxAIをSpaceXに統合していく可能性があるのだとか。IPOを控えるSpaceXSp">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.gizmodo.jp/2026/02/elon-musk-considers-merging-spacex-with-xai-as-he-races-to-beat-sam-altman-to-ipo-jpn.html" target="_blank" rel="noopener noreferrer">EVも宇宙もAIも。イーロン・マスクがSpaceXと自社企業を統合？</a>
+                            <a href="https://www.gizmodo.jp/2026/02/elon-musk-considers-merging-spacex-with-xai-as-he-races-to-beat-sam-altman-to-ipo-jpn.html" target="_blank" rel="noopener noreferrer" class="entry-link">EVも宇宙もAIも。イーロン・マスクがSpaceXと自社企業を統合？</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -331,13 +311,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="憧れのトゥールビヨン、この価格なら。自分へのご褒美に選びたい特別な1本でした" data-summary="東京発の腕時計工房ZEROOが、自動巻きの透明性を極限まで追求した新作「T9-02」をリリース。9時位置に搭載されたフライングトゥールビヨンと、UFOの軌道をイメージした新設計フレームが特徴のフルスケルトンモデルです。限定100本のリミテッドモデルで、クラウドファンディング方式にて販売中。2年保証も付いています。">
+                <li class="entry-item" data-link="https://www.gizmodo.jp/2026/02/machi-ya-zeroot902-review2-914474.html" data-title="憧れのトゥールビヨン、この価格なら。自分へのご褒美に選びたい特別な1本でした" data-summary="東京発の腕時計工房ZEROOが、自動巻きの透明性を極限まで追求した新作「T9-02」をリリース。9時位置に搭載されたフライングトゥールビヨンと、UFOの軌道をイメージした新設計フレームが特徴のフルスケルトンモデルです。限定100本のリミテッドモデルで、クラウドファンディング方式にて販売中。2年保証も付いています。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.gizmodo.jp/2026/02/machi-ya-zeroot902-review2-914474.html" target="_blank" rel="noopener noreferrer">憧れのトゥールビヨン、この価格なら。自分へのご褒美に選びたい特別な1本でした</a>
+                            <a href="https://www.gizmodo.jp/2026/02/machi-ya-zeroot902-review2-914474.html" target="_blank" rel="noopener noreferrer" class="entry-link">憧れのトゥールビヨン、この価格なら。自分へのご褒美に選びたい特別な1本でした</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -354,13 +334,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="iPhoneでパカパカ。「iPhone Flip」検討中ってホントですか？" data-summary="Image:Shutterstockうおおお、パカパカしてええ！出るかも出るかも？今年こそかも？と噂が耐えない、Apple（アップル）の折りたたみiPhone。先日はダミーモデルらしき画像がリークされるなど、登場への期待が高まっていますが、もうひとつの折りたたみの噂です。Bloombergのマーク・ガーマン記者の報告によると、Appleは四角くてクラムシェル型の折りたたみiPhoneのアイデアを検">
+                <li class="entry-item" data-link="https://www.gizmodo.jp/2026/02/iphone-flip-rumor.html" data-title="iPhoneでパカパカ。「iPhone Flip」検討中ってホントですか？" data-summary="Image:Shutterstockうおおお、パカパカしてええ！出るかも出るかも？今年こそかも？と噂が耐えない、Apple（アップル）の折りたたみiPhone。先日はダミーモデルらしき画像がリークされるなど、登場への期待が高まっていますが、もうひとつの折りたたみの噂です。Bloombergのマーク・ガーマン記者の報告によると、Appleは四角くてクラムシェル型の折りたたみiPhoneのアイデアを検">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.gizmodo.jp/2026/02/iphone-flip-rumor.html" target="_blank" rel="noopener noreferrer">iPhoneでパカパカ。「iPhone Flip」検討中ってホントですか？</a>
+                            <a href="https://www.gizmodo.jp/2026/02/iphone-flip-rumor.html" target="_blank" rel="noopener noreferrer" class="entry-link">iPhoneでパカパカ。「iPhone Flip」検討中ってホントですか？</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -377,13 +357,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="山崎実業の「ルーター収納ケース」が、テレビ裏でカオス配線を美学に変える" data-summary="今回は山崎実業の「ルーター収納ケース」をご紹介します。皆さん、家の中でルーターの置き場に困ったことはありませんか？ そこで、この収納ケースの出番です。ルータをケースの中に収納できるのでルーター自体目立たなくなりますし、コードの配線もすっきり！">
+                <li class="entry-item" data-link="https://www.gizmodo.jp/2026/02/2602-amazon-yamazaki-router-storage-7xg.html" data-title="山崎実業の「ルーター収納ケース」が、テレビ裏でカオス配線を美学に変える" data-summary="今回は山崎実業の「ルーター収納ケース」をご紹介します。皆さん、家の中でルーターの置き場に困ったことはありませんか？ そこで、この収納ケースの出番です。ルータをケースの中に収納できるのでルーター自体目立たなくなりますし、コードの配線もすっきり！">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.gizmodo.jp/2026/02/2602-amazon-yamazaki-router-storage-7xg.html" target="_blank" rel="noopener noreferrer">山崎実業の「ルーター収納ケース」が、テレビ裏でカオス配線を美学に変える</a>
+                            <a href="https://www.gizmodo.jp/2026/02/2602-amazon-yamazaki-router-storage-7xg.html" target="_blank" rel="noopener noreferrer" class="entry-link">山崎実業の「ルーター収納ケース」が、テレビ裏でカオス配線を美学に変える</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -400,13 +380,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="安楽死カプセル、最終決定にAIによる精神判定を導入" data-summary="Image:Sarco人生の最期、AIに任せる？ここ最近、精神的に追い詰められた人に対して、AIチャットボットが自殺を後押ししてしまったという事例で、企業が不当死亡訴訟を起こされるケースがありました。ところが今回は、その逆。安楽死をする際、自ら死を選ぶ権利を行使する判断ができる精神状態にあるとAIに認めてもらわなきゃいけなくなったのです。Futurismによると、物議を醸してきた安楽死カプセル「サ">
+                <li class="entry-item" data-link="https://www.gizmodo.jp/2026/02/euthanasia-swiss-pod-gets-an-ai-powered-upgrade.html" data-title="安楽死カプセル、最終決定にAIによる精神判定を導入" data-summary="Image:Sarco人生の最期、AIに任せる？ここ最近、精神的に追い詰められた人に対して、AIチャットボットが自殺を後押ししてしまったという事例で、企業が不当死亡訴訟を起こされるケースがありました。ところが今回は、その逆。安楽死をする際、自ら死を選ぶ権利を行使する判断ができる精神状態にあるとAIに認めてもらわなきゃいけなくなったのです。Futurismによると、物議を醸してきた安楽死カプセル「サ">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.gizmodo.jp/2026/02/euthanasia-swiss-pod-gets-an-ai-powered-upgrade.html" target="_blank" rel="noopener noreferrer">安楽死カプセル、最終決定にAIによる精神判定を導入</a>
+                            <a href="https://www.gizmodo.jp/2026/02/euthanasia-swiss-pod-gets-an-ai-powered-upgrade.html" target="_blank" rel="noopener noreferrer" class="entry-link">安楽死カプセル、最終決定にAIによる精神判定を導入</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -423,13 +403,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="急須って“注ぎ口”いらないの？「Doughnut Tea Set」が答え出してた" data-summary="取っ手も注ぎ口もない、オブジェのような白磁の急須「Doughnut Tea Set」。1000年の伝統を持つ徳化白磁を用いながら、360度注げるドーナツ型構造で現代的にアップデート。食洗機対応で手入れも簡単です。いつものコーヒー休憩を、たまにはお茶に変えてリフレッシュしてみては。">
+                <li class="entry-item" data-link="https://www.gizmodo.jp/2026/02/machi-ya-doughnutteaset-start-856461.html" data-title="急須って“注ぎ口”いらないの？「Doughnut Tea Set」が答え出してた" data-summary="取っ手も注ぎ口もない、オブジェのような白磁の急須「Doughnut Tea Set」。1000年の伝統を持つ徳化白磁を用いながら、360度注げるドーナツ型構造で現代的にアップデート。食洗機対応で手入れも簡単です。いつものコーヒー休憩を、たまにはお茶に変えてリフレッシュしてみては。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.gizmodo.jp/2026/02/machi-ya-doughnutteaset-start-856461.html" target="_blank" rel="noopener noreferrer">急須って“注ぎ口”いらないの？「Doughnut Tea Set」が答え出してた</a>
+                            <a href="https://www.gizmodo.jp/2026/02/machi-ya-doughnutteaset-start-856461.html" target="_blank" rel="noopener noreferrer" class="entry-link">急須って“注ぎ口”いらないの？「Doughnut Tea Set」が答え出してた</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -443,29 +423,6 @@
 
                     
                     <img src="https://media.loom-app.com/gizmodo/dist/images/2026/01/29/imgi_4_original%281%29.jpg" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
-                <li class="entry-item" data-title="Rabbitは諦めない！ 爆死AI端末の次に作るはバイブコーディング端末" data-summary="Image:Rabbit/X2025年、一瞬話題になったものの、現実的には使えないと一蹴されてしまったAI端末。HumaneのAIPinはディスコンされ会社も買収されて消えたものの、R1を開発するRabbitはまだ頑張っています。Rabbitの次の一手を予告、どうやらバイブコーディング端末…のようです。ProjectCyberdeckRabbit公式アカウントがXを更新。バイブコーディング専用端末">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://www.gizmodo.jp/2026/02/rabbits-next-ai-gadget-is-a-cyberdeck-for-vibe-coding.html" target="_blank" rel="noopener noreferrer">Rabbitは諦めない！ 爆死AI端末の次に作るはバイブコーディング端末</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>4時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            Image:Rabbit/X2025年、一瞬話題になったものの、現実的には使えないと一蹴されてしまったAI端末。HumaneのAIPinはディスコンされ会社も買収されて消えたものの、R1を開発するRabbitはまだ頑張っています。Rabbitの次の一手を予告、どうやらバイブコーディング端末…のようです。ProjectCyberdeckRabbit公式アカウントがXを更新。バイブコーディング専用端末
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://media.loom-app.com/gizmodo/dist/images/2026/02/02/260202cyberdeckrabbit.jpg" class="entry-thumbnail" loading="lazy" alt="">
                     
                 </li>
                 
@@ -485,17 +442,38 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-title="メモリ高騰でラズパイが再度値上げ。最大60ドル" data-summary="メモリ価格高騰の影響を受け、Raspberry Piの一部モデルが再度値上げされると2月2日に発表された。値上げ幅は10～60ドルで、メモリ容量によって異なる。">
+                <li class="entry-item" data-link="https://pc.watch.impress.co.jp/docs/news/2082957.html" data-title="Anker、A/C/Gプラグを備えた海外旅行向けUSB充電器" data-summary="アンカー・ジャパンは、3種類の折りたたみ式プラグ搭載USB充電器「Anker Nano トラベルアダプタ(5-in-1, 20W)」を2月3日に発売した。実売価格は3,990円。カラーはブラックとホワイト。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://pc.watch.impress.co.jp/docs/news/2082942.html" target="_blank" rel="noopener noreferrer">メモリ高騰でラズパイが再度値上げ。最大60ドル</a>
+                            <a href="https://pc.watch.impress.co.jp/docs/news/2082957.html" target="_blank" rel="noopener noreferrer" class="entry-link">Anker、A/C/Gプラグを備えた海外旅行向けUSB充電器</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>22分前</span>
+                            <span>11分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            アンカー・ジャパンは、3種類の折りたたみ式プラグ搭載USB充電器「Anker Nano トラベルアダプタ(5-in-1, 20W)」を2月3日に発売した。実売価格は3,990円。カラーはブラックとホワイト。
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://pc.watch.impress.co.jp/docs/news/2082942.html" data-title="メモリ高騰でラズパイが再度値上げ。最大60ドル" data-summary="メモリ価格高騰の影響を受け、Raspberry Piの一部モデルが再度値上げされると2月2日に発表された。値上げ幅は10～60ドルで、メモリ容量によって異なる。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://pc.watch.impress.co.jp/docs/news/2082942.html" target="_blank" rel="noopener noreferrer" class="entry-link">メモリ高騰でラズパイが再度値上げ。最大60ドル</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>45分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -506,17 +484,17 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="ロジクール初、「コトコト」打鍵感ガスケット搭載キーボード「K98M」" data-summary="ロジクールは、同社ブランド初となるガスケットマウント構造を採用したワイヤレスメカニカルキーボード「Alto Keys K98M」(以下K98M)を発表した。発売は2月26日、価格はオープンプライスで直販価格は1万8,590円。">
+                <li class="entry-item" data-link="https://pc.watch.impress.co.jp/docs/news/2082875.html" data-title="ロジクール初、「コトコト」打鍵感ガスケット搭載キーボード「K98M」" data-summary="ロジクールは、同社ブランド初となるガスケットマウント構造を採用したワイヤレスメカニカルキーボード「Alto Keys K98M」(以下K98M)を発表した。発売は2月26日、価格はオープンプライスで直販価格は1万8,590円。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://pc.watch.impress.co.jp/docs/news/2082875.html" target="_blank" rel="noopener noreferrer">ロジクール初、「コトコト」打鍵感ガスケット搭載キーボード「K98M」</a>
+                            <a href="https://pc.watch.impress.co.jp/docs/news/2082875.html" target="_blank" rel="noopener noreferrer" class="entry-link">ロジクール初、「コトコト」打鍵感ガスケット搭載キーボード「K98M」</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>31分前</span>
+                            <span>54分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -527,17 +505,17 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="【やじうまミニレビュー】これならオフィスでも使いやすい？ロジクールの静音メカニカルキーボード「Alto Keys K98M」" data-summary="">
+                <li class="entry-item" data-link="https://pc.watch.impress.co.jp/docs/column/yajiuma-mini-review/2082741.html" data-title="【やじうまミニレビュー】これならオフィスでも使いやすい？ロジクールの静音メカニカルキーボード「Alto Keys K98M」" data-summary="">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://pc.watch.impress.co.jp/docs/column/yajiuma-mini-review/2082741.html" target="_blank" rel="noopener noreferrer">【やじうまミニレビュー】これならオフィスでも使いやすい？ロジクールの静音メカニカルキーボード「Alto Keys K98M」</a>
+                            <a href="https://pc.watch.impress.co.jp/docs/column/yajiuma-mini-review/2082741.html" target="_blank" rel="noopener noreferrer" class="entry-link">【やじうまミニレビュー】これならオフィスでも使いやすい？ロジクールの静音メカニカルキーボード「Alto Keys K98M」</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>31分前</span>
+                            <span>54分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -548,17 +526,17 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="いいじゃないか、光学ドライブ付きの16型ノート。NEC PCから" data-summary="NECパーソナルコンピュータ(NEC PC)は、DVDスーパーマルチドライブを搭載した16型ノートPC「LAVIE N16」を2月5日に発売する。価格はオープンプライス。">
+                <li class="entry-item" data-link="https://pc.watch.impress.co.jp/docs/news/2082678.html" data-title="いいじゃないか、光学ドライブ付きの16型ノート。NEC PCから" data-summary="NECパーソナルコンピュータ(NEC PC)は、DVDスーパーマルチドライブを搭載した16型ノートPC「LAVIE N16」を2月5日に発売する。価格はオープンプライス。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://pc.watch.impress.co.jp/docs/news/2082678.html" target="_blank" rel="noopener noreferrer">いいじゃないか、光学ドライブ付きの16型ノート。NEC PCから</a>
+                            <a href="https://pc.watch.impress.co.jp/docs/news/2082678.html" target="_blank" rel="noopener noreferrer" class="entry-link">いいじゃないか、光学ドライブ付きの16型ノート。NEC PCから</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>31分前</span>
+                            <span>54分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -569,17 +547,17 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="Snapdragon 8 Gen 3搭載で実売9万円台の「LAVIE Tab EX」" data-summary="NECパーソナルコンピュータ(NEC PC)は、プロセッサにSnapdragon 8 Gen 3を搭載したAndroidタブレット「LAVIE Tab EX(TX117/LAS)」を2月12日に発売する。価格はオープンプライスで、実売予想価格は9万円前後の見込み。">
+                <li class="entry-item" data-link="https://pc.watch.impress.co.jp/docs/news/2082648.html" data-title="Snapdragon 8 Gen 3搭載で実売9万円台の「LAVIE Tab EX」" data-summary="NECパーソナルコンピュータ(NEC PC)は、プロセッサにSnapdragon 8 Gen 3を搭載したAndroidタブレット「LAVIE Tab EX(TX117/LAS)」を2月12日に発売する。価格はオープンプライスで、実売予想価格は9万円前後の見込み。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://pc.watch.impress.co.jp/docs/news/2082648.html" target="_blank" rel="noopener noreferrer">Snapdragon 8 Gen 3搭載で実売9万円台の「LAVIE Tab EX」</a>
+                            <a href="https://pc.watch.impress.co.jp/docs/news/2082648.html" target="_blank" rel="noopener noreferrer" class="entry-link">Snapdragon 8 Gen 3搭載で実売9万円台の「LAVIE Tab EX」</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>31分前</span>
+                            <span>54分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -590,17 +568,17 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="【本日みつけたお買い得品】BOSEのオープンイヤー型イヤフォンが7,200円オトク" data-summary="Amazonにおいて、BOSEのオープンイヤー型ワイヤレスイヤフォン「Bose Ultra Open Earbuds」が、タイムセールで直近価格の7,200円引きとなる2万8,800円で購入できる。">
+                <li class="entry-item" data-link="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082935.html" data-title="【本日みつけたお買い得品】BOSEのオープンイヤー型イヤフォンが7,200円オトク" data-summary="Amazonにおいて、BOSEのオープンイヤー型ワイヤレスイヤフォン「Bose Ultra Open Earbuds」が、タイムセールで直近価格の7,200円引きとなる2万8,800円で購入できる。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082935.html" target="_blank" rel="noopener noreferrer">【本日みつけたお買い得品】BOSEのオープンイヤー型イヤフォンが7,200円オトク</a>
+                            <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082935.html" target="_blank" rel="noopener noreferrer" class="entry-link">【本日みつけたお買い得品】BOSEのオープンイヤー型イヤフォンが7,200円オトク</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>57分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -611,13 +589,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="バッテリ駆動14時間超のスタミナ！これがAI時代の新スタンダードノート ～パソコン工房「STYLE-15FHA21-R7A-UCSX」[Sponsored]" data-summary="パソコン工房は、165Hzの15.3型WUXGA液晶搭載Copilot+ PC「STYLE-15FHA21-R7A-UCSX」を2025年12月に発売した。">
+                <li class="entry-item" data-link="https://pc.watch.impress.co.jp/docs/topic/pckoubou_review/2081428.html" data-title="バッテリ駆動14時間超のスタミナ！これがAI時代の新スタンダードノート ～パソコン工房「STYLE-15FHA21-R7A-UCSX」[Sponsored]" data-summary="パソコン工房は、165Hzの15.3型WUXGA液晶搭載Copilot+ PC「STYLE-15FHA21-R7A-UCSX」を2025年12月に発売した。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://pc.watch.impress.co.jp/docs/topic/pckoubou_review/2081428.html" target="_blank" rel="noopener noreferrer">バッテリ駆動14時間超のスタミナ！これがAI時代の新スタンダードノート ～パソコン工房「STYLE-15FHA21-R7A-UCSX」[Sponsored]</a>
+                            <a href="https://pc.watch.impress.co.jp/docs/topic/pckoubou_review/2081428.html" target="_blank" rel="noopener noreferrer" class="entry-link">バッテリ駆動14時間超のスタミナ！これがAI時代の新スタンダードノート ～パソコン工房「STYLE-15FHA21-R7A-UCSX」[Sponsored]</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -632,13 +610,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="「電気代、払うのやめてみました」ポタ電と太陽光だけで1カ月仕事してみた狂気の結果" data-summary="ポタ電仕事人の朝は早い。日が差し込み始めたベランダ。白い息を吐きながら、日課の「ソーラーパネル干し」に勤しむ姿がそこにあった。周囲の建物の陰になり、パネルにはまだほとんど日が当たっていない。入射角も浅い。日沼諭史、48歳。1Wでも多くの電力を稼がなければ、という決意の表情がにじんでいた……。">
+                <li class="entry-item" data-link="https://pc.watch.impress.co.jp/docs/topic/feature/2082893.html" data-title="「電気代、払うのやめてみました」ポタ電と太陽光だけで1カ月仕事してみた狂気の結果" data-summary="ポタ電仕事人の朝は早い。日が差し込み始めたベランダ。白い息を吐きながら、日課の「ソーラーパネル干し」に勤しむ姿がそこにあった。周囲の建物の陰になり、パネルにはまだほとんど日が当たっていない。入射角も浅い。日沼諭史、48歳。1Wでも多くの電力を稼がなければ、という決意の表情がにじんでいた……。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://pc.watch.impress.co.jp/docs/topic/feature/2082893.html" target="_blank" rel="noopener noreferrer">「電気代、払うのやめてみました」ポタ電と太陽光だけで1カ月仕事してみた狂気の結果</a>
+                            <a href="https://pc.watch.impress.co.jp/docs/topic/feature/2082893.html" target="_blank" rel="noopener noreferrer" class="entry-link">「電気代、払うのやめてみました」ポタ電と太陽光だけで1カ月仕事してみた狂気の結果</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -653,13 +631,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="【ニュース・フラッシュ】パソコン工房、PCの組み立てなどに使える「サポートサービスeチケット」" data-summary="ユニットコムは、全国のパソコン工房店舗で使える「サポートサービスeチケット」を販売開始した。パソコン工房店舗およびWeb通販サイトにて購入できる。">
+                <li class="entry-item" data-link="https://pc.watch.impress.co.jp/docs/news/news_flash/2082839.html" data-title="【ニュース・フラッシュ】パソコン工房、PCの組み立てなどに使える「サポートサービスeチケット」" data-summary="ユニットコムは、全国のパソコン工房店舗で使える「サポートサービスeチケット」を販売開始した。パソコン工房店舗およびWeb通販サイトにて購入できる。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://pc.watch.impress.co.jp/docs/news/news_flash/2082839.html" target="_blank" rel="noopener noreferrer">【ニュース・フラッシュ】パソコン工房、PCの組み立てなどに使える「サポートサービスeチケット」</a>
+                            <a href="https://pc.watch.impress.co.jp/docs/news/news_flash/2082839.html" target="_blank" rel="noopener noreferrer" class="entry-link">【ニュース・フラッシュ】パソコン工房、PCの組み立てなどに使える「サポートサービスeチケット」</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -668,27 +646,6 @@
 
                         <div class="entry-summary">
                             ユニットコムは、全国のパソコン工房店舗で使える「サポートサービスeチケット」を販売開始した。パソコン工房店舗およびWeb通販サイトにて購入できる。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-title="Kingston、USB 3.2 Gen 2 Type-C/A両対応のスティック型SSD" data-summary="Kingstonは、USB 3.2 Gen 2 Type-C/A両対応のスティック型SSD「デュアルポータブルSSD」を発表した。容量は512GB、1TB、2TBの3種類を用意する。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://pc.watch.impress.co.jp/docs/news/2082813.html" target="_blank" rel="noopener noreferrer">Kingston、USB 3.2 Gen 2 Type-C/A両対応のスティック型SSD</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>17時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            Kingstonは、USB 3.2 Gen 2 Type-C/A両対応のスティック型SSD「デュアルポータブルSSD」を発表した。容量は512GB、1TB、2TBの3種類を用意する。
                         </div>
                     </div>
 
@@ -711,17 +668,38 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-title="アンカー、トラベル用変換プラグ「Anker Nano トラベルアダプター」発売　3990円" data-summary="アンカー・ジャパンは、初のトラベル用変換プラグ「Anker Nano トラベルアダプター（5-in-1、20W）」を2月3日に発売した。価格は3990円。公式オンラインストアやAmazon.co.jp、一部家電量販店などで取り扱われる。">
+                <li class="entry-item" data-link="https://k-tai.watch.impress.co.jp/docs/news/2082967.html" data-title="IIJmio大特価セール開始、3月末まで　「ROG Phone 9」や「Xiaomi 15 Ultra」が約13万円など" data-summary="インターネットイニシアティブ（IIJ）は3日、MVNOサービス「IIJmio」で「スマホ大特価セール」を開始した。期間は3月31日21時59分まで。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://k-tai.watch.impress.co.jp/docs/news/2082418.html" target="_blank" rel="noopener noreferrer">アンカー、トラベル用変換プラグ「Anker Nano トラベルアダプター」発売　3990円</a>
+                            <a href="https://k-tai.watch.impress.co.jp/docs/news/2082967.html" target="_blank" rel="noopener noreferrer" class="entry-link">IIJmio大特価セール開始、3月末まで　「ROG Phone 9」や「Xiaomi 15 Ultra」が約13万円など</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>31分前</span>
+                            <span>15分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            インターネットイニシアティブ（IIJ）は3日、MVNOサービス「IIJmio」で「スマホ大特価セール」を開始した。期間は3月31日21時59分まで。
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://k-tai.watch.impress.co.jp/docs/news/2082418.html" data-title="アンカー、トラベル用変換プラグ「Anker Nano トラベルアダプター」発売　3990円" data-summary="アンカー・ジャパンは、初のトラベル用変換プラグ「Anker Nano トラベルアダプター（5-in-1、20W）」を2月3日に発売した。価格は3990円。公式オンラインストアやAmazon.co.jp、一部家電量販店などで取り扱われる。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://k-tai.watch.impress.co.jp/docs/news/2082418.html" target="_blank" rel="noopener noreferrer" class="entry-link">アンカー、トラベル用変換プラグ「Anker Nano トラベルアダプター」発売　3990円</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>54分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -732,17 +710,17 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="IIJmioの「ギガプラン」15ギガが値下げ、3月～" data-summary="インターネットイニシアティブ（IIJ）は、携帯電話サービス「IIJmioモバイルサービス」の料金プラン「ギガプラン」で、「15ギガプラン」の利用料を3月1日に値下げする。">
+                <li class="entry-item" data-link="https://k-tai.watch.impress.co.jp/docs/news/2082939.html" data-title="IIJmioの料金プラン「ギガプラン」15ギガが値下げ、3月～" data-summary="インターネットイニシアティブ（IIJ）は、携帯電話サービス「IIJmioモバイルサービス」の料金プラン「ギガプラン」で、「15ギガプラン」の利用料を3月1日に値下げする。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://k-tai.watch.impress.co.jp/docs/news/2082939.html" target="_blank" rel="noopener noreferrer">IIJmioの「ギガプラン」15ギガが値下げ、3月～</a>
+                            <a href="https://k-tai.watch.impress.co.jp/docs/news/2082939.html" target="_blank" rel="noopener noreferrer" class="entry-link">IIJmioの料金プラン「ギガプラン」15ギガが値下げ、3月～</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>35分前</span>
+                            <span>57分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -753,13 +731,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="ドコモ、Amazonアカウントとdアカウントを初めて連携で200ポイント付与" data-summary="NTTドコモは、Amazonアカウントとdアカウントを初めて連携したユーザーを対象に、200円相当のポイントを進呈するキャンペーンを開始した。期間は3月2日まで。">
+                <li class="entry-item" data-link="https://k-tai.watch.impress.co.jp/docs/news/2082852.html" data-title="ドコモ、Amazonアカウントとdアカウントを初めて連携で200ポイント付与" data-summary="NTTドコモは、Amazonアカウントとdアカウントを初めて連携したユーザーを対象に、200円相当のポイントを進呈するキャンペーンを開始した。期間は3月2日まで。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://k-tai.watch.impress.co.jp/docs/news/2082852.html" target="_blank" rel="noopener noreferrer">ドコモ、Amazonアカウントとdアカウントを初めて連携で200ポイント付与</a>
+                            <a href="https://k-tai.watch.impress.co.jp/docs/news/2082852.html" target="_blank" rel="noopener noreferrer" class="entry-link">ドコモ、Amazonアカウントとdアカウントを初めて連携で200ポイント付与</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -774,13 +752,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="ドコモ「d払い」のバーチャルカードに新機能「支払いロック」" data-summary="NTTドコモは、キャッシュレス決済サービス「d払い」のバーチャルカードにおいて、不正利用対策を目的とした新たな「支払いロック」機能を導入する。導入時期は2月下旬。">
+                <li class="entry-item" data-link="https://k-tai.watch.impress.co.jp/docs/news/2082682.html" data-title="ドコモ「d払い」のバーチャルカードに新機能「支払いロック」" data-summary="NTTドコモは、キャッシュレス決済サービス「d払い」のバーチャルカードにおいて、不正利用対策を目的とした新たな「支払いロック」機能を導入する。導入時期は2月下旬。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://k-tai.watch.impress.co.jp/docs/news/2082682.html" target="_blank" rel="noopener noreferrer">ドコモ「d払い」のバーチャルカードに新機能「支払いロック」</a>
+                            <a href="https://k-tai.watch.impress.co.jp/docs/news/2082682.html" target="_blank" rel="noopener noreferrer" class="entry-link">ドコモ「d払い」のバーチャルカードに新機能「支払いロック」</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -795,13 +773,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="ドコモ、買い物を通じて読売巨人軍を支援する「推しG」" data-summary="読売新聞東京本社、読売巨人軍、NTTドコモの3社は、普段の買い物を通じて球団を支援できる新サービス「推しG」の提供を開始した。">
+                <li class="entry-item" data-link="https://k-tai.watch.impress.co.jp/docs/news/2082873.html" data-title="ドコモ、買い物を通じて読売巨人軍を支援する「推しG」" data-summary="読売新聞東京本社、読売巨人軍、NTTドコモの3社は、普段の買い物を通じて球団を支援できる新サービス「推しG」の提供を開始した。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://k-tai.watch.impress.co.jp/docs/news/2082873.html" target="_blank" rel="noopener noreferrer">ドコモ、買い物を通じて読売巨人軍を支援する「推しG」</a>
+                            <a href="https://k-tai.watch.impress.co.jp/docs/news/2082873.html" target="_blank" rel="noopener noreferrer" class="entry-link">ドコモ、買い物を通じて読売巨人軍を支援する「推しG」</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -816,13 +794,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="[電子書籍人気ランキング] 電子書籍人気ランキング（1月16日～1月22日）" data-summary="今週のコミックランキングは2位に「スーパーの裏でヤニ吸うふたり 8巻通常版」、彼女の嘘の真意を知って……。3位は「メダリスト（14）」、金メダルを目指し中国の土を踏む！ 4位に、苦しい諜報戦「平和の国の島崎へ（11）」！ 書籍トップには、3カ国の交戦「極東発 世界大戦2 日韓紛争激化」がランクインしました。">
+                <li class="entry-item" data-link="https://k-tai.watch.impress.co.jp/docs/ranking/galapagos_ranking/2082446.html" data-title="[電子書籍人気ランキング] 電子書籍人気ランキング（1月16日～1月22日）" data-summary="今週のコミックランキングは2位に「スーパーの裏でヤニ吸うふたり 8巻通常版」、彼女の嘘の真意を知って……。3位は「メダリスト（14）」、金メダルを目指し中国の土を踏む！ 4位に、苦しい諜報戦「平和の国の島崎へ（11）」！ 書籍トップには、3カ国の交戦「極東発 世界大戦2 日韓紛争激化」がランクインしました。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://k-tai.watch.impress.co.jp/docs/ranking/galapagos_ranking/2082446.html" target="_blank" rel="noopener noreferrer">[電子書籍人気ランキング] 電子書籍人気ランキング（1月16日～1月22日）</a>
+                            <a href="https://k-tai.watch.impress.co.jp/docs/ranking/galapagos_ranking/2082446.html" target="_blank" rel="noopener noreferrer" class="entry-link">[電子書籍人気ランキング] 電子書籍人気ランキング（1月16日～1月22日）</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -837,13 +815,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="[石川温の「スマホ業界 Watch」]機種変更から投資・金融サービスへ、ドコモショップが「証券窓口」から“ドコモ銀行”への導線に" data-summary="ドコモショップが「お金の相談窓口」に変化しようとしている。年齢層が高く、お金に余裕のありそうなドコモユーザーが続々とターゲットになっているようだ。">
+                <li class="entry-item" data-link="https://k-tai.watch.impress.co.jp/docs/column/ishikawa/2082768.html" data-title="[石川温の「スマホ業界 Watch」]機種変更から投資・金融サービスへ、ドコモショップが「証券窓口」から“ドコモ銀行”への導線に" data-summary="ドコモショップが「お金の相談窓口」に変化しようとしている。年齢層が高く、お金に余裕のありそうなドコモユーザーが続々とターゲットになっているようだ。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://k-tai.watch.impress.co.jp/docs/column/ishikawa/2082768.html" target="_blank" rel="noopener noreferrer">[石川温の「スマホ業界 Watch」]機種変更から投資・金融サービスへ、ドコモショップが「証券窓口」から“ドコモ銀行”への導線に</a>
+                            <a href="https://k-tai.watch.impress.co.jp/docs/column/ishikawa/2082768.html" target="_blank" rel="noopener noreferrer" class="entry-link">[石川温の「スマホ業界 Watch」]機種変更から投資・金融サービスへ、ドコモショップが「証券窓口」から“ドコモ銀行”への導線に</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -858,13 +836,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="[本日の一品]派手さはないが堅実な使い勝手、スタンド機能も付属したMagSafe対応スマホバンド「MagGrip Pro」" data-summary="スマホの背面に取り付けて手への負担を軽減するスマホバンドやスマホリングを、ここ2～3年で20～30アイテムは取っ替え引っ替え試している筆者。メーカーサイトの使用例の写真で見ると使いやすく見えても、実際に届いてみるとパッケージから取り出した段階で「あっこれはダメだ」とお蔵入りになることも多く、当たり率は決して高くない。">
+                <li class="entry-item" data-link="https://k-tai.watch.impress.co.jp/docs/column/todays_goods/2082859.html" data-title="[本日の一品]派手さはないが堅実な使い勝手、スタンド機能も付属したMagSafe対応スマホバンド「MagGrip Pro」" data-summary="スマホの背面に取り付けて手への負担を軽減するスマホバンドやスマホリングを、ここ2～3年で20～30アイテムは取っ替え引っ替え試している筆者。メーカーサイトの使用例の写真で見ると使いやすく見えても、実際に届いてみるとパッケージから取り出した段階で「あっこれはダメだ」とお蔵入りになることも多く、当たり率は決して高くない。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://k-tai.watch.impress.co.jp/docs/column/todays_goods/2082859.html" target="_blank" rel="noopener noreferrer">[本日の一品]派手さはないが堅実な使い勝手、スタンド機能も付属したMagSafe対応スマホバンド「MagGrip Pro」</a>
+                            <a href="https://k-tai.watch.impress.co.jp/docs/column/todays_goods/2082859.html" target="_blank" rel="noopener noreferrer" class="entry-link">[本日の一品]派手さはないが堅実な使い勝手、スタンド機能も付属したMagSafe対応スマホバンド「MagGrip Pro」</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -879,13 +857,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="[みんなのケータイ]スマートホームで「スマートなホーム」を実現するのは容易ではない" data-summary="スマートフォンなどを使って家電や住宅設備などを操作するスマートホーム。筆者はこれまで、スマートホームにあまり積極的には取り組んでいなかったのですが、それでも気が付くと家電を遠隔操作できるスマートプラグやスマートリモコンなど、そこそこな数のスマートホーム機器が自宅にそろってきました。">
+                <li class="entry-item" data-link="https://k-tai.watch.impress.co.jp/docs/column/minna/2082694.html" data-title="[みんなのケータイ]スマートホームで「スマートなホーム」を実現するのは容易ではない" data-summary="スマートフォンなどを使って家電や住宅設備などを操作するスマートホーム。筆者はこれまで、スマートホームにあまり積極的には取り組んでいなかったのですが、それでも気が付くと家電を遠隔操作できるスマートプラグやスマートリモコンなど、そこそこな数のスマートホーム機器が自宅にそろってきました。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://k-tai.watch.impress.co.jp/docs/column/minna/2082694.html" target="_blank" rel="noopener noreferrer">[みんなのケータイ]スマートホームで「スマートなホーム」を実現するのは容易ではない</a>
+                            <a href="https://k-tai.watch.impress.co.jp/docs/column/minna/2082694.html" target="_blank" rel="noopener noreferrer" class="entry-link">[みんなのケータイ]スマートホームで「スマートなホーム」を実現するのは容易ではない</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -900,27 +878,6 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="LINEMO週穫祭2月第1弾、「留守電パック」などが最大3カ月間無料" data-summary="ソフトバンクは、オンライン専用ブランド「LINEMO」の「LINEMO週穫祭」で、「留守電パック＋セキュリティパックプレミアム（L）3カ月無料キャンペーン」を開始した。期間は8日まで。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://k-tai.watch.impress.co.jp/docs/news/2082716.html" target="_blank" rel="noopener noreferrer">LINEMO週穫祭2月第1弾、「留守電パック」などが最大3カ月間無料</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>17時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            ソフトバンクは、オンライン専用ブランド「LINEMO」の「LINEMO週穫祭」で、「留守電パック＋セキュリティパックプレミアム（L）3カ月無料キャンペーン」を開始した。期間は8日まで。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
             </ul>
         </details>
         
@@ -929,12 +886,47 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // ▼▼▼ 既読管理機能 ▼▼▼
+            const STORAGE_KEY = 'rss_read_items';
+            // LocalStorageから既読リストを取得 (Setで管理して高速化)
+            let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+
+            const entryItems = document.querySelectorAll('.entry-item');
+            
+            // 初期表示: 既読状態の反映
+            entryItems.forEach(item => {
+                const link = item.dataset.link;
+                if (readItems.has(link)) {
+                    item.classList.add('read');
+                }
+                
+                // クリックイベントの登録
+                const anchor = item.querySelector('a.entry-link');
+                anchor.addEventListener('click', function() {
+                    markAsRead(link, item);
+                });
+            });
+
+            function markAsRead(link, itemElement) {
+                // UIを即座に更新
+                itemElement.classList.add('read');
+                
+                // ストレージに保存
+                readItems.add(link);
+                // 容量制限のため、古いものから消す (最大1000件保持)
+                if (readItems.size > 1000) {
+                    const array = Array.from(readItems);
+                    readItems = new Set(array.slice(array.length - 1000));
+                }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
+            }
+            // ▲▲▲ 既読管理機能 ▲▲▲
+
+            // 検索機能
             const searchInput = document.getElementById('searchInput');
-            const entries = document.querySelectorAll('.entry-item');
             const sections = document.querySelectorAll('.feed-section');
 
-            // 元のHTMLを保存（ハイライト解除用）
-            entries.forEach(entry => {
+            entryItems.forEach(entry => {
                 const titleLink = entry.querySelector('.entry-title a');
                 const summaryDiv = entry.querySelector('.entry-summary');
                 entry.dataset.originalTitleHtml = titleLink.innerHTML;
@@ -944,15 +936,13 @@
             searchInput.addEventListener('input', function(e) {
                 const term = e.target.value.trim().toLowerCase();
 
-                // 検索リセット時の処理
                 if (term === '') {
                     sections.forEach(sec => {
                         sec.style.display = '';
-                        sec.open = false; // 全て閉じる
+                        sec.open = false;
                     });
-                    entries.forEach(entry => {
+                    entryItems.forEach(entry => {
                         entry.style.display = '';
-                        // ハイライト解除
                         const titleLink = entry.querySelector('.entry-title a');
                         const summaryDiv = entry.querySelector('.entry-summary');
                         titleLink.innerHTML = entry.dataset.originalTitleHtml;
@@ -961,7 +951,6 @@
                     return;
                 }
 
-                // 検索実行
                 sections.forEach(section => {
                     let hasVisibleEntry = false;
                     const sectionEntries = section.querySelectorAll('.entry-item');
@@ -973,15 +962,12 @@
                         if (titleText.includes(term) || summaryText.includes(term)) {
                             entry.style.display = '';
                             hasVisibleEntry = true;
-                            
-                            // ハイライト処理
                             highlightText(entry, term);
                         } else {
                             entry.style.display = 'none';
                         }
                     });
 
-                    // ヒットする記事があればセクションを開いて表示
                     if (hasVisibleEntry) {
                         section.style.display = '';
                         section.open = true;
@@ -994,17 +980,12 @@
             function highlightText(entry, term) {
                 const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
                 const highlightMark = '<mark>$1</mark>';
-
-                // タイトルのハイライト
                 const titleLink = entry.querySelector('.entry-title a');
                 titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
-
-                // サマリーのハイライト
                 const summaryDiv = entry.querySelector('.entry-summary');
                 summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
             }
 
-            // 正規表現のエスケープ処理
             function escapeRegExp(string) {
                 return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             }

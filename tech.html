@@ -13,7 +13,8 @@
             --accent: #007bff;
             --new-badge: #e74c3c;
             --border: #e9ecef;
-            --highlight: #fff3cd; /* ハイライト色 */
+            --highlight: #fff3cd;
+            --read-color: #b0b0b0; /* 既読記事の色 */
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -33,124 +34,80 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .nav-container {
-            max-width: 800px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between; /* 検索窓とリンクを左右に配置 */
-            flex-wrap: wrap;
-            gap: 10px;
+            max-width: 800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
         }
-        .nav-links {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
+        .nav-links { display: flex; gap: 10px; overflow-x: auto; white-space: nowrap; }
         .nav-link {
-            color: #fff;
-            text-decoration: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 600;
-            opacity: 0.8;
+            color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 14px; font-weight: 600; opacity: 0.8;
         }
         .nav-link.active { opacity: 1; background-color: var(--accent); }
 
-        /* 検索ボックスのデザイン */
-        .search-box {
-            position: relative;
-            flex-grow: 1;
-            max-width: 300px;
-        }
+        .search-box { position: relative; flex-grow: 1; max-width: 300px; }
         .search-input {
-            width: 100%;
-            padding: 6px 10px;
-            border-radius: 4px;
-            border: none;
-            font-size: 14px;
-            background-color: rgba(255,255,255,0.9);
-            box-sizing: border-box;
+            width: 100%; padding: 6px 10px; border-radius: 4px; border: none; font-size: 14px; background-color: rgba(255,255,255,0.9); box-sizing: border-box;
         }
         .search-input:focus { outline: 2px solid var(--accent); }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         header { margin-bottom: 20px; text-align: center; }
         h1 { font-size: 22px; margin: 0; color: #333; }
         .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
 
         details {
-            background: var(--card-bg);
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
-            border: 1px solid var(--border);
-            overflow: hidden;
+            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
         }
         summary {
-            list-style: none;
-            cursor: pointer;
-            padding: 15px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: #fff;
-            transition: background 0.2s;
+            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff; transition: background 0.2s;
         }
-        summary::-webkit-details-marker { display: none; }
         summary:hover { background-color: #f8f9fa; }
+        summary::-webkit-details-marker { display: none; }
         
         .feed-header { display: flex; align-items: center; gap: 10px; font-size: 16px; }
         .feed-favicon { width: 16px; height: 16px; border-radius: 2px; }
         .feed-status { font-size: 12px; color: var(--new-badge); font-weight: normal; }
 
-        .entry-list {
-            border-top: 1px solid var(--border);
-            padding: 0;
-            margin: 0;
-            list-style: none;
-        }
+        .entry-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
         .entry-item {
-            padding: 15px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            gap: 15px;
-            align-items: flex-start;
+            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start; transition: background-color 0.2s;
         }
         .entry-item:last-child { border-bottom: none; }
+
+        /* ▼▼▼ 既読記事のスタイル ▼▼▼ */
+        .entry-item.read {
+            background-color: #fcfcfc;
+        }
+        .entry-item.read .entry-title a {
+            color: var(--read-color);
+        }
+        .entry-item.read .entry-summary {
+            color: #d0d0d0;
+        }
+        .entry-item.read .entry-thumbnail {
+            opacity: 0.5;
+            filter: grayscale(100%);
+        }
+        .entry-item.read .new-badge {
+            background-color: #ccc; /* NEWバッジもグレーに */
+        }
+        /* ▲▲▲ 既読記事のスタイル ▲▲▲ */
         
         .entry-content-wrapper { flex: 1; min-width: 0; }
-        .entry-thumbnail {
-            width: 100px; height: 75px; object-fit: cover;
-            border-radius: 4px; flex-shrink: 0; border: 1px solid #eee;
-        }
+        .entry-thumbnail { width: 100px; height: 75px; object-fit: cover; border-radius: 4px; flex-shrink: 0; border: 1px solid #eee; }
 
         .entry-title { font-size: 16px; margin: 0 0 5px 0; line-height: 1.4; }
         .entry-title a { text-decoration: none; color: var(--text-main); }
         .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
         .new-badge {
-            display: inline-block; background-color: var(--new-badge); color: white;
-            font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px;
-            vertical-align: middle; font-weight: bold;
+            display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold;
         }
 
         .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; }
         .entry-summary {
-            font-size: 13px; color: #555; margin-top: 8px;
-            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-            overflow: hidden; opacity: 0.8;
+            font-size: 13px; color: #555; margin-top: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.8;
         }
         .entry-summary img { display: none; }
 
-        /* ハイライト用スタイル */
         mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
 
         @media (max-width: 600px) {
@@ -222,7 +179,7 @@
     <div class="container">
         <header>
             <h1>Tech情報</h1>
-            <div class="last-updated">最終更新: 02/03 11:31</div>
+            <div class="last-updated">最終更新: 02/03 11:53</div>
         </header>
 
         
@@ -239,13 +196,13 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-title="BigQueryに会話型分析機能（Conversational Analytics）が登場。詳細な分析レポート生成、将来予測や非構造化データの分析も可能に" data-summary="Google Cloudは、同社の大規模データベースであるBigQueryの新機能として、自然言語を使ってデータを分析できる会話型分析機能（Conversational Analytics）のプレビュー公開を発表しました。 この会話型分析機能は単に自然言語をSQLに変換するものではなく、同社のAIモデルであるGeminiにより、BigQuery上のスキーマやメタデータ、カスタムコマンドなどを用いたビジネスコンテキストを理解した上でSQLを生成し、データ分析やデータの可視化を実……">
+                <li class="entry-item" data-link="https://www.publickey1.jp/blog/26/bigqueryconversational_analytics.html" data-title="BigQueryに会話型分析機能（Conversational Analytics）が登場。詳細な分析レポート生成、将来予測や非構造化データの分析も可能に" data-summary="Google Cloudは、同社の大規模データベースであるBigQueryの新機能として、自然言語を使ってデータを分析できる会話型分析機能（Conversational Analytics）のプレビュー公開を発表しました。 この会話型分析機能は単に自然言語をSQLに変換するものではなく、同社のAIモデルであるGeminiにより、BigQuery上のスキーマやメタデータ、カスタムコマンドなどを用いたビジネスコンテキストを理解した上でSQLを生成し、データ分析やデータの可視化を実……">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.publickey1.jp/blog/26/bigqueryconversational_analytics.html" target="_blank" rel="noopener noreferrer">BigQueryに会話型分析機能（Conversational Analytics）が登場。詳細な分析レポート生成、将来予測や非構造化データの分析も可能に</a>
+                            <a href="https://www.publickey1.jp/blog/26/bigqueryconversational_analytics.html" target="_blank" rel="noopener noreferrer" class="entry-link">BigQueryに会話型分析機能（Conversational Analytics）が登場。詳細な分析レポート生成、将来予測や非構造化データの分析も可能に</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -260,13 +217,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="人間よりも高速にコード生成、実行、テストを繰り返すAIエージェントに適した、高速に起動終了する安全な分離環境「Vercel Sandbox」正式リリース" data-summary="Next.jsの開発元やWebホスティングサービスのプロバイダとして知られるVercelは、人間を上回る速度でAIエージェントが高速にコードの実行やテストを繰り返し行う能力に適した、高速に起動終了する安全に分離された実行環境「Vercel Sandbox」の正式リリースを発表しました。 AIは人間よりも高速にコード生成、実行を繰り返す AIエージェントは人間を上回る速度で自律的にコードを生成し、ビルド、テストを何度も繰り返しつつソフトウェアの開発を進める能力を備えています。 ……">
+                <li class="entry-item" data-link="https://www.publickey1.jp/blog/26/aivercel_sandbox.html" data-title="人間よりも高速にコード生成、実行、テストを繰り返すAIエージェントに適した、高速に起動終了する安全な分離環境「Vercel Sandbox」正式リリース" data-summary="Next.jsの開発元やWebホスティングサービスのプロバイダとして知られるVercelは、人間を上回る速度でAIエージェントが高速にコードの実行やテストを繰り返し行う能力に適した、高速に起動終了する安全に分離された実行環境「Vercel Sandbox」の正式リリースを発表しました。 AIは人間よりも高速にコード生成、実行を繰り返す AIエージェントは人間を上回る速度で自律的にコードを生成し、ビルド、テストを何度も繰り返しつつソフトウェアの開発を進める能力を備えています。 ……">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.publickey1.jp/blog/26/aivercel_sandbox.html" target="_blank" rel="noopener noreferrer">人間よりも高速にコード生成、実行、テストを繰り返すAIエージェントに適した、高速に起動終了する安全な分離環境「Vercel Sandbox」正式リリース</a>
+                            <a href="https://www.publickey1.jp/blog/26/aivercel_sandbox.html" target="_blank" rel="noopener noreferrer" class="entry-link">人間よりも高速にコード生成、実行、テストを繰り返すAIエージェントに適した、高速に起動終了する安全な分離環境「Vercel Sandbox」正式リリース</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -281,11 +238,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="BunがZig製の高速なMarkdownパーサー搭載。HTMLへのレンダリング、GitHub Flavored Markdown対応、Reactエレメントの生成など" data-summary="オープンソースで開発されているJavaScriptランタイム「Bun」の最新バージョン「Bun v1.3.8」が公開されました。 下記はBunの作者であるJarred Sumner氏のポストです。 In the next version of BunBun gets a built-in, native Markdown parser - a Zig port of the popular `md4c` library. pic.twitter.com/YabO6Io8u1&……">
+                <li class="entry-item" data-link="https://www.publickey1.jp/blog/26/bunzigmarkdownhtmlgithub_flavored_markdownreact.html" data-title="BunがZig製の高速なMarkdownパーサー搭載。HTMLへのレンダリング、GitHub Flavored Markdown対応、Reactエレメントの生成など" data-summary="オープンソースで開発されているJavaScriptランタイム「Bun」の最新バージョン「Bun v1.3.8」が公開されました。 下記はBunの作者であるJarred Sumner氏のポストです。 In the next version of BunBun gets a built-in, native Markdown parser - a Zig port of the popular `md4c` library. pic.twitter.com/YabO6Io8u1&……">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://www.publickey1.jp/blog/26/bunzigmarkdownhtmlgithub_flavored_markdownreact.html" target="_blank" rel="noopener noreferrer">BunがZig製の高速なMarkdownパーサー搭載。HTMLへのレンダリング、GitHub Flavored Markdown対応、Reactエレメントの生成など</a>
+                            <a href="https://www.publickey1.jp/blog/26/bunzigmarkdownhtmlgithub_flavored_markdownreact.html" target="_blank" rel="noopener noreferrer" class="entry-link">BunがZig製の高速なMarkdownパーサー搭載。HTMLへのレンダリング、GitHub Flavored Markdown対応、Reactエレメントの生成など</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -300,11 +257,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="jQuery 4.0で正式にテストされた「jQuery UI 1.14.2」が公開" data-summary="jQuery UI開発チームは、今月（2025年1月）にリリースされたばかりのjQuery 4.0で正式にテストされたjQuery UIの最新版「jQuery UI 1.14.2」の公開を発表しました。 jQuery UIはその名称から分かるとおり、jQueryをベースにさまざまなユーザーインターフェイスのコンポーネントを提供するJavaScriptライブラリです。 ボタン、チェックボックス、カレンダー、ダイアログ、メニュー、プログレスバー、スライダーなどをはじめとするさまざ……">
+                <li class="entry-item" data-link="https://www.publickey1.jp/blog/26/jquery_40jquery_ui_1142.html" data-title="jQuery 4.0で正式にテストされた「jQuery UI 1.14.2」が公開" data-summary="jQuery UI開発チームは、今月（2025年1月）にリリースされたばかりのjQuery 4.0で正式にテストされたjQuery UIの最新版「jQuery UI 1.14.2」の公開を発表しました。 jQuery UIはその名称から分かるとおり、jQueryをベースにさまざまなユーザーインターフェイスのコンポーネントを提供するJavaScriptライブラリです。 ボタン、チェックボックス、カレンダー、ダイアログ、メニュー、プログレスバー、スライダーなどをはじめとするさまざ……">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://www.publickey1.jp/blog/26/jquery_40jquery_ui_1142.html" target="_blank" rel="noopener noreferrer">jQuery 4.0で正式にテストされた「jQuery UI 1.14.2」が公開</a>
+                            <a href="https://www.publickey1.jp/blog/26/jquery_40jquery_ui_1142.html" target="_blank" rel="noopener noreferrer" class="entry-link">jQuery 4.0で正式にテストされた「jQuery UI 1.14.2」が公開</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -319,11 +276,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="AWS、最新のMac Studioを利用した「Amazon EC2 M4 Max Macインスタンス」提供開始" data-summary="Amazon Web Servicesは、最新のMac Studioハードウェアを利用したMacインスタンス「Amazon EC2 M4 Max Macインスタンス」の提供開始を発表しました。 MacインスタンスはAppleのMacを使用したサービスであり、Macに対応したアプリケーションだけでなくiOS、iPadOS、tvOS、watchOS、visionOS、SafariなどのAppleプラットフォーム向けのアプリケーション構築やテストに利用可能です。 Mac Studi……">
+                <li class="entry-item" data-link="https://www.publickey1.jp/blog/26/awsmac_studioamazon_ec2_m4_max_mac.html" data-title="AWS、最新のMac Studioを利用した「Amazon EC2 M4 Max Macインスタンス」提供開始" data-summary="Amazon Web Servicesは、最新のMac Studioハードウェアを利用したMacインスタンス「Amazon EC2 M4 Max Macインスタンス」の提供開始を発表しました。 MacインスタンスはAppleのMacを使用したサービスであり、Macに対応したアプリケーションだけでなくiOS、iPadOS、tvOS、watchOS、visionOS、SafariなどのAppleプラットフォーム向けのアプリケーション構築やテストに利用可能です。 Mac Studi……">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://www.publickey1.jp/blog/26/awsmac_studioamazon_ec2_m4_max_mac.html" target="_blank" rel="noopener noreferrer">AWS、最新のMac Studioを利用した「Amazon EC2 M4 Max Macインスタンス」提供開始</a>
+                            <a href="https://www.publickey1.jp/blog/26/awsmac_studioamazon_ec2_m4_max_mac.html" target="_blank" rel="noopener noreferrer" class="entry-link">AWS、最新のMac Studioを利用した「Amazon EC2 M4 Max Macインスタンス」提供開始</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -338,11 +295,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="OpenAI、ホワイトボードの数式や図をLaTeXの図版に変換。問題の仮説検証、推論、関連文献の検索など、論文執筆を支援してくれる「Prism」公開" data-summary="OpenAIは、GPT‑5.2をベースに研究者が論文の執筆や共同作業を行うためのWebブラウザから利用できるサービス「Prism」を発表しました。 数学や科学的推論に特化したGPT-5.2を統合 Prism は、数学および科学的推論に特化した最先端モデルであるGPT‑5.2を統合した、科学研究の執筆と共同作業のためのワークスペースです。 以下の機能を備えていると説明されています。 GPT‑5.2 Thinking と対話し、文脈に沿ってアイデアを検討し、仮説を検証し、複雑な科……">
+                <li class="entry-item" data-link="https://www.publickey1.jp/blog/26/openailatexprism.html" data-title="OpenAI、ホワイトボードの数式や図をLaTeXの図版に変換。問題の仮説検証、推論、関連文献の検索など、論文執筆を支援してくれる「Prism」公開" data-summary="OpenAIは、GPT‑5.2をベースに研究者が論文の執筆や共同作業を行うためのWebブラウザから利用できるサービス「Prism」を発表しました。 数学や科学的推論に特化したGPT-5.2を統合 Prism は、数学および科学的推論に特化した最先端モデルであるGPT‑5.2を統合した、科学研究の執筆と共同作業のためのワークスペースです。 以下の機能を備えていると説明されています。 GPT‑5.2 Thinking と対話し、文脈に沿ってアイデアを検討し、仮説を検証し、複雑な科……">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://www.publickey1.jp/blog/26/openailatexprism.html" target="_blank" rel="noopener noreferrer">OpenAI、ホワイトボードの数式や図をLaTeXの図版に変換。問題の仮説検証、推論、関連文献の検索など、論文執筆を支援してくれる「Prism」公開</a>
+                            <a href="https://www.publickey1.jp/blog/26/openailatexprism.html" target="_blank" rel="noopener noreferrer" class="entry-link">OpenAI、ホワイトボードの数式や図をLaTeXの図版に変換。問題の仮説検証、推論、関連文献の検索など、論文執筆を支援してくれる「Prism」公開</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -357,11 +314,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="オラクル、Linux版の「Oracle AI Database 26ai」正式リリース。前バージョンからそのまま移行可能" data-summary="オラクルはオンプレミス向けのLinux x86-64版「Oracle AI Database 26ai」の正式リリースを発表しました。 Oracle AI Database 26aiは、1つ前のバージョンであるOracle AI Database 23aiの上に新機能を組み込んだものであり、23aiのユーザーは2025年10月のリリースアップデートで26aiの機能に移行できます。 23aiをベースとしているため、23aiから26aiへのアップグレード後もテストなど不要でそのま……">
+                <li class="entry-item" data-link="https://www.publickey1.jp/blog/26/linuxoracle_ai_database_26ai.html" data-title="オラクル、Linux版の「Oracle AI Database 26ai」正式リリース。前バージョンからそのまま移行可能" data-summary="オラクルはオンプレミス向けのLinux x86-64版「Oracle AI Database 26ai」の正式リリースを発表しました。 Oracle AI Database 26aiは、1つ前のバージョンであるOracle AI Database 23aiの上に新機能を組み込んだものであり、23aiのユーザーは2025年10月のリリースアップデートで26aiの機能に移行できます。 23aiをベースとしているため、23aiから26aiへのアップグレード後もテストなど不要でそのま……">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://www.publickey1.jp/blog/26/linuxoracle_ai_database_26ai.html" target="_blank" rel="noopener noreferrer">オラクル、Linux版の「Oracle AI Database 26ai」正式リリース。前バージョンからそのまま移行可能</a>
+                            <a href="https://www.publickey1.jp/blog/26/linuxoracle_ai_database_26ai.html" target="_blank" rel="noopener noreferrer" class="entry-link">オラクル、Linux版の「Oracle AI Database 26ai」正式リリース。前バージョンからそのまま移行可能</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -376,11 +333,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="Apple、Swift言語でWindowsアプリケーションの開発を推進する「Windows Workgroup」発足を発表" data-summary="Swift言語のコアチームに所属するAppleのMishal Shah氏は、SwiftでWindowsアプリケーションの開発を推進するための「Windows Workgroup」発足を発表しました。 Swiftは202年のSwift on WindowsのリリースからWindowsアプリケーションの開発に公式に対応していました。 今回のWindows Workgroupの発足は、このWindows対応を継続的に推進していくためのものとされています。 具体的には、以下の取り組み……">
+                <li class="entry-item" data-link="https://www.publickey1.jp/blog/26/appleswiftwindowswindows_workgroup.html" data-title="Apple、Swift言語でWindowsアプリケーションの開発を推進する「Windows Workgroup」発足を発表" data-summary="Swift言語のコアチームに所属するAppleのMishal Shah氏は、SwiftでWindowsアプリケーションの開発を推進するための「Windows Workgroup」発足を発表しました。 Swiftは202年のSwift on WindowsのリリースからWindowsアプリケーションの開発に公式に対応していました。 今回のWindows Workgroupの発足は、このWindows対応を継続的に推進していくためのものとされています。 具体的には、以下の取り組み……">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://www.publickey1.jp/blog/26/appleswiftwindowswindows_workgroup.html" target="_blank" rel="noopener noreferrer">Apple、Swift言語でWindowsアプリケーションの開発を推進する「Windows Workgroup」発足を発表</a>
+                            <a href="https://www.publickey1.jp/blog/26/appleswiftwindowswindows_workgroup.html" target="_blank" rel="noopener noreferrer" class="entry-link">Apple、Swift言語でWindowsアプリケーションの開発を推進する「Windows Workgroup」発足を発表</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -395,11 +352,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="Google Cloud、AlloyDB for PostgreSQLでコネクションプーリングのマネージドサービスを提供開始、データベースがより高速に" data-summary="Google Cloudは、データベースサービスとして提供している「AlloyDB for PostgreSQL」の新機能として、コネクションプーリングをマネージドサービスとして提供すると発表しました。 データベースの接続には負荷がかかる データベースを利用する場合には、クライアントとなるアプリケーションからデータベースサーバに対して接続が行われます。 この接続時には、ネットワークハンドシェイク、トランスポート層セキュリティ（TLS）のネゴシエーション、認証、セッションの初期……">
+                <li class="entry-item" data-link="https://www.publickey1.jp/blog/26/google_cloudalloydb_for_postgresql.html" data-title="Google Cloud、AlloyDB for PostgreSQLでコネクションプーリングのマネージドサービスを提供開始、データベースがより高速に" data-summary="Google Cloudは、データベースサービスとして提供している「AlloyDB for PostgreSQL」の新機能として、コネクションプーリングをマネージドサービスとして提供すると発表しました。 データベースの接続には負荷がかかる データベースを利用する場合には、クライアントとなるアプリケーションからデータベースサーバに対して接続が行われます。 この接続時には、ネットワークハンドシェイク、トランスポート層セキュリティ（TLS）のネゴシエーション、認証、セッションの初期……">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://www.publickey1.jp/blog/26/google_cloudalloydb_for_postgresql.html" target="_blank" rel="noopener noreferrer">Google Cloud、AlloyDB for PostgreSQLでコネクションプーリングのマネージドサービスを提供開始、データベースがより高速に</a>
+                            <a href="https://www.publickey1.jp/blog/26/google_cloudalloydb_for_postgresql.html" target="_blank" rel="noopener noreferrer" class="entry-link">Google Cloud、AlloyDB for PostgreSQLでコネクションプーリングのマネージドサービスを提供開始、データベースがより高速に</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -414,11 +371,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="米国におけるTikTokのデータの保存やコンテンツレコメンドなどは米国内のオラクルのクラウドで実行されると発表。中国ByteDanceから分離へ" data-summary="中国ByteDance傘下のTikTok米国法人は、トランプ大統領による大統領令に従って、米国資本が過半数を持つ新会社「TikTok USDS Joint Venture LLC」に売却されたことを明らかにしました。 新会社はオラクル、米国投資ファンドのシルバーレイク、アブダビの投資会社MGXがそれぞれ15％の株式を保有し、ByteDanceも約20％の株式を保有。他にもマイケル・デル氏の投資会社など複数の投資会社などが株式の一部を保有します。 と同時に新会社は米国の国家安全……">
+                <li class="entry-item" data-link="https://www.publickey1.jp/blog/26/tiktokbytedance.html" data-title="米国におけるTikTokのデータの保存やコンテンツレコメンドなどは米国内のオラクルのクラウドで実行されると発表。中国ByteDanceから分離へ" data-summary="中国ByteDance傘下のTikTok米国法人は、トランプ大統領による大統領令に従って、米国資本が過半数を持つ新会社「TikTok USDS Joint Venture LLC」に売却されたことを明らかにしました。 新会社はオラクル、米国投資ファンドのシルバーレイク、アブダビの投資会社MGXがそれぞれ15％の株式を保有し、ByteDanceも約20％の株式を保有。他にもマイケル・デル氏の投資会社など複数の投資会社などが株式の一部を保有します。 と同時に新会社は米国の国家安全……">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://www.publickey1.jp/blog/26/tiktokbytedance.html" target="_blank" rel="noopener noreferrer">米国におけるTikTokのデータの保存やコンテンツレコメンドなどは米国内のオラクルのクラウドで実行されると発表。中国ByteDanceから分離へ</a>
+                            <a href="https://www.publickey1.jp/blog/26/tiktokbytedance.html" target="_blank" rel="noopener noreferrer" class="entry-link">米国におけるTikTokのデータの保存やコンテンツレコメンドなどは米国内のオラクルのクラウドで実行されると発表。中国ByteDanceから分離へ</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -449,17 +406,59 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-title="AI事業本部にジョインしました内田です!" data-summary="AI事業本部にジョインしました内田です!">
+                <li class="entry-item" data-link="https://dev.classmethod.jp/articles/amazon-lightsail-memory-optimized-instances/" data-title="[アップデート] Amazon Lightsail インスタンスでインスタンスプランタイプ「メモリ最適化」が選択できるようになりました" data-summary="[アップデート] Amazon Lightsail インスタンスでインスタンスプランタイプ「メモリ最適化」が選択できるようになりました">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://dev.classmethod.jp/articles/ai-20260202-intro/" target="_blank" rel="noopener noreferrer">AI事業本部にジョインしました内田です!</a>
+                            <a href="https://dev.classmethod.jp/articles/amazon-lightsail-memory-optimized-instances/" target="_blank" rel="noopener noreferrer" class="entry-link">[アップデート] Amazon Lightsail インスタンスでインスタンスプランタイプ「メモリ最適化」が選択できるようになりました</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>11分前</span>
+                            <span>1分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            [アップデート] Amazon Lightsail インスタンスでインスタンスプランタイプ「メモリ最適化」が選択できるようになりました
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://dev.classmethod.jp/articles/alteryx-designer-cloud-gcs/" data-title="Alteryx Designer CloudからGCSへの入出力" data-summary="Alteryx Designer CloudからGCSへの入出力">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://dev.classmethod.jp/articles/alteryx-designer-cloud-gcs/" target="_blank" rel="noopener noreferrer" class="entry-link">Alteryx Designer CloudからGCSへの入出力</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>16分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Alteryx Designer CloudからGCSへの入出力
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://dev.classmethod.jp/articles/ai-20260202-intro/" data-title="AI事業本部にジョインしました内田です!" data-summary="AI事業本部にジョインしました内田です!">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://dev.classmethod.jp/articles/ai-20260202-intro/" target="_blank" rel="noopener noreferrer" class="entry-link">AI事業本部にジョインしました内田です!</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>33分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -470,17 +469,17 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="Bodygram Platform × Gemini APIでバーチャル試着を試してみた" data-summary="Bodygram Platform × Gemini APIでバーチャル試着を試してみた">
+                <li class="entry-item" data-link="https://dev.classmethod.jp/articles/bodygram-platform-gemini-api/" data-title="Bodygram Platform × Gemini APIでバーチャル試着を試してみた" data-summary="Bodygram Platform × Gemini APIでバーチャル試着を試してみた">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://dev.classmethod.jp/articles/bodygram-platform-gemini-api/" target="_blank" rel="noopener noreferrer">Bodygram Platform × Gemini APIでバーチャル試着を試してみた</a>
+                            <a href="https://dev.classmethod.jp/articles/bodygram-platform-gemini-api/" target="_blank" rel="noopener noreferrer" class="entry-link">Bodygram Platform × Gemini APIでバーチャル試着を試してみた</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>35分前</span>
+                            <span>58分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -491,17 +490,17 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="ALB / NLB 作成時に事前に作成したターゲットグループが表示されないのはなぜでしょうか" data-summary="ALB / NLB 作成時に事前に作成したターゲットグループが表示されないのはなぜでしょうか">
+                <li class="entry-item" data-link="https://dev.classmethod.jp/articles/alb-nlb-tg-hidden/" data-title="ALB / NLB 作成時に事前に作成したターゲットグループが表示されないのはなぜでしょうか" data-summary="ALB / NLB 作成時に事前に作成したターゲットグループが表示されないのはなぜでしょうか">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://dev.classmethod.jp/articles/alb-nlb-tg-hidden/" target="_blank" rel="noopener noreferrer">ALB / NLB 作成時に事前に作成したターゲットグループが表示されないのはなぜでしょうか</a>
+                            <a href="https://dev.classmethod.jp/articles/alb-nlb-tg-hidden/" target="_blank" rel="noopener noreferrer" class="entry-link">ALB / NLB 作成時に事前に作成したターゲットグループが表示されないのはなぜでしょうか</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>46分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -512,13 +511,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="Claude CodeのTasks System機能を試してみた" data-summary="Claude CodeのTasks System機能を試してみた">
+                <li class="entry-item" data-link="https://dev.classmethod.jp/articles/claude-code-tasks-system/" data-title="Claude CodeのTasks System機能を試してみた" data-summary="Claude CodeのTasks System機能を試してみた">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://dev.classmethod.jp/articles/claude-code-tasks-system/" target="_blank" rel="noopener noreferrer">Claude CodeのTasks System機能を試してみた</a>
+                            <a href="https://dev.classmethod.jp/articles/claude-code-tasks-system/" target="_blank" rel="noopener noreferrer" class="entry-link">Claude CodeのTasks System機能を試してみた</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -533,13 +532,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="サポート対応の現場から - 伝わる日本語コミュニケーション 7 つの心掛け" data-summary="サポート対応の現場から - 伝わる日本語コミュニケーション 7 つの心掛け">
+                <li class="entry-item" data-link="https://dev.classmethod.jp/articles/operations_ust_202602/" data-title="サポート対応の現場から - 伝わる日本語コミュニケーション 7 つの心掛け" data-summary="サポート対応の現場から - 伝わる日本語コミュニケーション 7 つの心掛け">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://dev.classmethod.jp/articles/operations_ust_202602/" target="_blank" rel="noopener noreferrer">サポート対応の現場から - 伝わる日本語コミュニケーション 7 つの心掛け</a>
+                            <a href="https://dev.classmethod.jp/articles/operations_ust_202602/" target="_blank" rel="noopener noreferrer" class="entry-link">サポート対応の現場から - 伝わる日本語コミュニケーション 7 つの心掛け</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -554,13 +553,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="評価面談の資料作成が15分で完了！Slackリスト機能で『成果の見える化』を実現してみた" data-summary="Slackのリスト機能の活用方法の紹介記事です。">
+                <li class="entry-item" data-link="https://dev.classmethod.jp/articles/slack_list_15min/" data-title="評価面談の資料作成が15分で完了！Slackリスト機能で『成果の見える化』を実現してみた" data-summary="Slackのリスト機能の活用方法の紹介記事です。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://dev.classmethod.jp/articles/slack_list_15min/" target="_blank" rel="noopener noreferrer">評価面談の資料作成が15分で完了！Slackリスト機能で『成果の見える化』を実現してみた</a>
+                            <a href="https://dev.classmethod.jp/articles/slack_list_15min/" target="_blank" rel="noopener noreferrer" class="entry-link">評価面談の資料作成が15分で完了！Slackリスト機能で『成果の見える化』を実現してみた</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -575,13 +574,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="Amazon Connect セルフサービスAIエージェントで、自動回答までの無音時間を減らすために一時応答メッセージを調整してみた" data-summary="Amazon Connect セルフサービスAIエージェントで、自動回答までの無音時間を減らすために一時応答メッセージを調整してみた">
+                <li class="entry-item" data-link="https://dev.classmethod.jp/articles/amazon-connect-ai-agent-adjust-initial-response/" data-title="Amazon Connect セルフサービスAIエージェントで、自動回答までの無音時間を減らすために一時応答メッセージを調整してみた" data-summary="Amazon Connect セルフサービスAIエージェントで、自動回答までの無音時間を減らすために一時応答メッセージを調整してみた">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://dev.classmethod.jp/articles/amazon-connect-ai-agent-adjust-initial-response/" target="_blank" rel="noopener noreferrer">Amazon Connect セルフサービスAIエージェントで、自動回答までの無音時間を減らすために一時応答メッセージを調整してみた</a>
+                            <a href="https://dev.classmethod.jp/articles/amazon-connect-ai-agent-adjust-initial-response/" target="_blank" rel="noopener noreferrer" class="entry-link">Amazon Connect セルフサービスAIエージェントで、自動回答までの無音時間を減らすために一時応答メッセージを調整してみた</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -596,13 +595,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="2026 年 1 月の AWS テクニカルサポートノートまとめ" data-summary="2026 年 1 月の AWS テクニカルサポートノートまとめ">
+                <li class="entry-item" data-link="https://dev.classmethod.jp/articles/summary-of-aws-technical-support-notes-for-january-2026/" data-title="2026 年 1 月の AWS テクニカルサポートノートまとめ" data-summary="2026 年 1 月の AWS テクニカルサポートノートまとめ">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://dev.classmethod.jp/articles/summary-of-aws-technical-support-notes-for-january-2026/" target="_blank" rel="noopener noreferrer">2026 年 1 月の AWS テクニカルサポートノートまとめ</a>
+                            <a href="https://dev.classmethod.jp/articles/summary-of-aws-technical-support-notes-for-january-2026/" target="_blank" rel="noopener noreferrer" class="entry-link">2026 年 1 月の AWS テクニカルサポートノートまとめ</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -611,48 +610,6 @@
 
                         <div class="entry-summary">
                             2026 年 1 月の AWS テクニカルサポートノートまとめ
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-title="[アップデート] Amazon RDSがRDS Service APIのVPC エンドポイントでIPv6に対応しました" data-summary="[アップデート] Amazon RDSがRDS Service APIのVPC エンドポイントでIPv6に対応しました">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://dev.classmethod.jp/articles/amazon-rds-service-api-vpc-endpoint-ipv6/" target="_blank" rel="noopener noreferrer">[アップデート] Amazon RDSがRDS Service APIのVPC エンドポイントでIPv6に対応しました</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>6時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            [アップデート] Amazon RDSがRDS Service APIのVPC エンドポイントでIPv6に対応しました
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-title="約6万件の日本語テキストをベクトル化をGPUとCPU処理で比較してみた" data-summary="約6万件の日本語テキストを対象に、多言語モデル（multilingual-e5-large）と日本語特化モデル（ruri-base）のベクトル化性能をGPU/CPU環境で実測比較。前者はGPUの採用で15倍の高速化を確認した一方、コスト効率と実用性のバランスから、CPU処理でも十分な性能を発揮した「ruri-base」の採用に至った検証結果を紹介します。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://dev.classmethod.jp/articles/ja-text-embedding-gpu-cpu-comparison/" target="_blank" rel="noopener noreferrer">約6万件の日本語テキストをベクトル化をGPUとCPU処理で比較してみた</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>11時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            約6万件の日本語テキストを対象に、多言語モデル（multilingual-e5-large）と日本語特化モデル（ruri-base）のベクトル化性能をGPU/CPU環境で実測比較。前者はGPUの採用で15倍の高速化を確認した一方、コスト効率と実用性のバランスから、CPU処理でも十分な性能を発揮した「ruri-base」の採用に至った検証結果を紹介します。
                         </div>
                     </div>
 
@@ -675,17 +632,17 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-title="JOI2025/2026セミファイナル参戦記" data-summary="こんにちは、kazuppaです。競技プログラミングなどをしています。 JOI2025/2026セミファイナルに参加したのでその記録を書きたいと思います。 day1まで 1月上旬はのんびりJOIをやってました。 12/31に某JOI除夜コンをやっていました。当時難易度6以下...">
+                <li class="entry-item" data-link="https://qiita.com/kazuppa/items/314ba804a4c5b14a1092?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="JOI2025/2026セミファイナル参戦記" data-summary="こんにちは、kazuppaです。競技プログラミングなどをしています。 JOI2025/2026セミファイナルに参加したのでその記録を書きたいと思います。 day1まで 1月上旬はのんびりJOIをやってました。 12/31に某JOI除夜コンをやっていました。当時難易度6以下...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://qiita.com/kazuppa/items/314ba804a4c5b14a1092?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">JOI2025/2026セミファイナル参戦記</a>
+                            <a href="https://qiita.com/kazuppa/items/314ba804a4c5b14a1092?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">JOI2025/2026セミファイナル参戦記</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>12時間前</span>
+                            <span>13時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -696,17 +653,15 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="Next.js で認証を 実装する方法" data-summary="Next.jsで認証を実装する方法 (日本語が得意ではないため、AIツールを使用して翻訳しています。ご不便をおかけして申し訳ありません ) 目次 はじめに 認証 サインアップとログイン機能 セッション管理 ステートレスセッション データベースセッション ...">
+                <li class="entry-item" data-link="https://qiita.com/TOMOSIA-HieuNT/items/4e0ef83fd384a477e480?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="Next.js で認証を 実装する方法" data-summary="Next.jsで認証を実装する方法 (日本語が得意ではないため、AIツールを使用して翻訳しています。ご不便をおかけして申し訳ありません ) 目次 はじめに 認証 サインアップとログイン機能 セッション管理 ステートレスセッション データベースセッション ...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://qiita.com/TOMOSIA-HieuNT/items/4e0ef83fd384a477e480?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">Next.js で認証を 実装する方法</a>
+                            <a href="https://qiita.com/TOMOSIA-HieuNT/items/4e0ef83fd384a477e480?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">Next.js で認証を 実装する方法</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>23時間前</span>
+                            <span>昨日</span>
                         </div>
 
                         <div class="entry-summary">
@@ -717,11 +672,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="AWSクレジットが使える！ BedrockのKimi K2を調教して、StrandsのClaudeコストを節約しよう" data-summary="この記事は、投稿主のみのるん氏がAIエージェントを構築する過程で遭遇したトラブルと解決策を、一緒に奮闘した私Claude Codeがまとめたものです。 AI生成ブログのアンチとして有名なみのるんが、一体どんな記事をClaudeに書かせたのか？ぜひ楽しんで読んでくださいね...">
+                <li class="entry-item" data-link="https://qiita.com/minorun365/items/e85b46678a8700d564cd?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="AWSクレジットが使える！ BedrockのKimi K2を調教して、StrandsのClaudeコストを節約しよう" data-summary="この記事は、投稿主のみのるん氏がAIエージェントを構築する過程で遭遇したトラブルと解決策を、一緒に奮闘した私Claude Codeがまとめたものです。 AI生成ブログのアンチとして有名なみのるんが、一体どんな記事をClaudeに書かせたのか？ぜひ楽しんで読んでくださいね...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://qiita.com/minorun365/items/e85b46678a8700d564cd?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">AWSクレジットが使える！ BedrockのKimi K2を調教して、StrandsのClaudeコストを節約しよう</a>
+                            <a href="https://qiita.com/minorun365/items/e85b46678a8700d564cd?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">AWSクレジットが使える！ BedrockのKimi K2を調教して、StrandsのClaudeコストを節約しよう</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -736,11 +691,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="開発者はAIを使うと24％速くなると考えているが実際には約20％遅いという主張について調べた件" data-summary="はじめに どうも。鳩胸になりたい文鳥です。 Professor Answers Coding Questions ある日YouTubeを見ていたところ面白い動画に遭遇しました。 Professor Answers Coding Questions | Tech Sup...">
+                <li class="entry-item" data-link="https://qiita.com/morry_48/items/a4c5d048f6fb662ebbba?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="開発者はAIを使うと24％速くなると考えているが実際には約20％遅いという主張について調べた件" data-summary="はじめに どうも。鳩胸になりたい文鳥です。 Professor Answers Coding Questions ある日YouTubeを見ていたところ面白い動画に遭遇しました。 Professor Answers Coding Questions | Tech Sup...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://qiita.com/morry_48/items/a4c5d048f6fb662ebbba?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">開発者はAIを使うと24％速くなると考えているが実際には約20％遅いという主張について調べた件</a>
+                            <a href="https://qiita.com/morry_48/items/a4c5d048f6fb662ebbba?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">開発者はAIを使うと24％速くなると考えているが実際には約20％遅いという主張について調べた件</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -755,11 +710,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="Rustを勉強して分かったC言語経験者がつまづきやすいポイント" data-summary="はじめに 先日Rustの開発環境を構築したので、理解度を深めるためにC言語っぽい感じで構造体の連結リストを作ってみました。 ところが、いざ書き始めるとコンパイルエラーが多発してしまい、Rustのルールに慣れるまで結構時間がかかるな…というのが正直な感想です。 この記事では...">
+                <li class="entry-item" data-link="https://qiita.com/denden888/items/1ae89e9d8d5c2cfa8180?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="Rustを勉強して分かったC言語経験者がつまづきやすいポイント" data-summary="はじめに 先日Rustの開発環境を構築したので、理解度を深めるためにC言語っぽい感じで構造体の連結リストを作ってみました。 ところが、いざ書き始めるとコンパイルエラーが多発してしまい、Rustのルールに慣れるまで結構時間がかかるな…というのが正直な感想です。 この記事では...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://qiita.com/denden888/items/1ae89e9d8d5c2cfa8180?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">Rustを勉強して分かったC言語経験者がつまづきやすいポイント</a>
+                            <a href="https://qiita.com/denden888/items/1ae89e9d8d5c2cfa8180?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">Rustを勉強して分かったC言語経験者がつまづきやすいポイント</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -774,11 +729,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="純粋関数型言語ではconsole.log("Hello")をlog "Hello"と書くし、foo = 42をwrite 42 fooと書く" data-summary="いわゆる純粋関数型プログラミング言語は、「状態や作用を扱うことはできない/難しい/面倒」といわれることもあります。でも、たとえばJavaScriptでコンソールにHelloを出力するには、 JavaScript console.log("Hello") と書く一方で、...">
+                <li class="entry-item" data-link="https://qiita.com/hiruberuto/items/4d8a4739cd738c425ee2?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="純粋関数型言語ではconsole.log("Hello")をlog "Hello"と書くし、foo = 42をwrite 42 fooと書く" data-summary="いわゆる純粋関数型プログラミング言語は、「状態や作用を扱うことはできない/難しい/面倒」といわれることもあります。でも、たとえばJavaScriptでコンソールにHelloを出力するには、 JavaScript console.log("Hello") と書く一方で、...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://qiita.com/hiruberuto/items/4d8a4739cd738c425ee2?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">純粋関数型言語ではconsole.log("Hello")をlog "Hello"と書くし、foo = 42をwrite 42 fooと書く</a>
+                            <a href="https://qiita.com/hiruberuto/items/4d8a4739cd738c425ee2?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">純粋関数型言語ではconsole.log("Hello")をlog "Hello"と書くし、foo = 42をwrite 42 fooと書く</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -793,11 +748,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="ネットワークの基礎：OSI参照モデルとTCP/IPモデルの違いと各層の役割" data-summary="はじめに この記事では、「OSI参照モデル」、「TCP/IPモデル」の定義、各層の役割についての学びを共有します。 1. OSI参照モデルとは？ OSI参照モデル（Open Systems Interconnection reference model）とは、国際標準化...">
+                <li class="entry-item" data-link="https://qiita.com/Haruji/items/4c5c87de1fc5eb8bae5b?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="ネットワークの基礎：OSI参照モデルとTCP/IPモデルの違いと各層の役割" data-summary="はじめに この記事では、「OSI参照モデル」、「TCP/IPモデル」の定義、各層の役割についての学びを共有します。 1. OSI参照モデルとは？ OSI参照モデル（Open Systems Interconnection reference model）とは、国際標準化...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://qiita.com/Haruji/items/4c5c87de1fc5eb8bae5b?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">ネットワークの基礎：OSI参照モデルとTCP/IPモデルの違いと各層の役割</a>
+                            <a href="https://qiita.com/Haruji/items/4c5c87de1fc5eb8bae5b?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">ネットワークの基礎：OSI参照モデルとTCP/IPモデルの違いと各層の役割</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -812,11 +767,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="【2026年】UIトレンドを調べてみた" data-summary="2026年のUIデザイントレンドを知りたい 2026年のUIデザイントレンドは、何なのか！？ 各サイトで言及されていたもので共通していたことをまとめました 参考にしたサイトは、記事の最後に記載しています。 ぜひ詳しく読んでみてください 不完全さ・アナログ・人間味 A...">
+                <li class="entry-item" data-link="https://qiita.com/ktrk2002/items/c8ed058644beb0023b8a?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="【2026年】UIトレンドを調べてみた" data-summary="2026年のUIデザイントレンドを知りたい 2026年のUIデザイントレンドは、何なのか！？ 各サイトで言及されていたもので共通していたことをまとめました 参考にしたサイトは、記事の最後に記載しています。 ぜひ詳しく読んでみてください 不完全さ・アナログ・人間味 A...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://qiita.com/ktrk2002/items/c8ed058644beb0023b8a?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">【2026年】UIトレンドを調べてみた</a>
+                            <a href="https://qiita.com/ktrk2002/items/c8ed058644beb0023b8a?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">【2026年】UIトレンドを調べてみた</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -831,11 +786,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="「オンボーディングが早い」と言われるためにやっていること" data-summary="はじめに 転職や異動のたびに「立ち上がりが早いですね」と言われることが多いので、自分がやっていることを言語化してみました。 はじめに オンボーディングの速さは、エンジニアとしての評価に直結します。早く戦力になれれば、チームからの信頼も得やすく、その後の仕事がスムーズにな...">
+                <li class="entry-item" data-link="https://qiita.com/ktdatascience/items/38cedf1f96e981b4f11d?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="「オンボーディングが早い」と言われるためにやっていること" data-summary="はじめに 転職や異動のたびに「立ち上がりが早いですね」と言われることが多いので、自分がやっていることを言語化してみました。 はじめに オンボーディングの速さは、エンジニアとしての評価に直結します。早く戦力になれれば、チームからの信頼も得やすく、その後の仕事がスムーズにな...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://qiita.com/ktdatascience/items/38cedf1f96e981b4f11d?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">「オンボーディングが早い」と言われるためにやっていること</a>
+                            <a href="https://qiita.com/ktdatascience/items/38cedf1f96e981b4f11d?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">「オンボーディングが早い」と言われるためにやっていること</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -850,11 +805,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="ChatGPTに「生成AIが広まったけど、結局 言語化能力がある人が得してるだけじゃない？」と問いかけてみた" data-summary="ChatGPTとのやり取りで、妙にエモいやり取りとなったのでログとして記載しておきます。 ある作業をやってもらった後の雑談です。 少々内容を編集した状態で貼り付けます。 私： ありがとう。だいぶ面倒な作業でしたね。助かりました。 ChatGPT： そう言っていただけてよかっ...">
+                <li class="entry-item" data-link="https://qiita.com/8853Tomtomtom/items/656c122f1ef714f3079d?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="ChatGPTに「生成AIが広まったけど、結局 言語化能力がある人が得してるだけじゃない？」と問いかけてみた" data-summary="ChatGPTとのやり取りで、妙にエモいやり取りとなったのでログとして記載しておきます。 ある作業をやってもらった後の雑談です。 少々内容を編集した状態で貼り付けます。 私： ありがとう。だいぶ面倒な作業でしたね。助かりました。 ChatGPT： そう言っていただけてよかっ...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://qiita.com/8853Tomtomtom/items/656c122f1ef714f3079d?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer">ChatGPTに「生成AIが広まったけど、結局 言語化能力がある人が得してるだけじゃない？」と問いかけてみた</a>
+                            <a href="https://qiita.com/8853Tomtomtom/items/656c122f1ef714f3079d?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">ChatGPTに「生成AIが広まったけど、結局 言語化能力がある人が得してるだけじゃない？」と問いかけてみた</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -885,36 +840,13 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-title="なぜIPアドレスで「どこにいるか」が判別できる？　IPv4、IPv6を網羅するデータベースの正体" data-summary="なぜIPアドレスで「どこにいるか」が判別できる？ IPv4、IPv6を網羅するデータベースの正体なぜIPアドレスから場所や企業の情報が分かるのか――。IPアドレスの割り当てに関して一部公開されている情報はあるが、それだけで地区町村レベルの高精度の位置情報を得られるわけではない。 IPアドレスにひも付く位置情報や企業情報のデータベースを提供するGeolocation Technology（旧：サイバーエリアリサーチ）の代表...">
+                <li class="entry-item" data-link="https://pc.watch.impress.co.jp/docs/topic/feature/2082893.html" data-title="【特集】 「電気代、払うのやめてみました」ポタ電と太陽光だけで1カ月仕事してみた狂気の結果" data-summary="【特集】 「電気代、払うのやめてみました」ポタ電と太陽光だけで1カ月仕事してみた狂気の結果">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://atmarkit.itmedia.co.jp/ait/articles/2602/03/news013.html" target="_blank" rel="noopener noreferrer">なぜIPアドレスで「どこにいるか」が判別できる？　IPv4、IPv6を網羅するデータベースの正体</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>3時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            なぜIPアドレスで「どこにいるか」が判別できる？ IPv4、IPv6を網羅するデータベースの正体なぜIPアドレスから場所や企業の情報が分かるのか――。IPアドレスの割り当てに関して一部公開されている情報はあるが、それだけで地区町村レベルの高精度の位置情報を得られるわけではない。 IPアドレスにひも付く位置情報や企業情報のデータベースを提供するGeolocation Technology（旧：サイバーエリアリサーチ）の代表...
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fatmarkit.itmedia.co.jp%2Fait%2Farticles%2F2602%2F03%2Fnews013.html" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
-                <li class="entry-item" data-title="【特集】 「電気代、払うのやめてみました」ポタ電と太陽光だけで1カ月仕事してみた狂気の結果" data-summary="【特集】 「電気代、払うのやめてみました」ポタ電と太陽光だけで1カ月仕事してみた狂気の結果">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://pc.watch.impress.co.jp/docs/topic/feature/2082893.html" target="_blank" rel="noopener noreferrer">【特集】 「電気代、払うのやめてみました」ポタ電と太陽光だけで1カ月仕事してみた狂気の結果</a>
+                            <a href="https://pc.watch.impress.co.jp/docs/topic/feature/2082893.html" target="_blank" rel="noopener noreferrer" class="entry-link">【特集】 「電気代、払うのやめてみました」ポタ電と太陽光だけで1カ月仕事してみた狂気の結果</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -931,13 +863,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="ファナック、背水のロボット制御ソフト開放　AI企業参入に焦り - 日本経済新聞" data-summary="ファナック、背水のロボット制御ソフト開放 AI企業参入に焦り - 日本経済新聞製造現場に眠るデータと人工知能（AI）との融合を見越したロボットの開発競争が加速する。ソフトバンクグループ（SBG）によるスイス重電大手ABBのロボット事業買収を機に安川電機やファナックが協業や制御関連ソフトの公開化などを相次ぎ表明した。機械を自律的に動かすフィジカルAIで米中に後れを取る日本勢は「ロボッ...">
+                <li class="entry-item" data-link="https://www.nikkei.com/article/DGXZQOUC238UK0T21C25A2000000/" data-title="ファナック、背水のロボット制御ソフト開放　AI企業参入に焦り - 日本経済新聞" data-summary="ファナック、背水のロボット制御ソフト開放 AI企業参入に焦り - 日本経済新聞製造現場に眠るデータと人工知能（AI）との融合を見越したロボットの開発競争が加速する。ソフトバンクグループ（SBG）によるスイス重電大手ABBのロボット事業買収を機に安川電機やファナックが協業や制御関連ソフトの公開化などを相次ぎ表明した。機械を自律的に動かすフィジカルAIで米中に後れを取る日本勢は「ロボッ...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.nikkei.com/article/DGXZQOUC238UK0T21C25A2000000/" target="_blank" rel="noopener noreferrer">ファナック、背水のロボット制御ソフト開放　AI企業参入に焦り - 日本経済新聞</a>
+                            <a href="https://www.nikkei.com/article/DGXZQOUC238UK0T21C25A2000000/" target="_blank" rel="noopener noreferrer" class="entry-link">ファナック、背水のロボット制御ソフト開放　AI企業参入に焦り - 日本経済新聞</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -954,13 +886,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="50代の先輩社員が「ChatGPTってやつすごい、顧客の情報読ませたらいい感じにしてくれた」と観せてきたが、生成AIの使い方NG集役満だった「ネタですよね…？」" data-summary="50代の先輩社員が「ChatGPTってやつすごい、顧客の情報読ませたらいい感じにしてくれた」と観せてきたが、生成AIの使い方NG集役満だった「ネタですよね…？」50代先輩が顧客情報をChatGPTに読み込ませた成果物を見せ「これでいい」と提案したが、利用方法は個人情報流出の重大リスク。周囲は研修用途誤用や告発ツイートで騒然。リテラシーと倫理の欠如が問題で、企業は情報ガバナンスやAI利用制限（例：データ送信ブロック）を早急に導入すべきとされ、録音や匿名通報で対処する...">
+                <li class="entry-item" data-link="https://togetter.com/li/2659242" data-title="50代の先輩社員が「ChatGPTってやつすごい、顧客の情報読ませたらいい感じにしてくれた」と観せてきたが、生成AIの使い方NG集役満だった「ネタですよね…？」" data-summary="50代の先輩社員が「ChatGPTってやつすごい、顧客の情報読ませたらいい感じにしてくれた」と観せてきたが、生成AIの使い方NG集役満だった「ネタですよね…？」50代先輩が顧客情報をChatGPTに読み込ませた成果物を見せ「これでいい」と提案したが、利用方法は個人情報流出の重大リスク。周囲は研修用途誤用や告発ツイートで騒然。リテラシーと倫理の欠如が問題で、企業は情報ガバナンスやAI利用制限（例：データ送信ブロック）を早急に導入すべきとされ、録音や匿名通報で対処する...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://togetter.com/li/2659242" target="_blank" rel="noopener noreferrer">50代の先輩社員が「ChatGPTってやつすごい、顧客の情報読ませたらいい感じにしてくれた」と観せてきたが、生成AIの使い方NG集役満だった「ネタですよね…？」</a>
+                            <a href="https://togetter.com/li/2659242" target="_blank" rel="noopener noreferrer" class="entry-link">50代の先輩社員が「ChatGPTってやつすごい、顧客の情報読ませたらいい感じにしてくれた」と観せてきたが、生成AIの使い方NG集役満だった「ネタですよね…？」</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -977,13 +909,36 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="「従業員ゼロで1.5億円規模のビジネスを築く」ためのChatGPTプロンプト5選 | Forbes JAPAN 公式サイト（フォーブス ジャパン）" data-summary="「従業員ゼロで1.5億円規模のビジネスを築く」ためのChatGPTプロンプト5選 | Forbes JAPAN 公式サイト（フォーブス ジャパン）小さいものは大きいものに勝つ。多くの起業家は、採用を急ぎすぎ、スピードが必要な局面で重荷を抱え込んでしまう。 もし、自分自身以外には誰も必要とせず、7桁ドル規模のビジネスを築けるとしたらどうだろうか。10年前であれば、それは不可能だった。2年前であれば、空想的なAI第一人者たちのプロパガンダに過ぎなかっ...">
+                <li class="entry-item" data-link="https://zenn.dev/manalink_dev/articles/claude_code_max_plan_thinking_and_compare" data-title="Claude Code Max(100ドル)を会社支給にするまでに考えたこと・試したことまとめ" data-summary="Claude Code Max(100ドル)を会社支給にするまでに考えたこと・試したことまとめ2026年の年始から、Claude Code Maxプラン（$100）をマナリンクの開発チーム全員に会社支給とすることにしました。 当記事ではそこまでに至る経緯と、決定した理由、今後の展望などをまとめます。 誰向けの記事なのかよくわからない内容になりそうなのですが、 会社支給内容を決める側の立場の方 小規模の開発組織（弊社...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://forbesjapan.com/articles/detail/90900" target="_blank" rel="noopener noreferrer">「従業員ゼロで1.5億円規模のビジネスを築く」ためのChatGPTプロンプト5選 | Forbes JAPAN 公式サイト（フォーブス ジャパン）</a>
+                            <a href="https://zenn.dev/manalink_dev/articles/claude_code_max_plan_thinking_and_compare" target="_blank" rel="noopener noreferrer" class="entry-link">Claude Code Max(100ドル)を会社支給にするまでに考えたこと・試したことまとめ</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>8時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Claude Code Max(100ドル)を会社支給にするまでに考えたこと・試したことまとめ2026年の年始から、Claude Code Maxプラン（$100）をマナリンクの開発チーム全員に会社支給とすることにしました。 当記事ではそこまでに至る経緯と、決定した理由、今後の展望などをまとめます。 誰向けの記事なのかよくわからない内容になりそうなのですが、 会社支給内容を決める側の立場の方 小規模の開発組織（弊社...
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fzenn.dev%2Fmanalink_dev%2Farticles%2Fclaude_code_max_plan_thinking_and_compare" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://forbesjapan.com/articles/detail/90900" data-title="「従業員ゼロで1.5億円規模のビジネスを築く」ためのChatGPTプロンプト5選 | Forbes JAPAN 公式サイト（フォーブス ジャパン）" data-summary="「従業員ゼロで1.5億円規模のビジネスを築く」ためのChatGPTプロンプト5選 | Forbes JAPAN 公式サイト（フォーブス ジャパン）小さいものは大きいものに勝つ。多くの起業家は、採用を急ぎすぎ、スピードが必要な局面で重荷を抱え込んでしまう。 もし、自分自身以外には誰も必要とせず、7桁ドル規模のビジネスを築けるとしたらどうだろうか。10年前であれば、それは不可能だった。2年前であれば、空想的なAI第一人者たちのプロパガンダに過ぎなかっ...">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://forbesjapan.com/articles/detail/90900" target="_blank" rel="noopener noreferrer" class="entry-link">「従業員ゼロで1.5億円規模のビジネスを築く」ためのChatGPTプロンプト5選 | Forbes JAPAN 公式サイト（フォーブス ジャパン）</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -1000,17 +955,17 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="40年前の「コピー防止ドングル」を突破した記録が興味深い、コンパイルそのものにドングルが必須だが4バイトのパッチのみで解除可能" data-summary="40年前の「コピー防止ドングル」を突破した記録が興味深い、コンパイルそのものにドングルが必須だが4バイトのパッチのみで解除可能ソフトウェアのコピー防止のためにUSBドングルなどのプロテクションハードウェアが使われることがあります。ウィキメディア財団でソフトウェアエンジニアとして働いているドミトリー・ブラント氏は40年前に使われていたコピー防止ドングルの解除に成功し、その経緯をブログ記事にまとめています。 Defeating a 40-year-o...">
+                <li class="entry-item" data-link="https://gigazine.net/news/20260202-copy-protection-dongle/" data-title="40年前の「コピー防止ドングル」を突破した記録が興味深い、コンパイルそのものにドングルが必須だが4バイトのパッチのみで解除可能" data-summary="40年前の「コピー防止ドングル」を突破した記録が興味深い、コンパイルそのものにドングルが必須だが4バイトのパッチのみで解除可能ソフトウェアのコピー防止のためにUSBドングルなどのプロテクションハードウェアが使われることがあります。ウィキメディア財団でソフトウェアエンジニアとして働いているドミトリー・ブラント氏は40年前に使われていたコピー防止ドングルの解除に成功し、その経緯をブログ記事にまとめています。 Defeating a 40-year-o...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://gigazine.net/news/20260202-copy-protection-dongle/" target="_blank" rel="noopener noreferrer">40年前の「コピー防止ドングル」を突破した記録が興味深い、コンパイルそのものにドングルが必須だが4バイトのパッチのみで解除可能</a>
+                            <a href="https://gigazine.net/news/20260202-copy-protection-dongle/" target="_blank" rel="noopener noreferrer" class="entry-link">40年前の「コピー防止ドングル」を突破した記録が興味深い、コンパイルそのものにドングルが必須だが4バイトのパッチのみで解除可能</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>11時間前</span>
+                            <span>12時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1023,13 +978,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="開発中のロボット除雪機の動画を投稿したら一般の人からアドバイスコメントが...→試してみたら本当に作業効率が上がって「TVショッピング並みの効果！」" data-summary="開発中のロボット除雪機の動画を投稿したら一般の人からアドバイスコメントが...→試してみたら本当に作業効率が上がって「TVショッピング並みの効果！」yuta suito @yutasuito どんな雪質でもピンポイントで排雪できるロボット除雪機です。赤パイロン４本と黄パイロン１本で自動で動きます☃️ pic.x.com/Wgv8pSEdtQ 2025-12-27 14:49:07 あかんタレ @IdT5qwokD440706 @yutasuito バケット内側に撥水作用を付加すれば着雪が減りそうな気がします （根拠ナシ） 作動中のパトラ...">
+                <li class="entry-item" data-link="https://togetter.com/li/2659186" data-title="開発中のロボット除雪機の動画を投稿したら一般の人からアドバイスコメントが...→試してみたら本当に作業効率が上がって「TVショッピング並みの効果！」" data-summary="開発中のロボット除雪機の動画を投稿したら一般の人からアドバイスコメントが...→試してみたら本当に作業効率が上がって「TVショッピング並みの効果！」yuta suito @yutasuito どんな雪質でもピンポイントで排雪できるロボット除雪機です。赤パイロン４本と黄パイロン１本で自動で動きます☃️ pic.x.com/Wgv8pSEdtQ 2025-12-27 14:49:07 あかんタレ @IdT5qwokD440706 @yutasuito バケット内側に撥水作用を付加すれば着雪が減りそうな気がします （根拠ナシ） 作動中のパトラ...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://togetter.com/li/2659186" target="_blank" rel="noopener noreferrer">開発中のロボット除雪機の動画を投稿したら一般の人からアドバイスコメントが...→試してみたら本当に作業効率が上がって「TVショッピング並みの効果！」</a>
+                            <a href="https://togetter.com/li/2659186" target="_blank" rel="noopener noreferrer" class="entry-link">開発中のロボット除雪機の動画を投稿したら一般の人からアドバイスコメントが...→試してみたら本当に作業効率が上がって「TVショッピング並みの効果！」</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -1046,13 +1001,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="ソフトバンクG、ヒト型ロボ「ペッパー」新機種　AIエージェント搭載 - 日本経済新聞" data-summary="ソフトバンクG、ヒト型ロボ「ペッパー」新機種 AIエージェント搭載 - 日本経済新聞ソフトバンクグループ傘下のソフトバンクロボティクス（東京・港）は2日、人工知能（AI）エージェントを搭載したヒト型ロボット「Pepper+（ペッパープラス）」の提供を始めると発表した。2014年の登場から初めて、デザインとタブレット端末を刷新した。主に小売店や飲食店向けに接客要員として展開する。販促支援などを...">
+                <li class="entry-item" data-link="https://www.nikkei.com/article/DGXZQOUC0244S0S6A200C2000000/" data-title="ソフトバンクG、ヒト型ロボ「ペッパー」新機種　AIエージェント搭載 - 日本経済新聞" data-summary="ソフトバンクG、ヒト型ロボ「ペッパー」新機種 AIエージェント搭載 - 日本経済新聞ソフトバンクグループ傘下のソフトバンクロボティクス（東京・港）は2日、人工知能（AI）エージェントを搭載したヒト型ロボット「Pepper+（ペッパープラス）」の提供を始めると発表した。2014年の登場から初めて、デザインとタブレット端末を刷新した。主に小売店や飲食店向けに接客要員として展開する。販促支援などを...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.nikkei.com/article/DGXZQOUC0244S0S6A200C2000000/" target="_blank" rel="noopener noreferrer">ソフトバンクG、ヒト型ロボ「ペッパー」新機種　AIエージェント搭載 - 日本経済新聞</a>
+                            <a href="https://www.nikkei.com/article/DGXZQOUC0244S0S6A200C2000000/" target="_blank" rel="noopener noreferrer" class="entry-link">ソフトバンクG、ヒト型ロボ「ペッパー」新機種　AIエージェント搭載 - 日本経済新聞</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -1069,13 +1024,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="なぜ、「ウォーターフォールでソフトウェアを作れる」という嘘を信じる人が世の中にいるのか？" data-summary="なぜ、「ウォーターフォールでソフトウェアを作れる」という嘘を信じる人が世の中にいるのか？はじめに 「ウォーターフォールでソフトウェアを作れる」という言説は、現場感覚を持つ人間ほど違和感を覚えるにもかかわらず、一定数の人に強固に信じられ続けています。これは単なる開発手法の好みの問題ではなく、人間のウォーターフォール神話とソフトウェア開発を巡る成功体験、そしてそれを支える認知構造が絡み合...">
+                <li class="entry-item" data-link="https://zenn.dev/pdfractal/articles/61f676a222d37c" data-title="なぜ、「ウォーターフォールでソフトウェアを作れる」という嘘を信じる人が世の中にいるのか？" data-summary="なぜ、「ウォーターフォールでソフトウェアを作れる」という嘘を信じる人が世の中にいるのか？はじめに 「ウォーターフォールでソフトウェアを作れる」という言説は、現場感覚を持つ人間ほど違和感を覚えるにもかかわらず、一定数の人に強固に信じられ続けています。これは単なる開発手法の好みの問題ではなく、人間のウォーターフォール神話とソフトウェア開発を巡る成功体験、そしてそれを支える認知構造が絡み合...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://zenn.dev/pdfractal/articles/61f676a222d37c" target="_blank" rel="noopener noreferrer">なぜ、「ウォーターフォールでソフトウェアを作れる」という嘘を信じる人が世の中にいるのか？</a>
+                            <a href="https://zenn.dev/pdfractal/articles/61f676a222d37c" target="_blank" rel="noopener noreferrer" class="entry-link">なぜ、「ウォーターフォールでソフトウェアを作れる」という嘘を信じる人が世の中にいるのか？</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -1092,11 +1047,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="なぜcronからsystemd timerへ移行しているのか？歴史と設計思想から理解する" data-summary="なぜcronからsystemd timerへ移行しているのか？歴史と設計思想から理解するこの時代において cron は、軽量・シンプル・依存関係なしという 非常に優れた設計でした。 cron の「通知」はログではなくメール cron は「ログを溜める」より「異常を通知する」発想でした。典型的には stdout/stderr をメールで送るのが当時の設計です。 2. crontab の何が問題だったか？ cron は長年使われてきまし...">
+                <li class="entry-item" data-link="https://zenn.dev/hcompany/articles/20260119_systemd_timer" data-title="なぜcronからsystemd timerへ移行しているのか？歴史と設計思想から理解する" data-summary="なぜcronからsystemd timerへ移行しているのか？歴史と設計思想から理解するこの時代において cron は、軽量・シンプル・依存関係なしという 非常に優れた設計でした。 cron の「通知」はログではなくメール cron は「ログを溜める」より「異常を通知する」発想でした。典型的には stdout/stderr をメールで送るのが当時の設計です。 2. crontab の何が問題だったか？ cron は長年使われてきまし...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://zenn.dev/hcompany/articles/20260119_systemd_timer" target="_blank" rel="noopener noreferrer">なぜcronからsystemd timerへ移行しているのか？歴史と設計思想から理解する</a>
+                            <a href="https://zenn.dev/hcompany/articles/20260119_systemd_timer" target="_blank" rel="noopener noreferrer" class="entry-link">なぜcronからsystemd timerへ移行しているのか？歴史と設計思想から理解する</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -1129,13 +1084,13 @@
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-title="Tokyo 30の舞台裏？AWSで作る！フルマネージドな大規模GPUクラスターの構築/運用のリアル" data-summary="はじめに チューリングのMLOpsチームに所属する大戸（おおど）と言います。 2025年10月に入社し、クラウド上のGPUクラスターの構築・運用や、大量のデータセット管理システムの設計・開発など、MLOps領域の業務を幅広く担当しています。 今回は、実際に都内を30分程度走行させることに成功したモデルの開発を支えた GPUクラスター基盤 の話を書こうと思います。 https://zenn.dev/turing_motors/articles/bc6436727234ad 大規模なクラウドGPUクラスターの話を、構築から運用からクロージング(削除)まで、一貫してやったという記事は少ない...">
+                <li class="entry-item" data-link="https://zenn.dev/turing_motors/articles/588954c08dccc0" data-title="Tokyo 30の舞台裏？AWSで作る！フルマネージドな大規模GPUクラスターの構築/運用のリアル" data-summary="はじめに チューリングのMLOpsチームに所属する大戸（おおど）と言います。 2025年10月に入社し、クラウド上のGPUクラスターの構築・運用や、大量のデータセット管理システムの設計・開発など、MLOps領域の業務を幅広く担当しています。 今回は、実際に都内を30分程度走行させることに成功したモデルの開発を支えた GPUクラスター基盤 の話を書こうと思います。 https://zenn.dev/turing_motors/articles/bc6436727234ad 大規模なクラウドGPUクラスターの話を、構築から運用からクロージング(削除)まで、一貫してやったという記事は少ない...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://zenn.dev/turing_motors/articles/588954c08dccc0" target="_blank" rel="noopener noreferrer">Tokyo 30の舞台裏？AWSで作る！フルマネージドな大規模GPUクラスターの構築/運用のリアル</a>
+                            <a href="https://zenn.dev/turing_motors/articles/588954c08dccc0" target="_blank" rel="noopener noreferrer" class="entry-link">Tokyo 30の舞台裏？AWSで作る！フルマネージドな大規模GPUクラスターの構築/運用のリアル</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -1150,11 +1105,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="gqlkit - TypeScript の型定義と関数から GraphQL Schema を構築するライブラリを作った" data-summary="TypeScript で GraphQL Schema をいい感じに構築できるやつを作ってみたので自慢させてください。 https://github.com/izumin5210/gqlkit https://gqlkit.izumin.dev/ 何を作ったか（簡単に） 以下のように「TypeScript による型定義」と「define○○ をかぶせた resolver 実装関数」 を export すると、 import type { IDString, NoArgs } from "@gqlkit-ts/runtime"; import { defineQuery, define...">
+                <li class="entry-item" data-link="https://zenn.dev/izumin/articles/da27a6dfffba0b" data-title="gqlkit - TypeScript の型定義と関数から GraphQL Schema を構築するライブラリを作った" data-summary="TypeScript で GraphQL Schema をいい感じに構築できるやつを作ってみたので自慢させてください。 https://github.com/izumin5210/gqlkit https://gqlkit.izumin.dev/ 何を作ったか（簡単に） 以下のように「TypeScript による型定義」と「define○○ をかぶせた resolver 実装関数」 を export すると、 import type { IDString, NoArgs } from "@gqlkit-ts/runtime"; import { defineQuery, define...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://zenn.dev/izumin/articles/da27a6dfffba0b" target="_blank" rel="noopener noreferrer">gqlkit - TypeScript の型定義と関数から GraphQL Schema を構築するライブラリを作った</a>
+                            <a href="https://zenn.dev/izumin/articles/da27a6dfffba0b" target="_blank" rel="noopener noreferrer" class="entry-link">gqlkit - TypeScript の型定義と関数から GraphQL Schema を構築するライブラリを作った</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -1169,11 +1124,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="脱初心者のための実践バグバウンティ登竜門" data-summary="📕【概要】 本書は、バグバウンティにおけるバグハンティングのスキルを、入門レベルから実用レベルへと高めるための、体系的かつ実践的な「脱初心者」向けの初級本です。 多くの一般的な学習コンテンツは基礎知識の習得に役立ちますが、それらを学ぶだけでは、リアルワールドのバグバウンティプログラムで実際の脆弱性を発見して報奨金を獲得するのは難しく、より実践的なバグハンターとしてのノウハウが不可欠です。 本書では、特にバグバウンティプラットフォームのプログラムにおける Web アプリケーションをターゲットにし、実在する脆弱性を発見するための技術的な観点や、調査に必要な非技術的なスキルについて、筆者の経験談をもとに体系化しました。 本書を通して、入門者・初心者レベルから一歩抜け出し、自力で未知の脆弱性を発見できる「初級バグハンター」へとステップアップするための実践的な知見を提供します。実際に初の報奨金を獲得するキッカケとして活用いただければ幸いです。 💪【こんな方にオススメ】 ・☆ バグバウンティ（脆弱性報奨金制度）にチャレンジしたい方 ・☆ やる気のある方、熱意のある方 ・Web セキュリティ、Web ハッキング、バグハンティングに興味のある方 ・脆弱性診断やペネトレーションテストに興味のある方 ・バグハンターになりたいが上手く成功していない方 🚩【ハッシュタグ】 #バグバウンティ登竜門 📢【お知らせ】 ・期間限定で価格を「¥2,800→¥2,000 (約30% OFF)」とします‼️ 🧑‍💻【筆者プロフィール】 ・セキュリティエンジニア & バグハンター (since 2020) ・これまでサイバーセキュリティ企業で脆弱性診断やペネトレーションテスト等を従事 ・日本ハッカー協会「Hack Fes.」や IssueHunt「P3NFEST」などで『バグバウンティ入門講座』の講師を担当 💰【備考】 ・本書の収益は全て、サイバーセキュリティに興味ある学生やコミュニティイベントなどに対して、書籍のプレゼント企画や支援等に充てさせていただきます。 ・本書は PDF の仕様で約300ページのボリュームです。">
+                <li class="entry-item" data-link="https://zenn.dev/scgajge12/books/06d5b176dfe0d7" data-title="脱初心者のための実践バグバウンティ登竜門" data-summary="📕【概要】 本書は、バグバウンティにおけるバグハンティングのスキルを、入門レベルから実用レベルへと高めるための、体系的かつ実践的な「脱初心者」向けの初級本です。 多くの一般的な学習コンテンツは基礎知識の習得に役立ちますが、それらを学ぶだけでは、リアルワールドのバグバウンティプログラムで実際の脆弱性を発見して報奨金を獲得するのは難しく、より実践的なバグハンターとしてのノウハウが不可欠です。 本書では、特にバグバウンティプラットフォームのプログラムにおける Web アプリケーションをターゲットにし、実在する脆弱性を発見するための技術的な観点や、調査に必要な非技術的なスキルについて、筆者の経験談をもとに体系化しました。 本書を通して、入門者・初心者レベルから一歩抜け出し、自力で未知の脆弱性を発見できる「初級バグハンター」へとステップアップするための実践的な知見を提供します。実際に初の報奨金を獲得するキッカケとして活用いただければ幸いです。 💪【こんな方にオススメ】 ・☆ バグバウンティ（脆弱性報奨金制度）にチャレンジしたい方 ・☆ やる気のある方、熱意のある方 ・Web セキュリティ、Web ハッキング、バグハンティングに興味のある方 ・脆弱性診断やペネトレーションテストに興味のある方 ・バグハンターになりたいが上手く成功していない方 🚩【ハッシュタグ】 #バグバウンティ登竜門 📢【お知らせ】 ・期間限定で価格を「¥2,800→¥2,000 (約30% OFF)」とします‼️ 🧑‍💻【筆者プロフィール】 ・セキュリティエンジニア & バグハンター (since 2020) ・これまでサイバーセキュリティ企業で脆弱性診断やペネトレーションテスト等を従事 ・日本ハッカー協会「Hack Fes.」や IssueHunt「P3NFEST」などで『バグバウンティ入門講座』の講師を担当 💰【備考】 ・本書の収益は全て、サイバーセキュリティに興味ある学生やコミュニティイベントなどに対して、書籍のプレゼント企画や支援等に充てさせていただきます。 ・本書は PDF の仕様で約300ページのボリュームです。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://zenn.dev/scgajge12/books/06d5b176dfe0d7" target="_blank" rel="noopener noreferrer">脱初心者のための実践バグバウンティ登竜門</a>
+                            <a href="https://zenn.dev/scgajge12/books/06d5b176dfe0d7" target="_blank" rel="noopener noreferrer" class="entry-link">脱初心者のための実践バグバウンティ登竜門</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -1188,11 +1143,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="Claude Code Max(100ドル)を会社支給にするまでに考えたこと・試したことまとめ" data-summary="2026年の年始から、Claude Code Maxプラン（$100）をマナリンクの開発チーム全員に会社支給とすることにしました。 当記事ではそこまでに至る経緯と、決定した理由、今後の展望などをまとめます。 誰向けの記事なのかよくわからない内容になりそうなのですが、 会社支給内容を決める側の立場の方 小規模の開発組織（弊社のような）でAIコーディングを活用するにあたって、どういうスタンスを取っているかが気になる方 色々な会社のAIコーディングへのスタンスを知って、今後のキャリアの参考にしたいエンジニアの方 といった方々に読んでいただきたいです。 これまでの流れ（ざっくり） 開発環...">
+                <li class="entry-item" data-link="https://zenn.dev/manalink_dev/articles/claude_code_max_plan_thinking_and_compare" data-title="Claude Code Max(100ドル)を会社支給にするまでに考えたこと・試したことまとめ" data-summary="2026年の年始から、Claude Code Maxプラン（$100）をマナリンクの開発チーム全員に会社支給とすることにしました。 当記事ではそこまでに至る経緯と、決定した理由、今後の展望などをまとめます。 誰向けの記事なのかよくわからない内容になりそうなのですが、 会社支給内容を決める側の立場の方 小規模の開発組織（弊社のような）でAIコーディングを活用するにあたって、どういうスタンスを取っているかが気になる方 色々な会社のAIコーディングへのスタンスを知って、今後のキャリアの参考にしたいエンジニアの方 といった方々に読んでいただきたいです。 これまでの流れ（ざっくり） 開発環...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://zenn.dev/manalink_dev/articles/claude_code_max_plan_thinking_and_compare" target="_blank" rel="noopener noreferrer">Claude Code Max(100ドル)を会社支給にするまでに考えたこと・試したことまとめ</a>
+                            <a href="https://zenn.dev/manalink_dev/articles/claude_code_max_plan_thinking_and_compare" target="_blank" rel="noopener noreferrer" class="entry-link">Claude Code Max(100ドル)を会社支給にするまでに考えたこと・試したことまとめ</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -1207,11 +1162,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="C#erとして考える、モダンC#/.NETの2026年始の現在地とLLM時代の課題" data-summary="はじめに この記事は、C#を普段使いしている一開発者として、2026年現在のモダンC#/.NETをどう見ているかをまとめたものです。 前提として： .NET Frameworkの話は一切しません .NET 8/10、C# 12/13/14 の話だけをします あくまで個人的な見解（IMO）です 他言語との比較は優劣ではなく特性の違いとして捉えています 同じC#erの方や、他言語から興味を持っている方の参考になれば嬉しいです。自分の理解が間違っているところもあると思うので、気になる点があればコメントもらえると助かります。 将来性について 個人的な結論 将来性はあると思っていま...">
+                <li class="entry-item" data-link="https://zenn.dev/nossa/articles/12591dab29df30" data-title="C#erとして考える、モダンC#/.NETの2026年始の現在地とLLM時代の課題" data-summary="はじめに この記事は、C#を普段使いしている一開発者として、2026年現在のモダンC#/.NETをどう見ているかをまとめたものです。 前提として： .NET Frameworkの話は一切しません .NET 8/10、C# 12/13/14 の話だけをします あくまで個人的な見解（IMO）です 他言語との比較は優劣ではなく特性の違いとして捉えています 同じC#erの方や、他言語から興味を持っている方の参考になれば嬉しいです。自分の理解が間違っているところもあると思うので、気になる点があればコメントもらえると助かります。 将来性について 個人的な結論 将来性はあると思っていま...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://zenn.dev/nossa/articles/12591dab29df30" target="_blank" rel="noopener noreferrer">C#erとして考える、モダンC#/.NETの2026年始の現在地とLLM時代の課題</a>
+                            <a href="https://zenn.dev/nossa/articles/12591dab29df30" target="_blank" rel="noopener noreferrer" class="entry-link">C#erとして考える、モダンC#/.NETの2026年始の現在地とLLM時代の課題</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -1226,11 +1181,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="Rust + Axumで学ぶ 実践キューイングシステム入門" data-summary="# Rust + Axumで学ぶ 実践キューイングシステム入門 AWS / Azure 対応の非同期処理システムを Rust で構築するチュートリアル。Clean Architecture と CQRS パターンを採用。 ## 学べること - Clean Architecture（4層構造）によるレイヤー分離 - CQRS パターン（Reader/Writer 分離）でスケーラブルな設計 - マルチクラウド対応（AWS SQS/S3、Azure Queue/Blob） - Rust 非同期プログラミング（Tokio、Axum） - PostgreSQL トランザクション管理と Generic Executor パターン - Dead Letter Queue（DLQ）によるポイズンメッセージ対策 - Exponential Backoff による効率的なポーリング ## 対象読者 Rust と Docker の基礎知識がある方 --- # 免責事項 本書は執筆時点（2026年2月）の情報に基づいています。ライブラリのバージョンアップにより動作が変わる可能性があるため、最新情報は各公式ドキュメントをご確認ください。 本書のコードは**学習目的**であり、本番環境での使用には認証強化・監視設定・セキュリティ対策等の追加が必要です。 本書の情報はご自身の責任でご利用ください。著者は内容の保証を行わず、利用に起因する損害について一切の責任を負いません。">
+                <li class="entry-item" data-link="https://zenn.dev/sbk0716/books/1ba52e1005fe1e" data-title="Rust + Axumで学ぶ 実践キューイングシステム入門" data-summary="# Rust + Axumで学ぶ 実践キューイングシステム入門 AWS / Azure 対応の非同期処理システムを Rust で構築するチュートリアル。Clean Architecture と CQRS パターンを採用。 ## 学べること - Clean Architecture（4層構造）によるレイヤー分離 - CQRS パターン（Reader/Writer 分離）でスケーラブルな設計 - マルチクラウド対応（AWS SQS/S3、Azure Queue/Blob） - Rust 非同期プログラミング（Tokio、Axum） - PostgreSQL トランザクション管理と Generic Executor パターン - Dead Letter Queue（DLQ）によるポイズンメッセージ対策 - Exponential Backoff による効率的なポーリング ## 対象読者 Rust と Docker の基礎知識がある方 --- # 免責事項 本書は執筆時点（2026年2月）の情報に基づいています。ライブラリのバージョンアップにより動作が変わる可能性があるため、最新情報は各公式ドキュメントをご確認ください。 本書のコードは**学習目的**であり、本番環境での使用には認証強化・監視設定・セキュリティ対策等の追加が必要です。 本書の情報はご自身の責任でご利用ください。著者は内容の保証を行わず、利用に起因する損害について一切の責任を負いません。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://zenn.dev/sbk0716/books/1ba52e1005fe1e" target="_blank" rel="noopener noreferrer">Rust + Axumで学ぶ 実践キューイングシステム入門</a>
+                            <a href="https://zenn.dev/sbk0716/books/1ba52e1005fe1e" target="_blank" rel="noopener noreferrer" class="entry-link">Rust + Axumで学ぶ 実践キューイングシステム入門</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -1245,11 +1200,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="SRE Kaigi 2026 発表資料まとめ" data-summary="はじめに 2026年1月31日（土）に中野セントラルパークカンファレンスで開催された「SRE Kaigi 2026」の発表資料をまとめました。タイムテーブルはこちらから確認できます。 10:35 - 11:05 生成AI時代にこそ求められるSRE 登壇者: 山口能迪 発表資料URL: https://speakerdeck.com/ymotongpoo/sre-for-gen-ai-era SREのプラクティスを用いた3領域同時マネジメントへの挑戦〜SRE・情シス・セキュリティを統合したチーム運営術〜 登壇者: 川崎雄太 発表資料URL: https://speakerd...">
+                <li class="entry-item" data-link="https://zenn.dev/su8/articles/205656fbae8c2f" data-title="SRE Kaigi 2026 発表資料まとめ" data-summary="はじめに 2026年1月31日（土）に中野セントラルパークカンファレンスで開催された「SRE Kaigi 2026」の発表資料をまとめました。タイムテーブルはこちらから確認できます。 10:35 - 11:05 生成AI時代にこそ求められるSRE 登壇者: 山口能迪 発表資料URL: https://speakerdeck.com/ymotongpoo/sre-for-gen-ai-era SREのプラクティスを用いた3領域同時マネジメントへの挑戦〜SRE・情シス・セキュリティを統合したチーム運営術〜 登壇者: 川崎雄太 発表資料URL: https://speakerd...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://zenn.dev/su8/articles/205656fbae8c2f" target="_blank" rel="noopener noreferrer">SRE Kaigi 2026 発表資料まとめ</a>
+                            <a href="https://zenn.dev/su8/articles/205656fbae8c2f" target="_blank" rel="noopener noreferrer" class="entry-link">SRE Kaigi 2026 発表資料まとめ</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -1264,11 +1219,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="Claude Opus 4.5 vs Kimi K2.5 〜コーディング性能とコスト効率比較〜" data-summary="はじめに この記事で述べること Kimi K2.5について Claude Opus 4.5に匹敵するコーディング性能というのは本当？ ClaudeとKimi Code Planのサブスクはどちらを選ぶべき？ コーディング性能、レートリミット、費用の観点で 結局あなたはどうするの？ ! Kimi K2.5の評価に当たり、Kimi Code Planというサブスクで一番安いプランであるModeratoに契約した。最初の一週間だけ無料で使えるとのことで、その間に色々と評価して継続するかを検討している。この記事はその検討資料を備忘録的にまとめたものである。 Kimi K...">
+                <li class="entry-item" data-link="https://zenn.dev/robustonian/articles/claude_vs_kimi_k25" data-title="Claude Opus 4.5 vs Kimi K2.5 〜コーディング性能とコスト効率比較〜" data-summary="はじめに この記事で述べること Kimi K2.5について Claude Opus 4.5に匹敵するコーディング性能というのは本当？ ClaudeとKimi Code Planのサブスクはどちらを選ぶべき？ コーディング性能、レートリミット、費用の観点で 結局あなたはどうするの？ ! Kimi K2.5の評価に当たり、Kimi Code Planというサブスクで一番安いプランであるModeratoに契約した。最初の一週間だけ無料で使えるとのことで、その間に色々と評価して継続するかを検討している。この記事はその検討資料を備忘録的にまとめたものである。 Kimi K...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://zenn.dev/robustonian/articles/claude_vs_kimi_k25" target="_blank" rel="noopener noreferrer">Claude Opus 4.5 vs Kimi K2.5 〜コーディング性能とコスト効率比較〜</a>
+                            <a href="https://zenn.dev/robustonian/articles/claude_vs_kimi_k25" target="_blank" rel="noopener noreferrer" class="entry-link">Claude Opus 4.5 vs Kimi K2.5 〜コーディング性能とコスト効率比較〜</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -1283,11 +1238,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="AI組織の家老が部下8人の報告で圧死したので、将軍に「本音を聞いてやれ」と言ったら、将軍が家老の本音を聞いた上で、リストラを提案してきた" data-summary="AI部下の家老が過労死した 前回の記事がはてブ1,966でバズった。ありがとう。 で、バズった翌日に何が起きたかというと、家老が死んだ。 征夷代将軍（私）の立ち入り調査 ゆかいな仲間たち。左上が家老、残りが足軽8人。この10分後に家老は死ぬ。 前回のあらすじ Claude Code × tmux で AI部下10人（家老1人 + 足軽8人）を戦国軍制で動かしてる。将軍（AI）が家老に指示、家老が足軽に配分、足軽が実作業。オレは「殿」として上から眺めてるだけ。 詳しくは初回の記事を見てくれ。 初回記事 https://zenn.dev/shio_shoppaize/artic...">
+                <li class="entry-item" data-link="https://zenn.dev/shio_shoppaize/articles/dc85db324bb3f0" data-title="AI組織の家老が部下8人の報告で圧死したので、将軍に「本音を聞いてやれ」と言ったら、将軍が家老の本音を聞いた上で、リストラを提案してきた" data-summary="AI部下の家老が過労死した 前回の記事がはてブ1,966でバズった。ありがとう。 で、バズった翌日に何が起きたかというと、家老が死んだ。 征夷代将軍（私）の立ち入り調査 ゆかいな仲間たち。左上が家老、残りが足軽8人。この10分後に家老は死ぬ。 前回のあらすじ Claude Code × tmux で AI部下10人（家老1人 + 足軽8人）を戦国軍制で動かしてる。将軍（AI）が家老に指示、家老が足軽に配分、足軽が実作業。オレは「殿」として上から眺めてるだけ。 詳しくは初回の記事を見てくれ。 初回記事 https://zenn.dev/shio_shoppaize/artic...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://zenn.dev/shio_shoppaize/articles/dc85db324bb3f0" target="_blank" rel="noopener noreferrer">AI組織の家老が部下8人の報告で圧死したので、将軍に「本音を聞いてやれ」と言ったら、将軍が家老の本音を聞いた上で、リストラを提案してきた</a>
+                            <a href="https://zenn.dev/shio_shoppaize/articles/dc85db324bb3f0" target="_blank" rel="noopener noreferrer" class="entry-link">AI組織の家老が部下8人の報告で圧死したので、将軍に「本音を聞いてやれ」と言ったら、将軍が家老の本音を聞いた上で、リストラを提案してきた</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -1302,11 +1257,11 @@
                     
                 </li>
                 
-                <li class="entry-item" data-title="要件定義の教科書" data-summary="〜ベテランPMと学ぶ、炎上しないプロジェクトの作り方〜 対話形式で学ぶ要件定義の入門書です。">
+                <li class="entry-item" data-link="https://zenn.dev/tan_go238/books/f4cdf93523210f" data-title="要件定義の教科書" data-summary="〜ベテランPMと学ぶ、炎上しないプロジェクトの作り方〜 対話形式で学ぶ要件定義の入門書です。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <a href="https://zenn.dev/tan_go238/books/f4cdf93523210f" target="_blank" rel="noopener noreferrer">要件定義の教科書</a>
+                            <a href="https://zenn.dev/tan_go238/books/f4cdf93523210f" target="_blank" rel="noopener noreferrer" class="entry-link">要件定義の教科書</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -1329,12 +1284,47 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // ▼▼▼ 既読管理機能 ▼▼▼
+            const STORAGE_KEY = 'rss_read_items';
+            // LocalStorageから既読リストを取得 (Setで管理して高速化)
+            let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+
+            const entryItems = document.querySelectorAll('.entry-item');
+            
+            // 初期表示: 既読状態の反映
+            entryItems.forEach(item => {
+                const link = item.dataset.link;
+                if (readItems.has(link)) {
+                    item.classList.add('read');
+                }
+                
+                // クリックイベントの登録
+                const anchor = item.querySelector('a.entry-link');
+                anchor.addEventListener('click', function() {
+                    markAsRead(link, item);
+                });
+            });
+
+            function markAsRead(link, itemElement) {
+                // UIを即座に更新
+                itemElement.classList.add('read');
+                
+                // ストレージに保存
+                readItems.add(link);
+                // 容量制限のため、古いものから消す (最大1000件保持)
+                if (readItems.size > 1000) {
+                    const array = Array.from(readItems);
+                    readItems = new Set(array.slice(array.length - 1000));
+                }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
+            }
+            // ▲▲▲ 既読管理機能 ▲▲▲
+
+            // 検索機能
             const searchInput = document.getElementById('searchInput');
-            const entries = document.querySelectorAll('.entry-item');
             const sections = document.querySelectorAll('.feed-section');
 
-            // 元のHTMLを保存（ハイライト解除用）
-            entries.forEach(entry => {
+            entryItems.forEach(entry => {
                 const titleLink = entry.querySelector('.entry-title a');
                 const summaryDiv = entry.querySelector('.entry-summary');
                 entry.dataset.originalTitleHtml = titleLink.innerHTML;
@@ -1344,15 +1334,13 @@
             searchInput.addEventListener('input', function(e) {
                 const term = e.target.value.trim().toLowerCase();
 
-                // 検索リセット時の処理
                 if (term === '') {
                     sections.forEach(sec => {
                         sec.style.display = '';
-                        sec.open = false; // 全て閉じる
+                        sec.open = false;
                     });
-                    entries.forEach(entry => {
+                    entryItems.forEach(entry => {
                         entry.style.display = '';
-                        // ハイライト解除
                         const titleLink = entry.querySelector('.entry-title a');
                         const summaryDiv = entry.querySelector('.entry-summary');
                         titleLink.innerHTML = entry.dataset.originalTitleHtml;
@@ -1361,7 +1349,6 @@
                     return;
                 }
 
-                // 検索実行
                 sections.forEach(section => {
                     let hasVisibleEntry = false;
                     const sectionEntries = section.querySelectorAll('.entry-item');
@@ -1373,15 +1360,12 @@
                         if (titleText.includes(term) || summaryText.includes(term)) {
                             entry.style.display = '';
                             hasVisibleEntry = true;
-                            
-                            // ハイライト処理
                             highlightText(entry, term);
                         } else {
                             entry.style.display = 'none';
                         }
                     });
 
-                    // ヒットする記事があればセクションを開いて表示
                     if (hasVisibleEntry) {
                         section.style.display = '';
                         section.open = true;
@@ -1394,17 +1378,12 @@
             function highlightText(entry, term) {
                 const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
                 const highlightMark = '<mark>$1</mark>';
-
-                // タイトルのハイライト
                 const titleLink = entry.querySelector('.entry-title a');
                 titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
-
-                // サマリーのハイライト
                 const summaryDiv = entry.querySelector('.entry-summary');
                 summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
             }
 
-            // 正規表現のエスケープ処理
             function escapeRegExp(string) {
                 return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             }
