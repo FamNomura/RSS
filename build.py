@@ -51,33 +51,34 @@ def format_relative_time(dt_obj, now_utc):
         return f"{int(seconds // 86400)}日前"
 
 def extract_image(entry):
-    """RSSエントリから安全に画像URLを抽出する"""
-    # 1. media_content (多くのニュースサイトで使用)
     if 'media_content' in entry:
         for media in entry.media_content:
             if 'image' in media.get('type', '') or 'medium' in media and media['medium'] == 'image':
                 return media['url']
-    
-    # 2. media_thumbnail (YouTubeや一部ブログ)
     if 'media_thumbnail' in entry:
         return entry.media_thumbnail[0]['url']
-    
-    # 3. links (enclosureタグ / PodcastやIT系サイト)
     if 'links' in entry:
         for link in entry.links:
             if link.get('rel') == 'enclosure' and 'image' in link.get('type', ''):
                 return link['href']
-    
-    # 4. content/summary内のimgタグ (正規表現でsrcを抽出)
-    # ※アクセスは発生しないテキスト処理のみなので安全
     content = entry.get('summary', '') + entry.get('content', [{'value': ''}])[0]['value']
     img_match = re.search(r'<img[^>]+src=["\'](.*?)["\']', content)
     if img_match:
         return img_match.group(1)
-        
     return None
 
-def fetch_feed(url, title_override=None):
+def is_ng_content(entry, ng_keywords):
+    """タイトルやサマリーにNGワードが含まれているか判定"""
+    if not ng_keywords:
+        return False
+    
+    text = (entry.get('title', '') + entry.get('summary', '')).lower()
+    for keyword in ng_keywords:
+        if keyword.lower() in text:
+            return True
+    return False
+
+def fetch_feed(url, title_override=None, ng_keywords=None):
     print(f"  Fetching: {url}...")
     try:
         d = feedparser.parse(url)
@@ -91,6 +92,10 @@ def fetch_feed(url, title_override=None):
         has_new = False
 
         for entry in d.entries[:max_entries]:
+            # NG判定
+            if is_ng_content(entry, ng_keywords):
+                continue
+
             dt = parse_date(entry)
             is_new = False
             rel_time = ""
@@ -101,12 +106,10 @@ def fetch_feed(url, title_override=None):
                     has_new = True
                 rel_time = format_relative_time(dt, now_utc)
             
-            # コンテンツ処理
             summary = entry.get('summary', entry.get('description', ''))
             content = entry.get('content', [{'value': ''}])[0]['value']
             text_content = content if len(content) > len(summary) else summary
             
-            # 画像抽出 (ここを追加)
             image_url = extract_image(entry)
 
             entries_data.append({
@@ -115,7 +118,7 @@ def fetch_feed(url, title_override=None):
                 'is_new': is_new,
                 'relative_time': rel_time,
                 'summary': text_content,
-                'image': image_url, # 画像URLを追加
+                'image': image_url,
                 'timestamp': dt.timestamp() if dt else 0
             })
         
@@ -152,9 +155,11 @@ def main():
         target_filename = page_config['filename']
         print(f"Building page: {target_filename}")
         
+        ng_keywords = page_config.get('ng_keywords', [])
+        
         page_feeds_data = []
         for feed in page_config['feeds']:
-            data = fetch_feed(feed['url'], feed.get('title'))
+            data = fetch_feed(feed['url'], feed.get('title'), ng_keywords)
             if data:
                 page_feeds_data.append(data)
         
