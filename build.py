@@ -77,7 +77,6 @@ def is_ng_content(entry, ng_keywords):
     return False
 
 def process_entry(entry, feed_title, feed_link, now_utc):
-    """RSSエントリを共通の辞書形式に変換"""
     dt = parse_date(entry)
     is_new = False
     rel_time = ""
@@ -102,25 +101,24 @@ def process_entry(entry, feed_title, feed_link, now_utc):
         'summary': text_content,
         'image': image_url,
         'timestamp': timestamp,
-        'source_title': feed_title # 抽出時に元サイト名を表示するために保持
+        'source_title': feed_title
     }
 
 def fetch_all_feeds(config):
-    """設定にある全URLを一度だけ取得して辞書に格納"""
-    url_map = {} # url -> feed_data
-    
-    # 全ページの全URLを収集（重複排除）
+    url_map = {}
     all_urls = set()
+    
+    # ページ設定とウォッチ設定の両方からURLを収集
     for page in config.get('pages', []):
         for feed in page.get('feeds', []):
-            all_urls.add((feed['url'], feed.get('title'))) # URLとタイトルのセット
+            all_urls.add((feed['url'], feed.get('title')))
+    
+    # ウォッチリストは既存URLからの抽出が主だが、将来的に独立したURLを指定する場合に備えて探索（現状はpages依存でも可）
     
     print(f"Fetching {len(all_urls)} unique feeds...")
     
     now_utc = datetime.datetime.now(pytz.utc)
-    
-    # 取得処理
-    results = {} # url -> {meta_info, entries_list}
+    results = {}
     
     for url, title_override in all_urls:
         print(f"  Fetching: {url}...")
@@ -149,14 +147,14 @@ def fetch_all_feeds(config):
 def main():
     config = load_config(feeds_file)
     
-    # 1. ナビゲーション作成
+    # 1. ナビゲーション作成（★修正点：ウォッチリストを先頭に追加）
     navigation = []
-    # 通常ページ
-    for page in config.get('pages', []):
-        navigation.append({'page_title': page['page_title'], 'filename': page['filename']})
-    # ウォッチページ
+    # ウォッチページ（先頭）
     for watch in config.get('watches', []):
         navigation.append({'page_title': watch['page_title'], 'filename': watch['filename']})
+    # 通常ページ（後続）
+    for page in config.get('pages', []):
+        navigation.append({'page_title': page['page_title'], 'filename': page['filename']})
     
     # 2. 全フィード取得
     all_feeds_data = fetch_all_feeds(config)
@@ -180,20 +178,22 @@ def main():
             source_data = all_feeds_data.get(url)
             
             if source_data:
-                # NGフィルタリング
                 valid_entries = [e for e in source_data['entries'] if not is_ng_content(e, ng_keywords)]
                 
-                # 表示用にデータを整形
-                has_new = any(e['is_new'] for e in valid_entries)
+                # ★修正点：件数を計算
+                total_count = len(valid_entries)
+                new_count = sum(1 for e in valid_entries if e['is_new'])
+                has_new = new_count > 0
                 
                 page_feeds_display.append({
                     'title': source_data['title'],
                     'favicon': source_data['favicon'],
                     'has_new': has_new,
+                    'total_count': total_count, # 追加
+                    'new_count': new_count,     # 追加
                     'entries': valid_entries
                 })
         
-        # レンダリング
         with open(target_filename, 'w', encoding='utf-8') as f:
             f.write(template.render(
                 navigation=navigation,
@@ -212,43 +212,39 @@ def main():
         
         watch_feeds_display = []
         
-        # 全取得済みデータから検索
-        # キーワードごとに「仮想的なフィード」を作るイメージ
         for kw in keywords:
             matched_entries = []
             
-            # 全フィードを走査
             for url, source_data in all_feeds_data.items():
                 if not source_data: continue
                 
                 for entry in source_data['entries']:
-                    # NGチェック
                     if is_ng_content(entry, ng_keywords):
                         continue
-                        
-                    # キーワードマッチ確認 (タイトル or サマリー)
                     text_to_search = (entry['title'] + entry['summary']).lower()
                     if kw.lower() in text_to_search:
-                        # 記事を複製してリストに追加
                         matched_entries.append(entry)
             
-            # 日付順にソート
             matched_entries.sort(key=lambda x: x['timestamp'], reverse=True)
             
-            # 1件以上ヒットしたら表示リストに追加
             if matched_entries:
-                has_new = any(e['is_new'] for e in matched_entries)
-                # 虫眼鏡アイコンなどをfaviconの代わりに使う
-                search_icon = "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" # 簡易的にGoogleロゴを使用（または空文字でも可）
+                # ★修正点：件数を計算
+                total_count = len(matched_entries)
+                new_count = sum(1 for e in matched_entries if e['is_new'])
+                has_new = new_count > 0
+                
+                # 虫眼鏡アイコン（簡易）
+                search_icon = "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" 
                 
                 watch_feeds_display.append({
-                    'title': f"Keyword: {kw}", # タイトルを「Keyword: Python」のようにする
-                    'favicon': '', # アイコンなし
+                    'title': f"Keyword: {kw}",
+                    'favicon': '', 
                     'has_new': has_new,
+                    'total_count': total_count, # 追加
+                    'new_count': new_count,     # 追加
                     'entries': matched_entries
                 })
 
-        # レンダリング
         with open(target_filename, 'w', encoding='utf-8') as f:
             f.write(template.render(
                 navigation=navigation,
