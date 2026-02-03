@@ -1,0 +1,1783 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>★トピック★</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-sub: #7f8c8d;
+            --accent: #007bff;
+            --new-badge: #e74c3c;
+            --border: #e9ecef;
+            --highlight: #fff3cd;
+            --read-color: #b0b0b0; /* 既読記事の色 */
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding-bottom: 80px;
+            line-height: 1.6;
+        }
+        
+        .navbar {
+            background-color: #343a40;
+            padding: 0.8rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .nav-container {
+            max-width: 800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+        }
+        .nav-links { display: flex; gap: 10px; overflow-x: auto; white-space: nowrap; }
+        .nav-link {
+            color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 14px; font-weight: 600; opacity: 0.8;
+        }
+        .nav-link.active { opacity: 1; background-color: var(--accent); }
+
+        .search-box { position: relative; flex-grow: 1; max-width: 300px; }
+        .search-input {
+            width: 100%; padding: 6px 10px; border-radius: 4px; border: none; font-size: 14px; background-color: rgba(255,255,255,0.9); box-sizing: border-box;
+        }
+        .search-input:focus { outline: 2px solid var(--accent); }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        header { margin-bottom: 20px; text-align: center; }
+        h1 { font-size: 22px; margin: 0; color: #333; }
+        .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
+
+        details {
+            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
+        }
+        summary {
+            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff; transition: background 0.2s;
+        }
+        summary:hover { background-color: #f8f9fa; }
+        summary::-webkit-details-marker { display: none; }
+        
+        .feed-header { display: flex; align-items: center; gap: 10px; font-size: 16px; }
+        .feed-favicon { width: 16px; height: 16px; border-radius: 2px; }
+        .feed-status { font-size: 12px; color: var(--new-badge); font-weight: normal; }
+
+        .entry-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
+        .entry-item {
+            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start; transition: background-color 0.2s;
+        }
+        .entry-item:last-child { border-bottom: none; }
+
+        /* ▼▼▼ 既読記事のスタイル ▼▼▼ */
+        .entry-item.read {
+            background-color: #fcfcfc;
+        }
+        .entry-item.read .entry-title a {
+            color: var(--read-color);
+        }
+        .entry-item.read .entry-summary {
+            color: #d0d0d0;
+        }
+        .entry-item.read .entry-thumbnail {
+            opacity: 0.5;
+            filter: grayscale(100%);
+        }
+        .entry-item.read .new-badge {
+            background-color: #ccc; /* NEWバッジもグレーに */
+        }
+        /* ▲▲▲ 既読記事のスタイル ▲▲▲ */
+        
+        .entry-content-wrapper { flex: 1; min-width: 0; }
+        .entry-thumbnail { width: 100px; height: 75px; object-fit: cover; border-radius: 4px; flex-shrink: 0; border: 1px solid #eee; }
+
+        .entry-title { font-size: 16px; margin: 0 0 5px 0; line-height: 1.4; }
+        .entry-title a { text-decoration: none; color: var(--text-main); }
+        .entry-title a:hover { color: var(--accent); text-decoration: underline; }
+
+        .new-badge {
+            display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold;
+        }
+
+        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; }
+        .entry-summary {
+            font-size: 13px; color: #555; margin-top: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.8;
+        }
+        .entry-summary img { display: none; }
+
+        mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px 10px; }
+            summary { padding: 12px; }
+            .entry-thumbnail { width: 80px; height: 60px; }
+            .nav-container { flex-direction: column; align-items: stretch; }
+            .search-box { max-width: 100%; margin-top: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-links">
+                
+                <a href="new.html" 
+                   class="nav-link ">
+                    福祉行政
+                </a>
+                
+                <a href="index.html" 
+                   class="nav-link ">
+                    総合ニュース
+                </a>
+                
+                <a href="recipes.html" 
+                   class="nav-link ">
+                    レシピ・料理
+                </a>
+                
+                <a href="tech.html" 
+                   class="nav-link ">
+                    Tech情報
+                </a>
+                
+                <a href="business.html" 
+                   class="nav-link ">
+                    ビジネス・経済
+                </a>
+                
+                <a href="gadget.html" 
+                   class="nav-link ">
+                    ガジェット・モノ
+                </a>
+                
+                <a href="design.html" 
+                   class="nav-link ">
+                    デザイン・Web制作
+                </a>
+                
+                <a href="entertainment.html" 
+                   class="nav-link ">
+                    エンタメ・コラム
+                </a>
+                
+                <a href="yahoo.html" 
+                   class="nav-link ">
+                    ニュース記事
+                </a>
+                
+                <a href="topics.html" 
+                   class="nav-link active">
+                    ★トピック★
+                </a>
+                
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" class="search-input" placeholder="キーワード検索...">
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>★トピック★</h1>
+            <div class="last-updated">最終更新: 02/03 12:11</div>
+        </header>
+
+        
+        <details class="feed-section">
+            <summary>
+                <div class="feed-header">
+                    <img src="" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span>Keyword: 北海道</span>
+                </div>
+                
+                <span class="feed-status">● New</span>
+                
+            </summary>
+            
+            <ul class="entry-list">
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/775b1b45a6eadd3b14a8a7fe9cedd5b7279ce8a2?source=rss" data-title="さっぽろ雪まつり　「会津鶴ヶ城」大雪像の引き渡し式　大通会場８丁目「雪のＨＴＢ広場」(HTB北海道ニュース)" data-summary="あす（４日）開幕するさっぽろ雪まつりを前に会場となる大通公園では大雪像の引き渡し式が行われました。 けさ午前１０時から大通会場８丁目の「雪のＨＴＢ広場」で行われた大雪像の完成引き渡し式。 今年の大雪">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/775b1b45a6eadd3b14a8a7fe9cedd5b7279ce8a2?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">さっぽろ雪まつり　「会津鶴ヶ城」大雪像の引き渡し式　大通会場８丁目「雪のＨＴＢ広場」(HTB北海道ニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>1分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            あす（４日）開幕するさっぽろ雪まつりを前に会場となる大通公園では大雪像の引き渡し式が行われました。 けさ午前１０時から大通会場８丁目の「雪のＨＴＢ広場」で行われた大雪像の完成引き渡し式。 今年の大雪
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/775b1b45a6eadd3b14a8a7fe9cedd5b7279ce8a2?source=rss" data-title="さっぽろ雪まつり　「会津鶴ヶ城」大雪像の引き渡し式　大通会場８丁目「雪のＨＴＢ広場」(HTB北海道ニュース)" data-summary="あす（４日）開幕するさっぽろ雪まつりを前に会場となる大通公園では大雪像の引き渡し式が行われました。 けさ午前１０時から大通会場８丁目の「雪のＨＴＢ広場」で行われた大雪像の完成引き渡し式。 今年の大雪">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/775b1b45a6eadd3b14a8a7fe9cedd5b7279ce8a2?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">さっぽろ雪まつり　「会津鶴ヶ城」大雪像の引き渡し式　大通会場８丁目「雪のＨＴＢ広場」(HTB北海道ニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>1分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            あす（４日）開幕するさっぽろ雪まつりを前に会場となる大通公園では大雪像の引き渡し式が行われました。 けさ午前１０時から大通会場８丁目の「雪のＨＴＢ広場」で行われた大雪像の完成引き渡し式。 今年の大雪
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/020a7a44997ee1456dcb6bea010b1834ebfcbd4c?source=rss" data-title="車がすれ違えない札幌の生活道路　『緊急排雪』始まるも…いまだ生活への影響大　JRは137本の列車運休＆終電繰り上げ　路線バス・空港連絡バスも運休相次ぐ(HBCニュース北海道)" data-summary="3日朝は晴天に恵まれた札幌市ですが、連日の大雪の影響はきょうも続いていて、バスやJRは運休が相次いでいます。 中央区内の桑園地区は今も排雪が進まず生活道路は、車がすれ違うこともできません。朝も住民は">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/020a7a44997ee1456dcb6bea010b1834ebfcbd4c?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">車がすれ違えない札幌の生活道路　『緊急排雪』始まるも…いまだ生活への影響大　JRは137本の列車運休＆終電繰り上げ　路線バス・空港連絡バスも運休相次ぐ(HBCニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            3日朝は晴天に恵まれた札幌市ですが、連日の大雪の影響はきょうも続いていて、バスやJRは運休が相次いでいます。 中央区内の桑園地区は今も排雪が進まず生活道路は、車がすれ違うこともできません。朝も住民は
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/8d8cd29ee90db3b103e81d0e5f82dfadb3b8126c?source=rss" data-title="縄文の心「人は自然の一部」表現した大雪像が完成！トラック５２０台分の雪で製作　さっぽろ雪まつり(STVニュース北海道)" data-summary="２月４日に「さっぽろ雪まつり」が開幕するのを前に、大通公園では大雪像の引き渡し式が開かれました。 高さ１３メートル、幅２０メートル。 およそ１か月かけて作られた、大通４丁目のＳＴＶ広場の大雪像「祈">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/8d8cd29ee90db3b103e81d0e5f82dfadb3b8126c?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">縄文の心「人は自然の一部」表現した大雪像が完成！トラック５２０台分の雪で製作　さっぽろ雪まつり(STVニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>4分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ２月４日に「さっぽろ雪まつり」が開幕するのを前に、大通公園では大雪像の引き渡し式が開かれました。 高さ１３メートル、幅２０メートル。 およそ１か月かけて作られた、大通４丁目のＳＴＶ広場の大雪像「祈
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/850aa81cd75d89612beb25c0721d426ca12e6fcd?source=rss" data-title="スピード重視1000台出動　札幌で“緊急排雪”続く　交通量多い生活道路優先　２月中に完了へ(STVニュース北海道)" data-summary="大雪の影響で、札幌市の生活道路では２月３日も緊急排雪が続けられています。 交通量が多い生活道路を優先しているため、道幅が狭い場所では注意が必要です。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/850aa81cd75d89612beb25c0721d426ca12e6fcd?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">スピード重視1000台出動　札幌で“緊急排雪”続く　交通量多い生活道路優先　２月中に完了へ(STVニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>11分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            大雪の影響で、札幌市の生活道路では２月３日も緊急排雪が続けられています。 交通量が多い生活道路を優先しているため、道幅が狭い場所では注意が必要です。
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/81ff3185543fe7891957b3d58f730de5103c1f3c?source=rss" data-title="幼稚園児が節分の豆まき　太鼓の合図で鬼出現「キャー！」　仲良く記念撮影も　登別市(HTB北海道ニュース)" data-summary="「節分」のきょう（３日）登別市の幼稚園では園児たちが豆をまいて「鬼退治」に臨みました。 「キャー！」「キャー！」 太鼓の音を合図に突然、現れた鬼、園児たちが一斉に逃げ回ります。 登別市の白菊幼稚園で">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/81ff3185543fe7891957b3d58f730de5103c1f3c?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">幼稚園児が節分の豆まき　太鼓の合図で鬼出現「キャー！」　仲良く記念撮影も　登別市(HTB北海道ニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>11分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            「節分」のきょう（３日）登別市の幼稚園では園児たちが豆をまいて「鬼退治」に臨みました。 「キャー！」「キャー！」 太鼓の音を合図に突然、現れた鬼、園児たちが一斉に逃げ回ります。 登別市の白菊幼稚園で
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/1c306c02c640e4b6de053b92ea495e1142b02963?source=rss" data-title="【速報】“危険運転致死罪”で起訴　11時間半飲酒した状態で車を運転した33歳男　国道で正面衝突し、24歳大学院生が死亡　北海道小樽市(HBCニュース北海道)" data-summary="2024年、北海道小樽市で、当時24歳の大学院生の男性が亡くなった事故について、札幌地検は2月3日、事故を起こした33歳の男を危険運転致死の罪で起訴しました。 危険運転致死の罪で起訴されたのは、大沢">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/1c306c02c640e4b6de053b92ea495e1142b02963?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【速報】“危険運転致死罪”で起訴　11時間半飲酒した状態で車を運転した33歳男　国道で正面衝突し、24歳大学院生が死亡　北海道小樽市(HBCニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>23分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            2024年、北海道小樽市で、当時24歳の大学院生の男性が亡くなった事故について、札幌地検は2月3日、事故を起こした33歳の男を危険運転致死の罪で起訴しました。 危険運転致死の罪で起訴されたのは、大沢
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/df96f10ed47b8e93caa43e7d14558ba3cd995866?source=rss" data-title="【速報】飲酒運転で衝突…大学院生死亡から1年5か月　危険運転致死の罪で男を起訴　小樽市(STVニュース北海道)" data-summary="小樽市の国道で2024年9月、飲酒運転の車が乗用車と正面衝突し大学院生が死亡した事故で、札幌地検は、事故を起こした男を危険運転致死の罪で起訴しました。 危険運転致死の罪で起訴されたのは、大沢亮汰被告">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/df96f10ed47b8e93caa43e7d14558ba3cd995866?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【速報】飲酒運転で衝突…大学院生死亡から1年5か月　危険運転致死の罪で男を起訴　小樽市(STVニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>31分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            小樽市の国道で2024年9月、飲酒運転の車が乗用車と正面衝突し大学院生が死亡した事故で、札幌地検は、事故を起こした男を危険運転致死の罪で起訴しました。 危険運転致死の罪で起訴されたのは、大沢亮汰被告
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/54549e6a0a4cac29668708a4700c62d1f14d2011?source=rss" data-title="「打ったらでれるばい」新庄監督にアピール　紅白戦で吉田賢吾選手が２安打　伊藤投手はブルペン入り(STVニュース北海道)" data-summary="２月１日に始まったファイターズの沖縄キャンプ。 ２日目の２日は伊藤大海投手がブルペンに入り調整。 また、新庄監督は２軍の試合を視察しました。目に留まったのはー 沖縄県名護市で行われているファイタ">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/54549e6a0a4cac29668708a4700c62d1f14d2011?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「打ったらでれるばい」新庄監督にアピール　紅白戦で吉田賢吾選手が２安打　伊藤投手はブルペン入り(STVニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>41分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ２月１日に始まったファイターズの沖縄キャンプ。 ２日目の２日は伊藤大海投手がブルペンに入り調整。 また、新庄監督は２軍の試合を視察しました。目に留まったのはー 沖縄県名護市で行われているファイタ
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/a833e5acce2b6fc7147a67c5258bc341df4f4132?source=rss" data-title="JR137本運休…間引き運転も実施　大雪で交通に影響続く…最終列車で1時間ほど繰り上げも(STVニュース北海道)" data-summary="札幌圏を中心とした大雪で、２月３日も交通への影響が続いています。 ＪＲは一部の列車を終日、間引き運転するほか、最終列車の繰り上げを決めています。 ＪＲ北海道によりますと、大雪の影響で３日も札幌と新">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/a833e5acce2b6fc7147a67c5258bc341df4f4132?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">JR137本運休…間引き運転も実施　大雪で交通に影響続く…最終列車で1時間ほど繰り上げも(STVニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>1時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            札幌圏を中心とした大雪で、２月３日も交通への影響が続いています。 ＪＲは一部の列車を終日、間引き運転するほか、最終列車の繰り上げを決めています。 ＪＲ北海道によりますと、大雪の影響で３日も札幌と新
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/47165be09bd66c2c820860809c8200ce64032369?source=rss" data-title="サウナ施設の女性更衣室に侵入か　「お金がない男性客がいる」従業員からの通報で事件発覚　逮捕された男の所持金は40円(HBCニュース北海道)" data-summary="2月2日、札幌市中央区にあるサウナ施設の女性更衣室に侵入したとして、40歳の男が逮捕されました。 建造物侵入の疑いで逮捕されたのは、住所・職業が自称の、札幌市東区に住む個人事業主の40歳の男です。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/47165be09bd66c2c820860809c8200ce64032369?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">サウナ施設の女性更衣室に侵入か　「お金がない男性客がいる」従業員からの通報で事件発覚　逮捕された男の所持金は40円(HBCニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            2月2日、札幌市中央区にあるサウナ施設の女性更衣室に侵入したとして、40歳の男が逮捕されました。 建造物侵入の疑いで逮捕されたのは、住所・職業が自称の、札幌市東区に住む個人事業主の40歳の男です。
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/8c3cbfca7c536c462966937f5f6ce447138fdaa6?source=rss" data-title="【スノーボード】工藤璃星“北海道民に感動してもらえる滑りができれば”16歳札幌市出身…ミラノ・コルティナ五輪女子ハーフパイプ日本代表(北海道ニュースUHB)" data-summary="スノーボード女子ハーフパイプのミラノ・コルティナ五輪日本代表は2月3日、事前合宿地のスイス・ラークスでオンライン取材に応じました。今大会初出場となる北海道札幌市出身の工藤璃星選手(くどう・りせ 16">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/8c3cbfca7c536c462966937f5f6ce447138fdaa6?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【スノーボード】工藤璃星“北海道民に感動してもらえる滑りができれば”16歳札幌市出身…ミラノ・コルティナ五輪女子ハーフパイプ日本代表(北海道ニュースUHB)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            スノーボード女子ハーフパイプのミラノ・コルティナ五輪日本代表は2月3日、事前合宿地のスイス・ラークスでオンライン取材に応じました。今大会初出場となる北海道札幌市出身の工藤璃星選手(くどう・りせ 16
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/b155d8beaf492bea53b6b0b717c5d3275e3503a1?source=rss" data-title="40代妻がバリカンで自分の後頭部付近を刈り上げる…強要した疑いで40歳男を逮捕　語気を荒げて執拗に　(HBCニュース北海道)" data-summary="北海道石狩市で、40代の妻を脅し、後頭部付近をバリカンで刈り上げさせたとして、40歳の男が逮捕されました。 強要の疑いで逮捕されたのは、石狩市に住む40歳の解体工の男です。 男は1月15日未明ごろ">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/b155d8beaf492bea53b6b0b717c5d3275e3503a1?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">40代妻がバリカンで自分の後頭部付近を刈り上げる…強要した疑いで40歳男を逮捕　語気を荒げて執拗に　(HBCニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            北海道石狩市で、40代の妻を脅し、後頭部付近をバリカンで刈り上げさせたとして、40歳の男が逮捕されました。 強要の疑いで逮捕されたのは、石狩市に住む40歳の解体工の男です。 男は1月15日未明ごろ
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/a6af8c2568733aca17e01016a4e036f798dbb37a?source=rss" data-title="飲食店の駐車場に止まっている車に横付けして車内から"菓子パンと缶コーヒー（332円相当）"盗む…71歳男を窃盗容疑で逮捕…食事中の被害者が窓から犯行シーンを目撃して取り押さえる〈北海道鹿部町〉(北海道ニュースUHB)" data-summary="北海道鹿部町にある飲食店の駐車場で、車の中にあった菓子パンなど2点（合計332円相当）を盗んだとして、71歳の男が逮捕されました。 窃盗の疑いで現行犯逮捕されたのは、鹿部町本別に住む無職の男(7">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/a6af8c2568733aca17e01016a4e036f798dbb37a?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">飲食店の駐車場に止まっている車に横付けして車内から"菓子パンと缶コーヒー（332円相当）"盗む…71歳男を窃盗容疑で逮捕…食事中の被害者が窓から犯行シーンを目撃して取り押さえる〈北海道鹿部町〉(北海道ニュースUHB)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>4時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            北海道鹿部町にある飲食店の駐車場で、車の中にあった菓子パンなど2点（合計332円相当）を盗んだとして、71歳の男が逮捕されました。 窃盗の疑いで現行犯逮捕されたのは、鹿部町本別に住む無職の男(7
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/3ac6730fcc4b628970df50183f97cf4d58d7e29e?source=rss" data-title="【ファイターズ】伊藤大海　初プルペン入り・WBCに向けて「出来れば先発で」(北海道ニュースUHB)" data-summary="沖縄県名護市で行われている「北海道日本ハムファイターズ」春季キャンプ2日目。 WBC日本代表に選出された「伊藤大海投手(28)」が初ブルペン入りしました。 ＷＢＣ公式球を使い、捕手を立たせて11">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/3ac6730fcc4b628970df50183f97cf4d58d7e29e?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【ファイターズ】伊藤大海　初プルペン入り・WBCに向けて「出来れば先発で」(北海道ニュースUHB)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>4時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            沖縄県名護市で行われている「北海道日本ハムファイターズ」春季キャンプ2日目。 WBC日本代表に選出された「伊藤大海投手(28)」が初ブルペン入りしました。 ＷＢＣ公式球を使い、捕手を立たせて11
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/5a1928c700e31d9dd45b24e9d579117a27fbeb04?source=rss" data-title="【最新交通情報】JR北海道は間引き・最終繰り上げ運転…快速エアポートは毎時1〜2本運休、学園都市線の最終は午後11時8分の札幌発当別行き　路線バスも運休相次ぐ《3日午前6時時点》(HBCニュース北海道)" data-summary="JRは札幌圏の大雪の影響で、3日もあわせて124本の列車を運休するほか一部の最終列車を繰り上げることにしています。 新千歳空港・苫小牧方面の千歳線は毎時1本から3本を運休。 快速エアポートも毎時1">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/5a1928c700e31d9dd45b24e9d579117a27fbeb04?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【最新交通情報】JR北海道は間引き・最終繰り上げ運転…快速エアポートは毎時1〜2本運休、学園都市線の最終は午後11時8分の札幌発当別行き　路線バスも運休相次ぐ《3日午前6時時点》(HBCニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>5時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            JRは札幌圏の大雪の影響で、3日もあわせて124本の列車を運休するほか一部の最終列車を繰り上げることにしています。 新千歳空港・苫小牧方面の千歳線は毎時1本から3本を運休。 快速エアポートも毎時1
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/99abfd6ad7add01a13a3585ca5e153db4bb03c1e?source=rss" data-title="札幌市が『禁煙エリア』拡大検討＿ススキノや大通公園全域も対象エリアに＿「タバコ臭い」との苦情や"ポイ捨て"が多いことからついに決断へ(北海道ニュースUHB)" data-summary="札幌中心部の喫煙制限区域を巡り、札幌市がススキノや大通公園全域に禁煙エリアの拡大を検討していることが分かりました。 札幌市が検討している喫煙制限区域の案は、東は創成川公園から西は7丁目まで、南は">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/99abfd6ad7add01a13a3585ca5e153db4bb03c1e?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">札幌市が『禁煙エリア』拡大検討＿ススキノや大通公園全域も対象エリアに＿「タバコ臭い」との苦情や"ポイ捨て"が多いことからついに決断へ(北海道ニュースUHB)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>5時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            札幌中心部の喫煙制限区域を巡り、札幌市がススキノや大通公園全域に禁煙エリアの拡大を検討していることが分かりました。 札幌市が検討している喫煙制限区域の案は、東は創成川公園から西は7丁目まで、南は
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/592d082198c07189252b6a6d0c8e78fc3487d96f?source=rss" data-title="【ファイターズ】セカンド挑戦！吉田賢吾 チーム初実戦で２安打アピールに成功(北海道ニュースUHB)" data-summary="2月2日（月）、北海道日本ハムファイターズの春季キャンプ2日目。早くも2軍キャンプ地の国頭では初実戦となる紅白戦が行われました。 若手主体で4回まで行われた試合では、吉田賢吾（25）がライトとセ">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/592d082198c07189252b6a6d0c8e78fc3487d96f?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【ファイターズ】セカンド挑戦！吉田賢吾 チーム初実戦で２安打アピールに成功(北海道ニュースUHB)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>5時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            2月2日（月）、北海道日本ハムファイターズの春季キャンプ2日目。早くも2軍キャンプ地の国頭では初実戦となる紅白戦が行われました。 若手主体で4回まで行われた試合では、吉田賢吾（25）がライトとセ
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/8756875e8fa8b87f215947fb727310e00461ea98?source=rss" data-title="「緊急排雪」はスピーディー　市内3800キロを一気に作業　関係機関にも応援を求める　札幌市(STVニュース北海道)" data-summary="雪の影響が続く中、札幌市の生活道路では２月２日から初の緊急排雪が始まりました。 これまでのパートナーシップ排雪とどのような違いがあるのでしょうか。 （長南記者）「札幌市清田区の住宅街です。道のわき">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/8756875e8fa8b87f215947fb727310e00461ea98?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「緊急排雪」はスピーディー　市内3800キロを一気に作業　関係機関にも応援を求める　札幌市(STVニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>5時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            雪の影響が続く中、札幌市の生活道路では２月２日から初の緊急排雪が始まりました。 これまでのパートナーシップ排雪とどのような違いがあるのでしょうか。 （長南記者）「札幌市清田区の住宅街です。道のわき
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/f65c8bf16cd453ad81e54db1e35ed09eaa91ac38?source=rss" data-title="【ファイターズ】サードベースで矢澤が「DOMIれ！」ポーズ 紅白戦で好調アピール(北海道ニュースUHB)" data-summary="2月2日（月）、沖縄県で春季キャンプ2日目を迎えた北海道日本ハムファイターズ。この日は2軍キャンプ地の「かいぎんスタジアム国頭」で紅白戦を行いました。 新庄剛志監督（54）がバックネット裏のスタ">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/f65c8bf16cd453ad81e54db1e35ed09eaa91ac38?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【ファイターズ】サードベースで矢澤が「DOMIれ！」ポーズ 紅白戦で好調アピール(北海道ニュースUHB)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>5時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            2月2日（月）、沖縄県で春季キャンプ2日目を迎えた北海道日本ハムファイターズ。この日は2軍キャンプ地の「かいぎんスタジアム国頭」で紅白戦を行いました。 新庄剛志監督（54）がバックネット裏のスタ
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/569ea70f8703a234badf030f2566ed3e1dbeae7c?source=rss" data-title="もっと働く？　長時間抑制？　衆院選、各党公約分かれる　自民、規制緩和にじませる　中道など、多様な過ごし方尊重(北海道新聞)" data-summary="8日投開票の衆院選では、高市早苗首相（自民党総裁）が労働時間規制の緩和検討を指示する中、各党は働き方に関してさまざまな公約を掲げた。「自ら稼ぐ意欲を重視」するとして労働時間の規制緩和を目指す政策と、">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/569ea70f8703a234badf030f2566ed3e1dbeae7c?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">もっと働く？　長時間抑制？　衆院選、各党公約分かれる　自民、規制緩和にじませる　中道など、多様な過ごし方尊重(北海道新聞)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>6時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            8日投開票の衆院選では、高市早苗首相（自民党総裁）が労働時間規制の緩和検討を指示する中、各党は働き方に関してさまざまな公約を掲げた。「自ら稼ぐ意欲を重視」するとして労働時間の規制緩和を目指す政策と、
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/623e6626a0b38dc242e12bb2771cac7c71dfb140?source=rss" data-title="【争点解説】泊原発の再稼働　メリットとデメリット…どう考える？各党の公約　衆議院選挙(STVニュース北海道)" data-summary="２月８日に投開票となる衆院選の争点の一つが「泊原発の再稼働」です。 原発についての各党の公約です。 自民党・維新の会は再稼働を進める。 中道改革連合は候補者によって意見に程度の差はありますが、党">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/623e6626a0b38dc242e12bb2771cac7c71dfb140?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【争点解説】泊原発の再稼働　メリットとデメリット…どう考える？各党の公約　衆議院選挙(STVニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>6時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ２月８日に投開票となる衆院選の争点の一つが「泊原発の再稼働」です。 原発についての各党の公約です。 自民党・維新の会は再稼働を進める。 中道改革連合は候補者によって意見に程度の差はありますが、党
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/7ad25cd0b72cc395428c512f1a013ad39b408653?source=rss" data-title="公約分かれる“原発再稼働”　原発の信頼が全国的に揺らぎ…北電は１１％値下げ明言せず　衆議院選挙(STVニュース北海道)" data-summary="２月８日に投開票となる衆院選の争点の一つが「泊原発の再稼働」です。 原発の再稼働は高止まりしている電気料金の値下げにつながるとされていますが、その是非について各党の公約は分かれています。 有権者の">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/7ad25cd0b72cc395428c512f1a013ad39b408653?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">公約分かれる“原発再稼働”　原発の信頼が全国的に揺らぎ…北電は１１％値下げ明言せず　衆議院選挙(STVニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>6時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ２月８日に投開票となる衆院選の争点の一つが「泊原発の再稼働」です。 原発の再稼働は高止まりしている電気料金の値下げにつながるとされていますが、その是非について各党の公約は分かれています。 有権者の
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/af41283252943273daed76b19c9e541b8c3e13b2?source=rss" data-title="“所持金は40円”サウナ施設の女性更衣室に侵入 40歳の男を現行犯逮捕 札幌市(STVニュース北海道)" data-summary="札幌・中央警察署は、2026年2月2日にいずれも自称・札幌市東区に住む個人事業主の男（40）を建造物侵入の疑いで現行犯逮捕したと発表しました。 男は、2月2日午後7時前、札幌市中央区南5条西2丁目に">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/af41283252943273daed76b19c9e541b8c3e13b2?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">“所持金は40円”サウナ施設の女性更衣室に侵入 40歳の男を現行犯逮捕 札幌市(STVニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>6時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            札幌・中央警察署は、2026年2月2日にいずれも自称・札幌市東区に住む個人事業主の男（40）を建造物侵入の疑いで現行犯逮捕したと発表しました。 男は、2月2日午後7時前、札幌市中央区南5条西2丁目に
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/657e5c19ea3ee75d272ac226592505592840647d?source=rss" data-title="真夏の深夜、10代女性宅に侵入し『性的暴行』19歳団体職員の男を不同意性交等致傷容疑で逮捕『不同意わいせつと性的姿態等撮影』事件で逮捕され関与が浮上＜北海道旭川市＞(北海道ニュースUHB)" data-summary="女性宅に侵入し就寝中の女性に性的暴行を加えたとして、北海道旭川市に住む19歳の団体職員の男が住居侵入および不同意性交等致傷容疑で逮捕されました。 警察によりますと、男は2025年8月26日午前2">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/657e5c19ea3ee75d272ac226592505592840647d?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">真夏の深夜、10代女性宅に侵入し『性的暴行』19歳団体職員の男を不同意性交等致傷容疑で逮捕『不同意わいせつと性的姿態等撮影』事件で逮捕され関与が浮上＜北海道旭川市＞(北海道ニュースUHB)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>6時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            女性宅に侵入し就寝中の女性に性的暴行を加えたとして、北海道旭川市に住む19歳の団体職員の男が住居侵入および不同意性交等致傷容疑で逮捕されました。 警察によりますと、男は2025年8月26日午前2
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/9602c447d9a0b90136110458adb1c0526467647c?source=rss" data-title="ミラノ・コルティナ五輪・パラリンピック出場　ゆかりの選手を応援する横断幕設置　北海道旭川市(STVニュース北海道)" data-summary="ミラノ・コルティナオリンピックパラリンピックの開催を間近に控え旭川市ではゆかりの選手を応援する横断幕が設置されました。 早朝の旭川市役所です。 まだ誰もいない総合庁舎のロビーに掲げられたのは大きな">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/9602c447d9a0b90136110458adb1c0526467647c?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">ミラノ・コルティナ五輪・パラリンピック出場　ゆかりの選手を応援する横断幕設置　北海道旭川市(STVニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>6時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ミラノ・コルティナオリンピックパラリンピックの開催を間近に控え旭川市ではゆかりの選手を応援する横断幕が設置されました。 早朝の旭川市役所です。 まだ誰もいない総合庁舎のロビーに掲げられたのは大きな
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/b1843b2b6ae9336797fb74ca0b88d66d43dc23f3?source=rss" data-title="【JR北海道 2月3日の運行情報】大雪の影響で札幌圏の列車「終日間引き運転」を実施 133本が運休へ　札幌と新千歳空港を結ぶ快速エアポートも38本が運休(北海道ニュースUHB)" data-summary="JR北海道は2月3日も札幌圏で終日「間引き運転」を実施すると発表しました。 大雪の影響が続いているためで、133本（エアポート38本、快速・普通95本）の運休を予定しています。 【2月3日 札">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/b1843b2b6ae9336797fb74ca0b88d66d43dc23f3?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【JR北海道 2月3日の運行情報】大雪の影響で札幌圏の列車「終日間引き運転」を実施 133本が運休へ　札幌と新千歳空港を結ぶ快速エアポートも38本が運休(北海道ニュースUHB)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>6時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            JR北海道は2月3日も札幌圏で終日「間引き運転」を実施すると発表しました。 大雪の影響が続いているためで、133本（エアポート38本、快速・普通95本）の運休を予定しています。 【2月3日 札
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/63fa0a65ed0c2d0acab47e6ec2b8a686a34b213e?source=rss" data-title="夕方の公園を歩いていた20代女性に背後から抱きつき下半身を触る…「緑色のジャンパー」「中年の男」目撃証言そっくりの62歳無職男をみつけ不同意わいせつ容疑で逮捕〈北海道江別市〉(北海道ニュースUHB)" data-summary="真冬の公園で女性に背後から抱きつき、体を触ったとして男が逮捕されました。 不同意わいせつの疑いで逮捕されたのは、北海道江別市に住む62歳の無職の男（住所・職業・氏名・年齢すべて自称）です。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/63fa0a65ed0c2d0acab47e6ec2b8a686a34b213e?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">夕方の公園を歩いていた20代女性に背後から抱きつき下半身を触る…「緑色のジャンパー」「中年の男」目撃証言そっくりの62歳無職男をみつけ不同意わいせつ容疑で逮捕〈北海道江別市〉(北海道ニュースUHB)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>6時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            真冬の公園で女性に背後から抱きつき、体を触ったとして男が逮捕されました。 不同意わいせつの疑いで逮捕されたのは、北海道江別市に住む62歳の無職の男（住所・職業・氏名・年齢すべて自称）です。
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/0608ed8f4c39f6b7c3d2dbb0df4f88b6db74213e?source=rss" data-title="知人の顔などを何度も蹴り暴行容疑で逮捕された30代男性を『不起訴処分』に…SNSの「暴行動画」がきっかけで警察が動く＜苫小牧区検＞(北海道ニュースUHB)" data-summary="北海道苫小牧市で、知人男性の顔を蹴るなどした暴行事件で、札幌地検は30代男性を不起訴処分としました。 苫小牧市に住む男性は2025年8月ごろ、苫小牧市の路上で、知人男性の顔を蹴るなどの暴行をした">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/0608ed8f4c39f6b7c3d2dbb0df4f88b6db74213e?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">知人の顔などを何度も蹴り暴行容疑で逮捕された30代男性を『不起訴処分』に…SNSの「暴行動画」がきっかけで警察が動く＜苫小牧区検＞(北海道ニュースUHB)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>7時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            北海道苫小牧市で、知人男性の顔を蹴るなどした暴行事件で、札幌地検は30代男性を不起訴処分としました。 苫小牧市に住む男性は2025年8月ごろ、苫小牧市の路上で、知人男性の顔を蹴るなどの暴行をした
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/603abce3757ef891405618af7b6518c8362d8887?source=rss" data-title="【JR北海道】3日（火）も間引き・最終繰り上げ運転…快速エアポートは毎時1〜2本運休、学園都市線の最終は午後11時8分の札幌発当別行き(HBCニュース北海道)" data-summary="JRは札幌圏の大雪の影響で、3日もあわせて124本の列車を運休するほか一部の最終列車を繰り上げることにしています。 新千歳空港・苫小牧方面の千歳線は毎時1本から3本を運休。 快速エアポートも毎時1">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/603abce3757ef891405618af7b6518c8362d8887?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【JR北海道】3日（火）も間引き・最終繰り上げ運転…快速エアポートは毎時1〜2本運休、学園都市線の最終は午後11時8分の札幌発当別行き(HBCニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>15時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            JRは札幌圏の大雪の影響で、3日もあわせて124本の列車を運休するほか一部の最終列車を繰り上げることにしています。 新千歳空港・苫小牧方面の千歳線は毎時1本から3本を運休。 快速エアポートも毎時1
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/07965427eb286f1c555c8fcda30511e4b09aaa68?source=rss" data-title="“解散”ではなく“海産”総選挙、今回もやります…4選目指すホタテに挑む新人「身を切る覚悟」のニシン、「時代をシメる」サバ、「高い知能で電撃結成」イカタコ連合、魚論調査も…北海道豊浦町(HBCニュース北海道)" data-summary="こちらも、熱い戦いです。衆院選に合わせて「もう一つの総選挙」が始まっています。 ■“解散”ではなく…“海産”もう一つの総選挙始まる 観光協会事務局長 「3連覇しているホタテに今回は新人候補がたくさ">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/07965427eb286f1c555c8fcda30511e4b09aaa68?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">“解散”ではなく“海産”総選挙、今回もやります…4選目指すホタテに挑む新人「身を切る覚悟」のニシン、「時代をシメる」サバ、「高い知能で電撃結成」イカタコ連合、魚論調査も…北海道豊浦町(HBCニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>16時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            こちらも、熱い戦いです。衆院選に合わせて「もう一つの総選挙」が始まっています。 ■“解散”ではなく…“海産”もう一つの総選挙始まる 観光協会事務局長 「3連覇しているホタテに今回は新人候補がたくさ
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/9774162dc827b31d86c8c2daa4f663fa6c1dc4af?source=rss" data-title="北海道で高まる電力需要　相次ぐデータセンターの進出で11％増加試算　気になる電気料金の値下げ幅は不透明に…安全性を疑問視する専門家も　原発再稼働の是非　各党の考えは?衆議院選挙2026(HBCニュース北海道)" data-summary="2月8日に投開票を迎える衆議院議員選挙。今回は原発再稼働の是非について考えます。 京セラ ゼロエミッション・データセンター 尾方哲さん 「こちらがデータセンターの建物です。普段の生活で使うネット検索">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/9774162dc827b31d86c8c2daa4f663fa6c1dc4af?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">北海道で高まる電力需要　相次ぐデータセンターの進出で11％増加試算　気になる電気料金の値下げ幅は不透明に…安全性を疑問視する専門家も　原発再稼働の是非　各党の考えは?衆議院選挙2026(HBCニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>16時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            2月8日に投開票を迎える衆議院議員選挙。今回は原発再稼働の是非について考えます。 京セラ ゼロエミッション・データセンター 尾方哲さん 「こちらがデータセンターの建物です。普段の生活で使うネット検索
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/fb5d59ed41cf62685a761dd6598dcdd0cfe61c06?source=rss" data-title="ニセコモイワスキーリゾートのコース外で救助要請　27歳のオーストラリア人男性が死亡(HTB北海道ニュース)" data-summary="２日午後３時ごろ、北海道ニセコ町にある「ニセコモイワスキーリゾート」の関係者から「スキー場のコース外において救助要請が入った」と警察に通報がありました。 警察によりますと、オーストラリア人でニセコ地">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/fb5d59ed41cf62685a761dd6598dcdd0cfe61c06?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">ニセコモイワスキーリゾートのコース外で救助要請　27歳のオーストラリア人男性が死亡(HTB北海道ニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>16時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ２日午後３時ごろ、北海道ニセコ町にある「ニセコモイワスキーリゾート」の関係者から「スキー場のコース外において救助要請が入った」と警察に通報がありました。 警察によりますと、オーストラリア人でニセコ地
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/02f86c48ca7772c53a918bff5cb22382e95a5357?source=rss" data-title="2台をつなげた「連節バス」が札幌でテスト走行　雪で道幅が狭いススキノは走れた?輸送力1.5倍アップで街のにぎわい創出へ　2030年度に導入計画(HBCニュース北海道)" data-summary="札幌はこの冬、度重なる大雪に見舞われていますが市が導入を目指している新たな公共交通はこの冬を乗り越えられるのか、市内で走行テストが進められています。 1月、イルミネーションがきらめく札幌駅前通りです">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/02f86c48ca7772c53a918bff5cb22382e95a5357?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">2台をつなげた「連節バス」が札幌でテスト走行　雪で道幅が狭いススキノは走れた?輸送力1.5倍アップで街のにぎわい創出へ　2030年度に導入計画(HBCニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>16時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            札幌はこの冬、度重なる大雪に見舞われていますが市が導入を目指している新たな公共交通はこの冬を乗り越えられるのか、市内で走行テストが進められています。 1月、イルミネーションがきらめく札幌駅前通りです
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/843c4737fc6a0c3c0d5fdc3b669ce24720c9a3f3?source=rss" data-title="3日は節分！南南東を向いて無言で丸かぶり！豪華なカニからデザートまで 今年のトレンドは「ハーフサイズ」(HTB北海道ニュース)" data-summary="あす（3日）は節分です。札幌のデパートでは、豆まきと共に節分の風物詩となっている恵方巻商戦が始まっています。今年のトレンドは？ のりではなく、ズワイガニが巻かれた豪華な恵方巻に、エビフライが丸ごと１">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/843c4737fc6a0c3c0d5fdc3b669ce24720c9a3f3?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">3日は節分！南南東を向いて無言で丸かぶり！豪華なカニからデザートまで 今年のトレンドは「ハーフサイズ」(HTB北海道ニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>17時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            あす（3日）は節分です。札幌のデパートでは、豆まきと共に節分の風物詩となっている恵方巻商戦が始まっています。今年のトレンドは？ のりではなく、ズワイガニが巻かれた豪華な恵方巻に、エビフライが丸ごと１
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/cdf6715c19d7aa773a53e20884aca9b4fc705e19?source=rss" data-title="【最新】【交通情報】JR北海道・バス・高速道路に大雪の影響 運休・通行止め相次ぐ(HTB北海道ニュース)" data-summary="雪などの影響で交通機関にも乱れが出ています。 ＪＲ北海道によりますと、現在快速エアポート６１本を含む２１０本が運休となっていて、函館線の小樽～長万部間については上下線で終日運転を見合わせています。 ま">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/cdf6715c19d7aa773a53e20884aca9b4fc705e19?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【最新】【交通情報】JR北海道・バス・高速道路に大雪の影響 運休・通行止め相次ぐ(HTB北海道ニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>17時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            雪などの影響で交通機関にも乱れが出ています。 ＪＲ北海道によりますと、現在快速エアポート６１本を含む２１０本が運休となっていて、函館線の小樽～長万部間については上下線で終日運転を見合わせています。 ま
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/caef23df32a57f8be2d348067c790726958669e3?source=rss" data-title="札幌の百貨店で「恵方巻き」商戦　バラエティー豊かな商品が店頭に並ぶ(テレビ北海道)" data-summary="あすは節分です。札幌の百貨店では「恵方巻き」商戦が始まっています。 大丸札幌店の地下食品売り場では、ことしも、恵方巻きが各店舗で販売されています。あすの節分を前に多くの買い物客が詰めかけました。 店頭">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/caef23df32a57f8be2d348067c790726958669e3?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">札幌の百貨店で「恵方巻き」商戦　バラエティー豊かな商品が店頭に並ぶ(テレビ北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>17時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            あすは節分です。札幌の百貨店では「恵方巻き」商戦が始まっています。 大丸札幌店の地下食品売り場では、ことしも、恵方巻きが各店舗で販売されています。あすの節分を前に多くの買い物客が詰めかけました。 店頭
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/f7f48598ffae234e43d8b9b93fa83f0ab422baf1?source=rss" data-title="【中継】札幌市東区環状通、雪山で3車線→2車線に　左折レーン潰れ渋滞　つるつるガタガタ路面で危険な現状(HTB北海道ニュース)" data-summary="段木 涼太アナウンサー） はい、札幌市東区、環状通東駅から徒歩5分ほどの場所に来ています。私の画面右手に見えますのが環状通、大きな通りになっています。 ご覧の通りこの大きな雪山が、元々3車線ある道">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/f7f48598ffae234e43d8b9b93fa83f0ab422baf1?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【中継】札幌市東区環状通、雪山で3車線→2車線に　左折レーン潰れ渋滞　つるつるガタガタ路面で危険な現状(HTB北海道ニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>17時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            段木 涼太アナウンサー） はい、札幌市東区、環状通東駅から徒歩5分ほどの場所に来ています。私の画面右手に見えますのが環状通、大きな通りになっています。 ご覧の通りこの大きな雪山が、元々3車線ある道
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/4d3385d35dba39defc4a92cdfa7ecaba9a612ec1?source=rss" data-title="期日前投票　北海道は前回衆院選下回る２２万人　大雪も影響か(テレビ北海道)" data-summary="先月２７日に公示された衆院選は、今月８日に投開票を迎えます。北海道選挙管理委員会はきょう、期日前投票の１回目の中間状況を発表しました。 道選管によりますと、公示後初の週末をはさみ、きのうまでの５日間に">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/4d3385d35dba39defc4a92cdfa7ecaba9a612ec1?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">期日前投票　北海道は前回衆院選下回る２２万人　大雪も影響か(テレビ北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>17時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            先月２７日に公示された衆院選は、今月８日に投開票を迎えます。北海道選挙管理委員会はきょう、期日前投票の１回目の中間状況を発表しました。 道選管によりますと、公示後初の週末をはさみ、きのうまでの５日間に
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/e7ad2a43e611cd7351d1e275056f5c8d80d97fd3?source=rss" data-title="緊急避妊薬「ノルレボ」道内でも購入可能に　旭川、函館で先行販売(テレビ北海道)" data-summary="望まない妊娠を防くために飲む緊急避妊薬。きょうから医師の診断も処方箋もなしで購入できる市販薬の販売が、道内のドラッグストアや薬局でも始まりました。 販売が始まったのは緊急避妊薬ノルレボです。この薬はア">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/e7ad2a43e611cd7351d1e275056f5c8d80d97fd3?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">緊急避妊薬「ノルレボ」道内でも購入可能に　旭川、函館で先行販売(テレビ北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>17時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            望まない妊娠を防くために飲む緊急避妊薬。きょうから医師の診断も処方箋もなしで購入できる市販薬の販売が、道内のドラッグストアや薬局でも始まりました。 販売が始まったのは緊急避妊薬ノルレボです。この薬はア
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/da7c4215a24d5b3365291ff7e0b902fa1c4838ea?source=rss" data-title="札幌でまたも大雪　JR北海道は「間引き運転」　市民生活に影響(テレビ北海道)" data-summary="札幌ではきょう、積雪が再び１メートルを超えました。生活道路ではきょうから緊急排雪がスタートしていますが、この大雪で市民生活に影響が出ています。 ＪＲ北海道は、快速エアポートを含む１２１本の運休を発表し">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/da7c4215a24d5b3365291ff7e0b902fa1c4838ea?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">札幌でまたも大雪　JR北海道は「間引き運転」　市民生活に影響(テレビ北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>17時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            札幌ではきょう、積雪が再び１メートルを超えました。生活道路ではきょうから緊急排雪がスタートしていますが、この大雪で市民生活に影響が出ています。 ＪＲ北海道は、快速エアポートを含む１２１本の運休を発表し
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/2527019f951323e07cc0e6ebeb28029e2668599d?source=rss" data-title="「雪に埋まったかもしれない。背中が見えている」80代女性を病院搬送、意識なし(HTB北海道ニュース)" data-summary="ここで雪の事故の速報が入ってきました。 午後５時半前、札幌市厚別区厚別南５丁目で「家族が雪に埋まったかもしれない。背中が見えている」と消防に通報がありました。 ８０代の女性は駆け付けた消防隊によっ">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/2527019f951323e07cc0e6ebeb28029e2668599d?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「雪に埋まったかもしれない。背中が見えている」80代女性を病院搬送、意識なし(HTB北海道ニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>17時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ここで雪の事故の速報が入ってきました。 午後５時半前、札幌市厚別区厚別南５丁目で「家族が雪に埋まったかもしれない。背中が見えている」と消防に通報がありました。 ８０代の女性は駆け付けた消防隊によっ
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/8ad4c2e0e2682c4915a434b42a00c8f68e8b8332?source=rss" data-title="【中継】除雪追い付かず帰宅時間帯に向け混雑さらに…　札幌市東区・雪の影響による現在の道路状況は？(HTB北海道ニュース)" data-summary="段木涼太アナウンサー） 札幌市東区「北9条通り」に来ています。この通り、かなり混雑しています。この先、奥に「東8丁目篠路通り」がありまして、その大きな通りが非常に混んでいるため、この中道もかなり混ん">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/8ad4c2e0e2682c4915a434b42a00c8f68e8b8332?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【中継】除雪追い付かず帰宅時間帯に向け混雑さらに…　札幌市東区・雪の影響による現在の道路状況は？(HTB北海道ニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>18時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            段木涼太アナウンサー） 札幌市東区「北9条通り」に来ています。この通り、かなり混雑しています。この先、奥に「東8丁目篠路通り」がありまして、その大きな通りが非常に混んでいるため、この中道もかなり混ん
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/83c25df1a2097c3eaa0be61ea5f7730884c471c9?source=rss" data-title="【中継】札幌　路面はガタガタつるつる　道幅狭く生活に影響　(HTB北海道ニュース)" data-summary="■段木涼太アナウンサー 札幌市東区、東8丁目篠路通りに来ています。 向かってこちら側ですね、この先左手に東区役所があるあたりです。 この通りですね、除雪は入っているんですけども、やっぱり片側1車線にな">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/83c25df1a2097c3eaa0be61ea5f7730884c471c9?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【中継】札幌　路面はガタガタつるつる　道幅狭く生活に影響　(HTB北海道ニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>19時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ■段木涼太アナウンサー 札幌市東区、東8丁目篠路通りに来ています。 向かってこちら側ですね、この先左手に東区役所があるあたりです。 この通りですね、除雪は入っているんですけども、やっぱり片側1車線にな
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/1b5faceb5ad8b97256e801a9a01c4b5d51304439?source=rss" data-title="道内大雪　交通機関に乱れ　JR快速エアポート61本含め210本運休　バス運休や遅れ相次ぐ(HTB北海道ニュース)" data-summary="雪などの影響で交通機関にも乱れが出ています。 ＪＲ北海道によりますと、現在快速エアポート６１本を含む２１０本が運休となっていて、函館線の小樽～長万部間については上下線で終日運転を見合わせています。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/1b5faceb5ad8b97256e801a9a01c4b5d51304439?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">道内大雪　交通機関に乱れ　JR快速エアポート61本含め210本運休　バス運休や遅れ相次ぐ(HTB北海道ニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>19時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            雪などの影響で交通機関にも乱れが出ています。 ＪＲ北海道によりますと、現在快速エアポート６１本を含む２１０本が運休となっていて、函館線の小樽～長万部間については上下線で終日運転を見合わせています。
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/a98526e61d39a17941bf542a3a282f2665447bfe?source=rss" data-title="高市首相、トランプ政権に「曖昧姿勢」　ベネズエラ攻撃、グリーンランド領有(北海道新聞)" data-summary="高市早苗首相が、トランプ米政権による南米ベネズエラへの攻撃やデンマーク領グリーンランドの領有方針などに、「曖昧姿勢」を続けている。日米関係への影響を避けるためとみられ、明確な賛否を示していない。日本">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/a98526e61d39a17941bf542a3a282f2665447bfe?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">高市首相、トランプ政権に「曖昧姿勢」　ベネズエラ攻撃、グリーンランド領有(北海道新聞)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            高市早苗首相が、トランプ米政権による南米ベネズエラへの攻撃やデンマーク領グリーンランドの領有方針などに、「曖昧姿勢」を続けている。日米関係への影響を避けるためとみられ、明確な賛否を示していない。日本
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/49dc3785a571f3bdf5f14a2d1b47f9c8424247d2?source=rss" data-title="高市氏発言、イメージ先行？　「政策転換」「国論二分」曖昧な説明　「党総裁」「首相」も使い分け＜イチから！検証＞(北海道新聞)" data-summary="8日投開票の衆院選で、高市早苗首相（自民党総裁）は衆院解散の理由などを巡り「政策の大転換」「国論を二分」など印象に残る言葉を連呼する。ただ何をどう転換したのか、国論二分とは何を指すのか、など矛盾や不">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/49dc3785a571f3bdf5f14a2d1b47f9c8424247d2?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">高市氏発言、イメージ先行？　「政策転換」「国論二分」曖昧な説明　「党総裁」「首相」も使い分け＜イチから！検証＞(北海道新聞)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            8日投開票の衆院選で、高市早苗首相（自民党総裁）は衆院解散の理由などを巡り「政策の大転換」「国論を二分」など印象に残る言葉を連呼する。ただ何をどう転換したのか、国論二分とは何を指すのか、など矛盾や不
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/79fc791a4f38199f254a7e97c6ec4c8f198df42d?source=rss" data-title="インバウンドに人気！札幌の「まち歩きツアー」を地元民が体験！(テレビ北海道)" data-summary="テレビ北海道（ＴＶｈ）で１月３１日に放送した「けいナビ～応援！どさんこ経済～」では、最近インバウンドに人気だという札幌中心部の「まち歩きツアー」を地元民である磯田彩実アナウンサーとコメンテーターの北海">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/79fc791a4f38199f254a7e97c6ec4c8f198df42d?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">インバウンドに人気！札幌の「まち歩きツアー」を地元民が体験！(テレビ北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            テレビ北海道（ＴＶｈ）で１月３１日に放送した「けいナビ～応援！どさんこ経済～」では、最近インバウンドに人気だという札幌中心部の「まち歩きツアー」を地元民である磯田彩実アナウンサーとコメンテーターの北海
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/565a29bb25df2c22f1289fdedbb548977f6f6b24?source=rss" data-title="恩恵ばかり聞こえてくるけど…消費減税、代替財源はどうする？　税減収は年5兆円、地方にもしわ寄せ＜イチから！解説＞(北海道新聞)" data-summary="衆院選で主要政党がこぞって打ち出す消費税減税。家計負担の軽減が見込めるが、食料品だけの消費税ゼロでも、年5兆円近い税収減が見込まれる。各党とも減税の恩恵をアピールする一方、それを裏付けする代替財源を">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/565a29bb25df2c22f1289fdedbb548977f6f6b24?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">恩恵ばかり聞こえてくるけど…消費減税、代替財源はどうする？　税減収は年5兆円、地方にもしわ寄せ＜イチから！解説＞(北海道新聞)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            衆院選で主要政党がこぞって打ち出す消費税減税。家計負担の軽減が見込めるが、食料品だけの消費税ゼロでも、年5兆円近い税収減が見込まれる。各党とも減税の恩恵をアピールする一方、それを裏付けする代替財源を
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/9ae31faa392b23f5b189cd4cd7a764964f4855d0?source=rss" data-title="あすの「TVh杯ジャンプ大会」へ札幌・大倉山ジャンプ競技場で公式練習(テレビ北海道)" data-summary="あす開催予定の第３７回ＴＶｈ杯ジャンプ大会に向け、札幌・大倉山ジャンプ競技場で公式練習が行われました。 公式練習には、大会にエントリーしている男女合わせておよそ６０人の選手が臨みました。去年５２歳で優">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/9ae31faa392b23f5b189cd4cd7a764964f4855d0?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">あすの「TVh杯ジャンプ大会」へ札幌・大倉山ジャンプ競技場で公式練習(テレビ北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            あす開催予定の第３７回ＴＶｈ杯ジャンプ大会に向け、札幌・大倉山ジャンプ競技場で公式練習が行われました。 公式練習には、大会にエントリーしている男女合わせておよそ６０人の選手が臨みました。去年５２歳で優
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/b255d87c7bc6ac256e5d4d6f70d8a8a7c213aecc?source=rss" data-title="「ビックカメラセレクト」が札幌中心部にオープン　外国人観光客と地元客に対応(テレビ北海道)" data-summary="家電量販店大手のビックカメラの新型店舗「ビックカメラセレクト」がきょう、札幌中心部にオープンしました。 ビックカメラセレクトがオープンしたのは、札幌・中央区の狸小路商店街です。売り場面積は３００平方メ">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/b255d87c7bc6ac256e5d4d6f70d8a8a7c213aecc?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「ビックカメラセレクト」が札幌中心部にオープン　外国人観光客と地元客に対応(テレビ北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            家電量販店大手のビックカメラの新型店舗「ビックカメラセレクト」がきょう、札幌中心部にオープンしました。 ビックカメラセレクトがオープンしたのは、札幌・中央区の狸小路商店街です。売り場面積は３００平方メ
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/a783203c7cc2d7ceaba2b1152fdbc98b128851da?source=rss" data-title="札幌中心部のホテル　外国人観光客対応へリニューアル(テレビ北海道)" data-summary="札幌中心部のホテルが、団体旅行で北海道を訪れる外国人観光客向けに生まれ変わりました。 ＪＲ札幌駅から徒歩４分の距離にあさってリニューアルオープンする「三井ガーデンホテル札幌」。これまでビジネスでの利用">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/a783203c7cc2d7ceaba2b1152fdbc98b128851da?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">札幌中心部のホテル　外国人観光客対応へリニューアル(テレビ北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            札幌中心部のホテルが、団体旅行で北海道を訪れる外国人観光客向けに生まれ変わりました。 ＪＲ札幌駅から徒歩４分の距離にあさってリニューアルオープンする「三井ガーデンホテル札幌」。これまでビジネスでの利用
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/a5ddabf1da279910d267ec29d1cca85f92cb2b52?source=rss" data-title="北海道せたな町の漁船遭難　乗組員１人の遺体発見(テレビ北海道)" data-summary="きのう檜山のせたな町で４人乗りの漁船が行方不明になった事故で、けさ乗組員１人の遺体が発見されました。 第１管区海上保安本部などは残る３人の捜索を続けています。遭難したのはひやま漁業協同組合瀬棚支所の４">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/a5ddabf1da279910d267ec29d1cca85f92cb2b52?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">北海道せたな町の漁船遭難　乗組員１人の遺体発見(テレビ北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            きのう檜山のせたな町で４人乗りの漁船が行方不明になった事故で、けさ乗組員１人の遺体が発見されました。 第１管区海上保安本部などは残る３人の捜索を続けています。遭難したのはひやま漁業協同組合瀬棚支所の４
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/4bcea05849f9609a1b86d09268418643d75e49c6?source=rss" data-title="高市首相の「普通の国」とは　武器輸出「国際標準に合わせる」　専門家、安保政策の「分水嶺」(北海道新聞)" data-summary="2月8日投開票の衆院選で、高市早苗首相（自民党総裁）は安全保障政策などを巡り、日本は「普通の国」になると発言した。自民党と連立与党の日本維新の会は、防衛力のさらなる強化や武器輸出の大幅緩和など安保政">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/4bcea05849f9609a1b86d09268418643d75e49c6?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">高市首相の「普通の国」とは　武器輸出「国際標準に合わせる」　専門家、安保政策の「分水嶺」(北海道新聞)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>4日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            2月8日投開票の衆院選で、高市早苗首相（自民党総裁）は安全保障政策などを巡り、日本は「普通の国」になると発言した。自民党と連立与党の日本維新の会は、防衛力のさらなる強化や武器輸出の大幅緩和など安保政
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/4898dda6ffaf5d0c8d88deabd598b928af069bbc?source=rss" data-title="生活道路の緊急排雪を初実施へ　記録的大雪で札幌市(テレビ北海道)" data-summary="札幌市は記録的な大雪を受けて、初めて生活道路の緊急排雪に取り組むことを決めました。 こちらは今シーズンから厚別区と清田区で試験導入された生活道路の排雪の様子です。札幌市は現在、総延長５４００キロの道路">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/4898dda6ffaf5d0c8d88deabd598b928af069bbc?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">生活道路の緊急排雪を初実施へ　記録的大雪で札幌市(テレビ北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>4日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            札幌市は記録的な大雪を受けて、初めて生活道路の緊急排雪に取り組むことを決めました。 こちらは今シーズンから厚別区と清田区で試験導入された生活道路の排雪の様子です。札幌市は現在、総延長５４００キロの道路
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/958894e50ddb1cd2a37dbe196a2eaa357d0454a8?source=rss" data-title="衆院選公約　消費税減税、インテリジェンス機能強化…与野党で強まる分配・保守色(北海道新聞)" data-summary="2月8日投開票の衆院選の公約で、大半の政党が消費税減税や廃止を主張し「分配色」を強めている。家計の負担軽減策で後れを取れば支持を失いかねず、半年前の2025年参院選と比べると、票目当てのポピュリズム">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/958894e50ddb1cd2a37dbe196a2eaa357d0454a8?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">衆院選公約　消費税減税、インテリジェンス機能強化…与野党で強まる分配・保守色(北海道新聞)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>5日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            2月8日投開票の衆院選の公約で、大半の政党が消費税減税や廃止を主張し「分配色」を強めている。家計の負担軽減策で後れを取れば支持を失いかねず、半年前の2025年参院選と比べると、票目当てのポピュリズム
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/7a4a139cfabad70f39b6b6c54917c9812910c7e3?source=rss" data-title="首相「選挙と物価高対策　実施は別の部局」と発言　小規模自治体、役場総出が実情＜イチから！検証＞(北海道新聞)" data-summary="高市早苗首相は26日の党首討論会で、突然の衆院解散によって物価高対策を担う自治体が選挙事務に忙殺されていると指摘され、「（物価高対策などを）実施するのは、選挙実務と別の部局ですよね」と反論し、経済対">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/7a4a139cfabad70f39b6b6c54917c9812910c7e3?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">首相「選挙と物価高対策　実施は別の部局」と発言　小規模自治体、役場総出が実情＜イチから！検証＞(北海道新聞)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>6日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            高市早苗首相は26日の党首討論会で、突然の衆院解散によって物価高対策を担う自治体が選挙事務に忙殺されていると指摘され、「（物価高対策などを）実施するのは、選挙実務と別の部局ですよね」と反論し、経済対
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/1aea1911c6cb0bcb0cbfb98278586ce2e41e7f50?source=rss" data-title="首相「安定多数」243議席が本音　衆院選勝敗ライン　中道は比較第1党目標(北海道新聞)" data-summary="27日公示、2月8日投開票の衆院選で、高市早苗首相（自民党総裁）は自民と日本維新の会の与党で過半数となる233議席を勝敗ラインに設定した。政権の継続に信任を得るのが狙いだが、自らが掲げる政策を推進し">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/1aea1911c6cb0bcb0cbfb98278586ce2e41e7f50?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">首相「安定多数」243議席が本音　衆院選勝敗ライン　中道は比較第1党目標(北海道新聞)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>9日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            27日公示、2月8日投開票の衆院選で、高市早苗首相（自民党総裁）は自民と日本維新の会の与党で過半数となる233議席を勝敗ラインに設定した。政権の継続に信任を得るのが狙いだが、自らが掲げる政策を推進し
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/ff1bc969d19bf9ee6c2b76e19d5358eefd1d5ee5?source=rss" data-title="電撃解散　衆院選の構図一変　自維、首相の支持率頼み　中道、急造で協力未知数(北海道新聞)" data-summary="衆院が解散し、投開票日まで戦後最短の16日間となる選挙戦が事実上スタートした。電撃解散を仕掛けた高市早苗首相（自民党総裁）に、立憲民主党と公明党が結成した新党「中道改革連合」が挑むという二大勢力が激">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/ff1bc969d19bf9ee6c2b76e19d5358eefd1d5ee5?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">電撃解散　衆院選の構図一変　自維、首相の支持率頼み　中道、急造で協力未知数(北海道新聞)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>10日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            衆院が解散し、投開票日まで戦後最短の16日間となる選挙戦が事実上スタートした。電撃解散を仕掛けた高市早苗首相（自民党総裁）に、立憲民主党と公明党が結成した新党「中道改革連合」が挑むという二大勢力が激
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/df0b492a2529f12e8f63d8a529713a0d9d144b79?source=rss" data-title="「政治とカネ」の反省どこへ　自民衆院選公約「高市カラー」前面に　積極財政、減税…無党派層へアピール(北海道新聞)" data-summary="自民党は21日発表した衆院選公約で、高市早苗首相（自民総裁）が掲げる「責任ある積極財政」や保守的な政策を並べ「高市カラー」を前面に打ち出した。党派閥裏金事件の反省を踏まえ、信頼回復を掲げた石破茂前政">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/df0b492a2529f12e8f63d8a529713a0d9d144b79?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「政治とカネ」の反省どこへ　自民衆院選公約「高市カラー」前面に　積極財政、減税…無党派層へアピール(北海道新聞)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>12日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            自民党は21日発表した衆院選公約で、高市早苗首相（自民総裁）が掲げる「責任ある積極財政」や保守的な政策を並べ「高市カラー」を前面に打ち出した。党派閥裏金事件の反省を踏まえ、信頼回復を掲げた石破茂前政
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+            </ul>
+        </details>
+        
+        <details class="feed-section">
+            <summary>
+                <div class="feed-header">
+                    <img src="" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span>Keyword: 旭川</span>
+                </div>
+                
+                <span class="feed-status">● New</span>
+                
+            </summary>
+            
+            <ul class="entry-list">
+                
+                <li class="entry-item" data-link="https://www.hokkaido-np.co.jp/article/1270594/" data-title="旭川家具　世界に売り込め　カンディハウス、ドイツ見本市に初出展" data-summary="旭川家具製造販売「カンディハウス」（旭川市）は6日からの5日間...">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.hokkaido-np.co.jp/article/1270594/" target="_blank" rel="noopener noreferrer" class="entry-link">旭川家具　世界に売り込め　カンディハウス、ドイツ見本市に初出展</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>1時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            旭川家具製造販売「カンディハウス」（旭川市）は6日からの5日間...
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://www.hokkaido-np.co.jp/article/1270593/" data-title="旭川ゆかりの選手　応援を　ミラノ五輪・パラ　市庁舎にシート" data-summary="旭川市は2日、ミラノ・コルティナ冬季五輪と同パラリンピックに出...">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.hokkaido-np.co.jp/article/1270593/" target="_blank" rel="noopener noreferrer" class="entry-link">旭川ゆかりの選手　応援を　ミラノ五輪・パラ　市庁舎にシート</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>1時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            旭川市は2日、ミラノ・コルティナ冬季五輪と同パラリンピックに出...
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/657e5c19ea3ee75d272ac226592505592840647d?source=rss" data-title="真夏の深夜、10代女性宅に侵入し『性的暴行』19歳団体職員の男を不同意性交等致傷容疑で逮捕『不同意わいせつと性的姿態等撮影』事件で逮捕され関与が浮上＜北海道旭川市＞(北海道ニュースUHB)" data-summary="女性宅に侵入し就寝中の女性に性的暴行を加えたとして、北海道旭川市に住む19歳の団体職員の男が住居侵入および不同意性交等致傷容疑で逮捕されました。 警察によりますと、男は2025年8月26日午前2">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/657e5c19ea3ee75d272ac226592505592840647d?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">真夏の深夜、10代女性宅に侵入し『性的暴行』19歳団体職員の男を不同意性交等致傷容疑で逮捕『不同意わいせつと性的姿態等撮影』事件で逮捕され関与が浮上＜北海道旭川市＞(北海道ニュースUHB)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>6時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            女性宅に侵入し就寝中の女性に性的暴行を加えたとして、北海道旭川市に住む19歳の団体職員の男が住居侵入および不同意性交等致傷容疑で逮捕されました。 警察によりますと、男は2025年8月26日午前2
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/9602c447d9a0b90136110458adb1c0526467647c?source=rss" data-title="ミラノ・コルティナ五輪・パラリンピック出場　ゆかりの選手を応援する横断幕設置　北海道旭川市(STVニュース北海道)" data-summary="ミラノ・コルティナオリンピックパラリンピックの開催を間近に控え旭川市ではゆかりの選手を応援する横断幕が設置されました。 早朝の旭川市役所です。 まだ誰もいない総合庁舎のロビーに掲げられたのは大きな">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/9602c447d9a0b90136110458adb1c0526467647c?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">ミラノ・コルティナ五輪・パラリンピック出場　ゆかりの選手を応援する横断幕設置　北海道旭川市(STVニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>6時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ミラノ・コルティナオリンピックパラリンピックの開催を間近に控え旭川市ではゆかりの選手を応援する横断幕が設置されました。 早朝の旭川市役所です。 まだ誰もいない総合庁舎のロビーに掲げられたのは大きな
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/e7ad2a43e611cd7351d1e275056f5c8d80d97fd3?source=rss" data-title="緊急避妊薬「ノルレボ」道内でも購入可能に　旭川、函館で先行販売(テレビ北海道)" data-summary="望まない妊娠を防くために飲む緊急避妊薬。きょうから医師の診断も処方箋もなしで購入できる市販薬の販売が、道内のドラッグストアや薬局でも始まりました。 販売が始まったのは緊急避妊薬ノルレボです。この薬はア">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/e7ad2a43e611cd7351d1e275056f5c8d80d97fd3?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">緊急避妊薬「ノルレボ」道内でも購入可能に　旭川、函館で先行販売(テレビ北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>17時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            望まない妊娠を防くために飲む緊急避妊薬。きょうから医師の診断も処方箋もなしで購入できる市販薬の販売が、道内のドラッグストアや薬局でも始まりました。 販売が始まったのは緊急避妊薬ノルレボです。この薬はア
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://www.asahikawa-np.com/digest/2026/01/028039262/" data-title="15回目の旭川まちなか学生映画祭 「食」をテーマにした作品のコンテストも" data-summary="第十五回旭川まちなか学生映画祭が二十四日、ＩＣＴパーク（三ノ八）で開催された。旭川まちなかマネジメント協議会の主催。 市内六高校（旭川東、旭川西、旭川北、旭川南、旭川工業、旭川永嶺）のほか、留萌高や、北見工大の放送局 […]">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.asahikawa-np.com/digest/2026/01/028039262/" target="_blank" rel="noopener noreferrer" class="entry-link">15回目の旭川まちなか学生映画祭 「食」をテーマにした作品のコンテストも</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>5日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            第十五回旭川まちなか学生映画祭が二十四日、ＩＣＴパーク（三ノ八）で開催された。旭川まちなかマネジメント協議会の主催。 市内六高校（旭川東、旭川西、旭川北、旭川南、旭川工業、旭川永嶺）のほか、留萌高や、北見工大の放送局 […]
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://www.asahikawa-np.com/digest/2026/01/028039258/" data-title="壺屋の「ＲＡＭＳ ＣＨＯＣＯＬＡＴＥ」 ベルギー文化表現したチョコなど 26年の新作を発売" data-summary="旭川の菓子メーカー・壺屋総本店（村本暁宣社長）のチョコレートブランド「ＲＡＭＳ ＣＨＯＣＯＬＡＴＥ（ラムズチョコレート）」が、二〇二六年バレンタインの新作チョコレートを発売した。 同社常務でショコラティエの村本賢亮さ […]">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.asahikawa-np.com/digest/2026/01/028039258/" target="_blank" rel="noopener noreferrer" class="entry-link">壺屋の「ＲＡＭＳ ＣＨＯＣＯＬＡＴＥ」 ベルギー文化表現したチョコなど 26年の新作を発売</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>5日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            旭川の菓子メーカー・壺屋総本店（村本暁宣社長）のチョコレートブランド「ＲＡＭＳ ＣＨＯＣＯＬＡＴＥ（ラムズチョコレート）」が、二〇二六年バレンタインの新作チョコレートを発売した。 同社常務でショコラティエの村本賢亮さ […]
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://www.asahikawa-np.com/digest/2026/01/028039256/" data-title="冬の大人が楽しむおはなし会 ２／１ 中央図書館で" data-summary="「おはなしの森 冬の大人が楽しむおはなし会」が二月一日（日）午後一時半から、旭川中央図書館（常磐公園内）二階研修室で開かれます。旭川おはなしの会と同館の共催。 同会のメンバーが、本や道具を使わず、語り手自身の言葉で物 […]">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.asahikawa-np.com/digest/2026/01/028039256/" target="_blank" rel="noopener noreferrer" class="entry-link">冬の大人が楽しむおはなし会 ２／１ 中央図書館で</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>5日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            「おはなしの森 冬の大人が楽しむおはなし会」が二月一日（日）午後一時半から、旭川中央図書館（常磐公園内）二階研修室で開かれます。旭川おはなしの会と同館の共催。 同会のメンバーが、本や道具を使わず、語り手自身の言葉で物 […]
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://www.asahikawa-np.com/digest/2026/01/028039252/" data-title="旭川点字図書館 音訳ボランティア参加者募集" data-summary="旭川点字図書館（七ノ十四）は音訳ボランティア養成講座への参加者を募集します。 音訳ボランティアは視覚障がい者が利用する録音図書の製作が主な活動で、「ＮＨＫ俳句」などの雑誌や旭川市の広報誌「あさひばし」などの音訳もしま […]">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.asahikawa-np.com/digest/2026/01/028039252/" target="_blank" rel="noopener noreferrer" class="entry-link">旭川点字図書館 音訳ボランティア参加者募集</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>5日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            旭川点字図書館（七ノ十四）は音訳ボランティア養成講座への参加者を募集します。 音訳ボランティアは視覚障がい者が利用する録音図書の製作が主な活動で、「ＮＨＫ俳句」などの雑誌や旭川市の広報誌「あさひばし」などの音訳もしま […]
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://www.asahikawa-np.com/digest/2026/01/028039250/" data-title="柳家やなぎ真打昇進記念 柳家さん喬・栁家やなぎ親子会を開催 公会堂で２月15日" data-summary="柳家さん喬・柳家やなぎ親子会が二月十五日（日）、市公会堂（常磐公園）で行われます。旭川落語芸術協会の主催。 柳家さん喬は一九四八年、東京都生まれ。五代目柳家小さん門下で、八一年真打昇進。古典の人情噺や滑稽噺に定評があ […]">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.asahikawa-np.com/digest/2026/01/028039250/" target="_blank" rel="noopener noreferrer" class="entry-link">柳家やなぎ真打昇進記念 柳家さん喬・栁家やなぎ親子会を開催 公会堂で２月15日</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>5日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            柳家さん喬・柳家やなぎ親子会が二月十五日（日）、市公会堂（常磐公園）で行われます。旭川落語芸術協会の主催。 柳家さん喬は一九四八年、東京都生まれ。五代目柳家小さん門下で、八一年真打昇進。古典の人情噺や滑稽噺に定評があ […]
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://www.asahikawa-np.com/digest/2026/01/021039220/" data-title="ゆっきリンクＡＳＡＨＩＫＡＷＡ 17日～２月15日までオープン" data-summary="「北彩都あさひかわ冬のガーデン」のオープニングイベントが十六日、旭川駅駅前広場（宮下通八）で開かれた。実行委員会の主催。 北彩都あさひかわ冬のガーデンは、十七日から二月十五日まで開かれる。 期間中は、スケートリンク […]">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://www.asahikawa-np.com/digest/2026/01/021039220/" target="_blank" rel="noopener noreferrer" class="entry-link">ゆっきリンクＡＳＡＨＩＫＡＷＡ 17日～２月15日までオープン</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>12日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            「北彩都あさひかわ冬のガーデン」のオープニングイベントが十六日、旭川駅駅前広場（宮下通八）で開かれた。実行委員会の主催。 北彩都あさひかわ冬のガーデンは、十七日から二月十五日まで開かれる。 期間中は、スケートリンク […]
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+            </ul>
+        </details>
+        
+        
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // ▼▼▼ 既読管理機能 ▼▼▼
+            const STORAGE_KEY = 'rss_read_items';
+            // LocalStorageから既読リストを取得 (Setで管理して高速化)
+            let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+
+            const entryItems = document.querySelectorAll('.entry-item');
+            
+            // 初期表示: 既読状態の反映
+            entryItems.forEach(item => {
+                const link = item.dataset.link;
+                if (readItems.has(link)) {
+                    item.classList.add('read');
+                }
+                
+                // クリックイベントの登録
+                const anchor = item.querySelector('a.entry-link');
+                anchor.addEventListener('click', function() {
+                    markAsRead(link, item);
+                });
+            });
+
+            function markAsRead(link, itemElement) {
+                // UIを即座に更新
+                itemElement.classList.add('read');
+                
+                // ストレージに保存
+                readItems.add(link);
+                // 容量制限のため、古いものから消す (最大1000件保持)
+                if (readItems.size > 1000) {
+                    const array = Array.from(readItems);
+                    readItems = new Set(array.slice(array.length - 1000));
+                }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
+            }
+            // ▲▲▲ 既読管理機能 ▲▲▲
+
+            // 検索機能
+            const searchInput = document.getElementById('searchInput');
+            const sections = document.querySelectorAll('.feed-section');
+
+            entryItems.forEach(entry => {
+                const titleLink = entry.querySelector('.entry-title a');
+                const summaryDiv = entry.querySelector('.entry-summary');
+                entry.dataset.originalTitleHtml = titleLink.innerHTML;
+                entry.dataset.originalSummaryHtml = summaryDiv.innerHTML;
+            });
+
+            searchInput.addEventListener('input', function(e) {
+                const term = e.target.value.trim().toLowerCase();
+
+                if (term === '') {
+                    sections.forEach(sec => {
+                        sec.style.display = '';
+                        sec.open = false;
+                    });
+                    entryItems.forEach(entry => {
+                        entry.style.display = '';
+                        const titleLink = entry.querySelector('.entry-title a');
+                        const summaryDiv = entry.querySelector('.entry-summary');
+                        titleLink.innerHTML = entry.dataset.originalTitleHtml;
+                        summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
+                    });
+                    return;
+                }
+
+                sections.forEach(section => {
+                    let hasVisibleEntry = false;
+                    const sectionEntries = section.querySelectorAll('.entry-item');
+
+                    sectionEntries.forEach(entry => {
+                        const titleText = entry.dataset.title.toLowerCase();
+                        const summaryText = entry.dataset.summary.toLowerCase();
+
+                        if (titleText.includes(term) || summaryText.includes(term)) {
+                            entry.style.display = '';
+                            hasVisibleEntry = true;
+                            highlightText(entry, term);
+                        } else {
+                            entry.style.display = 'none';
+                        }
+                    });
+
+                    if (hasVisibleEntry) {
+                        section.style.display = '';
+                        section.open = true;
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+            });
+
+            function highlightText(entry, term) {
+                const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
+                const highlightMark = '<mark>$1</mark>';
+                const titleLink = entry.querySelector('.entry-title a');
+                titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
+                const summaryDiv = entry.querySelector('.entry-summary');
+                summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
+            }
+
+            function escapeRegExp(string) {
+                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+        });
+    </script>
+</body>
+</html>
