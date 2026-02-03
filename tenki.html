@@ -1,0 +1,1101 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天気</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-sub: #7f8c8d;
+            --accent: #007bff;
+            --accent-hover: #0056b3;
+            --new-badge: #e74c3c;
+            --border: #e9ecef;
+            --highlight: #fff3cd;
+            --read-color: #b0b0b0;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding-bottom: 80px;
+            line-height: 1.6;
+        }
+        
+        /* ナビゲーションバー */
+        .navbar {
+            background-color: #343a40;
+            padding: 0.8rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .nav-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap; /* スマホで検索窓が落ちるように */
+            gap: 15px;
+        }
+        /* カテゴリが増えても折り返す（横スクロール禁止） */
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap; 
+            gap: 8px;
+        }
+        .nav-link {
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.85;
+            transition: all 0.2s;
+            background-color: rgba(255,255,255,0.1);
+        }
+        .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
+        .nav-link.active {
+            opacity: 1;
+            background-color: var(--accent);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        /* 検索ボックス */
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 250px;
+        }
+        .search-input {
+            width: 100%;
+            padding: 6px 10px;
+            border-radius: 20px; /* 丸みをつける */
+            border: none;
+            font-size: 14px;
+            background-color: rgba(255,255,255,0.95);
+            box-sizing: border-box;
+            transition: box-shadow 0.2s;
+        }
+        .search-input:focus { outline: none; box-shadow: 0 0 0 2px var(--accent); }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header { margin-bottom: 25px; text-align: center; }
+        h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
+        .last-updated { font-size: 12px; color: var(--text-sub); }
+
+        /* アコーディオン */
+        details {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+        details:hover { box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
+        
+        summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #fff;
+            transition: background 0.2s;
+        }
+        summary:hover { background-color: #f8f9fa; }
+        summary::-webkit-details-marker { display: none; }
+        
+        .feed-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+        .feed-favicon { width: 16px; height: 16px; border-radius: 2px; flex-shrink: 0; }
+        .feed-title-text { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* 件数バッジ */
+        .feed-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        .count-badge {
+            background-color: #eee;
+            color: #555;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: normal;
+        }
+        .count-badge.has-new {
+            background-color: #fff0f0;
+            color: var(--new-badge);
+            border: 1px solid #ffcccc;
+        }
+
+        .entry-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
+        .entry-item {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            transition: background-color 0.2s;
+        }
+        .entry-item:last-child { border-bottom: none; }
+        
+        /* 既読スタイル */
+        .entry-item.read { background-color: #fafafa; }
+        .entry-item.read .entry-title a { color: var(--read-color); }
+        .entry-item.read .entry-summary { color: #d0d0d0; }
+        .entry-item.read .entry-thumbnail { opacity: 0.4; filter: grayscale(100%); }
+        .entry-item.read .new-badge { background-color: #ccc; }
+
+        .entry-content-wrapper { flex: 1; min-width: 0; }
+        .entry-thumbnail {
+            width: 100px; height: 75px; object-fit: cover; border-radius: 6px; flex-shrink: 0; border: 1px solid #eee;
+        }
+
+        .entry-title { font-size: 16px; margin: 0 0 6px 0; line-height: 1.4; }
+        .entry-title a { text-decoration: none; color: var(--text-main); font-weight: bold; }
+        .entry-title a:hover { color: var(--accent); text-decoration: underline; }
+
+        .new-badge {
+            display: inline-block; background-color: var(--new-badge); color: white;
+            font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px;
+            vertical-align: middle; font-weight: bold; transform: translateY(-1px);
+        }
+
+        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; margin-bottom: 4px; }
+        .entry-summary {
+            font-size: 13px; color: #555; margin-top: 5px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden; opacity: 0.9; line-height: 1.5;
+        }
+        .entry-summary img { display: none; }
+
+        /* 空の状態 */
+        .empty-state { padding: 20px; text-align: center; color: #999; font-size: 13px; }
+
+        /* トップへ戻るボタン */
+        #backToTop {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--accent);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            font-size: 20px;
+            z-index: 2000;
+        }
+        #backToTop.show { opacity: 1; visibility: visible; }
+        #backToTop:hover { background-color: var(--accent-hover); transform: translateY(-3px); }
+
+        mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px 10px; }
+            summary { padding: 12px; }
+            .entry-thumbnail { width: 80px; height: 60px; }
+            .nav-container { flex-direction: column; align-items: stretch; gap: 10px; }
+            .search-box { max-width: 100%; }
+            .feed-title-text { font-size: 14px; }
+            .count-badge { font-size: 11px; padding: 1px 6px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-links">
+                
+                <a href="topics.html" 
+                   class="nav-link ">
+                    ★トピック★
+                </a>
+                
+                <a href="index.html" 
+                   class="nav-link ">
+                    総合ニュース
+                </a>
+                
+                <a href="new.html" 
+                   class="nav-link ">
+                    福祉行政
+                </a>
+                
+                <a href="tenki.html" 
+                   class="nav-link active">
+                    天気
+                </a>
+                
+                <a href="recipes.html" 
+                   class="nav-link ">
+                    レシピ・料理
+                </a>
+                
+                <a href="tech.html" 
+                   class="nav-link ">
+                    Tech情報
+                </a>
+                
+                <a href="business.html" 
+                   class="nav-link ">
+                    ビジネス・経済
+                </a>
+                
+                <a href="gadget.html" 
+                   class="nav-link ">
+                    ガジェット・モノ
+                </a>
+                
+                <a href="design.html" 
+                   class="nav-link ">
+                    デザイン・Web制作
+                </a>
+                
+                <a href="entertainment.html" 
+                   class="nav-link ">
+                    エンタメ・コラム
+                </a>
+                
+                <a href="yahoo.html" 
+                   class="nav-link ">
+                    ニュース記事
+                </a>
+                
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" class="search-input" placeholder="キーワード検索...">
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>天気</h1>
+            <div class="last-updated">最終更新: 02/03 15:01</div>
+        </header>
+
+        
+
+        
+        <details class="feed-section" open>
+            <summary>
+                <div class="feed-info">
+                    <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span class="feed-title-text">ウェザーマップ</span>
+                </div>
+                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 6 / 10</span>
+                    
+                </div>
+            </summary>
+            
+            <ul class="entry-list">
+                
+
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/8fd207f71a40f2321e15ecc9fddbef7cafb2d9f5?source=rss" data-title="4日（水）～5日（木）は急に春めくが　週末は真冬の寒さに逆戻り　日本海側は再び大雪のおそれ(ウェザーマップ)" data-summary="冬型の気圧配置が緩んで、日本海側は雪の範囲は狭まるが、すでに記録的な大雪となっている所がある。あす（水）は北日本でも気温が上昇するため、なだれや除雪中の事故に注意が必要だ。太平洋側は引き続き晴れる所">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/8fd207f71a40f2321e15ecc9fddbef7cafb2d9f5?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">4日（水）～5日（木）は急に春めくが　週末は真冬の寒さに逆戻り　日本海側は再び大雪のおそれ(ウェザーマップ)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            冬型の気圧配置が緩んで、日本海側は雪の範囲は狭まるが、すでに記録的な大雪となっている所がある。あす（水）は北日本でも気温が上昇するため、なだれや除雪中の事故に注意が必要だ。太平洋側は引き続き晴れる所
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/b35ef55b962ca00c3b4d3b940b7b18b577c992c3?source=rss" data-title="【動画】3日の天気 - 日本海側 日中は雪の範囲狭く　なだれに注意　晴れる所も北風冷たく（3日7時更新）(ウェザーマップ)" data-summary="きょう（火）は、日本海側の雪の範囲は狭くなっていく見込みです。ただ、日本海側では、すでに平年を上回る積雪となっています。なだれや落雪、除雪作業中の事故には注意が必要です。全国的にこの時季らしい寒さで">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/b35ef55b962ca00c3b4d3b940b7b18b577c992c3?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【動画】3日の天気 - 日本海側 日中は雪の範囲狭く　なだれに注意　晴れる所も北風冷たく（3日7時更新）(ウェザーマップ)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>7時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            きょう（火）は、日本海側の雪の範囲は狭くなっていく見込みです。ただ、日本海側では、すでに平年を上回る積雪となっています。なだれや落雪、除雪作業中の事故には注意が必要です。全国的にこの時季らしい寒さで
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/97ead063046d8e0104652f122bb0e12d0a87a82c?source=rss" data-title="きょう（火）の天気　雪エリア縮小も寒さは厳しい　多雪地はなだれなどに注意　晴れ続きの太平洋側は水の管理を心がけて(ウェザーマップ)" data-summary="きょう3日（火）は冬型が緩むため、日本海側の雪は範囲が狭くなりそうだ。ただ、記録的な積雪になっている所がある。なだれや除雪作業中の事故などに注意が必要だ。一方、太平洋側はきょうも広く晴れて、乾燥が続">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/97ead063046d8e0104652f122bb0e12d0a87a82c?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">きょう（火）の天気　雪エリア縮小も寒さは厳しい　多雪地はなだれなどに注意　晴れ続きの太平洋側は水の管理を心がけて(ウェザーマップ)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>9時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            きょう3日（火）は冬型が緩むため、日本海側の雪は範囲が狭くなりそうだ。ただ、記録的な積雪になっている所がある。なだれや除雪作業中の事故などに注意が必要だ。一方、太平洋側はきょうも広く晴れて、乾燥が続
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/ffc3456a405f63bed01894a39feba16cec4ec9c7?source=rss" data-title="【動画】3日の天気 - 冬型緩む　雪エリア狭く　真冬の寒さは継続（2日18時更新）(ウェザーマップ)" data-summary="3日(節分・火)は冬型の気圧配置が緩みそうです。太平洋側を中心に日差しが届き、日本海側の雪のエリアも狭くなるでしょう。除雪作業ができそうですが、必ず2人以上で行うなどしてください。冷たい空気は居座り">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/ffc3456a405f63bed01894a39feba16cec4ec9c7?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【動画】3日の天気 - 冬型緩む　雪エリア狭く　真冬の寒さは継続（2日18時更新）(ウェザーマップ)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>20時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            3日(節分・火)は冬型の気圧配置が緩みそうです。太平洋側を中心に日差しが届き、日本海側の雪のエリアも狭くなるでしょう。除雪作業ができそうですが、必ず2人以上で行うなどしてください。冷たい空気は居座り
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/c58286b73a2122b9fec8175ed356b88743b4e9ab?source=rss" data-title="日本海側と太平洋側　降水量の差はっきり　北日本は気温低かった　1月の天候まとめ(ウェザーマップ)" data-summary="きょう（月）、気象庁は1月の天候まとめを発表した。北日本は中旬は低気圧に向かって暖かい空気が流れ込んだ一方、上旬と下旬は寒気の影響を受けやすかったため、月平均気温は低かった。東・西日本、沖縄・奄美の">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/c58286b73a2122b9fec8175ed356b88743b4e9ab?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">日本海側と太平洋側　降水量の差はっきり　北日本は気温低かった　1月の天候まとめ(ウェザーマップ)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>22時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            きょう（月）、気象庁は1月の天候まとめを発表した。北日本は中旬は低気圧に向かって暖かい空気が流れ込んだ一方、上旬と下旬は寒気の影響を受けやすかったため、月平均気温は低かった。東・西日本、沖縄・奄美の
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/19840e9dad9cc5e8e79d92c4236ecb93fe9cd061?source=rss" data-title="【動画解説】暖気と寒気　春の気配のち冬の嵐　衆院選投票日は大雪・厳しい寒さか(ウェザーマップ)" data-summary="大寒の期間は冬らしい天気や寒さが続き、日本海側は記録的な大雪、太平洋側は記録的な少雨で乾燥と極端な天気になっています。今週、日本海側は雪が小康状態になる日がありますが、週末を中心に再び、冬の嵐になる">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/19840e9dad9cc5e8e79d92c4236ecb93fe9cd061?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【動画解説】暖気と寒気　春の気配のち冬の嵐　衆院選投票日は大雪・厳しい寒さか(ウェザーマップ)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>23時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            大寒の期間は冬らしい天気や寒さが続き、日本海側は記録的な大雪、太平洋側は記録的な少雨で乾燥と極端な天気になっています。今週、日本海側は雪が小康状態になる日がありますが、週末を中心に再び、冬の嵐になる
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/e9608050e72c8b6bf0645c78d6e1b5afc53eb423?source=rss" data-title="今週は気温変化に注意　週半ばにいったん気温上がるが　週末は再び真冬の寒さ　日本海側は再び大雪(ウェザーマップ)" data-summary="きょう（月）午後も、全国的に真冬の寒さが続きそうだ。ただ、立春の4日（水）ごろから寒気が北上する見込み。5日（木）にかけて各地でいったん寒さが和らぐが、6日（金）以降は再び真冬の空気が優勢となる見通">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/e9608050e72c8b6bf0645c78d6e1b5afc53eb423?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">今週は気温変化に注意　週半ばにいったん気温上がるが　週末は再び真冬の寒さ　日本海側は再び大雪(ウェザーマップ)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            きょう（月）午後も、全国的に真冬の寒さが続きそうだ。ただ、立春の4日（水）ごろから寒気が北上する見込み。5日（木）にかけて各地でいったん寒さが和らぐが、6日（金）以降は再び真冬の空気が優勢となる見通
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/60a6082f5144a8b22eab1c1e305090785031a6d0?source=rss" data-title="【動画】2日の天気 - 日本海側で雪や雨 積雪増加⚠　西日本は太平洋側も傘の出番あり（2日7時更新）(ウェザーマップ)" data-summary="きょう2日(月)は日本海側で雪や雨が降りそうです。すでに記録的な大雪となっている所で、さらに積雪が増えるおそれがあります。なだれや落雪、除雪作業中の事故に十分にお気をつけください。また、西日本の太平">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/60a6082f5144a8b22eab1c1e305090785031a6d0?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【動画】2日の天気 - 日本海側で雪や雨 積雪増加⚠　西日本は太平洋側も傘の出番あり（2日7時更新）(ウェザーマップ)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            きょう2日(月)は日本海側で雪や雨が降りそうです。すでに記録的な大雪となっている所で、さらに積雪が増えるおそれがあります。なだれや落雪、除雪作業中の事故に十分にお気をつけください。また、西日本の太平
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/6c5886df9fd64cc71df18a4990bcda797c04a2b4?source=rss" data-title="日本海側はさらに積雪増加で北日本は大雪　太平洋側は降っても一時的で空気乾燥続く(ウェザーマップ)" data-summary="きょう2日(月)は、日本海側だけでなく朝から晴れている太平洋側でも一時的に傘の出番がありそうだ。日本海側はさらに積雪が増えて、北日本では局地的に大雪になる可能性がある。引き続き、大雪災害に注意が必要">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/6c5886df9fd64cc71df18a4990bcda797c04a2b4?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">日本海側はさらに積雪増加で北日本は大雪　太平洋側は降っても一時的で空気乾燥続く(ウェザーマップ)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            きょう2日(月)は、日本海側だけでなく朝から晴れている太平洋側でも一時的に傘の出番がありそうだ。日本海側はさらに積雪が増えて、北日本では局地的に大雪になる可能性がある。引き続き、大雪災害に注意が必要
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/cf4c4dada157820c859893804ada8dbeda539ddd?source=rss" data-title="【動画】2日の天気 - 日本海側は雪や雨の強まる所も　北日本は大雪のおそれ　太平洋側も一部で雨や雪に（1日19時更新）(ウェザーマップ)" data-summary="月曜日は日本海側を中心に雪や雨の範囲が広がるでしょう。北日本では、北海道の日本海側や青森県を中心に、大雪になる所もありそうです。交通障害や、なだれに注意が必要です。晴れ間の出る太平洋側も、午後は西日">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/cf4c4dada157820c859893804ada8dbeda539ddd?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【動画】2日の天気 - 日本海側は雪や雨の強まる所も　北日本は大雪のおそれ　太平洋側も一部で雨や雪に（1日19時更新）(ウェザーマップ)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            月曜日は日本海側を中心に雪や雨の範囲が広がるでしょう。北日本では、北海道の日本海側や青森県を中心に、大雪になる所もありそうです。交通障害や、なだれに注意が必要です。晴れ間の出る太平洋側も、午後は西日
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+            </ul>
+        </details>
+        
+        <details class="feed-section" >
+            <summary>
+                <div class="feed-info">
+                    <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span class="feed-title-text">ウェザーニュース</span>
+                </div>
+                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge">10 件</span>
+                    
+                </div>
+            </summary>
+            
+            <ul class="entry-list">
+                
+
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/4c57e5376a64016f6fa22507081bbc5f1b4e1313?source=rss" data-title="【来週は寒波襲来】強い寒気が居座り冬型が長引く 大雪・寒さへの備えを(ウェザーニュース)" data-summary="二十四節気「大寒」を迎えるとともに、来週中頃からは日本列島に非常に強い寒気が流れ込む予想です。今回の寒波の特徴は、その強さだけでなく「持続性」にあります。 20日(火)頃から冬型の気圧配置となり、日">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/4c57e5376a64016f6fa22507081bbc5f1b4e1313?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【来週は寒波襲来】強い寒気が居座り冬型が長引く 大雪・寒さへの備えを(ウェザーニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>18日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            二十四節気「大寒」を迎えるとともに、来週中頃からは日本列島に非常に強い寒気が流れ込む予想です。今回の寒波の特徴は、その強さだけでなく「持続性」にあります。 20日(火)頃から冬型の気圧配置となり、日
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/27c72b032be26c309c9e72a704ad1f75ceadcbd0?source=rss" data-title="【気候変動】30分でわかる2026年〜私たちの生活はこう変わる〜(ウェザーニュース)" data-summary="今回は「30分でわかる2026年」と題し、2026年、私たちの生活やビジネスに直結する「4つの転換点」を吉良真由子予報士が徹底解説。 炭素に価格がつく経済、移動距離が課題となるW杯、そして「オオカ">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/27c72b032be26c309c9e72a704ad1f75ceadcbd0?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【気候変動】30分でわかる2026年〜私たちの生活はこう変わる〜(ウェザーニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>29日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            今回は「30分でわかる2026年」と題し、2026年、私たちの生活やビジネスに直結する「4つの転換点」を吉良真由子予報士が徹底解説。 炭素に価格がつく経済、移動距離が課題となるW杯、そして「オオカ
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/f3e670a3b6bff7ad6fcd7f03f41d13428c21d271?source=rss" data-title="【年末年始の天気】帰省前に確認したい!!この先1か月の天気予報(ウェザーニュース)" data-summary="年末年始から1月にかけての気温と天気の傾向を解説します。 全体的な気温は平年より高めの傾向ですが、北極付近の寒気「極渦（きょくうず）」の分裂や、ブロッキング高気圧の影響により、一時的に強い寒気が日本付">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/f3e670a3b6bff7ad6fcd7f03f41d13428c21d271?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【年末年始の天気】帰省前に確認したい!!この先1か月の天気予報(ウェザーニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>43日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            年末年始から1月にかけての気温と天気の傾向を解説します。 全体的な気温は平年より高めの傾向ですが、北極付近の寒気「極渦（きょくうず）」の分裂や、ブロッキング高気圧の影響により、一時的に強い寒気が日本付
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/edaf211dfe074a2e7eab0209801c7a73587ec291?source=rss" data-title="【2026年5月下旬予定】防災気象情報が劇的に変わる！新ルールをプロが解説(ウェザーニュース)" data-summary="これまで「情報が多くて分かりにくい」「避難のタイミングが判断しづらい」とされていた課題を解決するため、気象業務法と水防法が改正されました。本動画では、新しい防災気象情報の変更点や、新設される「気象防災">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/edaf211dfe074a2e7eab0209801c7a73587ec291?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【2026年5月下旬予定】防災気象情報が劇的に変わる！新ルールをプロが解説(ウェザーニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>43日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            これまで「情報が多くて分かりにくい」「避難のタイミングが判断しづらい」とされていた課題を解決するため、気象業務法と水防法が改正されました。本動画では、新しい防災気象情報の変更点や、新設される「気象防災
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/05233ce65989bcaa509c188af9caad74dc4a7d20?source=rss" data-title="【識者解説】北海道・三陸沖後発地震注意情報を発表　今後の注意点は？(ウェザーニュース)" data-summary="気象庁は今日9日(火)2時00分に、北海道・三陸沖後発地震注意情報を発表しました。 後発地震が実際に発生する確率は低いものの、今後1週間程度は平時よりも巨大地震の発生に注意し、地震への備えを徹底して">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/05233ce65989bcaa509c188af9caad74dc4a7d20?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【識者解説】北海道・三陸沖後発地震注意情報を発表　今後の注意点は？(ウェザーニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>56日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            気象庁は今日9日(火)2時00分に、北海道・三陸沖後発地震注意情報を発表しました。 後発地震が実際に発生する確率は低いものの、今後1週間程度は平時よりも巨大地震の発生に注意し、地震への備えを徹底して
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/002a0127abdbaad0e5bd31f970730ca204f8e1b4?source=rss" data-title="【今季これまでで一番の寒気】週中頃、北日本や北陸は雪や風の強まりに注意(ウェザーニュース)" data-summary="今週中頃は今季これまでで最も強い寒気が南下します。北日本や本州日本海側の山地では積雪が急増し、大雪となるおそれがあります。全国的に風も強く吹き、雪の降るところでは暴風雪にも注意・警戒が必要です。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/002a0127abdbaad0e5bd31f970730ca204f8e1b4?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【今季これまでで一番の寒気】週中頃、北日本や北陸は雪や風の強まりに注意(ウェザーニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>64日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            今週中頃は今季これまでで最も強い寒気が南下します。北日本や本州日本海側の山地では積雪が急増し、大雪となるおそれがあります。全国的に風も強く吹き、雪の降るところでは暴風雪にも注意・警戒が必要です。
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/52b05a0ee3cf10dd9ce0747172a0045bc37312f5?source=rss" data-title="【熊の脅威なぜ拡大？】人馴れクマの危険性 専門家が語る“共存”のリアル＜後編＞(ウェザーニュース)" data-summary="（前編も公開中です） 近年、ニュースでも多く報じられている全国各地で相次いでいるクマの出没による人身被害の報告が急増しています。特に深刻なのが「人馴れ」したクマの増加。なぜ、かつて人間を恐れていたク">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/52b05a0ee3cf10dd9ce0747172a0045bc37312f5?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【熊の脅威なぜ拡大？】人馴れクマの危険性 専門家が語る“共存”のリアル＜後編＞(ウェザーニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>79日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            （前編も公開中です） 近年、ニュースでも多く報じられている全国各地で相次いでいるクマの出没による人身被害の報告が急増しています。特に深刻なのが「人馴れ」したクマの増加。なぜ、かつて人間を恐れていたク
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/de62ba42e7dc0a0ae276f2ccb2aec133ce698202?source=rss" data-title="【地震】三陸沖で発生したM6.9 それ以降の地震回数の推移は(ウェザーニュース)" data-summary="11月9日(日)17時過ぎに三陸沖を震源とするM6.9の地震が発生し、岩手県内では津波注意報が発表されました。その後も震度1から震度3の地震が頻発しました。一連の地震活動の推移について解説します。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/de62ba42e7dc0a0ae276f2ccb2aec133ce698202?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【地震】三陸沖で発生したM6.9 それ以降の地震回数の推移は(ウェザーニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>81日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            11月9日(日)17時過ぎに三陸沖を震源とするM6.9の地震が発生し、岩手県内では津波注意報が発表されました。その後も震度1から震度3の地震が頻発しました。一連の地震活動の推移について解説します。
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/cd11cdaaa23a18298111c12b0705af0edf8cbbf8?source=rss" data-title="【詳細解説】三陸沖で地震相次ぐ　過去の事例からみる地震活動(ウェザーニュース)" data-summary="三陸沖で地震が立て続けに発生し、地震活動が活発化しています。 最新の地震情報に基づき、三陸沖で地震が頻発する理由をプレート境界のメカニズムから詳細に解説します。 （ウェザーニュース予報センター 山">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/cd11cdaaa23a18298111c12b0705af0edf8cbbf8?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【詳細解説】三陸沖で地震相次ぐ　過去の事例からみる地震活動(ウェザーニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>86日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            三陸沖で地震が立て続けに発生し、地震活動が活発化しています。 最新の地震情報に基づき、三陸沖で地震が頻発する理由をプレート境界のメカニズムから詳細に解説します。 （ウェザーニュース予報センター 山
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/152341b3356df7be0a5a02e6a9156799458bcc14?source=rss" data-title="【なぜクマ被害が過去最多？】専門家が語る生態系の変化と気候変動の影響＜前編＞(ウェザーニュース)" data-summary="2025年、全国でクマの出没情報が相次ぎ人身被害が過去最多を記録するという異常事態が発生しています。 なぜこれほどまでにクマの活動が活発化し、人里での事故が増えてしまったのでしょうか？ この動画では、">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://news.yahoo.co.jp/articles/152341b3356df7be0a5a02e6a9156799458bcc14?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【なぜクマ被害が過去最多？】専門家が語る生態系の変化と気候変動の影響＜前編＞(ウェザーニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>86日前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            2025年、全国でクマの出没情報が相次ぎ人身被害が過去最多を記録するという異常事態が発生しています。 なぜこれほどまでにクマの活動が活発化し、人里での事故が増えてしまったのでしょうか？ この動画では、
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+            </ul>
+        </details>
+        
+        <details class="feed-section" open>
+            <summary>
+                <div class="feed-info">
+                    <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span class="feed-title-text">tenki.jp</span>
+                </div>
+                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 10 / 10</span>
+                    
+                </div>
+            </summary>
+            
+            <ul class="entry-list">
+                
+
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/85f7a5464cffadaf4a808e3d76b8e95d11f3033f?source=rss" data-title="土日は強烈寒気が南下　日本海側は再び大雪の恐れ　雪の事故に注意　関東も平地で雪か(tenki.jp)" data-summary="週末にかけて寒さが和らぐものの、土日は再び強烈な寒気が南下します。日本海側を中心に大雪となる見込みで、さらに積雪が増えるでしょう。記録的な大雪となっている所ではさらに積雪が増えるため、雪の事故に十分な">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/85f7a5464cffadaf4a808e3d76b8e95d11f3033f?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">土日は強烈寒気が南下　日本海側は再び大雪の恐れ　雪の事故に注意　関東も平地で雪か(tenki.jp)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>15分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            週末にかけて寒さが和らぐものの、土日は再び強烈な寒気が南下します。日本海側を中心に大雪となる見込みで、さらに積雪が増えるでしょう。記録的な大雪となっている所ではさらに積雪が増えるため、雪の事故に十分な
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/35a7a53278099fd17a017988845bd125ab749ec7?source=rss" data-title="関東から九州にかけて11月から極端な少雨と乾燥が続く　大規模な林野火災など注意(tenki.jp)" data-summary="関東から九州にかけては11月中旬頃からまとまった雨が降っておらず、降水量が極端に少ない状態が続き、空気が乾燥しています。記録的な少雨となった昨年令和7年は、冬から春にかけて大規模な林野火災が全国で相次">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/35a7a53278099fd17a017988845bd125ab749ec7?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">関東から九州にかけて11月から極端な少雨と乾燥が続く　大規模な林野火災など注意(tenki.jp)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            関東から九州にかけては11月中旬頃からまとまった雨が降っておらず、降水量が極端に少ない状態が続き、空気が乾燥しています。記録的な少雨となった昨年令和7年は、冬から春にかけて大規模な林野火災が全国で相次
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/43c0f488d96575ea353dc460d0eb09cc2b5eab9e?source=rss" data-title="7日頃は関東で雪の予想　8日～9日は日本海側で再び大雪　2週間天気予報(tenki.jp)" data-summary="この先2週間は、6日(金)～7日(土)頃に前線や低気圧の影響で、関東などは雪の可能性があります。8日(日)～9日(月)は一時的に強い冬型で、日本海側を中心に大雪の恐れがあります。10日(火)以降は高気">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/43c0f488d96575ea353dc460d0eb09cc2b5eab9e?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">7日頃は関東で雪の予想　8日～9日は日本海側で再び大雪　2週間天気予報(tenki.jp)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            この先2週間は、6日(金)～7日(土)頃に前線や低気圧の影響で、関東などは雪の可能性があります。8日(日)～9日(月)は一時的に強い冬型で、日本海側を中心に大雪の恐れがあります。10日(火)以降は高気
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/18325a64760bbd353d3412a848a6f208f0fa2e77?source=rss" data-title="今日3日「節分」は冷たい空気続く　明日4日「立春」は寒さ和らぐ　除雪時の事故注意(tenki.jp)" data-summary="今日3日は冬と春の季節の節目となる「節分」です。冬型の気圧配置はゆるみ、広い範囲で日が差していますが、空気は冷たく関東から西はまだ10℃に届かない所が多くなっています。明日4日は「立春」で暦の上では春">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/18325a64760bbd353d3412a848a6f208f0fa2e77?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">今日3日「節分」は冷たい空気続く　明日4日「立春」は寒さ和らぐ　除雪時の事故注意(tenki.jp)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            今日3日は冬と春の季節の節目となる「節分」です。冬型の気圧配置はゆるみ、広い範囲で日が差していますが、空気は冷たく関東から西はまだ10℃に届かない所が多くなっています。明日4日は「立春」で暦の上では春
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/23fd999b354935e9b8090a60ecf5757549b183d5?source=rss" data-title="【速報】今日3日は那覇で桜(ヒカンザクラ)が満開　平年より1日早く(tenki.jp)" data-summary="今日3日、那覇で桜(ヒカンザクラ)が満開となりました。平年より1日早い満開です。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/23fd999b354935e9b8090a60ecf5757549b183d5?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【速報】今日3日は那覇で桜(ヒカンザクラ)が満開　平年より1日早く(tenki.jp)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            今日3日、那覇で桜(ヒカンザクラ)が満開となりました。平年より1日早い満開です。
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/3b438e718f6dd9ef576df210156f7896ce4471d1?source=rss" data-title="積雪10センチで約1.5トン　災害級大雪の青森県などで4日～5日は落雪リスク大(tenki.jp)" data-summary="過去稀に見る大雪で自衛隊に災害派遣要請をした青森県をはじめ、日本海側の各地で平年を大幅に上回る積雪となっています。今後は気温の上昇とともに落雪などの危険性が高まります。様々な被害をもたらす「雪の重さ」">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/3b438e718f6dd9ef576df210156f7896ce4471d1?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">積雪10センチで約1.5トン　災害級大雪の青森県などで4日～5日は落雪リスク大(tenki.jp)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            過去稀に見る大雪で自衛隊に災害派遣要請をした青森県をはじめ、日本海側の各地で平年を大幅に上回る積雪となっています。今後は気温の上昇とともに落雪などの危険性が高まります。様々な被害をもたらす「雪の重さ」
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/a08a68faeec39a3deb5d6787859e7c5af824bdc2?source=rss" data-title="今日3日　近畿は天気回復へ　4日と5日は春の暖かさに　スギ花粉がわずかに飛ぶ所も(tenki.jp)" data-summary="近畿地方は、今日3日の午前中は雪や雨の降る所がありますが、午後は天気が回復するでしょう。4日から5日の日中にかけては、だいたい晴れる見込みです。スギ花粉がわずかながら飛ぶ可能性もあるため、花粉症の方は">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/a08a68faeec39a3deb5d6787859e7c5af824bdc2?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">今日3日　近畿は天気回復へ　4日と5日は春の暖かさに　スギ花粉がわずかに飛ぶ所も(tenki.jp)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>7時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            近畿地方は、今日3日の午前中は雪や雨の降る所がありますが、午後は天気が回復するでしょう。4日から5日の日中にかけては、だいたい晴れる見込みです。スギ花粉がわずかながら飛ぶ可能性もあるため、花粉症の方は
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/f4e63dc849cc3383226b0f2a8e624b1cdc26f94e?source=rss" data-title="今日2月3日(火)の天気予報　太平洋側は広く晴れ(tenki.jp)" data-summary="今日2月3日は冬型が緩み西から高気圧に覆われるでしょう。北陸以北の日本海側は午前中に雪が降りますが、午後は次第に止む見込みです。太平洋側は広く晴れて乾燥するため、火の元には注意が必要です。全国的に風が">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/f4e63dc849cc3383226b0f2a8e624b1cdc26f94e?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">今日2月3日(火)の天気予報　太平洋側は広く晴れ(tenki.jp)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>8時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            今日2月3日は冬型が緩み西から高気圧に覆われるでしょう。北陸以北の日本海側は午前中に雪が降りますが、午後は次第に止む見込みです。太平洋側は広く晴れて乾燥するため、火の元には注意が必要です。全国的に風が
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/9c33f90ba98a56600d3956946c4c3ac28fa8286f?source=rss" data-title="花粉情報　関東～九州は「少ない」でも油断禁物　東京都内で微量のスギ花粉を観測(tenki.jp)" data-summary="2月に入りそろそろ花粉の飛散が気になる頃です。関東～九州ではこの先1週間も「少ない」レベルですが、東京都内では微量のスギ花粉が観測されています。症状の出やすい方は早めの対策を心がけてください。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/9c33f90ba98a56600d3956946c4c3ac28fa8286f?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">花粉情報　関東～九州は「少ない」でも油断禁物　東京都内で微量のスギ花粉を観測(tenki.jp)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>9時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            2月に入りそろそろ花粉の飛散が気になる頃です。関東～九州ではこの先1週間も「少ない」レベルですが、東京都内では微量のスギ花粉が観測されています。症状の出やすい方は早めの対策を心がけてください。
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/9a0457c8516244bcf68fb185ecd10950e484c25d?source=rss" data-title="4日～6日は寒さ和らぐが急な雪解け注意　7日～8日は再び厳しい寒さで大雪のおそれ(tenki.jp)" data-summary="今日2日夜から明日3日明け方は、関東では落雷に、北海道では大雪に注意が必要です。4日(水)から6日(金)は東日本から西日本を中心に日中の寒さが和らぎますが、積雪の多い地域ではなだれや急な雪解けによる災">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/9a0457c8516244bcf68fb185ecd10950e484c25d?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">4日～6日は寒さ和らぐが急な雪解け注意　7日～8日は再び厳しい寒さで大雪のおそれ(tenki.jp)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>20時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            今日2日夜から明日3日明け方は、関東では落雷に、北海道では大雪に注意が必要です。4日(水)から6日(金)は東日本から西日本を中心に日中の寒さが和らぎますが、積雪の多い地域ではなだれや急な雪解けによる災
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+            </ul>
+        </details>
+        
+    </div>
+
+    <div id="backToTop" title="トップへ戻る">↑</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // ▼▼▼ 既読管理機能 ▼▼▼
+            const STORAGE_KEY = 'rss_read_items';
+            let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+            const entryItems = document.querySelectorAll('.entry-item');
+            
+            entryItems.forEach(item => {
+                const link = item.dataset.link;
+                if (readItems.has(link)) {
+                    item.classList.add('read');
+                }
+                const anchor = item.querySelector('a.entry-link');
+                if(anchor) {
+                    anchor.addEventListener('click', function() {
+                        markAsRead(link, item);
+                    });
+                }
+            });
+
+            function markAsRead(link, itemElement) {
+                itemElement.classList.add('read');
+                readItems.add(link);
+                if (readItems.size > 1000) {
+                    const array = Array.from(readItems);
+                    readItems = new Set(array.slice(array.length - 1000));
+                }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
+            }
+
+            // ▼▼▼ 検索機能 ▼▼▼
+            const searchInput = document.getElementById('searchInput');
+            const sections = document.querySelectorAll('.feed-section');
+
+            entryItems.forEach(entry => {
+                const titleLink = entry.querySelector('.entry-title a');
+                const summaryDiv = entry.querySelector('.entry-summary');
+                if(titleLink && summaryDiv){
+                    entry.dataset.originalTitleHtml = titleLink.innerHTML;
+                    entry.dataset.originalSummaryHtml = summaryDiv.innerHTML;
+                }
+            });
+
+            searchInput.addEventListener('input', function(e) {
+                const term = e.target.value.trim().toLowerCase();
+
+                if (term === '') {
+                    sections.forEach(sec => {
+                        sec.style.display = '';
+                        // 検索解除時は「新着があるものだけ開く」状態に戻したいが、
+                        // 簡易的に全て閉じる、または今の状態を維持する。
+                        // ここでは「閉じる」挙動にする
+                        sec.open = false; 
+                    });
+                    entryItems.forEach(entry => {
+                        entry.style.display = '';
+                        const titleLink = entry.querySelector('.entry-title a');
+                        const summaryDiv = entry.querySelector('.entry-summary');
+                        if(titleLink) titleLink.innerHTML = entry.dataset.originalTitleHtml;
+                        if(summaryDiv) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
+                    });
+                    return;
+                }
+
+                sections.forEach(section => {
+                    let hasVisibleEntry = false;
+                    const sectionEntries = section.querySelectorAll('.entry-item');
+
+                    sectionEntries.forEach(entry => {
+                        const titleText = (entry.dataset.title || '').toLowerCase();
+                        const summaryText = (entry.dataset.summary || '').toLowerCase();
+
+                        if (titleText.includes(term) || summaryText.includes(term)) {
+                            entry.style.display = '';
+                            hasVisibleEntry = true;
+                            highlightText(entry, term);
+                        } else {
+                            entry.style.display = 'none';
+                        }
+                    });
+
+                    if (hasVisibleEntry) {
+                        section.style.display = '';
+                        section.open = true;
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+            });
+
+            function highlightText(entry, term) {
+                try {
+                    const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
+                    const highlightMark = '<mark>$1</mark>';
+                    const titleLink = entry.querySelector('.entry-title a');
+                    const summaryDiv = entry.querySelector('.entry-summary');
+                    
+                    if(titleLink && entry.dataset.originalTitleHtml) {
+                        titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
+                    }
+                    if(summaryDiv && entry.dataset.originalSummaryHtml) {
+                        summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
+                    }
+                } catch(e) { console.error(e); }
+            }
+
+            function escapeRegExp(string) {
+                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+
+            // ▼▼▼ トップへ戻るボタン ▼▼▼
+            const backToTopBtn = document.getElementById('backToTop');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
