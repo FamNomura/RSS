@@ -20,8 +20,32 @@
                 "url": "https://www.asahikawa-np.com/digest/feed/"
             },
             {
-                "title": "中央バス",
-                "url": "https://www.chuo-bus.co.jp/support/stop/?ope=feed&topic=stop_top"
+                "title": "HBCニュース北海道",
+                "url": "https://news.yahoo.co.jp/rss/media/hbcv/all.xml"
+            },
+            {
+                "title": "HTB北海道ニュース",
+                "url": "https://news.yahoo.co.jp/rss/media/htbv/all.xml"
+            },
+            {
+                "title": "STVニュース北海道",
+                "url": "https://news.yahoo.co.jp/rss/media/stv/all.xml"
+            },
+            {
+                "title": "テレビ北海道",
+                "url": "https://news.yahoo.co.jp/rss/media/tvh/all.xml"
+            },
+            {
+                "title": "北海道新聞",
+                "url": "https://news.yahoo.co.jp/rss/media/doshin/all.xml"
+            },
+            {
+                "title": "北海道ニュースUHB",
+                "url": "https://news.yahoo.co.jp/rss/media/hokkaibun/all.xml"
+            },
+            {
+                "title": "福祉新聞",
+                "url": "https://news.yahoo.co.jp/rss/media/fukushi/all.xml"
             }
         ]
     },
@@ -190,6 +214,74 @@
             {
                 "title": "主要",
                 "url": "https://news.yahoo.co.jp/rss/topics/top-picks.xml"
+            },
+            {
+                "title": "カテゴリ-地域",
+                "url": "https://news.yahoo.co.jp/rss/categories/local.xml"
+            },
+            {
+                "title": "トピックス - 地域",
+                "url": "https://news.yahoo.co.jp/rss/topics/local.xml"
+            },
+            {
+                "title": "科学",
+                "url": "https://news.yahoo.co.jp/rss/topics/science.xml"
+            },
+            {
+                "title": "IT",
+                "url": "https://news.yahoo.co.jp/rss/topics/it.xml"
+            },
+            {
+                "title": "スポーツ",
+                "url": "https://news.yahoo.co.jp/rss/topics/sports.xml"
+            },
+            {
+                "title": "エンタ",
+                "url": "https://news.yahoo.co.jp/rss/topics/entertainment.xml"
+            },
+            {
+                "title": "経済",
+                "url": "https://news.yahoo.co.jp/rss/topics/business.xml"
+            },
+            {
+                "title": "国際",
+                "url": "https://news.yahoo.co.jp/rss/topics/world.xml"
+            },
+            {
+                "title": "国内",
+                "url": "https://news.yahoo.co.jp/rss/topics/domestic.xml"
+            },
+            {
+                "title": "主要",
+                "url": "https://news.yahoo.co.jp/rss/topics/top-picks.xml"
+            },
+            {
+                "title": "みん経",
+                "url": "https://news.yahoo.co.jp/rss/media/minkei/all.xml"
+            },
+            {
+                "title": "ねとらぼ",
+                "url": "https://news.yahoo.co.jp/rss/media/it_nlab/all.xml"
+            },
+            {
+                "title": "日経ビジ",
+                "url": "https://news.yahoo.co.jp/rss/media/business/all.xml"
+            },
+            {
+                "title": "ダイ不動",
+                "url": "https://news.yahoo.co.jp/rss/media/diamondf/all.xml"
+            },
+            {
+                "title": "税理士",
+                "url": "https://news.yahoo.co.jp/rss/media/zeiricom/all.xml"
+            },
+            {
+                "title": "選挙",
+                "url": "https://news.yahoo.co.jp/rss/media/senkyocom/all.xml"
+            },
+            {
+                "title": "ライフ",
+                "url": "https://news.yahoo.co.jp/rss/categories/life.xml"
             }
         ]
     }
