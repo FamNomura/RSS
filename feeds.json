@@ -2,7 +2,7 @@
     "pages": [
         {
             "page_title": "総合ニュース",
-            "filename": "index.html",
+            "filename": "topics.html",
             "feeds": [
                 {
                     "title": "GIGAZINE",
@@ -53,10 +53,7 @@
         {
             "page_title": "福祉行政",
             "filename": "new.html",
-            "ng_keywords": [
-                "PR",
-                "広告"
-            ],
+            "ng_keywords": [],
             "feeds": [
                 {
                     "title": "厚生労働省",
@@ -300,13 +297,13 @@
     "watches": [
         {
             "page_title": "★トピック★",
-            "filename": "topics.html",
+            "filename": "index.html",
             "keywords": [
-                "Python",
-                "北海道",
                 "旭川",
+                "医療扶助",
                 "生活保護",
-                "医療扶助"
+                "Python",
+                "北海道"
             ],
             "ng_keywords": []
         }
