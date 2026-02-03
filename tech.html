@@ -6,16 +6,18 @@
     <title>Tech情報</title>
     <style>
         :root {
-            --bg-color: #f8f9fa;
+            --bg-color: #f4f6f8;
             --card-bg: #ffffff;
             --text-main: #2c3e50;
             --text-sub: #7f8c8d;
             --accent: #007bff;
+            --accent-hover: #0056b3;
             --new-badge: #e74c3c;
             --border: #e9ecef;
             --highlight: #fff3cd;
-            --read-color: #b0b0b0; /* 既読記事の色 */
+            --read-color: #b0b0b0;
         }
+        html { scroll-behavior: smooth; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: var(--bg-color);
@@ -25,88 +27,193 @@
             line-height: 1.6;
         }
         
+        /* ナビゲーションバー */
         .navbar {
             background-color: #343a40;
-            padding: 0.8rem;
+            padding: 0.8rem 1rem;
             position: sticky;
             top: 0;
             z-index: 1000;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .nav-container {
-            max-width: 800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap; /* スマホで検索窓が落ちるように */
+            gap: 15px;
         }
-        .nav-links { display: flex; gap: 10px; overflow-x: auto; white-space: nowrap; }
+        /* カテゴリが増えても折り返す（横スクロール禁止） */
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap; 
+            gap: 8px;
+        }
         .nav-link {
-            color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 14px; font-weight: 600; opacity: 0.8;
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.85;
+            transition: all 0.2s;
+            background-color: rgba(255,255,255,0.1);
         }
-        .nav-link.active { opacity: 1; background-color: var(--accent); }
+        .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
+        .nav-link.active {
+            opacity: 1;
+            background-color: var(--accent);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
 
-        .search-box { position: relative; flex-grow: 1; max-width: 300px; }
+        /* 検索ボックス */
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 250px;
+        }
         .search-input {
-            width: 100%; padding: 6px 10px; border-radius: 4px; border: none; font-size: 14px; background-color: rgba(255,255,255,0.9); box-sizing: border-box;
+            width: 100%;
+            padding: 6px 10px;
+            border-radius: 20px; /* 丸みをつける */
+            border: none;
+            font-size: 14px;
+            background-color: rgba(255,255,255,0.95);
+            box-sizing: border-box;
+            transition: box-shadow 0.2s;
         }
-        .search-input:focus { outline: 2px solid var(--accent); }
+        .search-input:focus { outline: none; box-shadow: 0 0 0 2px var(--accent); }
 
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        header { margin-bottom: 20px; text-align: center; }
-        h1 { font-size: 22px; margin: 0; color: #333; }
-        .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header { margin-bottom: 25px; text-align: center; }
+        h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
+        .last-updated { font-size: 12px; color: var(--text-sub); }
 
+        /* アコーディオン */
         details {
-            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: box-shadow 0.2s;
         }
+        details:hover { box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
+        
         summary {
-            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff; transition: background 0.2s;
+            list-style: none;
+            cursor: pointer;
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #fff;
+            transition: background 0.2s;
         }
         summary:hover { background-color: #f8f9fa; }
         summary::-webkit-details-marker { display: none; }
         
-        .feed-header { display: flex; align-items: center; gap: 10px; font-size: 16px; }
-        .feed-favicon { width: 16px; height: 16px; border-radius: 2px; }
-        .feed-status { font-size: 12px; color: var(--new-badge); font-weight: normal; }
+        .feed-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+        .feed-favicon { width: 16px; height: 16px; border-radius: 2px; flex-shrink: 0; }
+        .feed-title-text { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* 件数バッジ */
+        .feed-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        .count-badge {
+            background-color: #eee;
+            color: #555;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: normal;
+        }
+        .count-badge.has-new {
+            background-color: #fff0f0;
+            color: var(--new-badge);
+            border: 1px solid #ffcccc;
+        }
 
         .entry-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
         .entry-item {
-            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start; transition: background-color 0.2s;
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            transition: background-color 0.2s;
         }
         .entry-item:last-child { border-bottom: none; }
-
-        /* ▼▼▼ 既読記事のスタイル ▼▼▼ */
-        .entry-item.read {
-            background-color: #fcfcfc;
-        }
-        .entry-item.read .entry-title a {
-            color: var(--read-color);
-        }
-        .entry-item.read .entry-summary {
-            color: #d0d0d0;
-        }
-        .entry-item.read .entry-thumbnail {
-            opacity: 0.5;
-            filter: grayscale(100%);
-        }
-        .entry-item.read .new-badge {
-            background-color: #ccc; /* NEWバッジもグレーに */
-        }
-        /* ▲▲▲ 既読記事のスタイル ▲▲▲ */
         
-        .entry-content-wrapper { flex: 1; min-width: 0; }
-        .entry-thumbnail { width: 100px; height: 75px; object-fit: cover; border-radius: 4px; flex-shrink: 0; border: 1px solid #eee; }
+        /* 既読スタイル */
+        .entry-item.read { background-color: #fafafa; }
+        .entry-item.read .entry-title a { color: var(--read-color); }
+        .entry-item.read .entry-summary { color: #d0d0d0; }
+        .entry-item.read .entry-thumbnail { opacity: 0.4; filter: grayscale(100%); }
+        .entry-item.read .new-badge { background-color: #ccc; }
 
-        .entry-title { font-size: 16px; margin: 0 0 5px 0; line-height: 1.4; }
-        .entry-title a { text-decoration: none; color: var(--text-main); }
+        .entry-content-wrapper { flex: 1; min-width: 0; }
+        .entry-thumbnail {
+            width: 100px; height: 75px; object-fit: cover; border-radius: 6px; flex-shrink: 0; border: 1px solid #eee;
+        }
+
+        .entry-title { font-size: 16px; margin: 0 0 6px 0; line-height: 1.4; }
+        .entry-title a { text-decoration: none; color: var(--text-main); font-weight: bold; }
         .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
         .new-badge {
-            display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold;
+            display: inline-block; background-color: var(--new-badge); color: white;
+            font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px;
+            vertical-align: middle; font-weight: bold; transform: translateY(-1px);
         }
 
-        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; }
+        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; margin-bottom: 4px; }
         .entry-summary {
-            font-size: 13px; color: #555; margin-top: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.8;
+            font-size: 13px; color: #555; margin-top: 5px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden; opacity: 0.9; line-height: 1.5;
         }
         .entry-summary img { display: none; }
+
+        /* 空の状態 */
+        .empty-state { padding: 20px; text-align: center; color: #999; font-size: 13px; }
+
+        /* トップへ戻るボタン */
+        #backToTop {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--accent);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            font-size: 20px;
+            z-index: 2000;
+        }
+        #backToTop.show { opacity: 1; visibility: visible; }
+        #backToTop:hover { background-color: var(--accent-hover); transform: translateY(-3px); }
 
         mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
 
@@ -114,8 +221,10 @@
             .container { padding: 15px 10px; }
             summary { padding: 12px; }
             .entry-thumbnail { width: 80px; height: 60px; }
-            .nav-container { flex-direction: column; align-items: stretch; }
-            .search-box { max-width: 100%; margin-top: 10px; }
+            .nav-container { flex-direction: column; align-items: stretch; gap: 10px; }
+            .search-box { max-width: 100%; }
+            .feed-title-text { font-size: 14px; }
+            .count-badge { font-size: 11px; padding: 1px 6px; }
         }
     </style>
 </head>
@@ -123,6 +232,11 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-links">
+                
+                <a href="topics.html" 
+                   class="nav-link ">
+                    ★トピック★
+                </a>
                 
                 <a href="new.html" 
                    class="nav-link ">
@@ -169,11 +283,6 @@
                     ニュース記事
                 </a>
                 
-                <a href="topics.html" 
-                   class="nav-link ">
-                    ★トピック★
-                </a>
-                
             </div>
             <div class="search-box">
                 <input type="text" id="searchInput" class="search-input" placeholder="キーワード検索...">
@@ -184,22 +293,29 @@
     <div class="container">
         <header>
             <h1>Tech情報</h1>
-            <div class="last-updated">最終更新: 02/03 12:11</div>
+            <div class="last-updated">最終更新: 02/03 13:03</div>
         </header>
 
         
-        <details class="feed-section">
+
+        
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=www.publickey1.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>Publickey</span>
+                    <span class="feed-title-text">Publickey</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 2 / 10</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
                 
                 <li class="entry-item" data-link="https://www.publickey1.jp/blog/26/bigqueryconversational_analytics.html" data-title="BigQueryに会話型分析機能（Conversational Analytics）が登場。詳細な分析レポート生成、将来予測や非構造化データの分析も可能に" data-summary="Google Cloudは、同社の大規模データベースであるBigQueryの新機能として、自然言語を使ってデータを分析できる会話型分析機能（Conversational Analytics）のプレビュー公開を発表しました。 この会話型分析機能は単に自然言語をSQLに変換するものではなく、同社のAIモデルであるGeminiにより、BigQuery上のスキーマやメタデータ、カスタムコマンドなどを用いたビジネスコンテキストを理解した上でSQLを生成し、データ分析やデータの可視化を実……">
                     <div class="entry-content-wrapper">
@@ -211,7 +327,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>11時間前</span>
+                            <span>12時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -232,7 +348,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>11時間前</span>
+                            <span>12時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -398,18 +514,65 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=dev.classmethod.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>DevelopersIO</span>
+                    <span class="feed-title-text">DevelopersIO</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 10 / 10</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
+                
+                <li class="entry-item" data-link="https://dev.classmethod.jp/articles/tsnote-ses-dedicated-ip-addresses-warming-up/" data-title="Amazon SES の IP ウォームアップの終了条件について教えてください" data-summary="Amazon SES の IP ウォームアップの終了条件について教えてください">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://dev.classmethod.jp/articles/tsnote-ses-dedicated-ip-addresses-warming-up/" target="_blank" rel="noopener noreferrer" class="entry-link">Amazon SES の IP ウォームアップの終了条件について教えてください</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Amazon SES の IP ウォームアップの終了条件について教えてください
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://dev.classmethod.jp/articles/zendesk-ticket-trigger-twilio-sms/" data-title="Zendeskのチケット作成をトリガとTwilio Studioで担当者にSMS通知してみた" data-summary="Zendeskでのチケット起票をTwilioのSMSで通知してみた">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://dev.classmethod.jp/articles/zendesk-ticket-trigger-twilio-sms/" target="_blank" rel="noopener noreferrer" class="entry-link">Zendeskのチケット作成をトリガとTwilio Studioで担当者にSMS通知してみた</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>5分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Zendeskでのチケット起票をTwilioのSMSで通知してみた
+                        </div>
+                    </div>
+
+                    
+                </li>
                 
                 <li class="entry-item" data-link="https://dev.classmethod.jp/articles/aws-sts-oidc-github-google-circleci-oci/" data-title="[アップデート] AWS STSがOIDCフェデレーションでGitHub・Google・CircleCI・OCIのプロバイダー固有クレーム検証をサポートしました" data-summary="[アップデート] AWS STSがOIDCフェデレーションでGitHub・Google・CircleCI・OCIのプロバイダー固有クレーム検証をサポートしました">
                     <div class="entry-content-wrapper">
@@ -421,7 +584,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>10分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -442,7 +605,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>18分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -463,7 +626,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>33分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -484,7 +647,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>50分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -505,7 +668,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -526,7 +689,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -547,7 +710,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -579,63 +742,26 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://dev.classmethod.jp/articles/slack_list_15min/" data-title="評価面談の資料作成が15分で完了！Slackリスト機能で『成果の見える化』を実現してみた" data-summary="Slackのリスト機能の活用方法の紹介記事です。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://dev.classmethod.jp/articles/slack_list_15min/" target="_blank" rel="noopener noreferrer" class="entry-link">評価面談の資料作成が15分で完了！Slackリスト機能で『成果の見える化』を実現してみた</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>2時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            Slackのリスト機能の活用方法の紹介記事です。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://dev.classmethod.jp/articles/amazon-connect-ai-agent-adjust-initial-response/" data-title="Amazon Connect セルフサービスAIエージェントで、自動回答までの無音時間を減らすために一時応答メッセージを調整してみた" data-summary="Amazon Connect セルフサービスAIエージェントで、自動回答までの無音時間を減らすために一時応答メッセージを調整してみた">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://dev.classmethod.jp/articles/amazon-connect-ai-agent-adjust-initial-response/" target="_blank" rel="noopener noreferrer" class="entry-link">Amazon Connect セルフサービスAIエージェントで、自動回答までの無音時間を減らすために一時応答メッセージを調整してみた</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>2時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            Amazon Connect セルフサービスAIエージェントで、自動回答までの無音時間を減らすために一時応答メッセージを調整してみた
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=qiita.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>Qiita トレンド</span>
+                    <span class="feed-title-text">Qiita トレンド</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 1 / 10</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
                 
                 <li class="entry-item" data-link="https://qiita.com/8853Tomtomtom/items/656c122f1ef714f3079d?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="ChatGPTに「生成AIが広まったけど、結局 言語化能力がある人が得してるだけじゃない？」と問いかけてみた" data-summary="ChatGPTとのやり取りで、妙にエモいやり取りとなったのでログとして記載しておきます。 ある作業をやってもらった後の雑談です。 少々内容を編集した状態で貼り付けます。 私： ありがとう。だいぶ面倒な作業でしたね。助かりました。 ChatGPT： そう言っていただけてよかっ...">
                     <div class="entry-content-wrapper">
@@ -761,7 +887,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>13時間前</span>
+                            <span>14時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -832,18 +958,23 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=b.hatena.ne.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>はてなブックマーク IT</span>
+                    <span class="feed-title-text">はてなブックマーク IT</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 9 / 10</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
                 
                 <li class="entry-item" data-link="https://pc.watch.impress.co.jp/docs/topic/feature/2082893.html" data-title="【特集】 「電気代、払うのやめてみました」ポタ電と太陽光だけで1カ月仕事してみた狂気の結果" data-summary="【特集】 「電気代、払うのやめてみました」ポタ電と太陽光だけで1カ月仕事してみた狂気の結果">
                     <div class="entry-content-wrapper">
@@ -855,7 +986,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>5時間前</span>
+                            <span>6時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -865,29 +996,6 @@
 
                     
                     <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fpc.watch.impress.co.jp%2Fdocs%2Ftopic%2Ffeature%2F2082893.html" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://forbesjapan.com/articles/detail/90900" data-title="「従業員ゼロで1.5億円規模のビジネスを築く」ためのChatGPTプロンプト5選 | Forbes JAPAN 公式サイト（フォーブス ジャパン）" data-summary="「従業員ゼロで1.5億円規模のビジネスを築く」ためのChatGPTプロンプト5選 | Forbes JAPAN 公式サイト（フォーブス ジャパン）小さいものは大きいものに勝つ。多くの起業家は、採用を急ぎすぎ、スピードが必要な局面で重荷を抱え込んでしまう。 もし、自分自身以外には誰も必要とせず、7桁ドル規模のビジネスを築けるとしたらどうだろうか。10年前であれば、それは不可能だった。2年前であれば、空想的なAI第一人者たちのプロパガンダに過ぎなかっ...">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://forbesjapan.com/articles/detail/90900" target="_blank" rel="noopener noreferrer" class="entry-link">「従業員ゼロで1.5億円規模のビジネスを築く」ためのChatGPTプロンプト5選 | Forbes JAPAN 公式サイト（フォーブス ジャパン）</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>11時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            「従業員ゼロで1.5億円規模のビジネスを築く」ためのChatGPTプロンプト5選 | Forbes JAPAN 公式サイト（フォーブス ジャパン）小さいものは大きいものに勝つ。多くの起業家は、採用を急ぎすぎ、スピードが必要な局面で重荷を抱え込んでしまう。 もし、自分自身以外には誰も必要とせず、7桁ドル規模のビジネスを築けるとしたらどうだろうか。10年前であれば、それは不可能だった。2年前であれば、空想的なAI第一人者たちのプロパガンダに過ぎなかっ...
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fforbesjapan.com%2Farticles%2Fdetail%2F90900" class="entry-thumbnail" loading="lazy" alt="">
                     
                 </li>
                 
@@ -901,7 +1009,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>17時間前</span>
+                            <span>18時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -911,6 +1019,29 @@
 
                     
                     <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fzenn.dev%2Fpdfractal%2Farticles%2F61f676a222d37c" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://forbesjapan.com/articles/detail/90900" data-title="「従業員ゼロで1.5億円規模のビジネスを築く」ためのChatGPTプロンプト5選 | Forbes JAPAN 公式サイト（フォーブス ジャパン）" data-summary="「従業員ゼロで1.5億円規模のビジネスを築く」ためのChatGPTプロンプト5選 | Forbes JAPAN 公式サイト（フォーブス ジャパン）小さいものは大きいものに勝つ。多くの起業家は、採用を急ぎすぎ、スピードが必要な局面で重荷を抱え込んでしまう。 もし、自分自身以外には誰も必要とせず、7桁ドル規模のビジネスを築けるとしたらどうだろうか。10年前であれば、それは不可能だった。2年前であれば、空想的なAI第一人者たちのプロパガンダに過ぎなかっ...">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://forbesjapan.com/articles/detail/90900" target="_blank" rel="noopener noreferrer" class="entry-link">「従業員ゼロで1.5億円規模のビジネスを築く」ためのChatGPTプロンプト5選 | Forbes JAPAN 公式サイト（フォーブス ジャパン）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>12時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            「従業員ゼロで1.5億円規模のビジネスを築く」ためのChatGPTプロンプト5選 | Forbes JAPAN 公式サイト（フォーブス ジャパン）小さいものは大きいものに勝つ。多くの起業家は、採用を急ぎすぎ、スピードが必要な局面で重荷を抱え込んでしまう。 もし、自分自身以外には誰も必要とせず、7桁ドル規模のビジネスを築けるとしたらどうだろうか。10年前であれば、それは不可能だった。2年前であれば、空想的なAI第一人者たちのプロパガンダに過ぎなかっ...
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fforbesjapan.com%2Farticles%2Fdetail%2F90900" class="entry-thumbnail" loading="lazy" alt="">
                     
                 </li>
                 
@@ -935,29 +1066,6 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://togetter.com/li/2659242" data-title="50代の先輩社員が「ChatGPTってやつすごい、顧客の情報読ませたらいい感じにしてくれた」と観せてきたが、生成AIの使い方NG集役満だった「ネタですよね…？」" data-summary="50代の先輩社員が「ChatGPTってやつすごい、顧客の情報読ませたらいい感じにしてくれた」と観せてきたが、生成AIの使い方NG集役満だった「ネタですよね…？」50代先輩が顧客情報をChatGPTに読み込ませた成果物を見せ「これでいい」と提案したが、利用方法は個人情報流出の重大リスク。周囲は研修用途誤用や告発ツイートで騒然。リテラシーと倫理の欠如が問題で、企業は情報ガバナンスやAI利用制限（例：データ送信ブロック）を早急に導入すべきとされ、録音や匿名通報で対処する...">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://togetter.com/li/2659242" target="_blank" rel="noopener noreferrer" class="entry-link">50代の先輩社員が「ChatGPTってやつすごい、顧客の情報読ませたらいい感じにしてくれた」と観せてきたが、生成AIの使い方NG集役満だった「ネタですよね…？」</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>7時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            50代の先輩社員が「ChatGPTってやつすごい、顧客の情報読ませたらいい感じにしてくれた」と観せてきたが、生成AIの使い方NG集役満だった「ネタですよね…？」50代先輩が顧客情報をChatGPTに読み込ませた成果物を見せ「これでいい」と提案したが、利用方法は個人情報流出の重大リスク。周囲は研修用途誤用や告発ツイートで騒然。リテラシーと倫理の欠如が問題で、企業は情報ガバナンスやAI利用制限（例：データ送信ブロック）を早急に導入すべきとされ、録音や匿名通報で対処する...
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Ftogetter.com%2Fli%2F2659242" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
                 <li class="entry-item" data-link="https://gigazine.net/news/20260202-copy-protection-dongle/" data-title="40年前の「コピー防止ドングル」を突破した記録が興味深い、コンパイルそのものにドングルが必須だが4バイトのパッチのみで解除可能" data-summary="40年前の「コピー防止ドングル」を突破した記録が興味深い、コンパイルそのものにドングルが必須だが4バイトのパッチのみで解除可能ソフトウェアのコピー防止のためにUSBドングルなどのプロテクションハードウェアが使われることがあります。ウィキメディア財団でソフトウェアエンジニアとして働いているドミトリー・ブラント氏は40年前に使われていたコピー防止ドングルの解除に成功し、その経緯をブログ記事にまとめています。 Defeating a 40-year-o...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
@@ -968,7 +1076,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>12時間前</span>
+                            <span>13時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -978,75 +1086,6 @@
 
                     
                     <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fgigazine.net%2Fnews%2F20260202-copy-protection-dongle%2F" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://www.nikkei.com/article/DGXZQOUC238UK0T21C25A2000000/" data-title="ファナック、背水のロボット制御ソフト開放　AI企業参入に焦り - 日本経済新聞" data-summary="ファナック、背水のロボット制御ソフト開放 AI企業参入に焦り - 日本経済新聞製造現場に眠るデータと人工知能（AI）との融合を見越したロボットの開発競争が加速する。ソフトバンクグループ（SBG）によるスイス重電大手ABBのロボット事業買収を機に安川電機やファナックが協業や制御関連ソフトの公開化などを相次ぎ表明した。機械を自律的に動かすフィジカルAIで米中に後れを取る日本勢は「ロボッ...">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://www.nikkei.com/article/DGXZQOUC238UK0T21C25A2000000/" target="_blank" rel="noopener noreferrer" class="entry-link">ファナック、背水のロボット制御ソフト開放　AI企業参入に焦り - 日本経済新聞</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>6時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            ファナック、背水のロボット制御ソフト開放 AI企業参入に焦り - 日本経済新聞製造現場に眠るデータと人工知能（AI）との融合を見越したロボットの開発競争が加速する。ソフトバンクグループ（SBG）によるスイス重電大手ABBのロボット事業買収を機に安川電機やファナックが協業や制御関連ソフトの公開化などを相次ぎ表明した。機械を自律的に動かすフィジカルAIで米中に後れを取る日本勢は「ロボッ...
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fwww.nikkei.com%2Farticle%2FDGXZQOUC238UK0T21C25A2000000%2F" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://www.nikkei.com/article/DGXZQOUC0244S0S6A200C2000000/" data-title="ソフトバンクG、ヒト型ロボ「ペッパー」新機種　AIエージェント搭載 - 日本経済新聞" data-summary="ソフトバンクG、ヒト型ロボ「ペッパー」新機種 AIエージェント搭載 - 日本経済新聞ソフトバンクグループ傘下のソフトバンクロボティクス（東京・港）は2日、人工知能（AI）エージェントを搭載したヒト型ロボット「Pepper+（ペッパープラス）」の提供を始めると発表した。2014年の登場から初めて、デザインとタブレット端末を刷新した。主に小売店や飲食店向けに接客要員として展開する。販促支援などを...">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://www.nikkei.com/article/DGXZQOUC0244S0S6A200C2000000/" target="_blank" rel="noopener noreferrer" class="entry-link">ソフトバンクG、ヒト型ロボ「ペッパー」新機種　AIエージェント搭載 - 日本経済新聞</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>14時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            ソフトバンクG、ヒト型ロボ「ペッパー」新機種 AIエージェント搭載 - 日本経済新聞ソフトバンクグループ傘下のソフトバンクロボティクス（東京・港）は2日、人工知能（AI）エージェントを搭載したヒト型ロボット「Pepper+（ペッパープラス）」の提供を始めると発表した。2014年の登場から初めて、デザインとタブレット端末を刷新した。主に小売店や飲食店向けに接客要員として展開する。販促支援などを...
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fwww.nikkei.com%2Farticle%2FDGXZQOUC0244S0S6A200C2000000%2F" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://zenn.dev/manalink_dev/articles/claude_code_max_plan_thinking_and_compare" data-title="Claude Code Max(100ドル)を会社支給にするまでに考えたこと・試したことまとめ" data-summary="Claude Code Max(100ドル)を会社支給にするまでに考えたこと・試したことまとめ2026年の年始から、Claude Code Maxプラン（$100）をマナリンクの開発チーム全員に会社支給とすることにしました。 当記事ではそこまでに至る経緯と、決定した理由、今後の展望などをまとめます。 誰向けの記事なのかよくわからない内容になりそうなのですが、 会社支給内容を決める側の立場の方 小規模の開発組織（弊社...">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://zenn.dev/manalink_dev/articles/claude_code_max_plan_thinking_and_compare" target="_blank" rel="noopener noreferrer" class="entry-link">Claude Code Max(100ドル)を会社支給にするまでに考えたこと・試したことまとめ</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>8時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            Claude Code Max(100ドル)を会社支給にするまでに考えたこと・試したことまとめ2026年の年始から、Claude Code Maxプラン（$100）をマナリンクの開発チーム全員に会社支給とすることにしました。 当記事ではそこまでに至る経緯と、決定した理由、今後の展望などをまとめます。 誰向けの記事なのかよくわからない内容になりそうなのですが、 会社支給内容を決める側の立場の方 小規模の開発組織（弊社...
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fzenn.dev%2Fmanalink_dev%2Farticles%2Fclaude_code_max_plan_thinking_and_compare" class="entry-thumbnail" loading="lazy" alt="">
                     
                 </li>
                 
@@ -1060,7 +1099,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3時間前</span>
+                            <span>4時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1073,21 +1112,118 @@
                     
                 </li>
                 
+                <li class="entry-item" data-link="https://levtech.jp/media/article/focus/detail_797/" data-title="カセットテープ・エンジニア人生45年。「彼でないと動かせない生産設備」と共に2回移籍して【フォーカス】 レバテックラボ（レバテックLAB）" data-summary="カセットテープ・エンジニア人生45年。「彼でないと動かせない生産設備」と共に2回移籍して【フォーカス】 レバテックラボ（レバテックLAB）TOPフォーカスカセットテープ・エンジニア人生45年。「彼でないと動かせない生産設備」と共に2回移籍して【フォーカス】 株式会社磁気研究所 カセットテープ製造技術者 江幡 昭 1963年生まれ。1981年、日本ビクター株式会社（現・JVCケンウッド）の水戸工場に入社し、カセットテープの製造・保守に従事。2007年の同工場...">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://levtech.jp/media/article/focus/detail_797/" target="_blank" rel="noopener noreferrer" class="entry-link">カセットテープ・エンジニア人生45年。「彼でないと動かせない生産設備」と共に2回移籍して【フォーカス】 レバテックラボ（レバテックLAB）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            カセットテープ・エンジニア人生45年。「彼でないと動かせない生産設備」と共に2回移籍して【フォーカス】 レバテックラボ（レバテックLAB）TOPフォーカスカセットテープ・エンジニア人生45年。「彼でないと動かせない生産設備」と共に2回移籍して【フォーカス】 株式会社磁気研究所 カセットテープ製造技術者 江幡 昭 1963年生まれ。1981年、日本ビクター株式会社（現・JVCケンウッド）の水戸工場に入社し、カセットテープの製造・保守に従事。2007年の同工場...
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Flevtech.jp%2Fmedia%2Farticle%2Ffocus%2Fdetail_797%2F" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://togetter.com/li/2659242" data-title="50代の先輩社員が「ChatGPTってやつすごい、顧客の情報読ませたらいい感じにしてくれた」と観せてきたが、生成AIの使い方NG集役満だった「ネタですよね…？」" data-summary="50代の先輩社員が「ChatGPTってやつすごい、顧客の情報読ませたらいい感じにしてくれた」と観せてきたが、生成AIの使い方NG集役満だった「ネタですよね…？」50代先輩が顧客情報をChatGPTに読み込ませた成果物を見せ「これでいい」と提案したが、利用方法は個人情報流出の重大リスク。周囲は研修用途誤用や告発ツイートで騒然。リテラシーと倫理の欠如が問題で、企業は情報ガバナンスやAI利用制限（例：データ送信ブロック）を早急に導入すべきとされ、録音や匿名通報で対処する...">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://togetter.com/li/2659242" target="_blank" rel="noopener noreferrer" class="entry-link">50代の先輩社員が「ChatGPTってやつすごい、顧客の情報読ませたらいい感じにしてくれた」と観せてきたが、生成AIの使い方NG集役満だった「ネタですよね…？」</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>8時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            50代の先輩社員が「ChatGPTってやつすごい、顧客の情報読ませたらいい感じにしてくれた」と観せてきたが、生成AIの使い方NG集役満だった「ネタですよね…？」50代先輩が顧客情報をChatGPTに読み込ませた成果物を見せ「これでいい」と提案したが、利用方法は個人情報流出の重大リスク。周囲は研修用途誤用や告発ツイートで騒然。リテラシーと倫理の欠如が問題で、企業は情報ガバナンスやAI利用制限（例：データ送信ブロック）を早急に導入すべきとされ、録音や匿名通報で対処する...
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Ftogetter.com%2Fli%2F2659242" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://zenn.dev/manalink_dev/articles/claude_code_max_plan_thinking_and_compare" data-title="Claude Code Max(100ドル)を会社支給にするまでに考えたこと・試したことまとめ" data-summary="Claude Code Max(100ドル)を会社支給にするまでに考えたこと・試したことまとめ2026年の年始から、Claude Code Maxプラン（$100）をマナリンクの開発チーム全員に会社支給とすることにしました。 当記事ではそこまでに至る経緯と、決定した理由、今後の展望などをまとめます。 誰向けの記事なのかよくわからない内容になりそうなのですが、 会社支給内容を決める側の立場の方 小規模の開発組織（弊社...">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://zenn.dev/manalink_dev/articles/claude_code_max_plan_thinking_and_compare" target="_blank" rel="noopener noreferrer" class="entry-link">Claude Code Max(100ドル)を会社支給にするまでに考えたこと・試したことまとめ</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>9時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Claude Code Max(100ドル)を会社支給にするまでに考えたこと・試したことまとめ2026年の年始から、Claude Code Maxプラン（$100）をマナリンクの開発チーム全員に会社支給とすることにしました。 当記事ではそこまでに至る経緯と、決定した理由、今後の展望などをまとめます。 誰向けの記事なのかよくわからない内容になりそうなのですが、 会社支給内容を決める側の立場の方 小規模の開発組織（弊社...
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fzenn.dev%2Fmanalink_dev%2Farticles%2Fclaude_code_max_plan_thinking_and_compare" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://qiita.com/TaichiEndoh/items/b534f73310ce4508dac2" data-title="【完全自動化】n8n×Obsidianで「寝ている間に最新ニュースが届く」最強の情報収集システムを作った話 - Qiita" data-summary="【完全自動化】n8n×Obsidianで「寝ている間に最新ニュースが届く」最強の情報収集システムを作った話 - QiitaDeleted articles cannot be recovered. Draft of this article would be also deleted. Are you sure you want to delete this article? こんにちは、エンジニアのTaichiです。 日々アップデートされる技術情報、追いかけるのが大変ですよね。「あとで読む」つもりの記事が溜まっていくばかり…。 そこで今回は、話題の...">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://qiita.com/TaichiEndoh/items/b534f73310ce4508dac2" target="_blank" rel="noopener noreferrer" class="entry-link">【完全自動化】n8n×Obsidianで「寝ている間に最新ニュースが届く」最強の情報収集システムを作った話 - Qiita</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>18時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            【完全自動化】n8n×Obsidianで「寝ている間に最新ニュースが届く」最強の情報収集システムを作った話 - QiitaDeleted articles cannot be recovered. Draft of this article would be also deleted. Are you sure you want to delete this article? こんにちは、エンジニアのTaichiです。 日々アップデートされる技術情報、追いかけるのが大変ですよね。「あとで読む」つもりの記事が溜まっていくばかり…。 そこで今回は、話題の...
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fqiita.com%2FTaichiEndoh%2Fitems%2Fb534f73310ce4508dac2" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=zenn.dev" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>Zenn トレンド</span>
+                    <span class="feed-title-text">Zenn トレンド</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 1 / 10</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
                 
                 <li class="entry-item" data-link="https://zenn.dev/turing_motors/articles/588954c08dccc0" data-title="Tokyo 30の舞台裏？AWSで作る！フルマネージドな大規模GPUクラスターの構築/運用のリアル" data-summary="はじめに チューリングのMLOpsチームに所属する大戸（おおど）と言います。 2025年10月に入社し、クラウド上のGPUクラスターの構築・運用や、大量のデータセット管理システムの設計・開発など、MLOps領域の業務を幅広く担当しています。 今回は、実際に都内を30分程度走行させることに成功したモデルの開発を支えた GPUクラスター基盤 の話を書こうと思います。 https://zenn.dev/turing_motors/articles/bc6436727234ad 大規模なクラウドGPUクラスターの話を、構築から運用からクロージング(削除)まで、一貫してやったという記事は少ない...">
                     <div class="entry-content-wrapper">
@@ -1099,7 +1235,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>21時間前</span>
+                            <span>22時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1284,56 +1420,51 @@
             </ul>
         </details>
         
-        
     </div>
+
+    <div id="backToTop" title="トップへ戻る">↑</div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // ▼▼▼ 既読管理機能 ▼▼▼
             const STORAGE_KEY = 'rss_read_items';
-            // LocalStorageから既読リストを取得 (Setで管理して高速化)
             let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
-
             const entryItems = document.querySelectorAll('.entry-item');
             
-            // 初期表示: 既読状態の反映
             entryItems.forEach(item => {
                 const link = item.dataset.link;
                 if (readItems.has(link)) {
                     item.classList.add('read');
                 }
-                
-                // クリックイベントの登録
                 const anchor = item.querySelector('a.entry-link');
-                anchor.addEventListener('click', function() {
-                    markAsRead(link, item);
-                });
+                if(anchor) {
+                    anchor.addEventListener('click', function() {
+                        markAsRead(link, item);
+                    });
+                }
             });
 
             function markAsRead(link, itemElement) {
-                // UIを即座に更新
                 itemElement.classList.add('read');
-                
-                // ストレージに保存
                 readItems.add(link);
-                // 容量制限のため、古いものから消す (最大1000件保持)
                 if (readItems.size > 1000) {
                     const array = Array.from(readItems);
                     readItems = new Set(array.slice(array.length - 1000));
                 }
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
             }
-            // ▲▲▲ 既読管理機能 ▲▲▲
 
-            // 検索機能
+            // ▼▼▼ 検索機能 ▼▼▼
             const searchInput = document.getElementById('searchInput');
             const sections = document.querySelectorAll('.feed-section');
 
             entryItems.forEach(entry => {
                 const titleLink = entry.querySelector('.entry-title a');
                 const summaryDiv = entry.querySelector('.entry-summary');
-                entry.dataset.originalTitleHtml = titleLink.innerHTML;
-                entry.dataset.originalSummaryHtml = summaryDiv.innerHTML;
+                if(titleLink && summaryDiv){
+                    entry.dataset.originalTitleHtml = titleLink.innerHTML;
+                    entry.dataset.originalSummaryHtml = summaryDiv.innerHTML;
+                }
             });
 
             searchInput.addEventListener('input', function(e) {
@@ -1342,14 +1473,17 @@
                 if (term === '') {
                     sections.forEach(sec => {
                         sec.style.display = '';
-                        sec.open = false;
+                        // 検索解除時は「新着があるものだけ開く」状態に戻したいが、
+                        // 簡易的に全て閉じる、または今の状態を維持する。
+                        // ここでは「閉じる」挙動にする
+                        sec.open = false; 
                     });
                     entryItems.forEach(entry => {
                         entry.style.display = '';
                         const titleLink = entry.querySelector('.entry-title a');
                         const summaryDiv = entry.querySelector('.entry-summary');
-                        titleLink.innerHTML = entry.dataset.originalTitleHtml;
-                        summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
+                        if(titleLink) titleLink.innerHTML = entry.dataset.originalTitleHtml;
+                        if(summaryDiv) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
                     });
                     return;
                 }
@@ -1359,8 +1493,8 @@
                     const sectionEntries = section.querySelectorAll('.entry-item');
 
                     sectionEntries.forEach(entry => {
-                        const titleText = entry.dataset.title.toLowerCase();
-                        const summaryText = entry.dataset.summary.toLowerCase();
+                        const titleText = (entry.dataset.title || '').toLowerCase();
+                        const summaryText = (entry.dataset.summary || '').toLowerCase();
 
                         if (titleText.includes(term) || summaryText.includes(term)) {
                             entry.style.display = '';
@@ -1381,17 +1515,37 @@
             });
 
             function highlightText(entry, term) {
-                const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
-                const highlightMark = '<mark>$1</mark>';
-                const titleLink = entry.querySelector('.entry-title a');
-                titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
-                const summaryDiv = entry.querySelector('.entry-summary');
-                summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
+                try {
+                    const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
+                    const highlightMark = '<mark>$1</mark>';
+                    const titleLink = entry.querySelector('.entry-title a');
+                    const summaryDiv = entry.querySelector('.entry-summary');
+                    
+                    if(titleLink && entry.dataset.originalTitleHtml) {
+                        titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
+                    }
+                    if(summaryDiv && entry.dataset.originalSummaryHtml) {
+                        summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
+                    }
+                } catch(e) { console.error(e); }
             }
 
             function escapeRegExp(string) {
                 return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             }
+
+            // ▼▼▼ トップへ戻るボタン ▼▼▼
+            const backToTopBtn = document.getElementById('backToTop');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
         });
     </script>
 </body>

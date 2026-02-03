@@ -6,16 +6,18 @@
     <title>★トピック★</title>
     <style>
         :root {
-            --bg-color: #f8f9fa;
+            --bg-color: #f4f6f8;
             --card-bg: #ffffff;
             --text-main: #2c3e50;
             --text-sub: #7f8c8d;
             --accent: #007bff;
+            --accent-hover: #0056b3;
             --new-badge: #e74c3c;
             --border: #e9ecef;
             --highlight: #fff3cd;
-            --read-color: #b0b0b0; /* 既読記事の色 */
+            --read-color: #b0b0b0;
         }
+        html { scroll-behavior: smooth; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: var(--bg-color);
@@ -25,88 +27,193 @@
             line-height: 1.6;
         }
         
+        /* ナビゲーションバー */
         .navbar {
             background-color: #343a40;
-            padding: 0.8rem;
+            padding: 0.8rem 1rem;
             position: sticky;
             top: 0;
             z-index: 1000;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .nav-container {
-            max-width: 800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap; /* スマホで検索窓が落ちるように */
+            gap: 15px;
         }
-        .nav-links { display: flex; gap: 10px; overflow-x: auto; white-space: nowrap; }
+        /* カテゴリが増えても折り返す（横スクロール禁止） */
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap; 
+            gap: 8px;
+        }
         .nav-link {
-            color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 14px; font-weight: 600; opacity: 0.8;
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.85;
+            transition: all 0.2s;
+            background-color: rgba(255,255,255,0.1);
         }
-        .nav-link.active { opacity: 1; background-color: var(--accent); }
+        .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
+        .nav-link.active {
+            opacity: 1;
+            background-color: var(--accent);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
 
-        .search-box { position: relative; flex-grow: 1; max-width: 300px; }
+        /* 検索ボックス */
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 250px;
+        }
         .search-input {
-            width: 100%; padding: 6px 10px; border-radius: 4px; border: none; font-size: 14px; background-color: rgba(255,255,255,0.9); box-sizing: border-box;
+            width: 100%;
+            padding: 6px 10px;
+            border-radius: 20px; /* 丸みをつける */
+            border: none;
+            font-size: 14px;
+            background-color: rgba(255,255,255,0.95);
+            box-sizing: border-box;
+            transition: box-shadow 0.2s;
         }
-        .search-input:focus { outline: 2px solid var(--accent); }
+        .search-input:focus { outline: none; box-shadow: 0 0 0 2px var(--accent); }
 
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        header { margin-bottom: 20px; text-align: center; }
-        h1 { font-size: 22px; margin: 0; color: #333; }
-        .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header { margin-bottom: 25px; text-align: center; }
+        h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
+        .last-updated { font-size: 12px; color: var(--text-sub); }
 
+        /* アコーディオン */
         details {
-            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: box-shadow 0.2s;
         }
+        details:hover { box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
+        
         summary {
-            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff; transition: background 0.2s;
+            list-style: none;
+            cursor: pointer;
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #fff;
+            transition: background 0.2s;
         }
         summary:hover { background-color: #f8f9fa; }
         summary::-webkit-details-marker { display: none; }
         
-        .feed-header { display: flex; align-items: center; gap: 10px; font-size: 16px; }
-        .feed-favicon { width: 16px; height: 16px; border-radius: 2px; }
-        .feed-status { font-size: 12px; color: var(--new-badge); font-weight: normal; }
+        .feed-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+        .feed-favicon { width: 16px; height: 16px; border-radius: 2px; flex-shrink: 0; }
+        .feed-title-text { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* 件数バッジ */
+        .feed-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        .count-badge {
+            background-color: #eee;
+            color: #555;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: normal;
+        }
+        .count-badge.has-new {
+            background-color: #fff0f0;
+            color: var(--new-badge);
+            border: 1px solid #ffcccc;
+        }
 
         .entry-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
         .entry-item {
-            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start; transition: background-color 0.2s;
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            transition: background-color 0.2s;
         }
         .entry-item:last-child { border-bottom: none; }
-
-        /* ▼▼▼ 既読記事のスタイル ▼▼▼ */
-        .entry-item.read {
-            background-color: #fcfcfc;
-        }
-        .entry-item.read .entry-title a {
-            color: var(--read-color);
-        }
-        .entry-item.read .entry-summary {
-            color: #d0d0d0;
-        }
-        .entry-item.read .entry-thumbnail {
-            opacity: 0.5;
-            filter: grayscale(100%);
-        }
-        .entry-item.read .new-badge {
-            background-color: #ccc; /* NEWバッジもグレーに */
-        }
-        /* ▲▲▲ 既読記事のスタイル ▲▲▲ */
         
-        .entry-content-wrapper { flex: 1; min-width: 0; }
-        .entry-thumbnail { width: 100px; height: 75px; object-fit: cover; border-radius: 4px; flex-shrink: 0; border: 1px solid #eee; }
+        /* 既読スタイル */
+        .entry-item.read { background-color: #fafafa; }
+        .entry-item.read .entry-title a { color: var(--read-color); }
+        .entry-item.read .entry-summary { color: #d0d0d0; }
+        .entry-item.read .entry-thumbnail { opacity: 0.4; filter: grayscale(100%); }
+        .entry-item.read .new-badge { background-color: #ccc; }
 
-        .entry-title { font-size: 16px; margin: 0 0 5px 0; line-height: 1.4; }
-        .entry-title a { text-decoration: none; color: var(--text-main); }
+        .entry-content-wrapper { flex: 1; min-width: 0; }
+        .entry-thumbnail {
+            width: 100px; height: 75px; object-fit: cover; border-radius: 6px; flex-shrink: 0; border: 1px solid #eee;
+        }
+
+        .entry-title { font-size: 16px; margin: 0 0 6px 0; line-height: 1.4; }
+        .entry-title a { text-decoration: none; color: var(--text-main); font-weight: bold; }
         .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
         .new-badge {
-            display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold;
+            display: inline-block; background-color: var(--new-badge); color: white;
+            font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px;
+            vertical-align: middle; font-weight: bold; transform: translateY(-1px);
         }
 
-        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; }
+        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; margin-bottom: 4px; }
         .entry-summary {
-            font-size: 13px; color: #555; margin-top: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.8;
+            font-size: 13px; color: #555; margin-top: 5px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden; opacity: 0.9; line-height: 1.5;
         }
         .entry-summary img { display: none; }
+
+        /* 空の状態 */
+        .empty-state { padding: 20px; text-align: center; color: #999; font-size: 13px; }
+
+        /* トップへ戻るボタン */
+        #backToTop {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--accent);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            font-size: 20px;
+            z-index: 2000;
+        }
+        #backToTop.show { opacity: 1; visibility: visible; }
+        #backToTop:hover { background-color: var(--accent-hover); transform: translateY(-3px); }
 
         mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
 
@@ -114,8 +221,10 @@
             .container { padding: 15px 10px; }
             summary { padding: 12px; }
             .entry-thumbnail { width: 80px; height: 60px; }
-            .nav-container { flex-direction: column; align-items: stretch; }
-            .search-box { max-width: 100%; margin-top: 10px; }
+            .nav-container { flex-direction: column; align-items: stretch; gap: 10px; }
+            .search-box { max-width: 100%; }
+            .feed-title-text { font-size: 14px; }
+            .count-badge { font-size: 11px; padding: 1px 6px; }
         }
     </style>
 </head>
@@ -123,6 +232,11 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-links">
+                
+                <a href="topics.html" 
+                   class="nav-link active">
+                    ★トピック★
+                </a>
                 
                 <a href="new.html" 
                    class="nav-link ">
@@ -169,11 +283,6 @@
                     ニュース記事
                 </a>
                 
-                <a href="topics.html" 
-                   class="nav-link active">
-                    ★トピック★
-                </a>
-                
             </div>
             <div class="search-box">
                 <input type="text" id="searchInput" class="search-input" placeholder="キーワード検索...">
@@ -184,59 +293,276 @@
     <div class="container">
         <header>
             <h1>★トピック★</h1>
-            <div class="last-updated">最終更新: 02/03 12:11</div>
+            <div class="last-updated">最終更新: 02/03 13:03</div>
         </header>
 
         
-        <details class="feed-section">
+
+        
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>Keyword: 北海道</span>
+                    <span class="feed-title-text">Keyword: 北海道</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 45 / 60</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/775b1b45a6eadd3b14a8a7fe9cedd5b7279ce8a2?source=rss" data-title="さっぽろ雪まつり　「会津鶴ヶ城」大雪像の引き渡し式　大通会場８丁目「雪のＨＴＢ広場」(HTB北海道ニュース)" data-summary="あす（４日）開幕するさっぽろ雪まつりを前に会場となる大通公園では大雪像の引き渡し式が行われました。 けさ午前１０時から大通会場８丁目の「雪のＨＴＢ広場」で行われた大雪像の完成引き渡し式。 今年の大雪">
+
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/45b62c2016d09f56fd71e39ff53b88e596fb46cf?source=rss" data-title="「事故直前に居眠りしてしまった」11時間飲酒して死亡事故を引き起こす 33歳男を危険運転致死罪で起訴「友人と別れた後、1人でスナックとバーに行った」(HBCニュース北海道)" data-summary="2024年9月、北海道小樽市の国道で飲酒運転をして事故を起こし、当時24歳の大学院生の男性を死亡させたとして、33歳の男が危険運転致死の罪で起訴しました。 2月3日付で危険運転致死の罪で起訴されたの">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/775b1b45a6eadd3b14a8a7fe9cedd5b7279ce8a2?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">さっぽろ雪まつり　「会津鶴ヶ城」大雪像の引き渡し式　大通会場８丁目「雪のＨＴＢ広場」(HTB北海道ニュース)</a>
+                            <a href="https://news.yahoo.co.jp/articles/45b62c2016d09f56fd71e39ff53b88e596fb46cf?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「事故直前に居眠りしてしまった」11時間飲酒して死亡事故を引き起こす 33歳男を危険運転致死罪で起訴「友人と別れた後、1人でスナックとバーに行った」(HBCニュース北海道)</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1分前</span>
+                            <span>4分前</span>
                         </div>
 
                         <div class="entry-summary">
-                            あす（４日）開幕するさっぽろ雪まつりを前に会場となる大通公園では大雪像の引き渡し式が行われました。 けさ午前１０時から大通会場８丁目の「雪のＨＴＢ広場」で行われた大雪像の完成引き渡し式。 今年の大雪
+                            2024年9月、北海道小樽市の国道で飲酒運転をして事故を起こし、当時24歳の大学院生の男性を死亡させたとして、33歳の男が危険運転致死の罪で起訴しました。 2月3日付で危険運転致死の罪で起訴されたの
                         </div>
                     </div>
 
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/775b1b45a6eadd3b14a8a7fe9cedd5b7279ce8a2?source=rss" data-title="さっぽろ雪まつり　「会津鶴ヶ城」大雪像の引き渡し式　大通会場８丁目「雪のＨＴＢ広場」(HTB北海道ニュース)" data-summary="あす（４日）開幕するさっぽろ雪まつりを前に会場となる大通公園では大雪像の引き渡し式が行われました。 けさ午前１０時から大通会場８丁目の「雪のＨＴＢ広場」で行われた大雪像の完成引き渡し式。 今年の大雪">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/45b62c2016d09f56fd71e39ff53b88e596fb46cf?source=rss" data-title="「事故直前に居眠りしてしまった」11時間飲酒して死亡事故を引き起こす 33歳男を危険運転致死罪で起訴「友人と別れた後、1人でスナックとバーに行った」(HBCニュース北海道)" data-summary="2024年9月、北海道小樽市の国道で飲酒運転をして事故を起こし、当時24歳の大学院生の男性を死亡させたとして、33歳の男が危険運転致死の罪で起訴しました。 2月3日付で危険運転致死の罪で起訴されたの">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/775b1b45a6eadd3b14a8a7fe9cedd5b7279ce8a2?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">さっぽろ雪まつり　「会津鶴ヶ城」大雪像の引き渡し式　大通会場８丁目「雪のＨＴＢ広場」(HTB北海道ニュース)</a>
+                            <a href="https://news.yahoo.co.jp/articles/45b62c2016d09f56fd71e39ff53b88e596fb46cf?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「事故直前に居眠りしてしまった」11時間飲酒して死亡事故を引き起こす 33歳男を危険運転致死罪で起訴「友人と別れた後、1人でスナックとバーに行った」(HBCニュース北海道)</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1分前</span>
+                            <span>4分前</span>
                         </div>
 
                         <div class="entry-summary">
-                            あす（４日）開幕するさっぽろ雪まつりを前に会場となる大通公園では大雪像の引き渡し式が行われました。 けさ午前１０時から大通会場８丁目の「雪のＨＴＢ広場」で行われた大雪像の完成引き渡し式。 今年の大雪
+                            2024年9月、北海道小樽市の国道で飲酒運転をして事故を起こし、当時24歳の大学院生の男性を死亡させたとして、33歳の男が危険運転致死の罪で起訴しました。 2月3日付で危険運転致死の罪で起訴されたの
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/967573a909b68723ffb8c1d2bd8fcc54f89f605c?source=rss" data-title="鬼も「DOMIれ! 」ファイターズの台湾出身選手2人が“豆まき”日本の伝統文化『節分』楽しみ活躍誓う～春季キャンプの恒例行事〈沖縄県名護市〉(北海道ニュースUHB)" data-summary="節分の2月3日、沖縄県で行われているファイターズの春季キャンプでは、毎年恒例の選手たちの豆まきが行われました。 3日目を迎えたファイターズの沖縄春季キャンプ。 節分の2月3日は、台湾出身の古">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/967573a909b68723ffb8c1d2bd8fcc54f89f605c?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">鬼も「DOMIれ! 」ファイターズの台湾出身選手2人が“豆まき”日本の伝統文化『節分』楽しみ活躍誓う～春季キャンプの恒例行事〈沖縄県名護市〉(北海道ニュースUHB)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>29分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            節分の2月3日、沖縄県で行われているファイターズの春季キャンプでは、毎年恒例の選手たちの豆まきが行われました。 3日目を迎えたファイターズの沖縄春季キャンプ。 節分の2月3日は、台湾出身の古
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/9bf9cd949e5c5b480926bbd2a801925fbe167d12?source=rss" data-title="記録的大雪で車1台しか通れない！札幌市の緊急排雪「順次、全地域で」連日の排雪作業＿道路拡幅作業も同時進行中～生活道路約3800キロの排雪を2月中に終了予定〈北海道札幌市〉(北海道ニュースUHB)" data-summary="札幌市が2月2日から始めた生活道路の緊急排雪は、3日も朝から行われています。 市内の各地区で順次行われる予定で、2月中には排雪を終える方針です。 札幌市中央区宮の森地区では、3日午前9時から">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/9bf9cd949e5c5b480926bbd2a801925fbe167d12?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">記録的大雪で車1台しか通れない！札幌市の緊急排雪「順次、全地域で」連日の排雪作業＿道路拡幅作業も同時進行中～生活道路約3800キロの排雪を2月中に終了予定〈北海道札幌市〉(北海道ニュースUHB)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>33分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            札幌市が2月2日から始めた生活道路の緊急排雪は、3日も朝から行われています。 市内の各地区で順次行われる予定で、2月中には排雪を終える方針です。 札幌市中央区宮の森地区では、3日午前9時から
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/6b83fbf9f35e4abb422fea5b286d9639bce8fe42?source=rss" data-title="「さっぽろ雪まつり」スター・ウォーズの巨大雪像“マンダロリアン”と“グローグー”完成！高さ10メートル超で迫力満点「精巧な作りにもぜひ注目を」記録的大雪の中で準備～4日開幕〈北海道札幌市〉(北海道ニュースUHB)" data-summary="「さっぽろ雪まつり」がいよいよ2月4日開幕します。 札幌市中央区の大通10丁目会場では3日、雪像の引き渡し式が行われました。 76回目を迎える「さっぽろ雪まつり」。 2026年は記録的な大">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/6b83fbf9f35e4abb422fea5b286d9639bce8fe42?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「さっぽろ雪まつり」スター・ウォーズの巨大雪像“マンダロリアン”と“グローグー”完成！高さ10メートル超で迫力満点「精巧な作りにもぜひ注目を」記録的大雪の中で準備～4日開幕〈北海道札幌市〉(北海道ニュースUHB)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>36分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            「さっぽろ雪まつり」がいよいよ2月4日開幕します。 札幌市中央区の大通10丁目会場では3日、雪像の引き渡し式が行われました。 76回目を迎える「さっぽろ雪まつり」。 2026年は記録的な大
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/3b82e189b1c8f667e2309b95437255338301f10a?source=rss" data-title="【北海道の天気 3日(火)】札幌は3日ぶりプラス気温 ”落雪・なだれ・路面変化に注意" 週末にかけて気温変化激しい(北海道ニュースUHB)" data-summary="（吉井庸二気象予報士が解説） 午前11時50分現在 ◆きょう3日(火) 午後の天気 午後も雪が強まるところはないでしょう。 名寄は昼過ぎ、倶知安は夜遅くにちらつく程度となりそうです。 あす朝に">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/3b82e189b1c8f667e2309b95437255338301f10a?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【北海道の天気 3日(火)】札幌は3日ぶりプラス気温 ”落雪・なだれ・路面変化に注意" 週末にかけて気温変化激しい(北海道ニュースUHB)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>40分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            （吉井庸二気象予報士が解説） 午前11時50分現在 ◆きょう3日(火) 午後の天気 午後も雪が強まるところはないでしょう。 名寄は昼過ぎ、倶知安は夜遅くにちらつく程度となりそうです。 あす朝に
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/f57044eaa8ed412b0b0fa0d26bc951536cf141c9?source=rss" data-title="「まじで怖かった‼」幼稚園児が豆まきで“鬼退治”　最後は鬼とも打ち解け、仲良く記念撮影(HBCニュース北海道)" data-summary="2月3日は「節分」です。北海道登別市の幼稚園では、恒例の豆まきが行われ、園児たちが鬼を退治しました。 太鼓の音とともに突然現れた鬼に、豆を投げるのも忘れ、必死に逃げ回る園児たち。 節分のきょう、登">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/f57044eaa8ed412b0b0fa0d26bc951536cf141c9?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「まじで怖かった‼」幼稚園児が豆まきで“鬼退治”　最後は鬼とも打ち解け、仲良く記念撮影(HBCニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>40分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            2月3日は「節分」です。北海道登別市の幼稚園では、恒例の豆まきが行われ、園児たちが鬼を退治しました。 太鼓の音とともに突然現れた鬼に、豆を投げるのも忘れ、必死に逃げ回る園児たち。 節分のきょう、登
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/3e199cbbcb7e897b5593abf64d31080573babff0?source=rss" data-title="札幌　大雪から一夜明け交通機関への影響続く　 快速エアポート含めＪＲ１３０本以上運休(HTB北海道ニュース)" data-summary="きのう(２日)の大雪から一夜明けた札幌。 きょうもＪＲが１３０本以上運休するなど影響が続いています。 きのうの大雪で交通への影響が続く道内、きょう（３日）もＪＲは札幌と新千歳空港を結ぶ快速エアポート">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/3e199cbbcb7e897b5593abf64d31080573babff0?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">札幌　大雪から一夜明け交通機関への影響続く　 快速エアポート含めＪＲ１３０本以上運休(HTB北海道ニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>42分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            きのう(２日)の大雪から一夜明けた札幌。 きょうもＪＲが１３０本以上運休するなど影響が続いています。 きのうの大雪で交通への影響が続く道内、きょう（３日）もＪＲは札幌と新千歳空港を結ぶ快速エアポート
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/9d03c99e888d97a2db330397ffe79abaf9fa7a5b?source=rss" data-title="【落雪注意】屋根からの落雪事故を想定した合同救助訓練　北海道では1か月で6人が死亡　屋根の雪下ろしはヘルメットや命綱を(HBCニュース北海道)" data-summary="札幌圏で大雪の影響が続く中、北海道羽幌町では、屋根からの落雪事故を想定した警察と消防による合同救助訓練が行われました。 訓練は、屋根からの落雪によって通行人が生き埋めになった想定で行われ、警察と消防">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/9d03c99e888d97a2db330397ffe79abaf9fa7a5b?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【落雪注意】屋根からの落雪事故を想定した合同救助訓練　北海道では1か月で6人が死亡　屋根の雪下ろしはヘルメットや命綱を(HBCニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>45分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            札幌圏で大雪の影響が続く中、北海道羽幌町では、屋根からの落雪事故を想定した警察と消防による合同救助訓練が行われました。 訓練は、屋根からの落雪によって通行人が生き埋めになった想定で行われ、警察と消防
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/4d47af4ef098909abebf79e99585f2c4f7572174?source=rss" data-title="妻にバリカンで後頭部を刈り上げるよう強要「義務のないことを行わせたかは分かりません」石狩市の40歳解体工の男を強要容疑で逮捕「夫から暴力を振るわれた」と妻が110番通報〈北海道石狩市〉(北海道ニュースUHB)" data-summary="妻を脅迫しバリカンで後頭部を刈り上げるよう強要したとして、石狩市の40歳の男が逮捕されました。 強要の疑いで逮捕されたのは、石狩市樽川に住む40歳の解体工の男です。 警察によりますと、男は1">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/4d47af4ef098909abebf79e99585f2c4f7572174?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">妻にバリカンで後頭部を刈り上げるよう強要「義務のないことを行わせたかは分かりません」石狩市の40歳解体工の男を強要容疑で逮捕「夫から暴力を振るわれた」と妻が110番通報〈北海道石狩市〉(北海道ニュースUHB)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>52分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            妻を脅迫しバリカンで後頭部を刈り上げるよう強要したとして、石狩市の40歳の男が逮捕されました。 強要の疑いで逮捕されたのは、石狩市樽川に住む40歳の解体工の男です。 警察によりますと、男は1
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/71ad1ca7f40e0645b927a6fcbb03695ddd1f9b46?source=rss" data-title="エアポートなど137本運休　一部列車を間引き運転　大雪に見舞われた札幌圏　ＪＲ・バスに影響(STVニュース北海道)" data-summary="札幌圏を中心とした大雪で、２月３日もＪＲやバスなど交通機関に運休や遅れが出ています。 ＪＲは一部の列車を終日、間引き運転するほか、最終列車の繰り上げを決めています。 ＪＲ北海道によりますと、大雪の">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/71ad1ca7f40e0645b927a6fcbb03695ddd1f9b46?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">エアポートなど137本運休　一部列車を間引き運転　大雪に見舞われた札幌圏　ＪＲ・バスに影響(STVニュース北海道)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>52分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            札幌圏を中心とした大雪で、２月３日もＪＲやバスなど交通機関に運休や遅れが出ています。 ＪＲは一部の列車を終日、間引き運転するほか、最終列車の繰り上げを決めています。 ＪＲ北海道によりますと、大雪の
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/775b1b45a6eadd3b14a8a7fe9cedd5b7279ce8a2?source=rss" data-title="さっぽろ雪まつり　「会津鶴ヶ城」大雪像の引き渡し式　大通会場西８丁目「雪のＨＴＢ広場」(HTB北海道ニュース)" data-summary="あす（４日）開幕するさっぽろ雪まつりを前に会場となる大通公園では大雪像の引き渡し式が行われました。 けさ午前１０時から大通会場西８丁目の「雪のＨＴＢ広場」で行われた大雪像の完成引き渡し式。 今年の大">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/775b1b45a6eadd3b14a8a7fe9cedd5b7279ce8a2?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">さっぽろ雪まつり　「会津鶴ヶ城」大雪像の引き渡し式　大通会場西８丁目「雪のＨＴＢ広場」(HTB北海道ニュース)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>53分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            あす（４日）開幕するさっぽろ雪まつりを前に会場となる大通公園では大雪像の引き渡し式が行われました。 けさ午前１０時から大通会場西８丁目の「雪のＨＴＢ広場」で行われた大雪像の完成引き渡し式。 今年の大
                         </div>
                     </div>
 
@@ -253,7 +579,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3分前</span>
+                            <span>55分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -274,7 +600,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>4分前</span>
+                            <span>56分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -295,7 +621,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>11分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -316,7 +642,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>11分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -327,17 +653,17 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/1c306c02c640e4b6de053b92ea495e1142b02963?source=rss" data-title="【速報】“危険運転致死罪”で起訴　11時間半飲酒した状態で車を運転した33歳男　国道で正面衝突し、24歳大学院生が死亡　北海道小樽市(HBCニュース北海道)" data-summary="2024年、北海道小樽市で、当時24歳の大学院生の男性が亡くなった事故について、札幌地検は2月3日、事故を起こした33歳の男を危険運転致死の罪で起訴しました。 危険運転致死の罪で起訴されたのは、大沢">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/1c306c02c640e4b6de053b92ea495e1142b02963?source=rss" data-title="【速報】“危険運転致死罪”で起訴　11時間半飲酒した状態で車を運転した33歳男「事故直前に居眠りしてしまった」国道で正面衝突し、24歳大学院生が死亡　北海道小樽市(HBCニュース北海道)" data-summary="2024年、北海道小樽市で、当時24歳の大学院生の男性が亡くなった事故について、札幌地検は2月3日、事故を起こした33歳の男を危険運転致死の罪で起訴しました。 危険運転致死の罪で起訴されたのは、大沢">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/1c306c02c640e4b6de053b92ea495e1142b02963?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【速報】“危険運転致死罪”で起訴　11時間半飲酒した状態で車を運転した33歳男　国道で正面衝突し、24歳大学院生が死亡　北海道小樽市(HBCニュース北海道)</a>
+                            <a href="https://news.yahoo.co.jp/articles/1c306c02c640e4b6de053b92ea495e1142b02963?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【速報】“危険運転致死罪”で起訴　11時間半飲酒した状態で車を運転した33歳男「事故直前に居眠りしてしまった」国道で正面衝突し、24歳大学院生が死亡　北海道小樽市(HBCニュース北海道)</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>23分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -348,7 +674,7 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/df96f10ed47b8e93caa43e7d14558ba3cd995866?source=rss" data-title="【速報】飲酒運転で衝突…大学院生死亡から1年5か月　危険運転致死の罪で男を起訴　小樽市(STVニュース北海道)" data-summary="小樽市の国道で2024年9月、飲酒運転の車が乗用車と正面衝突し大学院生が死亡した事故で、札幌地検は、事故を起こした男を危険運転致死の罪で起訴しました。 危険運転致死の罪で起訴されたのは、大沢亮汰被告">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/df96f10ed47b8e93caa43e7d14558ba3cd995866?source=rss" data-title="【速報】飲酒運転で衝突…大学院生死亡から1年5か月　危険運転致死の罪で男を起訴　小樽市(STVニュース北海道)" data-summary="北海道小樽市の国道で2024年9月、飲酒運転の車が乗用車と正面衝突し、大学院生が死亡した事故で、札幌地検は、事故を起こした男を危険運転致死の罪で起訴しました。 危険運転致死の罪で起訴されたのは、大沢">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
@@ -358,11 +684,11 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>31分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
-                            小樽市の国道で2024年9月、飲酒運転の車が乗用車と正面衝突し大学院生が死亡した事故で、札幌地検は、事故を起こした男を危険運転致死の罪で起訴しました。 危険運転致死の罪で起訴されたのは、大沢亮汰被告
+                            北海道小樽市の国道で2024年9月、飲酒運転の車が乗用車と正面衝突し、大学院生が死亡した事故で、札幌地検は、事故を起こした男を危険運転致死の罪で起訴しました。 危険運転致死の罪で起訴されたのは、大沢
                         </div>
                     </div>
 
@@ -379,7 +705,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>41分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -421,7 +747,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3時間前</span>
+                            <span>4時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -442,7 +768,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3時間前</span>
+                            <span>4時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -463,7 +789,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3時間前</span>
+                            <span>4時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -484,7 +810,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>4時間前</span>
+                            <span>5時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -505,7 +831,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>4時間前</span>
+                            <span>5時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -547,7 +873,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>5時間前</span>
+                            <span>6時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -568,7 +894,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>5時間前</span>
+                            <span>6時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -589,32 +915,11 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>5時間前</span>
+                            <span>6時間前</span>
                         </div>
 
                         <div class="entry-summary">
                             雪の影響が続く中、札幌市の生活道路では２月２日から初の緊急排雪が始まりました。 これまでのパートナーシップ排雪とどのような違いがあるのでしょうか。 （長南記者）「札幌市清田区の住宅街です。道のわき
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/f65c8bf16cd453ad81e54db1e35ed09eaa91ac38?source=rss" data-title="【ファイターズ】サードベースで矢澤が「DOMIれ！」ポーズ 紅白戦で好調アピール(北海道ニュースUHB)" data-summary="2月2日（月）、沖縄県で春季キャンプ2日目を迎えた北海道日本ハムファイターズ。この日は2軍キャンプ地の「かいぎんスタジアム国頭」で紅白戦を行いました。 新庄剛志監督（54）がバックネット裏のスタ">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/articles/f65c8bf16cd453ad81e54db1e35ed09eaa91ac38?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【ファイターズ】サードベースで矢澤が「DOMIれ！」ポーズ 紅白戦で好調アピール(北海道ニュースUHB)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>5時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            2月2日（月）、沖縄県で春季キャンプ2日目を迎えた北海道日本ハムファイターズ。この日は2軍キャンプ地の「かいぎんスタジアム国頭」で紅白戦を行いました。 新庄剛志監督（54）がバックネット裏のスタ
                         </div>
                     </div>
 
@@ -631,7 +936,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>6時間前</span>
+                            <span>7時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -652,7 +957,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>6時間前</span>
+                            <span>7時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -673,7 +978,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>6時間前</span>
+                            <span>7時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -694,116 +999,11 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>6時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            札幌・中央警察署は、2026年2月2日にいずれも自称・札幌市東区に住む個人事業主の男（40）を建造物侵入の疑いで現行犯逮捕したと発表しました。 男は、2月2日午後7時前、札幌市中央区南5条西2丁目に
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/657e5c19ea3ee75d272ac226592505592840647d?source=rss" data-title="真夏の深夜、10代女性宅に侵入し『性的暴行』19歳団体職員の男を不同意性交等致傷容疑で逮捕『不同意わいせつと性的姿態等撮影』事件で逮捕され関与が浮上＜北海道旭川市＞(北海道ニュースUHB)" data-summary="女性宅に侵入し就寝中の女性に性的暴行を加えたとして、北海道旭川市に住む19歳の団体職員の男が住居侵入および不同意性交等致傷容疑で逮捕されました。 警察によりますと、男は2025年8月26日午前2">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/articles/657e5c19ea3ee75d272ac226592505592840647d?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">真夏の深夜、10代女性宅に侵入し『性的暴行』19歳団体職員の男を不同意性交等致傷容疑で逮捕『不同意わいせつと性的姿態等撮影』事件で逮捕され関与が浮上＜北海道旭川市＞(北海道ニュースUHB)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>6時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            女性宅に侵入し就寝中の女性に性的暴行を加えたとして、北海道旭川市に住む19歳の団体職員の男が住居侵入および不同意性交等致傷容疑で逮捕されました。 警察によりますと、男は2025年8月26日午前2
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/9602c447d9a0b90136110458adb1c0526467647c?source=rss" data-title="ミラノ・コルティナ五輪・パラリンピック出場　ゆかりの選手を応援する横断幕設置　北海道旭川市(STVニュース北海道)" data-summary="ミラノ・コルティナオリンピックパラリンピックの開催を間近に控え旭川市ではゆかりの選手を応援する横断幕が設置されました。 早朝の旭川市役所です。 まだ誰もいない総合庁舎のロビーに掲げられたのは大きな">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/articles/9602c447d9a0b90136110458adb1c0526467647c?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">ミラノ・コルティナ五輪・パラリンピック出場　ゆかりの選手を応援する横断幕設置　北海道旭川市(STVニュース北海道)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>6時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            ミラノ・コルティナオリンピックパラリンピックの開催を間近に控え旭川市ではゆかりの選手を応援する横断幕が設置されました。 早朝の旭川市役所です。 まだ誰もいない総合庁舎のロビーに掲げられたのは大きな
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/b1843b2b6ae9336797fb74ca0b88d66d43dc23f3?source=rss" data-title="【JR北海道 2月3日の運行情報】大雪の影響で札幌圏の列車「終日間引き運転」を実施 133本が運休へ　札幌と新千歳空港を結ぶ快速エアポートも38本が運休(北海道ニュースUHB)" data-summary="JR北海道は2月3日も札幌圏で終日「間引き運転」を実施すると発表しました。 大雪の影響が続いているためで、133本（エアポート38本、快速・普通95本）の運休を予定しています。 【2月3日 札">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/articles/b1843b2b6ae9336797fb74ca0b88d66d43dc23f3?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【JR北海道 2月3日の運行情報】大雪の影響で札幌圏の列車「終日間引き運転」を実施 133本が運休へ　札幌と新千歳空港を結ぶ快速エアポートも38本が運休(北海道ニュースUHB)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>6時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            JR北海道は2月3日も札幌圏で終日「間引き運転」を実施すると発表しました。 大雪の影響が続いているためで、133本（エアポート38本、快速・普通95本）の運休を予定しています。 【2月3日 札
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/63fa0a65ed0c2d0acab47e6ec2b8a686a34b213e?source=rss" data-title="夕方の公園を歩いていた20代女性に背後から抱きつき下半身を触る…「緑色のジャンパー」「中年の男」目撃証言そっくりの62歳無職男をみつけ不同意わいせつ容疑で逮捕〈北海道江別市〉(北海道ニュースUHB)" data-summary="真冬の公園で女性に背後から抱きつき、体を触ったとして男が逮捕されました。 不同意わいせつの疑いで逮捕されたのは、北海道江別市に住む62歳の無職の男（住所・職業・氏名・年齢すべて自称）です。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/articles/63fa0a65ed0c2d0acab47e6ec2b8a686a34b213e?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">夕方の公園を歩いていた20代女性に背後から抱きつき下半身を触る…「緑色のジャンパー」「中年の男」目撃証言そっくりの62歳無職男をみつけ不同意わいせつ容疑で逮捕〈北海道江別市〉(北海道ニュースUHB)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>6時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            真冬の公園で女性に背後から抱きつき、体を触ったとして男が逮捕されました。 不同意わいせつの疑いで逮捕されたのは、北海道江別市に住む62歳の無職の男（住所・職業・氏名・年齢すべて自称）です。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/0608ed8f4c39f6b7c3d2dbb0df4f88b6db74213e?source=rss" data-title="知人の顔などを何度も蹴り暴行容疑で逮捕された30代男性を『不起訴処分』に…SNSの「暴行動画」がきっかけで警察が動く＜苫小牧区検＞(北海道ニュースUHB)" data-summary="北海道苫小牧市で、知人男性の顔を蹴るなどした暴行事件で、札幌地検は30代男性を不起訴処分としました。 苫小牧市に住む男性は2025年8月ごろ、苫小牧市の路上で、知人男性の顔を蹴るなどの暴行をした">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/articles/0608ed8f4c39f6b7c3d2dbb0df4f88b6db74213e?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">知人の顔などを何度も蹴り暴行容疑で逮捕された30代男性を『不起訴処分』に…SNSの「暴行動画」がきっかけで警察が動く＜苫小牧区検＞(北海道ニュースUHB)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
                             <span>7時間前</span>
                         </div>
 
                         <div class="entry-summary">
-                            北海道苫小牧市で、知人男性の顔を蹴るなどした暴行事件で、札幌地検は30代男性を不起訴処分としました。 苫小牧市に住む男性は2025年8月ごろ、苫小牧市の路上で、知人男性の顔を蹴るなどの暴行をした
+                            札幌・中央警察署は、2026年2月2日にいずれも自称・札幌市東区に住む個人事業主の男（40）を建造物侵入の疑いで現行犯逮捕したと発表しました。 男は、2月2日午後7時前、札幌市中央区南5条西2丁目に
                         </div>
                     </div>
 
@@ -831,48 +1031,6 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/07965427eb286f1c555c8fcda30511e4b09aaa68?source=rss" data-title="“解散”ではなく“海産”総選挙、今回もやります…4選目指すホタテに挑む新人「身を切る覚悟」のニシン、「時代をシメる」サバ、「高い知能で電撃結成」イカタコ連合、魚論調査も…北海道豊浦町(HBCニュース北海道)" data-summary="こちらも、熱い戦いです。衆院選に合わせて「もう一つの総選挙」が始まっています。 ■“解散”ではなく…“海産”もう一つの総選挙始まる 観光協会事務局長 「3連覇しているホタテに今回は新人候補がたくさ">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/articles/07965427eb286f1c555c8fcda30511e4b09aaa68?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">“解散”ではなく“海産”総選挙、今回もやります…4選目指すホタテに挑む新人「身を切る覚悟」のニシン、「時代をシメる」サバ、「高い知能で電撃結成」イカタコ連合、魚論調査も…北海道豊浦町(HBCニュース北海道)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>16時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            こちらも、熱い戦いです。衆院選に合わせて「もう一つの総選挙」が始まっています。 ■“解散”ではなく…“海産”もう一つの総選挙始まる 観光協会事務局長 「3連覇しているホタテに今回は新人候補がたくさ
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/9774162dc827b31d86c8c2daa4f663fa6c1dc4af?source=rss" data-title="北海道で高まる電力需要　相次ぐデータセンターの進出で11％増加試算　気になる電気料金の値下げ幅は不透明に…安全性を疑問視する専門家も　原発再稼働の是非　各党の考えは?衆議院選挙2026(HBCニュース北海道)" data-summary="2月8日に投開票を迎える衆議院議員選挙。今回は原発再稼働の是非について考えます。 京セラ ゼロエミッション・データセンター 尾方哲さん 「こちらがデータセンターの建物です。普段の生活で使うネット検索">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/articles/9774162dc827b31d86c8c2daa4f663fa6c1dc4af?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">北海道で高まる電力需要　相次ぐデータセンターの進出で11％増加試算　気になる電気料金の値下げ幅は不透明に…安全性を疑問視する専門家も　原発再稼働の是非　各党の考えは?衆議院選挙2026(HBCニュース北海道)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>16時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            2月8日に投開票を迎える衆議院議員選挙。今回は原発再稼働の是非について考えます。 京セラ ゼロエミッション・データセンター 尾方哲さん 「こちらがデータセンターの建物です。普段の生活で使うネット検索
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
                 <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/fb5d59ed41cf62685a761dd6598dcdd0cfe61c06?source=rss" data-title="ニセコモイワスキーリゾートのコース外で救助要請　27歳のオーストラリア人男性が死亡(HTB北海道ニュース)" data-summary="２日午後３時ごろ、北海道ニセコ町にある「ニセコモイワスキーリゾート」の関係者から「スキー場のコース外において救助要請が入った」と警察に通報がありました。 警察によりますと、オーストラリア人でニセコ地">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
@@ -883,32 +1041,11 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>16時間前</span>
+                            <span>17時間前</span>
                         </div>
 
                         <div class="entry-summary">
                             ２日午後３時ごろ、北海道ニセコ町にある「ニセコモイワスキーリゾート」の関係者から「スキー場のコース外において救助要請が入った」と警察に通報がありました。 警察によりますと、オーストラリア人でニセコ地
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/02f86c48ca7772c53a918bff5cb22382e95a5357?source=rss" data-title="2台をつなげた「連節バス」が札幌でテスト走行　雪で道幅が狭いススキノは走れた?輸送力1.5倍アップで街のにぎわい創出へ　2030年度に導入計画(HBCニュース北海道)" data-summary="札幌はこの冬、度重なる大雪に見舞われていますが市が導入を目指している新たな公共交通はこの冬を乗り越えられるのか、市内で走行テストが進められています。 1月、イルミネーションがきらめく札幌駅前通りです">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/articles/02f86c48ca7772c53a918bff5cb22382e95a5357?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">2台をつなげた「連節バス」が札幌でテスト走行　雪で道幅が狭いススキノは走れた?輸送力1.5倍アップで街のにぎわい創出へ　2030年度に導入計画(HBCニュース北海道)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>16時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            札幌はこの冬、度重なる大雪に見舞われていますが市が導入を目指している新たな公共交通はこの冬を乗り越えられるのか、市内で走行テストが進められています。 1月、イルミネーションがきらめく札幌駅前通りです
                         </div>
                     </div>
 
@@ -925,7 +1062,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>17時間前</span>
+                            <span>18時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -946,7 +1083,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>17時間前</span>
+                            <span>18時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -967,7 +1104,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>17時間前</span>
+                            <span>18時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -988,7 +1125,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>17時間前</span>
+                            <span>18時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1009,7 +1146,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>17時間前</span>
+                            <span>18時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1030,7 +1167,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>17時間前</span>
+                            <span>18時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1051,7 +1188,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>17時間前</span>
+                            <span>18時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1072,7 +1209,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>17時間前</span>
+                            <span>18時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1093,7 +1230,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>18時間前</span>
+                            <span>19時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1114,32 +1251,11 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>19時間前</span>
+                            <span>20時間前</span>
                         </div>
 
                         <div class="entry-summary">
                             ■段木涼太アナウンサー 札幌市東区、東8丁目篠路通りに来ています。 向かってこちら側ですね、この先左手に東区役所があるあたりです。 この通りですね、除雪は入っているんですけども、やっぱり片側1車線にな
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/1b5faceb5ad8b97256e801a9a01c4b5d51304439?source=rss" data-title="道内大雪　交通機関に乱れ　JR快速エアポート61本含め210本運休　バス運休や遅れ相次ぐ(HTB北海道ニュース)" data-summary="雪などの影響で交通機関にも乱れが出ています。 ＪＲ北海道によりますと、現在快速エアポート６１本を含む２１０本が運休となっていて、函館線の小樽～長万部間については上下線で終日運転を見合わせています。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/articles/1b5faceb5ad8b97256e801a9a01c4b5d51304439?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">道内大雪　交通機関に乱れ　JR快速エアポート61本含め210本運休　バス運休や遅れ相次ぐ(HTB北海道ニュース)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>19時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            雪などの影響で交通機関にも乱れが出ています。 ＪＲ北海道によりますと、現在快速エアポート６１本を含む２１０本が運休となっていて、函館線の小樽～長万部間については上下線で終日運転を見合わせています。
                         </div>
                     </div>
 
@@ -1434,18 +1550,23 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>Keyword: 旭川</span>
+                    <span class="feed-title-text">Keyword: 旭川</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 3 / 9</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
                 
                 <li class="entry-item" data-link="https://www.hokkaido-np.co.jp/article/1270594/" data-title="旭川家具　世界に売り込め　カンディハウス、ドイツ見本市に初出展" data-summary="旭川家具製造販売「カンディハウス」（旭川市）は6日からの5日間...">
                     <div class="entry-content-wrapper">
@@ -1457,7 +1578,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1478,53 +1599,11 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
                             旭川市は2日、ミラノ・コルティナ冬季五輪と同パラリンピックに出...
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/657e5c19ea3ee75d272ac226592505592840647d?source=rss" data-title="真夏の深夜、10代女性宅に侵入し『性的暴行』19歳団体職員の男を不同意性交等致傷容疑で逮捕『不同意わいせつと性的姿態等撮影』事件で逮捕され関与が浮上＜北海道旭川市＞(北海道ニュースUHB)" data-summary="女性宅に侵入し就寝中の女性に性的暴行を加えたとして、北海道旭川市に住む19歳の団体職員の男が住居侵入および不同意性交等致傷容疑で逮捕されました。 警察によりますと、男は2025年8月26日午前2">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/articles/657e5c19ea3ee75d272ac226592505592840647d?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">真夏の深夜、10代女性宅に侵入し『性的暴行』19歳団体職員の男を不同意性交等致傷容疑で逮捕『不同意わいせつと性的姿態等撮影』事件で逮捕され関与が浮上＜北海道旭川市＞(北海道ニュースUHB)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>6時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            女性宅に侵入し就寝中の女性に性的暴行を加えたとして、北海道旭川市に住む19歳の団体職員の男が住居侵入および不同意性交等致傷容疑で逮捕されました。 警察によりますと、男は2025年8月26日午前2
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/9602c447d9a0b90136110458adb1c0526467647c?source=rss" data-title="ミラノ・コルティナ五輪・パラリンピック出場　ゆかりの選手を応援する横断幕設置　北海道旭川市(STVニュース北海道)" data-summary="ミラノ・コルティナオリンピックパラリンピックの開催を間近に控え旭川市ではゆかりの選手を応援する横断幕が設置されました。 早朝の旭川市役所です。 まだ誰もいない総合庁舎のロビーに掲げられたのは大きな">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/articles/9602c447d9a0b90136110458adb1c0526467647c?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">ミラノ・コルティナ五輪・パラリンピック出場　ゆかりの選手を応援する横断幕設置　北海道旭川市(STVニュース北海道)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>6時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            ミラノ・コルティナオリンピックパラリンピックの開催を間近に控え旭川市ではゆかりの選手を応援する横断幕が設置されました。 早朝の旭川市役所です。 まだ誰もいない総合庁舎のロビーに掲げられたのは大きな
                         </div>
                     </div>
 
@@ -1541,7 +1620,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>17時間前</span>
+                            <span>18時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1669,56 +1748,93 @@
             </ul>
         </details>
         
+        <details class="feed-section" open>
+            <summary>
+                <div class="feed-info">
+                    <img src="" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span class="feed-title-text">Keyword: 生活保護</span>
+                </div>
+                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 1 / 1</span>
+                    
+                </div>
+            </summary>
+            
+            <ul class="entry-list">
+                
+
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/167b9044ee9e901e4e7e419d8ae10d1a146d84b1?source=rss" data-title="生活保護訴訟、補償内容を原告に説明　厚労省社援局長がおわび(福祉新聞)" data-summary="2013～15年の生活保護費引き下げを違法とした25年6月の最高裁判決をめぐり、厚生労働省は1月22日、受給者への補償内容を原告やその弁護団に説明した。省内の会議室で鹿沼均社会・援護局長がおわびの言">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/167b9044ee9e901e4e7e419d8ae10d1a146d84b1?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">生活保護訴訟、補償内容を原告に説明　厚労省社援局長がおわび(福祉新聞)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>23時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            2013～15年の生活保護費引き下げを違法とした25年6月の最高裁判決をめぐり、厚生労働省は1月22日、受給者への補償内容を原告やその弁護団に説明した。省内の会議室で鹿沼均社会・援護局長がおわびの言
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+            </ul>
+        </details>
         
     </div>
+
+    <div id="backToTop" title="トップへ戻る">↑</div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // ▼▼▼ 既読管理機能 ▼▼▼
             const STORAGE_KEY = 'rss_read_items';
-            // LocalStorageから既読リストを取得 (Setで管理して高速化)
             let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
-
             const entryItems = document.querySelectorAll('.entry-item');
             
-            // 初期表示: 既読状態の反映
             entryItems.forEach(item => {
                 const link = item.dataset.link;
                 if (readItems.has(link)) {
                     item.classList.add('read');
                 }
-                
-                // クリックイベントの登録
                 const anchor = item.querySelector('a.entry-link');
-                anchor.addEventListener('click', function() {
-                    markAsRead(link, item);
-                });
+                if(anchor) {
+                    anchor.addEventListener('click', function() {
+                        markAsRead(link, item);
+                    });
+                }
             });
 
             function markAsRead(link, itemElement) {
-                // UIを即座に更新
                 itemElement.classList.add('read');
-                
-                // ストレージに保存
                 readItems.add(link);
-                // 容量制限のため、古いものから消す (最大1000件保持)
                 if (readItems.size > 1000) {
                     const array = Array.from(readItems);
                     readItems = new Set(array.slice(array.length - 1000));
                 }
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
             }
-            // ▲▲▲ 既読管理機能 ▲▲▲
 
-            // 検索機能
+            // ▼▼▼ 検索機能 ▼▼▼
             const searchInput = document.getElementById('searchInput');
             const sections = document.querySelectorAll('.feed-section');
 
             entryItems.forEach(entry => {
                 const titleLink = entry.querySelector('.entry-title a');
                 const summaryDiv = entry.querySelector('.entry-summary');
-                entry.dataset.originalTitleHtml = titleLink.innerHTML;
-                entry.dataset.originalSummaryHtml = summaryDiv.innerHTML;
+                if(titleLink && summaryDiv){
+                    entry.dataset.originalTitleHtml = titleLink.innerHTML;
+                    entry.dataset.originalSummaryHtml = summaryDiv.innerHTML;
+                }
             });
 
             searchInput.addEventListener('input', function(e) {
@@ -1727,14 +1843,17 @@
                 if (term === '') {
                     sections.forEach(sec => {
                         sec.style.display = '';
-                        sec.open = false;
+                        // 検索解除時は「新着があるものだけ開く」状態に戻したいが、
+                        // 簡易的に全て閉じる、または今の状態を維持する。
+                        // ここでは「閉じる」挙動にする
+                        sec.open = false; 
                     });
                     entryItems.forEach(entry => {
                         entry.style.display = '';
                         const titleLink = entry.querySelector('.entry-title a');
                         const summaryDiv = entry.querySelector('.entry-summary');
-                        titleLink.innerHTML = entry.dataset.originalTitleHtml;
-                        summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
+                        if(titleLink) titleLink.innerHTML = entry.dataset.originalTitleHtml;
+                        if(summaryDiv) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
                     });
                     return;
                 }
@@ -1744,8 +1863,8 @@
                     const sectionEntries = section.querySelectorAll('.entry-item');
 
                     sectionEntries.forEach(entry => {
-                        const titleText = entry.dataset.title.toLowerCase();
-                        const summaryText = entry.dataset.summary.toLowerCase();
+                        const titleText = (entry.dataset.title || '').toLowerCase();
+                        const summaryText = (entry.dataset.summary || '').toLowerCase();
 
                         if (titleText.includes(term) || summaryText.includes(term)) {
                             entry.style.display = '';
@@ -1766,17 +1885,37 @@
             });
 
             function highlightText(entry, term) {
-                const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
-                const highlightMark = '<mark>$1</mark>';
-                const titleLink = entry.querySelector('.entry-title a');
-                titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
-                const summaryDiv = entry.querySelector('.entry-summary');
-                summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
+                try {
+                    const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
+                    const highlightMark = '<mark>$1</mark>';
+                    const titleLink = entry.querySelector('.entry-title a');
+                    const summaryDiv = entry.querySelector('.entry-summary');
+                    
+                    if(titleLink && entry.dataset.originalTitleHtml) {
+                        titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
+                    }
+                    if(summaryDiv && entry.dataset.originalSummaryHtml) {
+                        summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
+                    }
+                } catch(e) { console.error(e); }
             }
 
             function escapeRegExp(string) {
                 return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             }
+
+            // ▼▼▼ トップへ戻るボタン ▼▼▼
+            const backToTopBtn = document.getElementById('backToTop');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
         });
     </script>
 </body>

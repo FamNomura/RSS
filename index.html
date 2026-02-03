@@ -6,16 +6,18 @@
     <title>総合ニュース</title>
     <style>
         :root {
-            --bg-color: #f8f9fa;
+            --bg-color: #f4f6f8;
             --card-bg: #ffffff;
             --text-main: #2c3e50;
             --text-sub: #7f8c8d;
             --accent: #007bff;
+            --accent-hover: #0056b3;
             --new-badge: #e74c3c;
             --border: #e9ecef;
             --highlight: #fff3cd;
-            --read-color: #b0b0b0; /* 既読記事の色 */
+            --read-color: #b0b0b0;
         }
+        html { scroll-behavior: smooth; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: var(--bg-color);
@@ -25,88 +27,193 @@
             line-height: 1.6;
         }
         
+        /* ナビゲーションバー */
         .navbar {
             background-color: #343a40;
-            padding: 0.8rem;
+            padding: 0.8rem 1rem;
             position: sticky;
             top: 0;
             z-index: 1000;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .nav-container {
-            max-width: 800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap; /* スマホで検索窓が落ちるように */
+            gap: 15px;
         }
-        .nav-links { display: flex; gap: 10px; overflow-x: auto; white-space: nowrap; }
+        /* カテゴリが増えても折り返す（横スクロール禁止） */
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap; 
+            gap: 8px;
+        }
         .nav-link {
-            color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 14px; font-weight: 600; opacity: 0.8;
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.85;
+            transition: all 0.2s;
+            background-color: rgba(255,255,255,0.1);
         }
-        .nav-link.active { opacity: 1; background-color: var(--accent); }
+        .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
+        .nav-link.active {
+            opacity: 1;
+            background-color: var(--accent);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
 
-        .search-box { position: relative; flex-grow: 1; max-width: 300px; }
+        /* 検索ボックス */
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 250px;
+        }
         .search-input {
-            width: 100%; padding: 6px 10px; border-radius: 4px; border: none; font-size: 14px; background-color: rgba(255,255,255,0.9); box-sizing: border-box;
+            width: 100%;
+            padding: 6px 10px;
+            border-radius: 20px; /* 丸みをつける */
+            border: none;
+            font-size: 14px;
+            background-color: rgba(255,255,255,0.95);
+            box-sizing: border-box;
+            transition: box-shadow 0.2s;
         }
-        .search-input:focus { outline: 2px solid var(--accent); }
+        .search-input:focus { outline: none; box-shadow: 0 0 0 2px var(--accent); }
 
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        header { margin-bottom: 20px; text-align: center; }
-        h1 { font-size: 22px; margin: 0; color: #333; }
-        .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header { margin-bottom: 25px; text-align: center; }
+        h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
+        .last-updated { font-size: 12px; color: var(--text-sub); }
 
+        /* アコーディオン */
         details {
-            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: box-shadow 0.2s;
         }
+        details:hover { box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
+        
         summary {
-            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff; transition: background 0.2s;
+            list-style: none;
+            cursor: pointer;
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #fff;
+            transition: background 0.2s;
         }
         summary:hover { background-color: #f8f9fa; }
         summary::-webkit-details-marker { display: none; }
         
-        .feed-header { display: flex; align-items: center; gap: 10px; font-size: 16px; }
-        .feed-favicon { width: 16px; height: 16px; border-radius: 2px; }
-        .feed-status { font-size: 12px; color: var(--new-badge); font-weight: normal; }
+        .feed-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+        .feed-favicon { width: 16px; height: 16px; border-radius: 2px; flex-shrink: 0; }
+        .feed-title-text { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* 件数バッジ */
+        .feed-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        .count-badge {
+            background-color: #eee;
+            color: #555;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: normal;
+        }
+        .count-badge.has-new {
+            background-color: #fff0f0;
+            color: var(--new-badge);
+            border: 1px solid #ffcccc;
+        }
 
         .entry-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
         .entry-item {
-            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start; transition: background-color 0.2s;
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            transition: background-color 0.2s;
         }
         .entry-item:last-child { border-bottom: none; }
-
-        /* ▼▼▼ 既読記事のスタイル ▼▼▼ */
-        .entry-item.read {
-            background-color: #fcfcfc;
-        }
-        .entry-item.read .entry-title a {
-            color: var(--read-color);
-        }
-        .entry-item.read .entry-summary {
-            color: #d0d0d0;
-        }
-        .entry-item.read .entry-thumbnail {
-            opacity: 0.5;
-            filter: grayscale(100%);
-        }
-        .entry-item.read .new-badge {
-            background-color: #ccc; /* NEWバッジもグレーに */
-        }
-        /* ▲▲▲ 既読記事のスタイル ▲▲▲ */
         
-        .entry-content-wrapper { flex: 1; min-width: 0; }
-        .entry-thumbnail { width: 100px; height: 75px; object-fit: cover; border-radius: 4px; flex-shrink: 0; border: 1px solid #eee; }
+        /* 既読スタイル */
+        .entry-item.read { background-color: #fafafa; }
+        .entry-item.read .entry-title a { color: var(--read-color); }
+        .entry-item.read .entry-summary { color: #d0d0d0; }
+        .entry-item.read .entry-thumbnail { opacity: 0.4; filter: grayscale(100%); }
+        .entry-item.read .new-badge { background-color: #ccc; }
 
-        .entry-title { font-size: 16px; margin: 0 0 5px 0; line-height: 1.4; }
-        .entry-title a { text-decoration: none; color: var(--text-main); }
+        .entry-content-wrapper { flex: 1; min-width: 0; }
+        .entry-thumbnail {
+            width: 100px; height: 75px; object-fit: cover; border-radius: 6px; flex-shrink: 0; border: 1px solid #eee;
+        }
+
+        .entry-title { font-size: 16px; margin: 0 0 6px 0; line-height: 1.4; }
+        .entry-title a { text-decoration: none; color: var(--text-main); font-weight: bold; }
         .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
         .new-badge {
-            display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold;
+            display: inline-block; background-color: var(--new-badge); color: white;
+            font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px;
+            vertical-align: middle; font-weight: bold; transform: translateY(-1px);
         }
 
-        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; }
+        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; margin-bottom: 4px; }
         .entry-summary {
-            font-size: 13px; color: #555; margin-top: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.8;
+            font-size: 13px; color: #555; margin-top: 5px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden; opacity: 0.9; line-height: 1.5;
         }
         .entry-summary img { display: none; }
+
+        /* 空の状態 */
+        .empty-state { padding: 20px; text-align: center; color: #999; font-size: 13px; }
+
+        /* トップへ戻るボタン */
+        #backToTop {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--accent);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            font-size: 20px;
+            z-index: 2000;
+        }
+        #backToTop.show { opacity: 1; visibility: visible; }
+        #backToTop:hover { background-color: var(--accent-hover); transform: translateY(-3px); }
 
         mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
 
@@ -114,8 +221,10 @@
             .container { padding: 15px 10px; }
             summary { padding: 12px; }
             .entry-thumbnail { width: 80px; height: 60px; }
-            .nav-container { flex-direction: column; align-items: stretch; }
-            .search-box { max-width: 100%; margin-top: 10px; }
+            .nav-container { flex-direction: column; align-items: stretch; gap: 10px; }
+            .search-box { max-width: 100%; }
+            .feed-title-text { font-size: 14px; }
+            .count-badge { font-size: 11px; padding: 1px 6px; }
         }
     </style>
 </head>
@@ -123,6 +232,11 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-links">
+                
+                <a href="topics.html" 
+                   class="nav-link ">
+                    ★トピック★
+                </a>
                 
                 <a href="new.html" 
                    class="nav-link ">
@@ -169,11 +283,6 @@
                     ニュース記事
                 </a>
                 
-                <a href="topics.html" 
-                   class="nav-link ">
-                    ★トピック★
-                </a>
-                
             </div>
             <div class="search-box">
                 <input type="text" id="searchInput" class="search-input" placeholder="キーワード検索...">
@@ -184,48 +293,85 @@
     <div class="container">
         <header>
             <h1>総合ニュース</h1>
-            <div class="last-updated">最終更新: 02/03 12:11</div>
+            <div class="last-updated">最終更新: 02/03 13:03</div>
         </header>
 
         
-        <details class="feed-section">
+
+        
+        <details class="feed-section" >
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=feed.rssad.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>GIGAZINE</span>
+                    <span class="feed-title-text">GIGAZINE</span>
                 </div>
                 
+                <div class="feed-meta">
+                    
+                    <span class="count-badge">0 件</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+                <li class="empty-state">記事がありません</li>
+                
+
                 
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.web.nhk" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>NHKニュース</span>
+                    <span class="feed-title-text">NHKニュース</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 7 / 7</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015041921000" data-title="各地で平年を大幅に上回る積雪 除雪中の事故などに十分注意" data-summary="冬型の気圧配置が緩み、日本海側では3日の午後には雪のやむところが多くなる見込みです。ただ、各地で平年を大幅に上回る積雪となっていて、屋根からの落雪や雪崩、除雪作業中の事故などに十分注意が必要です。政府…">
+
+                
+                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042251000" data-title="山形 最上町 水路で80代女性倒れ 死亡確認 そばに雪かきの道具" data-summary="2日、山形県最上町の住宅街の水路で80代の女性が倒れているのが見つかり、その後、死亡が確認されました。そばには雪かきの道具があったということで、警察は、除雪作業中に転落した可能性もあるとみて調べていま…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.web.nhk/newsweb/na/na-k10015041921000" target="_blank" rel="noopener noreferrer" class="entry-link">各地で平年を大幅に上回る積雪 除雪中の事故などに十分注意</a>
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015042251000" target="_blank" rel="noopener noreferrer" class="entry-link">山形 最上町 水路で80代女性倒れ 死亡確認 そばに雪かきの道具</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>11分前</span>
+                            <span>29分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            2日、山形県最上町の住宅街の水路で80代の女性が倒れているのが見つかり、その後、死亡が確認されました。そばには雪かきの道具があったということで、警察は、除雪作業中に転落した可能性もあるとみて調べていま…
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015041921000" data-title="各地で平年を大幅に上回る積雪 除雪中の事故などに十分注意を" data-summary="冬型の気圧配置が緩み、日本海側では3日の午後には雪のやむところが多くなる見込みです。ただ、各地で平年を大幅に上回る積雪となっていて、屋根からの落雪や雪崩、除雪作業中の事故などに十分注意が必要です。政府…">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015041921000" target="_blank" rel="noopener noreferrer" class="entry-link">各地で平年を大幅に上回る積雪 除雪中の事故などに十分注意を</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>17分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -246,7 +392,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>14分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -257,17 +403,38 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042141000" data-title="株価 一時1700円以上値上がり 円安ドル高を受け" data-summary="3日の東京市場では、アメリカの景気への期待などを背景に1ドル＝155円台半ばまで円安ドル高が進んでいて、これを受けて日経平均株価は一時、1700円を超える大幅な上昇となっています。">
+                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042261000" data-title="沖縄 少女に性的暴行の米兵 懲役5年の実刑判決確定へ 最高裁" data-summary="沖縄のアメリカ軍嘉手納基地に所属する空軍兵が、3年前、面識のない16歳未満の少女に性的暴行をした罪に問われた裁判で、最高裁判所は上告を退ける決定をし、懲役5年の実刑判決が確定することになりました。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.web.nhk/newsweb/na/na-k10015042141000" target="_blank" rel="noopener noreferrer" class="entry-link">株価 一時1700円以上値上がり 円安ドル高を受け</a>
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015042261000" target="_blank" rel="noopener noreferrer" class="entry-link">沖縄 少女に性的暴行の米兵 懲役5年の実刑判決確定へ 最高裁</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>10分前</span>
+                            <span>37分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            沖縄のアメリカ軍嘉手納基地に所属する空軍兵が、3年前、面識のない16歳未満の少女に性的暴行をした罪に問われた裁判で、最高裁判所は上告を退ける決定をし、懲役5年の実刑判決が確定することになりました。
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042141000" data-title="円安ドル高が進む 株価 一時1700円以上値上がり" data-summary="3日の東京市場では、アメリカの景気への期待などを背景に1ドル＝155円台半ばまで円安ドル高が進んでいて、これを受けて日経平均株価は一時、1700円を超える大幅な上昇となっています。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015042141000" target="_blank" rel="noopener noreferrer" class="entry-link">円安ドル高が進む 株価 一時1700円以上値上がり</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -288,7 +455,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>46分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -299,63 +466,21 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042131000" data-title="去年の農林水産物と食品の輸出額 過去最高 13年連続で更新" data-summary="去年1年間の農林水産物と食品の輸出額は1兆7000億円余りと13年連続で過去最高を更新しました。一方、政府が目標としていた2兆円には届かず、アメリカが幅広い品目で関税を上乗せする中、一段の増加に向けて…">
+                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042211000" data-title="ベネズエラ 大統領拘束から1か月 民主的な体制への道筋不透明" data-summary="アメリカのトランプ政権が南米ベネズエラでの軍事作戦でマドゥーロ大統領を拘束してから1か月となります。トランプ政権は、石油資源の開発に意欲を見せる一方、ベネズエラの野党側が求める民主的な体制への道筋は不…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.web.nhk/newsweb/na/na-k10015042131000" target="_blank" rel="noopener noreferrer" class="entry-link">去年の農林水産物と食品の輸出額 過去最高 13年連続で更新</a>
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015042211000" target="_blank" rel="noopener noreferrer" class="entry-link">ベネズエラ 大統領拘束から1か月 民主的な体制への道筋不透明</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>2時間前</span>
+                            <span>41分前</span>
                         </div>
 
                         <div class="entry-summary">
-                            去年1年間の農林水産物と食品の輸出額は1兆7000億円余りと13年連続で過去最高を更新しました。一方、政府が目標としていた2兆円には届かず、アメリカが幅広い品目で関税を上乗せする中、一段の増加に向けて…
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042231000" data-title="米トランプ政権 移民摘発の連邦職員にボディーカメラ配備へ" data-summary="アメリカのトランプ政権は、中西部ミネソタ州のミネアポリスで滞在資格を持たない移民の摘発にあたる連邦職員にボディーカメラを配備する方針を明らかにしました。連邦職員の発砲で市民2人が死亡し、対応が適切では…">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.web.nhk/newsweb/na/na-k10015042231000" target="_blank" rel="noopener noreferrer" class="entry-link">米トランプ政権 移民摘発の連邦職員にボディーカメラ配備へ</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>51分前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            アメリカのトランプ政権は、中西部ミネソタ州のミネアポリスで滞在資格を持たない移民の摘発にあたる連邦職員にボディーカメラを配備する方針を明らかにしました。連邦職員の発砲で市民2人が死亡し、対応が適切では…
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015041951000" data-title="広島の羽月選手 逮捕時も “ゾンビたばこ”エトミデート所持か" data-summary="プロ野球、広島の羽月選手が、指定薬物の「エトミデート」を去年12月に使用したとして逮捕された事件で、選手が先月逮捕された際も使いかけのカートリッジが見つかり、その後の鑑定で「エトミデート」と確認された…">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.web.nhk/newsweb/na/na-k10015041951000" target="_blank" rel="noopener noreferrer" class="entry-link">広島の羽月選手 逮捕時も “ゾンビたばこ”エトミデート所持か</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>7時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            プロ野球、広島の羽月選手が、指定薬物の「エトミデート」を去年12月に使用したとして逮捕された事件で、選手が先月逮捕された際も使いかけのカートリッジが見つかり、その後の鑑定で「エトミデート」と確認された…
+                            アメリカのトランプ政権が南米ベネズエラでの軍事作戦でマドゥーロ大統領を拘束してから1か月となります。トランプ政権は、石油資源の開発に意欲を見せる一方、ベネズエラの野党側が求める民主的な体制への道筋は不…
                         </div>
                     </div>
 
@@ -365,30 +490,33 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=b.hatena.ne.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>はてなブックマーク 人気エントリー</span>
+                    <span class="feed-title-text">はてなブックマーク 人気エントリー</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 8 / 10</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
                 
                 <li class="entry-item" data-link="https://www.mizuhobank.co.jp/forex/pdf/market_analysis/econ2600202.pdf" data-title="みずほマーケット・トピック（2026 年 2 月 2 日） 高市演説を受けて～危うい現状認識～" data-summary="みずほマーケット・トピック（2026 年 2 月 2 日） 高市演説を受けて～危うい現状認識～">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <span class="new-badge">NEW</span>
-                            
                             <a href="https://www.mizuhobank.co.jp/forex/pdf/market_analysis/econ2600202.pdf" target="_blank" rel="noopener noreferrer" class="entry-link">みずほマーケット・トピック（2026 年 2 月 2 日） 高市演説を受けて～危うい現状認識～</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>23時間前</span>
+                            <span>昨日</span>
                         </div>
 
                         <div class="entry-summary">
@@ -411,7 +539,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3時間前</span>
+                            <span>4時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -434,7 +562,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>5時間前</span>
+                            <span>6時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -457,7 +585,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>10時間前</span>
+                            <span>11時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -467,6 +595,52 @@
 
                     
                     <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Ftogetter.com%2Fli%2F2659194" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://anond.hatelabo.jp/20260203085905" data-title="高市のリウマチ" data-summary="高市のリウマチもそうだけど、皆いい子ちゃんで偉いね 病気が理由なんだから仕方ないだろ！揶揄するな！って 私、シンプルにじゃあ病気にすれば今後何があっても追及躱せるな政治家って思っちゃった 年齢層高いんだから持病持ちは多いだろうし、追求するのもセンシティブなら嘘ついたって問題ないだろうな いい子ちゃんでいると気分は...">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://anond.hatelabo.jp/20260203085905" target="_blank" rel="noopener noreferrer" class="entry-link">高市のリウマチ</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            高市のリウマチもそうだけど、皆いい子ちゃんで偉いね 病気が理由なんだから仕方ないだろ！揶揄するな！って 私、シンプルにじゃあ病気にすれば今後何があっても追及躱せるな政治家って思っちゃった 年齢層高いんだから持病持ちは多いだろうし、追求するのもセンシティブなら嘘ついたって問題ないだろうな いい子ちゃんでいると気分は...
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fanond.hatelabo.jp%2F20260203085905" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://www.47news.jp/13810491.html" data-title="【速報】共産・社民が首相の討論欠席に抗議文" data-summary="【速報】共産・社民が首相の討論欠席に抗議文共産党と社民党は2日、高市早苗首相が1日の各党首らによるNHK討論番組への出演を急きょ取りやめたことについて、首相宛てに抗議文を送付した。手を痛めたとの理由だったが、その後に岐阜、愛知両県で街頭演説したと指摘した上で「議論の場から逃げる姿勢に強く抗議する」とした。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.47news.jp/13810491.html" target="_blank" rel="noopener noreferrer" class="entry-link">【速報】共産・社民が首相の討論欠席に抗議文</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>14時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            【速報】共産・社民が首相の討論欠席に抗議文共産党と社民党は2日、高市早苗首相が1日の各党首らによるNHK討論番組への出演を急きょ取りやめたことについて、首相宛てに抗議文を送付した。手を痛めたとの理由だったが、その後に岐阜、愛知両県で街頭演説したと指摘した上で「議論の場から逃げる姿勢に強く抗議する」とした。
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fwww.47news.jp%2F13810491.html" class="entry-thumbnail" loading="lazy" alt="">
                     
                 </li>
                 
@@ -491,26 +665,26 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://www.47news.jp/13810491.html" data-title="【速報】共産・社民が首相の討論欠席に抗議文" data-summary="【速報】共産・社民が首相の討論欠席に抗議文共産党と社民党は2日、高市早苗首相が1日の各党首らによるNHK討論番組への出演を急きょ取りやめたことについて、首相宛てに抗議文を送付した。手を痛めたとの理由だったが、その後に岐阜、愛知両県で街頭演説したと指摘した上で「議論の場から逃げる姿勢に強く抗議する」とした。">
+                <li class="entry-item" data-link="https://zenn.dev/pdfractal/articles/61f676a222d37c" data-title="なぜ、「ウォーターフォールでソフトウェアを作れる」という嘘を信じる人が世の中にいるのか？" data-summary="なぜ、「ウォーターフォールでソフトウェアを作れる」という嘘を信じる人が世の中にいるのか？はじめに 「ウォーターフォールでソフトウェアを作れる」という言説は、現場感覚を持つ人間ほど違和感を覚えるにもかかわらず、一定数の人に強固に信じられ続けています。これは単なる開発手法の好みの問題ではなく、人間のウォーターフォール神話とソフトウェア開発を巡る成功体験、そしてそれを支える認知構造が絡み合...">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://www.47news.jp/13810491.html" target="_blank" rel="noopener noreferrer" class="entry-link">【速報】共産・社民が首相の討論欠席に抗議文</a>
+                            <a href="https://zenn.dev/pdfractal/articles/61f676a222d37c" target="_blank" rel="noopener noreferrer" class="entry-link">なぜ、「ウォーターフォールでソフトウェアを作れる」という嘘を信じる人が世の中にいるのか？</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>13時間前</span>
+                            <span>18時間前</span>
                         </div>
 
                         <div class="entry-summary">
-                            【速報】共産・社民が首相の討論欠席に抗議文共産党と社民党は2日、高市早苗首相が1日の各党首らによるNHK討論番組への出演を急きょ取りやめたことについて、首相宛てに抗議文を送付した。手を痛めたとの理由だったが、その後に岐阜、愛知両県で街頭演説したと指摘した上で「議論の場から逃げる姿勢に強く抗議する」とした。
+                            なぜ、「ウォーターフォールでソフトウェアを作れる」という嘘を信じる人が世の中にいるのか？はじめに 「ウォーターフォールでソフトウェアを作れる」という言説は、現場感覚を持つ人間ほど違和感を覚えるにもかかわらず、一定数の人に強固に信じられ続けています。これは単なる開発手法の好みの問題ではなく、人間のウォーターフォール神話とソフトウェア開発を巡る成功体験、そしてそれを支える認知構造が絡み合...
                         </div>
                     </div>
 
                     
-                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fwww.47news.jp%2F13810491.html" class="entry-thumbnail" loading="lazy" alt="">
+                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fzenn.dev%2Fpdfractal%2Farticles%2F61f676a222d37c" class="entry-thumbnail" loading="lazy" alt="">
                     
                 </li>
                 
@@ -524,7 +698,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>11時間前</span>
+                            <span>12時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -534,29 +708,6 @@
 
                     
                     <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fnews.jp%2Fi%2F1391028626624725718" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://www.nikkei.com/article/DGXZQOUA027KO0S6A200C2000000/" data-title="【衆議院選挙】高市早苗首相「憲法改正やらせてほしい」　 自衛隊の明記に意欲 - 日本経済新聞" data-summary="【衆議院選挙】高市早苗首相「憲法改正やらせてほしい」 自衛隊の明記に意欲 - 日本経済新聞高市早苗首相は2日、自衛隊を明記するための憲法改正に意欲をみせた。衆院選の応援演説で訪れた新潟県上越市内で「彼らの誇りを守り、しっかり実力組織として位置づけるためにも当たり前の憲法改正もやらせてほしい」と述べた。「（国会の）憲法審査会の会長は残念ながら野党だ」と語った。改憲議論を進めるために与党が...">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://www.nikkei.com/article/DGXZQOUA027KO0S6A200C2000000/" target="_blank" rel="noopener noreferrer" class="entry-link">【衆議院選挙】高市早苗首相「憲法改正やらせてほしい」　 自衛隊の明記に意欲 - 日本経済新聞</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>15時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            【衆議院選挙】高市早苗首相「憲法改正やらせてほしい」 自衛隊の明記に意欲 - 日本経済新聞高市早苗首相は2日、自衛隊を明記するための憲法改正に意欲をみせた。衆院選の応援演説で訪れた新潟県上越市内で「彼らの誇りを守り、しっかり実力組織として位置づけるためにも当たり前の憲法改正もやらせてほしい」と述べた。「（国会の）憲法審査会の会長は残念ながら野党だ」と語った。改憲議論を進めるために与党が...
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fwww.nikkei.com%2Farticle%2FDGXZQOUA027KO0S6A200C2000000%2F" class="entry-thumbnail" loading="lazy" alt="">
                     
                 </li>
                 
@@ -570,7 +721,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>11時間前</span>
+                            <span>12時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -583,56 +734,59 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://anond.hatelabo.jp/20260203085905" data-title="高市のリウマチ" data-summary="高市のリウマチもそうだけど、皆いい子ちゃんで偉いね 病気が理由なんだから仕方ないだろ！揶揄するな！って 私、シンプルにじゃあ病気にすれば今後何があっても追及躱せるな政治家って思っちゃった 年齢層高いんだから持病持ちは多いだろうし、追求するのもセンシティブなら嘘ついたって問題ないだろうな いい子ちゃんでいると気分は...">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://anond.hatelabo.jp/20260203085905" target="_blank" rel="noopener noreferrer" class="entry-link">高市のリウマチ</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>2時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            高市のリウマチもそうだけど、皆いい子ちゃんで偉いね 病気が理由なんだから仕方ないだろ！揶揄するな！って 私、シンプルにじゃあ病気にすれば今後何があっても追及躱せるな政治家って思っちゃった 年齢層高いんだから持病持ちは多いだろうし、追求するのもセンシティブなら嘘ついたって問題ないだろうな いい子ちゃんでいると気分は...
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fanond.hatelabo.jp%2F20260203085905" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.web.nhk" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>NHK主要ニュース</span>
+                    <span class="feed-title-text">NHK主要ニュース</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 7 / 7</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015041921000" data-title="各地で平年を大幅に上回る積雪 除雪中の事故などに十分注意" data-summary="冬型の気圧配置が緩み、日本海側では3日の午後には雪のやむところが多くなる見込みです。ただ、各地で平年を大幅に上回る積雪となっていて、屋根からの落雪や雪崩、除雪作業中の事故などに十分注意が必要です。政府…">
+
+                
+                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042251000" data-title="山形 最上町 水路で80代女性倒れ 死亡確認 そばに雪かきの道具" data-summary="2日、山形県最上町の住宅街の水路で80代の女性が倒れているのが見つかり、その後、死亡が確認されました。そばには雪かきの道具があったということで、警察は、除雪作業中に転落した可能性もあるとみて調べていま…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.web.nhk/newsweb/na/na-k10015041921000" target="_blank" rel="noopener noreferrer" class="entry-link">各地で平年を大幅に上回る積雪 除雪中の事故などに十分注意</a>
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015042251000" target="_blank" rel="noopener noreferrer" class="entry-link">山形 最上町 水路で80代女性倒れ 死亡確認 そばに雪かきの道具</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>11分前</span>
+                            <span>29分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            2日、山形県最上町の住宅街の水路で80代の女性が倒れているのが見つかり、その後、死亡が確認されました。そばには雪かきの道具があったということで、警察は、除雪作業中に転落した可能性もあるとみて調べていま…
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015041921000" data-title="各地で平年を大幅に上回る積雪 除雪中の事故などに十分注意を" data-summary="冬型の気圧配置が緩み、日本海側では3日の午後には雪のやむところが多くなる見込みです。ただ、各地で平年を大幅に上回る積雪となっていて、屋根からの落雪や雪崩、除雪作業中の事故などに十分注意が必要です。政府…">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015041921000" target="_blank" rel="noopener noreferrer" class="entry-link">各地で平年を大幅に上回る積雪 除雪中の事故などに十分注意を</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>17分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -653,7 +807,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>14分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -664,17 +818,38 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042141000" data-title="株価 一時1700円以上値上がり 円安ドル高を受け" data-summary="3日の東京市場では、アメリカの景気への期待などを背景に1ドル＝155円台半ばまで円安ドル高が進んでいて、これを受けて日経平均株価は一時、1700円を超える大幅な上昇となっています。">
+                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042261000" data-title="沖縄 少女に性的暴行の米兵 懲役5年の実刑判決確定へ 最高裁" data-summary="沖縄のアメリカ軍嘉手納基地に所属する空軍兵が、3年前、面識のない16歳未満の少女に性的暴行をした罪に問われた裁判で、最高裁判所は上告を退ける決定をし、懲役5年の実刑判決が確定することになりました。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.web.nhk/newsweb/na/na-k10015042141000" target="_blank" rel="noopener noreferrer" class="entry-link">株価 一時1700円以上値上がり 円安ドル高を受け</a>
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015042261000" target="_blank" rel="noopener noreferrer" class="entry-link">沖縄 少女に性的暴行の米兵 懲役5年の実刑判決確定へ 最高裁</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>10分前</span>
+                            <span>37分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            沖縄のアメリカ軍嘉手納基地に所属する空軍兵が、3年前、面識のない16歳未満の少女に性的暴行をした罪に問われた裁判で、最高裁判所は上告を退ける決定をし、懲役5年の実刑判決が確定することになりました。
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042141000" data-title="円安ドル高が進む 株価 一時1700円以上値上がり" data-summary="3日の東京市場では、アメリカの景気への期待などを背景に1ドル＝155円台半ばまで円安ドル高が進んでいて、これを受けて日経平均株価は一時、1700円を超える大幅な上昇となっています。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015042141000" target="_blank" rel="noopener noreferrer" class="entry-link">円安ドル高が進む 株価 一時1700円以上値上がり</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -695,7 +870,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>46分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -706,63 +881,21 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042131000" data-title="去年の農林水産物と食品の輸出額 過去最高 13年連続で更新" data-summary="去年1年間の農林水産物と食品の輸出額は1兆7000億円余りと13年連続で過去最高を更新しました。一方、政府が目標としていた2兆円には届かず、アメリカが幅広い品目で関税を上乗せする中、一段の増加に向けて…">
+                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042211000" data-title="ベネズエラ 大統領拘束から1か月 民主的な体制への道筋不透明" data-summary="アメリカのトランプ政権が南米ベネズエラでの軍事作戦でマドゥーロ大統領を拘束してから1か月となります。トランプ政権は、石油資源の開発に意欲を見せる一方、ベネズエラの野党側が求める民主的な体制への道筋は不…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.web.nhk/newsweb/na/na-k10015042131000" target="_blank" rel="noopener noreferrer" class="entry-link">去年の農林水産物と食品の輸出額 過去最高 13年連続で更新</a>
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015042211000" target="_blank" rel="noopener noreferrer" class="entry-link">ベネズエラ 大統領拘束から1か月 民主的な体制への道筋不透明</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>2時間前</span>
+                            <span>41分前</span>
                         </div>
 
                         <div class="entry-summary">
-                            去年1年間の農林水産物と食品の輸出額は1兆7000億円余りと13年連続で過去最高を更新しました。一方、政府が目標としていた2兆円には届かず、アメリカが幅広い品目で関税を上乗せする中、一段の増加に向けて…
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042231000" data-title="米トランプ政権 移民摘発の連邦職員にボディーカメラ配備へ" data-summary="アメリカのトランプ政権は、中西部ミネソタ州のミネアポリスで滞在資格を持たない移民の摘発にあたる連邦職員にボディーカメラを配備する方針を明らかにしました。連邦職員の発砲で市民2人が死亡し、対応が適切では…">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.web.nhk/newsweb/na/na-k10015042231000" target="_blank" rel="noopener noreferrer" class="entry-link">米トランプ政権 移民摘発の連邦職員にボディーカメラ配備へ</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>51分前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            アメリカのトランプ政権は、中西部ミネソタ州のミネアポリスで滞在資格を持たない移民の摘発にあたる連邦職員にボディーカメラを配備する方針を明らかにしました。連邦職員の発砲で市民2人が死亡し、対応が適切では…
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015041951000" data-title="広島の羽月選手 逮捕時も “ゾンビたばこ”エトミデート所持か" data-summary="プロ野球、広島の羽月選手が、指定薬物の「エトミデート」を去年12月に使用したとして逮捕された事件で、選手が先月逮捕された際も使いかけのカートリッジが見つかり、その後の鑑定で「エトミデート」と確認された…">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.web.nhk/newsweb/na/na-k10015041951000" target="_blank" rel="noopener noreferrer" class="entry-link">広島の羽月選手 逮捕時も “ゾンビたばこ”エトミデート所持か</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>7時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            プロ野球、広島の羽月選手が、指定薬物の「エトミデート」を去年12月に使用したとして逮捕された事件で、選手が先月逮捕された際も使いかけのカートリッジが見つかり、その後の鑑定で「エトミデート」と確認された…
+                            アメリカのトランプ政権が南米ベネズエラでの軍事作戦でマドゥーロ大統領を拘束してから1か月となります。トランプ政権は、石油資源の開発に意欲を見せる一方、ベネズエラの野党側が求める民主的な体制への道筋は不…
                         </div>
                     </div>
 
@@ -772,34 +905,102 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.web.nhk" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>NHKニュース 社会</span>
+                    <span class="feed-title-text">NHKニュース 社会</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 10 / 10</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015041921000" data-title="各地で平年を大幅に上回る積雪 除雪中の事故などに十分注意" data-summary="冬型の気圧配置が緩み、日本海側では3日の午後には雪のやむところが多くなる見込みです。ただ、各地で平年を大幅に上回る積雪となっていて、屋根からの落雪や雪崩、除雪作業中の事故などに十分注意が必要です。政府…">
+
+                
+                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015041921000" data-title="各地で平年を大幅に上回る積雪 除雪中の事故などに十分注意を" data-summary="冬型の気圧配置が緩み、日本海側では3日の午後には雪のやむところが多くなる見込みです。ただ、各地で平年を大幅に上回る積雪となっていて、屋根からの落雪や雪崩、除雪作業中の事故などに十分注意が必要です。政府…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.web.nhk/newsweb/na/na-k10015041921000" target="_blank" rel="noopener noreferrer" class="entry-link">各地で平年を大幅に上回る積雪 除雪中の事故などに十分注意</a>
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015041921000" target="_blank" rel="noopener noreferrer" class="entry-link">各地で平年を大幅に上回る積雪 除雪中の事故などに十分注意を</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>11分前</span>
+                            <span>17分前</span>
                         </div>
 
                         <div class="entry-summary">
                             冬型の気圧配置が緩み、日本海側では3日の午後には雪のやむところが多くなる見込みです。ただ、各地で平年を大幅に上回る積雪となっていて、屋根からの落雪や雪崩、除雪作業中の事故などに十分注意が必要です。政府…
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042251000" data-title="山形 最上町 水路で80代女性倒れ 死亡確認 そばに雪かきの道具" data-summary="2日、山形県最上町の住宅街の水路で80代の女性が倒れているのが見つかり、その後、死亡が確認されました。そばには雪かきの道具があったということで、警察は、除雪作業中に転落した可能性もあるとみて調べていま…">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015042251000" target="_blank" rel="noopener noreferrer" class="entry-link">山形 最上町 水路で80代女性倒れ 死亡確認 そばに雪かきの道具</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>29分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            2日、山形県最上町の住宅街の水路で80代の女性が倒れているのが見つかり、その後、死亡が確認されました。そばには雪かきの道具があったということで、警察は、除雪作業中に転落した可能性もあるとみて調べていま…
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042261000" data-title="沖縄 少女に性的暴行の米兵 懲役5年の実刑判決確定へ 最高裁" data-summary="沖縄のアメリカ軍嘉手納基地に所属する空軍兵が、3年前、面識のない16歳未満の少女に性的暴行をした罪に問われた裁判で、最高裁判所は上告を退ける決定をし、懲役5年の実刑判決が確定することになりました。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015042261000" target="_blank" rel="noopener noreferrer" class="entry-link">沖縄 少女に性的暴行の米兵 懲役5年の実刑判決確定へ 最高裁</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>37分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            沖縄のアメリカ軍嘉手納基地に所属する空軍兵が、3年前、面識のない16歳未満の少女に性的暴行をした罪に問われた裁判で、最高裁判所は上告を退ける決定をし、懲役5年の実刑判決が確定することになりました。
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042221000" data-title="【動画】気象予報士解説 今後の雪の見通しは(3日正午前)" data-summary="冬型の気圧配置が緩み、日本海側では3日の午後には雪のやむところが多くなる見込みです。ただ、各地で平年を大幅に上回る積雪となっていて、屋根からの落雪や雪崩、除雪作業中の事故などに十分注意が必要です。気象…">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015042221000" target="_blank" rel="noopener noreferrer" class="entry-link">【動画】気象予報士解説 今後の雪の見通しは(3日正午前)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>49分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            冬型の気圧配置が緩み、日本海側では3日の午後には雪のやむところが多くなる見込みです。ただ、各地で平年を大幅に上回る積雪となっていて、屋根からの落雪や雪崩、除雪作業中の事故などに十分注意が必要です。気象…
                         </div>
                     </div>
 
@@ -816,7 +1017,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>14分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -837,7 +1038,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>46分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -858,7 +1059,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>2時間前</span>
+                            <span>3時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -900,7 +1101,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>7時間前</span>
+                            <span>8時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -921,7 +1122,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>13時間前</span>
+                            <span>14時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -932,84 +1133,26 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015041941000" data-title="能登半島地震から2年で奥能登地域の人口14.1％減少" data-summary="先月1日で能登半島地震の発生から2年がたちましたが、大きな被害を受けた石川県の奥能登地域の4つの市と町では、この2年間で人口が14.1％減少していたことが石川県の推計でわかりました。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.web.nhk/newsweb/na/na-k10015041941000" target="_blank" rel="noopener noreferrer" class="entry-link">能登半島地震から2年で奥能登地域の人口14.1％減少</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>13時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            先月1日で能登半島地震の発生から2年がたちましたが、大きな被害を受けた石川県の奥能登地域の4つの市と町では、この2年間で人口が14.1％減少していたことが石川県の推計でわかりました。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015041761000" data-title="再審制度見直しへ要綱案まとまる えん罪被害者支援団体抗議" data-summary="再審＝裁判のやり直しの制度の見直しに向けた法制審議会の部会は、再審請求理由に関連する証拠を開示の対象とする規定を新設するなどとした要綱案をまとめました。焦点の1つとなった、弁護士の委員が必要性を主張し…">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.web.nhk/newsweb/na/na-k10015041761000" target="_blank" rel="noopener noreferrer" class="entry-link">再審制度見直しへ要綱案まとまる えん罪被害者支援団体抗議</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>13時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            再審＝裁判のやり直しの制度の見直しに向けた法制審議会の部会は、再審請求理由に関連する証拠を開示の対象とする規定を新設するなどとした要綱案をまとめました。焦点の1つとなった、弁護士の委員が必要性を主張し…
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015041821000" data-title="中部電力 9か月間決算で117億円の費用計上 浜岡原発問題に関連" data-summary="中部電力は、浜岡原子力発電所の再稼働の前提となる審査で地震の想定を過小評価していた疑いがある問題に関連し、去年12月までの9か月間の決算で、117億円の費用を計上したと発表しました。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.web.nhk/newsweb/na/na-k10015041821000" target="_blank" rel="noopener noreferrer" class="entry-link">中部電力 9か月間決算で117億円の費用計上 浜岡原発問題に関連</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>15時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            中部電力は、浜岡原子力発電所の再稼働の前提となる審査で地震の想定を過小評価していた疑いがある問題に関連し、去年12月までの9か月間の決算で、117億円の費用を計上したと発表しました。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.web.nhk" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>NHKニュース 文化</span>
+                    <span class="feed-title-text">NHKニュース 文化</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 2 / 9</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
                 
                 <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015041781000" data-title="カルビー “6月から値上げ” ポテトチップスなど17品目" data-summary="大手菓子メーカーのカルビーはスナック菓子の一部の商品をことし6月から値上げすると発表しました。ジャガイモなどの原材料価格が上昇したためだとしていて、主力の菓子で値上げが続いています。">
                     <div class="entry-content-wrapper">
@@ -1021,7 +1164,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>18時間前</span>
+                            <span>19時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1042,7 +1185,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>19時間前</span>
+                            <span>20時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1057,13 +1200,11 @@
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
-                            <span class="new-badge">NEW</span>
-                            
                             <a href="https://news.web.nhk/newsweb/na/na-k10015040431000" target="_blank" rel="noopener noreferrer" class="entry-link">1週間ニュース 衆議院選挙 「解散」って? なぜ任期の途中に?</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>23時間前</span>
+                            <span>昨日</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1191,18 +1332,23 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.web.nhk" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>NHKニュース 科学・医療</span>
+                    <span class="feed-title-text">NHKニュース 科学・医療</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 2 / 10</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
                 
                 <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015041381000" data-title="南鳥島沖 水深約5700mの海底からレアアース含む泥の採掘に成功" data-summary="日本の排他的経済水域である南鳥島沖の海底からレアアースを含んだ泥を採掘する試験を行っている内閣府のプロジェクトは、探査船「ちきゅう」を使って水深およそ5700メートルの海底から泥を引き上げることに成功…">
                     <div class="entry-content-wrapper">
@@ -1214,7 +1360,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>18時間前</span>
+                            <span>19時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1235,7 +1381,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>22時間前</span>
+                            <span>23時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1401,18 +1547,44 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.web.nhk" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>NHKニュース 政治</span>
+                    <span class="feed-title-text">NHKニュース 政治</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 10 / 10</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
+                
+                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042291000" data-title="UAE大統領の国賓としての訪日 UAE側の意向で延期 木原官房長官" data-summary="木原官房長官は来週、予定されていたUAE＝アラブ首長国連邦のムハンマド大統領の国賓としての日本訪問について、UAE側の意向で延期されることになったと発表しました。緊迫化するイラン情勢が影響しているとみ…">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015042291000" target="_blank" rel="noopener noreferrer" class="entry-link">UAE大統領の国賓としての訪日 UAE側の意向で延期 木原官房長官</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>8分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            木原官房長官は来週、予定されていたUAE＝アラブ首長国連邦のムハンマド大統領の国賓としての日本訪問について、UAE側の意向で延期されることになったと発表しました。緊迫化するイラン情勢が影響しているとみ…
+                        </div>
+                    </div>
+
+                    
+                </li>
                 
                 <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042111000" data-title="東京都「転入超過」6万5000人余 総務省“一極集中の傾向続く”" data-summary="東京都の去年の人口は、転入が転出を上回る「転入超過」が6万5000人余りでした。調査をまとめた総務省は「依然、東京一極集中の傾向が続いている」としています。">
                     <div class="entry-content-wrapper">
@@ -1424,7 +1596,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>46分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1445,7 +1617,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>2時間前</span>
+                            <span>3時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1466,7 +1638,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>9時間前</span>
+                            <span>10時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1487,7 +1659,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>15時間前</span>
+                            <span>16時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1508,7 +1680,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>15時間前</span>
+                            <span>16時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1529,7 +1701,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>15時間前</span>
+                            <span>16時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1550,7 +1722,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>17時間前</span>
+                            <span>18時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1571,7 +1743,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>22時間前</span>
+                            <span>23時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1603,42 +1775,47 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015040431000" data-title="1週間ニュース 衆議院選挙 「解散」って? なぜ任期の途中に?" data-summary="放送日（1月31日）までの1週間のニュースをふり返ります。">
+            </ul>
+        </details>
+        
+        <details class="feed-section" open>
+            <summary>
+                <div class="feed-info">
+                    <img src="https://www.google.com/s2/favicons?domain=news.web.nhk" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span class="feed-title-text">NHKニュース 経済</span>
+                </div>
+                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 10 / 10</span>
+                    
+                </div>
+            </summary>
+            
+            <ul class="entry-list">
+                
+
+                
+                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042171000" data-title="【きょうのおはBiz 2月3日(火)】" data-summary="NHKニュース「おはよう日本」で平日朝に放送している経済ニュースコーナー「おはBiz」。最新のビジネストレンドや働き方、お役立ちサービスやスタートアップ企業の情報など、ギュギュっとコンパクトにお届けし…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.web.nhk/newsweb/na/na-k10015040431000" target="_blank" rel="noopener noreferrer" class="entry-link">1週間ニュース 衆議院選挙 「解散」って? なぜ任期の途中に?</a>
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015042171000" target="_blank" rel="noopener noreferrer" class="entry-link">【きょうのおはBiz 2月3日(火)】</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>23時間前</span>
+                            <span>41分前</span>
                         </div>
 
                         <div class="entry-summary">
-                            放送日（1月31日）までの1週間のニュースをふり返ります。
+                            NHKニュース「おはよう日本」で平日朝に放送している経済ニュースコーナー「おはBiz」。最新のビジネストレンドや働き方、お役立ちサービスやスタートアップ企業の情報など、ギュギュっとコンパクトにお届けし…
                         </div>
                     </div>
 
                     
                 </li>
-                
-            </ul>
-        </details>
-        
-        <details class="feed-section">
-            <summary>
-                <div class="feed-header">
-                    <img src="https://www.google.com/s2/favicons?domain=news.web.nhk" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>NHKニュース 経済</span>
-                </div>
-                
-                <span class="feed-status">● New</span>
-                
-            </summary>
-            
-            <ul class="entry-list">
                 
                 <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042141000" data-title="円安ドル高が進む 株価 一時1700円以上値上がり" data-summary="3日の東京市場では、アメリカの景気への期待などを背景に1ドル＝155円台半ばまで円安ドル高が進んでいて、これを受けて日経平均株価は一時、1700円を超える大幅な上昇となっています。">
                     <div class="entry-content-wrapper">
@@ -1650,7 +1827,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>10分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1671,7 +1848,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1713,7 +1890,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3時間前</span>
+                            <span>4時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1734,7 +1911,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>5時間前</span>
+                            <span>6時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1755,7 +1932,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>12時間前</span>
+                            <span>13時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1776,7 +1953,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>15時間前</span>
+                            <span>16時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1797,7 +1974,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>15時間前</span>
+                            <span>16時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1818,7 +1995,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>16時間前</span>
+                            <span>17時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1829,42 +2006,47 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015041851000" data-title="三井住友とみずほFG 9か月間の決算 最終利益1兆円超 過去最高" data-summary="大手金融グループの三井住友フィナンシャルグループとみずほフィナンシャルグループは、金利の上昇で利息収入が伸びたことなどを背景に去年12月までの9か月間の決算で、最終的な利益がそれぞれ1兆円を超え、過去…">
+            </ul>
+        </details>
+        
+        <details class="feed-section" open>
+            <summary>
+                <div class="feed-info">
+                    <img src="https://www.google.com/s2/favicons?domain=news.web.nhk" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span class="feed-title-text">NHKニュース 国際</span>
+                </div>
+                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 10 / 10</span>
+                    
+                </div>
+            </summary>
+            
+            <ul class="entry-list">
+                
+
+                
+                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042211000" data-title="ベネズエラ 大統領拘束から1か月 民主的な体制への道筋不透明" data-summary="アメリカのトランプ政権が南米ベネズエラでの軍事作戦でマドゥーロ大統領を拘束してから1か月となります。トランプ政権は、石油資源の開発に意欲を見せる一方、ベネズエラの野党側が求める民主的な体制への道筋は不…">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.web.nhk/newsweb/na/na-k10015041851000" target="_blank" rel="noopener noreferrer" class="entry-link">三井住友とみずほFG 9か月間の決算 最終利益1兆円超 過去最高</a>
+                            <a href="https://news.web.nhk/newsweb/na/na-k10015042211000" target="_blank" rel="noopener noreferrer" class="entry-link">ベネズエラ 大統領拘束から1か月 民主的な体制への道筋不透明</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>17時間前</span>
+                            <span>41分前</span>
                         </div>
 
                         <div class="entry-summary">
-                            大手金融グループの三井住友フィナンシャルグループとみずほフィナンシャルグループは、金利の上昇で利息収入が伸びたことなどを背景に去年12月までの9か月間の決算で、最終的な利益がそれぞれ1兆円を超え、過去…
+                            アメリカのトランプ政権が南米ベネズエラでの軍事作戦でマドゥーロ大統領を拘束してから1か月となります。トランプ政権は、石油資源の開発に意欲を見せる一方、ベネズエラの野党側が求める民主的な体制への道筋は不…
                         </div>
                     </div>
 
                     
                 </li>
-                
-            </ul>
-        </details>
-        
-        <details class="feed-section">
-            <summary>
-                <div class="feed-header">
-                    <img src="https://www.google.com/s2/favicons?domain=news.web.nhk" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>NHKニュース 国際</span>
-                </div>
-                
-                <span class="feed-status">● New</span>
-                
-            </summary>
-            
-            <ul class="entry-list">
                 
                 <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042271000" data-title="トランプ大統領 重要鉱物の民間企業利用へ備蓄制度開始を発表" data-summary="アメリカのトランプ大統領は、レアアースなどの重要鉱物を民間企業で利用するために日本円でおよそ1兆9000億円をかけて備蓄する制度を始めると発表しました。この取り組みにより中国への依存度や緊急時のリスク…">
                     <div class="entry-content-wrapper">
@@ -1876,7 +2058,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>26分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1897,7 +2079,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>51分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1918,7 +2100,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1939,7 +2121,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3時間前</span>
+                            <span>4時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1960,7 +2142,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3時間前</span>
+                            <span>4時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1981,7 +2163,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>5時間前</span>
+                            <span>6時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2002,7 +2184,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>5時間前</span>
+                            <span>6時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2023,7 +2205,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>5時間前</span>
+                            <span>6時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2044,7 +2226,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>6時間前</span>
+                            <span>7時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2055,42 +2237,26 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042041000" data-title="ゼレンスキー大統領 エネルギー施設復旧急ぐ 厳寒も暖房使えず" data-summary="ウクライナのゼレンスキー大統領は、ロシアが攻撃の重点を鉄道などに移していると指摘する一方、厳しい寒さの中、暖房が使えないままの住宅も多いとして、エネルギー施設の復旧を急ぐ考えを示しました。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.web.nhk/newsweb/na/na-k10015042041000" target="_blank" rel="noopener noreferrer" class="entry-link">ゼレンスキー大統領 エネルギー施設復旧急ぐ 厳寒も暖房使えず</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>6時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            ウクライナのゼレンスキー大統領は、ロシアが攻撃の重点を鉄道などに移していると指摘する一方、厳しい寒さの中、暖房が使えないままの住宅も多いとして、エネルギー施設の復旧を急ぐ考えを示しました。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.web.nhk" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>NHKニュース スポーツ</span>
+                    <span class="feed-title-text">NHKニュース スポーツ</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 10 / 10</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
                 
                 <li class="entry-item" data-link="https://news.web.nhk/newsweb/na/na-k10015042081000" data-title="フィギュア 坂本花織 五輪リンクで初練習 「いい練習できた」" data-summary="ミラノ・コルティナオリンピックでメダル獲得が期待されるフィギュアスケート女子シングルの日本のエース、坂本花織選手が試合会場のリンクで初めて練習を行い、3連続ジャンプをスムーズに着氷するなど順調な調整ぶ…">
                     <div class="entry-content-wrapper">
@@ -2102,7 +2268,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>2時間前</span>
+                            <span>3時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2186,7 +2352,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>14時間前</span>
+                            <span>15時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2207,7 +2373,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>15時間前</span>
+                            <span>16時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2228,7 +2394,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>15時間前</span>
+                            <span>16時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2249,7 +2415,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>19時間前</span>
+                            <span>20時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2270,7 +2436,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>21時間前</span>
+                            <span>22時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2291,7 +2457,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>21時間前</span>
+                            <span>22時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2305,56 +2471,51 @@
             </ul>
         </details>
         
-        
     </div>
+
+    <div id="backToTop" title="トップへ戻る">↑</div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // ▼▼▼ 既読管理機能 ▼▼▼
             const STORAGE_KEY = 'rss_read_items';
-            // LocalStorageから既読リストを取得 (Setで管理して高速化)
             let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
-
             const entryItems = document.querySelectorAll('.entry-item');
             
-            // 初期表示: 既読状態の反映
             entryItems.forEach(item => {
                 const link = item.dataset.link;
                 if (readItems.has(link)) {
                     item.classList.add('read');
                 }
-                
-                // クリックイベントの登録
                 const anchor = item.querySelector('a.entry-link');
-                anchor.addEventListener('click', function() {
-                    markAsRead(link, item);
-                });
+                if(anchor) {
+                    anchor.addEventListener('click', function() {
+                        markAsRead(link, item);
+                    });
+                }
             });
 
             function markAsRead(link, itemElement) {
-                // UIを即座に更新
                 itemElement.classList.add('read');
-                
-                // ストレージに保存
                 readItems.add(link);
-                // 容量制限のため、古いものから消す (最大1000件保持)
                 if (readItems.size > 1000) {
                     const array = Array.from(readItems);
                     readItems = new Set(array.slice(array.length - 1000));
                 }
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
             }
-            // ▲▲▲ 既読管理機能 ▲▲▲
 
-            // 検索機能
+            // ▼▼▼ 検索機能 ▼▼▼
             const searchInput = document.getElementById('searchInput');
             const sections = document.querySelectorAll('.feed-section');
 
             entryItems.forEach(entry => {
                 const titleLink = entry.querySelector('.entry-title a');
                 const summaryDiv = entry.querySelector('.entry-summary');
-                entry.dataset.originalTitleHtml = titleLink.innerHTML;
-                entry.dataset.originalSummaryHtml = summaryDiv.innerHTML;
+                if(titleLink && summaryDiv){
+                    entry.dataset.originalTitleHtml = titleLink.innerHTML;
+                    entry.dataset.originalSummaryHtml = summaryDiv.innerHTML;
+                }
             });
 
             searchInput.addEventListener('input', function(e) {
@@ -2363,14 +2524,17 @@
                 if (term === '') {
                     sections.forEach(sec => {
                         sec.style.display = '';
-                        sec.open = false;
+                        // 検索解除時は「新着があるものだけ開く」状態に戻したいが、
+                        // 簡易的に全て閉じる、または今の状態を維持する。
+                        // ここでは「閉じる」挙動にする
+                        sec.open = false; 
                     });
                     entryItems.forEach(entry => {
                         entry.style.display = '';
                         const titleLink = entry.querySelector('.entry-title a');
                         const summaryDiv = entry.querySelector('.entry-summary');
-                        titleLink.innerHTML = entry.dataset.originalTitleHtml;
-                        summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
+                        if(titleLink) titleLink.innerHTML = entry.dataset.originalTitleHtml;
+                        if(summaryDiv) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
                     });
                     return;
                 }
@@ -2380,8 +2544,8 @@
                     const sectionEntries = section.querySelectorAll('.entry-item');
 
                     sectionEntries.forEach(entry => {
-                        const titleText = entry.dataset.title.toLowerCase();
-                        const summaryText = entry.dataset.summary.toLowerCase();
+                        const titleText = (entry.dataset.title || '').toLowerCase();
+                        const summaryText = (entry.dataset.summary || '').toLowerCase();
 
                         if (titleText.includes(term) || summaryText.includes(term)) {
                             entry.style.display = '';
@@ -2402,17 +2566,37 @@
             });
 
             function highlightText(entry, term) {
-                const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
-                const highlightMark = '<mark>$1</mark>';
-                const titleLink = entry.querySelector('.entry-title a');
-                titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
-                const summaryDiv = entry.querySelector('.entry-summary');
-                summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
+                try {
+                    const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
+                    const highlightMark = '<mark>$1</mark>';
+                    const titleLink = entry.querySelector('.entry-title a');
+                    const summaryDiv = entry.querySelector('.entry-summary');
+                    
+                    if(titleLink && entry.dataset.originalTitleHtml) {
+                        titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
+                    }
+                    if(summaryDiv && entry.dataset.originalSummaryHtml) {
+                        summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
+                    }
+                } catch(e) { console.error(e); }
             }
 
             function escapeRegExp(string) {
                 return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             }
+
+            // ▼▼▼ トップへ戻るボタン ▼▼▼
+            const backToTopBtn = document.getElementById('backToTop');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
         });
     </script>
 </body>

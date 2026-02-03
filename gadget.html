@@ -6,16 +6,18 @@
     <title>ガジェット・モノ</title>
     <style>
         :root {
-            --bg-color: #f8f9fa;
+            --bg-color: #f4f6f8;
             --card-bg: #ffffff;
             --text-main: #2c3e50;
             --text-sub: #7f8c8d;
             --accent: #007bff;
+            --accent-hover: #0056b3;
             --new-badge: #e74c3c;
             --border: #e9ecef;
             --highlight: #fff3cd;
-            --read-color: #b0b0b0; /* 既読記事の色 */
+            --read-color: #b0b0b0;
         }
+        html { scroll-behavior: smooth; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: var(--bg-color);
@@ -25,88 +27,193 @@
             line-height: 1.6;
         }
         
+        /* ナビゲーションバー */
         .navbar {
             background-color: #343a40;
-            padding: 0.8rem;
+            padding: 0.8rem 1rem;
             position: sticky;
             top: 0;
             z-index: 1000;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .nav-container {
-            max-width: 800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap; /* スマホで検索窓が落ちるように */
+            gap: 15px;
         }
-        .nav-links { display: flex; gap: 10px; overflow-x: auto; white-space: nowrap; }
+        /* カテゴリが増えても折り返す（横スクロール禁止） */
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap; 
+            gap: 8px;
+        }
         .nav-link {
-            color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 14px; font-weight: 600; opacity: 0.8;
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.85;
+            transition: all 0.2s;
+            background-color: rgba(255,255,255,0.1);
         }
-        .nav-link.active { opacity: 1; background-color: var(--accent); }
+        .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
+        .nav-link.active {
+            opacity: 1;
+            background-color: var(--accent);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
 
-        .search-box { position: relative; flex-grow: 1; max-width: 300px; }
+        /* 検索ボックス */
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 250px;
+        }
         .search-input {
-            width: 100%; padding: 6px 10px; border-radius: 4px; border: none; font-size: 14px; background-color: rgba(255,255,255,0.9); box-sizing: border-box;
+            width: 100%;
+            padding: 6px 10px;
+            border-radius: 20px; /* 丸みをつける */
+            border: none;
+            font-size: 14px;
+            background-color: rgba(255,255,255,0.95);
+            box-sizing: border-box;
+            transition: box-shadow 0.2s;
         }
-        .search-input:focus { outline: 2px solid var(--accent); }
+        .search-input:focus { outline: none; box-shadow: 0 0 0 2px var(--accent); }
 
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        header { margin-bottom: 20px; text-align: center; }
-        h1 { font-size: 22px; margin: 0; color: #333; }
-        .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header { margin-bottom: 25px; text-align: center; }
+        h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
+        .last-updated { font-size: 12px; color: var(--text-sub); }
 
+        /* アコーディオン */
         details {
-            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: box-shadow 0.2s;
         }
+        details:hover { box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
+        
         summary {
-            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff; transition: background 0.2s;
+            list-style: none;
+            cursor: pointer;
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #fff;
+            transition: background 0.2s;
         }
         summary:hover { background-color: #f8f9fa; }
         summary::-webkit-details-marker { display: none; }
         
-        .feed-header { display: flex; align-items: center; gap: 10px; font-size: 16px; }
-        .feed-favicon { width: 16px; height: 16px; border-radius: 2px; }
-        .feed-status { font-size: 12px; color: var(--new-badge); font-weight: normal; }
+        .feed-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+        .feed-favicon { width: 16px; height: 16px; border-radius: 2px; flex-shrink: 0; }
+        .feed-title-text { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* 件数バッジ */
+        .feed-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        .count-badge {
+            background-color: #eee;
+            color: #555;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: normal;
+        }
+        .count-badge.has-new {
+            background-color: #fff0f0;
+            color: var(--new-badge);
+            border: 1px solid #ffcccc;
+        }
 
         .entry-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
         .entry-item {
-            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start; transition: background-color 0.2s;
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            transition: background-color 0.2s;
         }
         .entry-item:last-child { border-bottom: none; }
-
-        /* ▼▼▼ 既読記事のスタイル ▼▼▼ */
-        .entry-item.read {
-            background-color: #fcfcfc;
-        }
-        .entry-item.read .entry-title a {
-            color: var(--read-color);
-        }
-        .entry-item.read .entry-summary {
-            color: #d0d0d0;
-        }
-        .entry-item.read .entry-thumbnail {
-            opacity: 0.5;
-            filter: grayscale(100%);
-        }
-        .entry-item.read .new-badge {
-            background-color: #ccc; /* NEWバッジもグレーに */
-        }
-        /* ▲▲▲ 既読記事のスタイル ▲▲▲ */
         
-        .entry-content-wrapper { flex: 1; min-width: 0; }
-        .entry-thumbnail { width: 100px; height: 75px; object-fit: cover; border-radius: 4px; flex-shrink: 0; border: 1px solid #eee; }
+        /* 既読スタイル */
+        .entry-item.read { background-color: #fafafa; }
+        .entry-item.read .entry-title a { color: var(--read-color); }
+        .entry-item.read .entry-summary { color: #d0d0d0; }
+        .entry-item.read .entry-thumbnail { opacity: 0.4; filter: grayscale(100%); }
+        .entry-item.read .new-badge { background-color: #ccc; }
 
-        .entry-title { font-size: 16px; margin: 0 0 5px 0; line-height: 1.4; }
-        .entry-title a { text-decoration: none; color: var(--text-main); }
+        .entry-content-wrapper { flex: 1; min-width: 0; }
+        .entry-thumbnail {
+            width: 100px; height: 75px; object-fit: cover; border-radius: 6px; flex-shrink: 0; border: 1px solid #eee;
+        }
+
+        .entry-title { font-size: 16px; margin: 0 0 6px 0; line-height: 1.4; }
+        .entry-title a { text-decoration: none; color: var(--text-main); font-weight: bold; }
         .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
         .new-badge {
-            display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold;
+            display: inline-block; background-color: var(--new-badge); color: white;
+            font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px;
+            vertical-align: middle; font-weight: bold; transform: translateY(-1px);
         }
 
-        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; }
+        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; margin-bottom: 4px; }
         .entry-summary {
-            font-size: 13px; color: #555; margin-top: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.8;
+            font-size: 13px; color: #555; margin-top: 5px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden; opacity: 0.9; line-height: 1.5;
         }
         .entry-summary img { display: none; }
+
+        /* 空の状態 */
+        .empty-state { padding: 20px; text-align: center; color: #999; font-size: 13px; }
+
+        /* トップへ戻るボタン */
+        #backToTop {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--accent);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            font-size: 20px;
+            z-index: 2000;
+        }
+        #backToTop.show { opacity: 1; visibility: visible; }
+        #backToTop:hover { background-color: var(--accent-hover); transform: translateY(-3px); }
 
         mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
 
@@ -114,8 +221,10 @@
             .container { padding: 15px 10px; }
             summary { padding: 12px; }
             .entry-thumbnail { width: 80px; height: 60px; }
-            .nav-container { flex-direction: column; align-items: stretch; }
-            .search-box { max-width: 100%; margin-top: 10px; }
+            .nav-container { flex-direction: column; align-items: stretch; gap: 10px; }
+            .search-box { max-width: 100%; }
+            .feed-title-text { font-size: 14px; }
+            .count-badge { font-size: 11px; padding: 1px 6px; }
         }
     </style>
 </head>
@@ -123,6 +232,11 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-links">
+                
+                <a href="topics.html" 
+                   class="nav-link ">
+                    ★トピック★
+                </a>
                 
                 <a href="new.html" 
                    class="nav-link ">
@@ -169,11 +283,6 @@
                     ニュース記事
                 </a>
                 
-                <a href="topics.html" 
-                   class="nav-link ">
-                    ★トピック★
-                </a>
-                
             </div>
             <div class="search-box">
                 <input type="text" id="searchInput" class="search-input" placeholder="キーワード検索...">
@@ -184,22 +293,98 @@
     <div class="container">
         <header>
             <h1>ガジェット・モノ</h1>
-            <div class="last-updated">最終更新: 02/03 12:11</div>
+            <div class="last-updated">最終更新: 02/03 13:03</div>
         </header>
 
         
-        <details class="feed-section">
+
+        
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=www.gizmodo.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>ギズモード・ジャパン</span>
+                    <span class="feed-title-text">ギズモード・ジャパン</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 10 / 10</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
+                
+                <li class="entry-item" data-link="https://www.gizmodo.jp/2026/02/anker-nano-travel-adapter.html" data-title="まるで「コンセントの翻訳機」。世界中で使えるAnkerのアダプタが20％OFF" data-summary="Image:Amazonこれだけ持っていきゃいいのか！ルンルンの海外旅行も、ルンルンじゃないけど頑張りどころな海外出張も、あると助かるのがコンセントプラグの変換器。地球は地域によってプラグ形状が違うので、渡航先に対応できるプラグ変換を用意する必要があるんですよね。正直めんどい。なので、オールインワンみたいな変換プラグ、Anker（アンカー）が用意してくれました。AnkerNanoトラベルアダプタ(">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.gizmodo.jp/2026/02/anker-nano-travel-adapter.html" target="_blank" rel="noopener noreferrer" class="entry-link">まるで「コンセントの翻訳機」。世界中で使えるAnkerのアダプタが20％OFF</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Image:Amazonこれだけ持っていきゃいいのか！ルンルンの海外旅行も、ルンルンじゃないけど頑張りどころな海外出張も、あると助かるのがコンセントプラグの変換器。地球は地域によってプラグ形状が違うので、渡航先に対応できるプラグ変換を用意する必要があるんですよね。正直めんどい。なので、オールインワンみたいな変換プラグ、Anker（アンカー）が用意してくれました。AnkerNanoトラベルアダプタ(
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://media.loom-app.com/gizmodo/dist/images/2026/01/30/20260130ank00.jpg" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://www.gizmodo.jp/2026/02/costorypo-habaneroyuzukosyo-end-1890246163.html" data-title="どんな料理にも合う！本当は秘密にしておきたいくらいうまい、主役級の柚子胡椒" data-summary="「ハバネロ柚子胡椒」は、清らかな水と豊かな自然に恵まれた足柄の地で育った柚子とハバネロを使った、こだわりの柚子胡椒。素材の持ち味を生かすため、刻みはあえてやや粗め。口に入れた瞬間、柚子の爽やかな香りが立ち上がり、続いてハバネロの刺激が広がります。一般的な唐辛子の約7倍とも言われる辛さながら、ただ辛いだけでなく、料理の味を引き締めるのが特徴。味変や隠し味にも活躍する、使うほどに手が伸びる一本です。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.gizmodo.jp/2026/02/costorypo-habaneroyuzukosyo-end-1890246163.html" target="_blank" rel="noopener noreferrer" class="entry-link">どんな料理にも合う！本当は秘密にしておきたいくらいうまい、主役級の柚子胡椒</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>8分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            「ハバネロ柚子胡椒」は、清らかな水と豊かな自然に恵まれた足柄の地で育った柚子とハバネロを使った、こだわりの柚子胡椒。素材の持ち味を生かすため、刻みはあえてやや粗め。口に入れた瞬間、柚子の爽やかな香りが立ち上がり、続いてハバネロの刺激が広がります。一般的な唐辛子の約7倍とも言われる辛さながら、ただ辛いだけでなく、料理の味を引き締めるのが特徴。味変や隠し味にも活躍する、使うほどに手が伸びる一本です。
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://media.loom-app.com/gizmodo/dist/images/2026/01/29/original%282%29.png" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://www.gizmodo.jp/2026/02/standard-products-file-case-review.html" data-title="「とりあえず置く」はもうヤメ。Standard Productsのファイルケース" data-summary="Photo:oh!ga1人暮らしでも気になってたんですが、家族が増えてより気になりが増したものがあります。それは「書類」。チラシや請求書、通知書エトセトラ…。後で見ようとか仕分けようとかでテーブルの上に放置してて、時を見て一気に整理するのが常だったのですが、やっぱりゴチャつくんですよね。家族が増えてからは、なおさら書類の量が増えてごちゃつきも加速していました。standardproducts×キン">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://www.gizmodo.jp/2026/02/standard-products-file-case-review.html" target="_blank" rel="noopener noreferrer" class="entry-link">「とりあえず置く」はもうヤメ。Standard Productsのファイルケース</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>33分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Photo:oh!ga1人暮らしでも気になってたんですが、家族が増えてより気になりが増したものがあります。それは「書類」。チラシや請求書、通知書エトセトラ…。後で見ようとか仕分けようとかでテーブルの上に放置してて、時を見て一気に整理するのが常だったのですが、やっぱりゴチャつくんですよね。家族が増えてからは、なおさら書類の量が増えてごちゃつきも加速していました。standardproducts×キン
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://media.loom-app.com/gizmodo/dist/images/2026/01/28/giz260128_11.jpg" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
                 
                 <li class="entry-item" data-link="https://www.gizmodo.jp/2026/02/jbls-new-speakers-use-ai-to-silence-your-favorite-songs-worst-guitar-solo.html" data-title="ボーカル消してカラオケ、ドラム消して練習。JBLのAIスピーカーが万能すぎ" data-summary="Image:JBL楽器演奏やサンプリングをしたい人に朗報。JBLから、AIで楽曲を自動分解できるめちゃ有能スピーカーが登場しました。AIでステムを自動的に抽出できるスピーカー今回JBLから発表されたのは、「BandBoxSolo」と「BandBoxTrio」の2モデル。この2モデルの特長は、ミックスされた楽曲からドラムやギター、ボーカルといったステムを自動的に抽出できること。つまり、楽曲から特定の">
                     <div class="entry-content-wrapper">
@@ -211,7 +396,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>11分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -234,7 +419,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>36分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -257,7 +442,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -280,7 +465,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -303,7 +488,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -326,7 +511,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>2時間前</span>
+                            <span>3時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -349,7 +534,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>2時間前</span>
+                            <span>3時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -362,90 +547,68 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://www.gizmodo.jp/2026/02/iphone-flip-rumor.html" data-title="iPhoneでパカパカ。「iPhone Flip」検討中ってホントですか？" data-summary="Image:Shutterstockうおおお、パカパカしてええ！出るかも出るかも？今年こそかも？と噂が耐えない、Apple（アップル）の折りたたみiPhone。先日はダミーモデルらしき画像がリークされるなど、登場への期待が高まっていますが、もうひとつの折りたたみの噂です。Bloombergのマーク・ガーマン記者の報告によると、Appleは四角くてクラムシェル型の折りたたみiPhoneのアイデアを検">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://www.gizmodo.jp/2026/02/iphone-flip-rumor.html" target="_blank" rel="noopener noreferrer" class="entry-link">iPhoneでパカパカ。「iPhone Flip」検討中ってホントですか？</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>3時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            Image:Shutterstockうおおお、パカパカしてええ！出るかも出るかも？今年こそかも？と噂が耐えない、Apple（アップル）の折りたたみiPhone。先日はダミーモデルらしき画像がリークされるなど、登場への期待が高まっていますが、もうひとつの折りたたみの噂です。Bloombergのマーク・ガーマン記者の報告によると、Appleは四角くてクラムシェル型の折りたたみiPhoneのアイデアを検
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://media.loom-app.com/gizmodo/dist/images/2026/02/02/shutterstock_2534273311.jpg" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://www.gizmodo.jp/2026/02/2602-amazon-yamazaki-router-storage-7xg.html" data-title="山崎実業の「ルーター収納ケース」が、テレビ裏でカオス配線を美学に変える" data-summary="今回は山崎実業の「ルーター収納ケース」をご紹介します。皆さん、家の中でルーターの置き場に困ったことはありませんか？ そこで、この収納ケースの出番です。ルータをケースの中に収納できるのでルーター自体目立たなくなりますし、コードの配線もすっきり！">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://www.gizmodo.jp/2026/02/2602-amazon-yamazaki-router-storage-7xg.html" target="_blank" rel="noopener noreferrer" class="entry-link">山崎実業の「ルーター収納ケース」が、テレビ裏でカオス配線を美学に変える</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>3時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            今回は山崎実業の「ルーター収納ケース」をご紹介します。皆さん、家の中でルーターの置き場に困ったことはありませんか？ そこで、この収納ケースの出番です。ルータをケースの中に収納できるのでルーター自体目立たなくなりますし、コードの配線もすっきり！
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://media.loom-app.com/gizmodo/dist/images/2026/01/30/20260130yamazaki.jpg" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://www.gizmodo.jp/2026/02/euthanasia-swiss-pod-gets-an-ai-powered-upgrade.html" data-title="安楽死カプセル、最終決定にAIによる精神判定を導入" data-summary="Image:Sarco人生の最期、AIに任せる？ここ最近、精神的に追い詰められた人に対して、AIチャットボットが自殺を後押ししてしまったという事例で、企業が不当死亡訴訟を起こされるケースがありました。ところが今回は、その逆。安楽死をする際、自ら死を選ぶ権利を行使する判断ができる精神状態にあるとAIに認めてもらわなきゃいけなくなったのです。Futurismによると、物議を醸してきた安楽死カプセル「サ">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://www.gizmodo.jp/2026/02/euthanasia-swiss-pod-gets-an-ai-powered-upgrade.html" target="_blank" rel="noopener noreferrer" class="entry-link">安楽死カプセル、最終決定にAIによる精神判定を導入</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>4時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            Image:Sarco人生の最期、AIに任せる？ここ最近、精神的に追い詰められた人に対して、AIチャットボットが自殺を後押ししてしまったという事例で、企業が不当死亡訴訟を起こされるケースがありました。ところが今回は、その逆。安楽死をする際、自ら死を選ぶ権利を行使する判断ができる精神状態にあるとAIに認めてもらわなきゃいけなくなったのです。Futurismによると、物議を醸してきた安楽死カプセル「サ
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://media.loom-app.com/gizmodo/dist/images/2026/02/02/VD-Sarco.jpg" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=pc.watch.impress.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>PC Watch</span>
+                    <span class="feed-title-text">PC Watch</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 10 / 10</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
+                
+                <li class="entry-item" data-link="https://pc.watch.impress.co.jp/docs/news/todays_sales/2083023.html" data-title="【本日みつけたお買い得品】SwitchBotのソーラーパネル付き防犯カメラが3,180円引き" data-summary="Amazonにおいて、タイムセールでSwitchBotのソーラーパネル付き防犯カメラ「SwitchBot防犯カメラ」が直近価格から3,180円引きの1万2,780円で販売している。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2083023.html" target="_blank" rel="noopener noreferrer" class="entry-link">【本日みつけたお買い得品】SwitchBotのソーラーパネル付き防犯カメラが3,180円引き</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>8分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            Amazonにおいて、タイムセールでSwitchBotのソーラーパネル付き防犯カメラ「SwitchBot防犯カメラ」が直近価格から3,180円引きの1万2,780円で販売している。
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://pc.watch.impress.co.jp/docs/news/2082996.html" data-title="デル、最上位ゲーミングPC「Alienware Area-51」にRyzen 7 9850X3D搭載モデル" data-summary="デル・テクノロジーズは、フラグシップゲーミングPC「Alienware Area-51 Gaming Desktop」に、Ryzen 9000X3Dシリーズ搭載モデルを追加した。価格は69万9,980円から。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://pc.watch.impress.co.jp/docs/news/2082996.html" target="_blank" rel="noopener noreferrer" class="entry-link">デル、最上位ゲーミングPC「Alienware Area-51」にRyzen 7 9850X3D搭載モデル</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>38分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            デル・テクノロジーズは、フラグシップゲーミングPC「Alienware Area-51 Gaming Desktop」に、Ryzen 9000X3Dシリーズ搭載モデルを追加した。価格は69万9,980円から。
+                        </div>
+                    </div>
+
+                    
+                </li>
                 
                 <li class="entry-item" data-link="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082985.html" data-title="【本日みつけたお買い得品】SwitchBotのスマートロックが3,447円引き" data-summary="Amazonにおいて、SwitchBotのスマートロック「スマートロック Ultra」がタイムセールで、直近価格よりも3,447円安い1万9,533円で販売している。">
                     <div class="entry-content-wrapper">
@@ -457,7 +620,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>12分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -478,7 +641,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>14分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -499,7 +662,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>28分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -541,7 +704,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -562,7 +725,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -583,7 +746,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -604,7 +767,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -615,63 +778,89 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082935.html" data-title="【本日みつけたお買い得品】BOSEのオープンイヤー型イヤフォンが7,200円オトク" data-summary="Amazonにおいて、BOSEのオープンイヤー型ワイヤレスイヤフォン「Bose Ultra Open Earbuds」が、タイムセールで直近価格の7,200円引きとなる2万8,800円で購入できる。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://pc.watch.impress.co.jp/docs/news/todays_sales/2082935.html" target="_blank" rel="noopener noreferrer" class="entry-link">【本日みつけたお買い得品】BOSEのオープンイヤー型イヤフォンが7,200円オトク</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>1時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            Amazonにおいて、BOSEのオープンイヤー型ワイヤレスイヤフォン「Bose Ultra Open Earbuds」が、タイムセールで直近価格の7,200円引きとなる2万8,800円で購入できる。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://pc.watch.impress.co.jp/docs/topic/pckoubou_review/2081428.html" data-title="バッテリ駆動14時間超のスタミナ！これがAI時代の新スタンダードノート ～パソコン工房「STYLE-15FHA21-R7A-UCSX」[Sponsored]" data-summary="パソコン工房は、165Hzの15.3型WUXGA液晶搭載Copilot+ PC「STYLE-15FHA21-R7A-UCSX」を2025年12月に発売した。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://pc.watch.impress.co.jp/docs/topic/pckoubou_review/2081428.html" target="_blank" rel="noopener noreferrer" class="entry-link">バッテリ駆動14時間超のスタミナ！これがAI時代の新スタンダードノート ～パソコン工房「STYLE-15FHA21-R7A-UCSX」[Sponsored]</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>2時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            パソコン工房は、165Hzの15.3型WUXGA液晶搭載Copilot+ PC「STYLE-15FHA21-R7A-UCSX」を2025年12月に発売した。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=k-tai.watch.impress.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>ケータイ Watch</span>
+                    <span class="feed-title-text">ケータイ Watch</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 10 / 10</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
+                
+                <li class="entry-item" data-link="https://k-tai.watch.impress.co.jp/docs/news/2083000.html" data-title="IIJmioのスマホ回線が3カ月10GB増や6カ月割引など、「ハッピープライス」始まる" data-summary="インターネットイニシアティブは、MVNOサービス「IIJmio」で「ハッピープライスキャンペーン」を開始した。受付期間は3月31日まで。新たに申し込む場合や、旧プランからギガプランへの変更などが対象。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://k-tai.watch.impress.co.jp/docs/news/2083000.html" target="_blank" rel="noopener noreferrer" class="entry-link">IIJmioのスマホ回線が3カ月10GB増や6カ月割引など、「ハッピープライス」始まる</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>18分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            インターネットイニシアティブは、MVNOサービス「IIJmio」で「ハッピープライスキャンペーン」を開始した。受付期間は3月31日まで。新たに申し込む場合や、旧プランからギガプランへの変更などが対象。
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://k-tai.watch.impress.co.jp/docs/news/2083007.html" data-title="楽天、最大10万ポイントが当たる「SPU」10周年記念キャンペーン開催" data-summary="楽天は、ポイントアッププログラム「SPU（スーパーポイントアッププログラム）」の開始10周年を記念し、3月31日までの期間中「楽天ポイント」が最大10万ポイント当たるキャンペーンを実施する。特設ページのクイズに全問正解することで抽選に参加できる。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://k-tai.watch.impress.co.jp/docs/news/2083007.html" target="_blank" rel="noopener noreferrer" class="entry-link">楽天、最大10万ポイントが当たる「SPU」10周年記念キャンペーン開催</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>24分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            楽天は、ポイントアッププログラム「SPU（スーパーポイントアッププログラム）」の開始10周年を記念し、3月31日までの期間中「楽天ポイント」が最大10万ポイント当たるキャンペーンを実施する。特設ページのクイズに全問正解することで抽選に参加できる。
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://k-tai.watch.impress.co.jp/docs/news/2082971.html" data-title="BIC SIM、15ギガプランを値下げ　3月～" data-summary="ラネットは、MVNOサービス「BIC SIM powered by IIJ」において、音声通話機能付きの「ギガプラン」の15ギガプランの月額料金を、3月1日利用分から値下げする。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://k-tai.watch.impress.co.jp/docs/news/2082971.html" target="_blank" rel="noopener noreferrer" class="entry-link">BIC SIM、15ギガプランを値下げ　3月～</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>47分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ラネットは、MVNOサービス「BIC SIM powered by IIJ」において、音声通話機能付きの「ギガプラン」の15ギガプランの月額料金を、3月1日利用分から値下げする。
+                        </div>
+                    </div>
+
+                    
+                </li>
                 
                 <li class="entry-item" data-link="https://k-tai.watch.impress.co.jp/docs/news/2082967.html" data-title="IIJmio大特価セール開始、3月末まで　「ROG Phone 9」や「Xiaomi 15 Ultra」が約13万円など" data-summary="インターネットイニシアティブ（IIJ）は3日、MVNOサービス「IIJmio」で「スマホ大特価セール」を開始した。期間は3月31日21時59分まで。">
                     <div class="entry-content-wrapper">
@@ -683,7 +872,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>32分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -704,7 +893,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -725,7 +914,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -746,7 +935,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>4時間前</span>
+                            <span>5時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -767,7 +956,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>5時間前</span>
+                            <span>6時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -788,7 +977,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>6時間前</span>
+                            <span>7時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -809,7 +998,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>6時間前</span>
+                            <span>7時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -820,122 +1009,54 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://k-tai.watch.impress.co.jp/docs/column/ishikawa/2082768.html" data-title="[石川温の「スマホ業界 Watch」]機種変更から投資・金融サービスへ、ドコモショップが「証券窓口」から“ドコモ銀行”への導線に" data-summary="ドコモショップが「お金の相談窓口」に変化しようとしている。年齢層が高く、お金に余裕のありそうなドコモユーザーが続々とターゲットになっているようだ。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://k-tai.watch.impress.co.jp/docs/column/ishikawa/2082768.html" target="_blank" rel="noopener noreferrer" class="entry-link">[石川温の「スマホ業界 Watch」]機種変更から投資・金融サービスへ、ドコモショップが「証券窓口」から“ドコモ銀行”への導線に</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>12時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            ドコモショップが「お金の相談窓口」に変化しようとしている。年齢層が高く、お金に余裕のありそうなドコモユーザーが続々とターゲットになっているようだ。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://k-tai.watch.impress.co.jp/docs/column/todays_goods/2082859.html" data-title="[本日の一品]派手さはないが堅実な使い勝手、スタンド機能も付属したMagSafe対応スマホバンド「MagGrip Pro」" data-summary="スマホの背面に取り付けて手への負担を軽減するスマホバンドやスマホリングを、ここ2～3年で20～30アイテムは取っ替え引っ替え試している筆者。メーカーサイトの使用例の写真で見ると使いやすく見えても、実際に届いてみるとパッケージから取り出した段階で「あっこれはダメだ」とお蔵入りになることも多く、当たり率は決して高くない。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://k-tai.watch.impress.co.jp/docs/column/todays_goods/2082859.html" target="_blank" rel="noopener noreferrer" class="entry-link">[本日の一品]派手さはないが堅実な使い勝手、スタンド機能も付属したMagSafe対応スマホバンド「MagGrip Pro」</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>12時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            スマホの背面に取り付けて手への負担を軽減するスマホバンドやスマホリングを、ここ2～3年で20～30アイテムは取っ替え引っ替え試している筆者。メーカーサイトの使用例の写真で見ると使いやすく見えても、実際に届いてみるとパッケージから取り出した段階で「あっこれはダメだ」とお蔵入りになることも多く、当たり率は決して高くない。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://k-tai.watch.impress.co.jp/docs/column/minna/2082694.html" data-title="[みんなのケータイ]スマートホームで「スマートなホーム」を実現するのは容易ではない" data-summary="スマートフォンなどを使って家電や住宅設備などを操作するスマートホーム。筆者はこれまで、スマートホームにあまり積極的には取り組んでいなかったのですが、それでも気が付くと家電を遠隔操作できるスマートプラグやスマートリモコンなど、そこそこな数のスマートホーム機器が自宅にそろってきました。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://k-tai.watch.impress.co.jp/docs/column/minna/2082694.html" target="_blank" rel="noopener noreferrer" class="entry-link">[みんなのケータイ]スマートホームで「スマートなホーム」を実現するのは容易ではない</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>12時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            スマートフォンなどを使って家電や住宅設備などを操作するスマートホーム。筆者はこれまで、スマートホームにあまり積極的には取り組んでいなかったのですが、それでも気が付くと家電を遠隔操作できるスマートプラグやスマートリモコンなど、そこそこな数のスマートホーム機器が自宅にそろってきました。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
             </ul>
         </details>
         
-        
     </div>
+
+    <div id="backToTop" title="トップへ戻る">↑</div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // ▼▼▼ 既読管理機能 ▼▼▼
             const STORAGE_KEY = 'rss_read_items';
-            // LocalStorageから既読リストを取得 (Setで管理して高速化)
             let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
-
             const entryItems = document.querySelectorAll('.entry-item');
             
-            // 初期表示: 既読状態の反映
             entryItems.forEach(item => {
                 const link = item.dataset.link;
                 if (readItems.has(link)) {
                     item.classList.add('read');
                 }
-                
-                // クリックイベントの登録
                 const anchor = item.querySelector('a.entry-link');
-                anchor.addEventListener('click', function() {
-                    markAsRead(link, item);
-                });
+                if(anchor) {
+                    anchor.addEventListener('click', function() {
+                        markAsRead(link, item);
+                    });
+                }
             });
 
             function markAsRead(link, itemElement) {
-                // UIを即座に更新
                 itemElement.classList.add('read');
-                
-                // ストレージに保存
                 readItems.add(link);
-                // 容量制限のため、古いものから消す (最大1000件保持)
                 if (readItems.size > 1000) {
                     const array = Array.from(readItems);
                     readItems = new Set(array.slice(array.length - 1000));
                 }
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
             }
-            // ▲▲▲ 既読管理機能 ▲▲▲
 
-            // 検索機能
+            // ▼▼▼ 検索機能 ▼▼▼
             const searchInput = document.getElementById('searchInput');
             const sections = document.querySelectorAll('.feed-section');
 
             entryItems.forEach(entry => {
                 const titleLink = entry.querySelector('.entry-title a');
                 const summaryDiv = entry.querySelector('.entry-summary');
-                entry.dataset.originalTitleHtml = titleLink.innerHTML;
-                entry.dataset.originalSummaryHtml = summaryDiv.innerHTML;
+                if(titleLink && summaryDiv){
+                    entry.dataset.originalTitleHtml = titleLink.innerHTML;
+                    entry.dataset.originalSummaryHtml = summaryDiv.innerHTML;
+                }
             });
 
             searchInput.addEventListener('input', function(e) {
@@ -944,14 +1065,17 @@
                 if (term === '') {
                     sections.forEach(sec => {
                         sec.style.display = '';
-                        sec.open = false;
+                        // 検索解除時は「新着があるものだけ開く」状態に戻したいが、
+                        // 簡易的に全て閉じる、または今の状態を維持する。
+                        // ここでは「閉じる」挙動にする
+                        sec.open = false; 
                     });
                     entryItems.forEach(entry => {
                         entry.style.display = '';
                         const titleLink = entry.querySelector('.entry-title a');
                         const summaryDiv = entry.querySelector('.entry-summary');
-                        titleLink.innerHTML = entry.dataset.originalTitleHtml;
-                        summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
+                        if(titleLink) titleLink.innerHTML = entry.dataset.originalTitleHtml;
+                        if(summaryDiv) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
                     });
                     return;
                 }
@@ -961,8 +1085,8 @@
                     const sectionEntries = section.querySelectorAll('.entry-item');
 
                     sectionEntries.forEach(entry => {
-                        const titleText = entry.dataset.title.toLowerCase();
-                        const summaryText = entry.dataset.summary.toLowerCase();
+                        const titleText = (entry.dataset.title || '').toLowerCase();
+                        const summaryText = (entry.dataset.summary || '').toLowerCase();
 
                         if (titleText.includes(term) || summaryText.includes(term)) {
                             entry.style.display = '';
@@ -983,17 +1107,37 @@
             });
 
             function highlightText(entry, term) {
-                const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
-                const highlightMark = '<mark>$1</mark>';
-                const titleLink = entry.querySelector('.entry-title a');
-                titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
-                const summaryDiv = entry.querySelector('.entry-summary');
-                summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
+                try {
+                    const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
+                    const highlightMark = '<mark>$1</mark>';
+                    const titleLink = entry.querySelector('.entry-title a');
+                    const summaryDiv = entry.querySelector('.entry-summary');
+                    
+                    if(titleLink && entry.dataset.originalTitleHtml) {
+                        titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
+                    }
+                    if(summaryDiv && entry.dataset.originalSummaryHtml) {
+                        summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
+                    }
+                } catch(e) { console.error(e); }
             }
 
             function escapeRegExp(string) {
                 return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             }
+
+            // ▼▼▼ トップへ戻るボタン ▼▼▼
+            const backToTopBtn = document.getElementById('backToTop');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
         });
     </script>
 </body>

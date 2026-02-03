@@ -6,16 +6,18 @@
     <title>ニュース記事</title>
     <style>
         :root {
-            --bg-color: #f8f9fa;
+            --bg-color: #f4f6f8;
             --card-bg: #ffffff;
             --text-main: #2c3e50;
             --text-sub: #7f8c8d;
             --accent: #007bff;
+            --accent-hover: #0056b3;
             --new-badge: #e74c3c;
             --border: #e9ecef;
             --highlight: #fff3cd;
-            --read-color: #b0b0b0; /* 既読記事の色 */
+            --read-color: #b0b0b0;
         }
+        html { scroll-behavior: smooth; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: var(--bg-color);
@@ -25,88 +27,193 @@
             line-height: 1.6;
         }
         
+        /* ナビゲーションバー */
         .navbar {
             background-color: #343a40;
-            padding: 0.8rem;
+            padding: 0.8rem 1rem;
             position: sticky;
             top: 0;
             z-index: 1000;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .nav-container {
-            max-width: 800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap; /* スマホで検索窓が落ちるように */
+            gap: 15px;
         }
-        .nav-links { display: flex; gap: 10px; overflow-x: auto; white-space: nowrap; }
+        /* カテゴリが増えても折り返す（横スクロール禁止） */
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap; 
+            gap: 8px;
+        }
         .nav-link {
-            color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 14px; font-weight: 600; opacity: 0.8;
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.85;
+            transition: all 0.2s;
+            background-color: rgba(255,255,255,0.1);
         }
-        .nav-link.active { opacity: 1; background-color: var(--accent); }
+        .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
+        .nav-link.active {
+            opacity: 1;
+            background-color: var(--accent);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
 
-        .search-box { position: relative; flex-grow: 1; max-width: 300px; }
+        /* 検索ボックス */
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 250px;
+        }
         .search-input {
-            width: 100%; padding: 6px 10px; border-radius: 4px; border: none; font-size: 14px; background-color: rgba(255,255,255,0.9); box-sizing: border-box;
+            width: 100%;
+            padding: 6px 10px;
+            border-radius: 20px; /* 丸みをつける */
+            border: none;
+            font-size: 14px;
+            background-color: rgba(255,255,255,0.95);
+            box-sizing: border-box;
+            transition: box-shadow 0.2s;
         }
-        .search-input:focus { outline: 2px solid var(--accent); }
+        .search-input:focus { outline: none; box-shadow: 0 0 0 2px var(--accent); }
 
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        header { margin-bottom: 20px; text-align: center; }
-        h1 { font-size: 22px; margin: 0; color: #333; }
-        .last-updated { font-size: 12px; color: var(--text-sub); margin-top: 5px; }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header { margin-bottom: 25px; text-align: center; }
+        h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
+        .last-updated { font-size: 12px; color: var(--text-sub); }
 
+        /* アコーディオン */
         details {
-            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: box-shadow 0.2s;
         }
+        details:hover { box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
+        
         summary {
-            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff; transition: background 0.2s;
+            list-style: none;
+            cursor: pointer;
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #fff;
+            transition: background 0.2s;
         }
         summary:hover { background-color: #f8f9fa; }
         summary::-webkit-details-marker { display: none; }
         
-        .feed-header { display: flex; align-items: center; gap: 10px; font-size: 16px; }
-        .feed-favicon { width: 16px; height: 16px; border-radius: 2px; }
-        .feed-status { font-size: 12px; color: var(--new-badge); font-weight: normal; }
+        .feed-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+        .feed-favicon { width: 16px; height: 16px; border-radius: 2px; flex-shrink: 0; }
+        .feed-title-text { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* 件数バッジ */
+        .feed-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        .count-badge {
+            background-color: #eee;
+            color: #555;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: normal;
+        }
+        .count-badge.has-new {
+            background-color: #fff0f0;
+            color: var(--new-badge);
+            border: 1px solid #ffcccc;
+        }
 
         .entry-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
         .entry-item {
-            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start; transition: background-color 0.2s;
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            transition: background-color 0.2s;
         }
         .entry-item:last-child { border-bottom: none; }
-
-        /* ▼▼▼ 既読記事のスタイル ▼▼▼ */
-        .entry-item.read {
-            background-color: #fcfcfc;
-        }
-        .entry-item.read .entry-title a {
-            color: var(--read-color);
-        }
-        .entry-item.read .entry-summary {
-            color: #d0d0d0;
-        }
-        .entry-item.read .entry-thumbnail {
-            opacity: 0.5;
-            filter: grayscale(100%);
-        }
-        .entry-item.read .new-badge {
-            background-color: #ccc; /* NEWバッジもグレーに */
-        }
-        /* ▲▲▲ 既読記事のスタイル ▲▲▲ */
         
-        .entry-content-wrapper { flex: 1; min-width: 0; }
-        .entry-thumbnail { width: 100px; height: 75px; object-fit: cover; border-radius: 4px; flex-shrink: 0; border: 1px solid #eee; }
+        /* 既読スタイル */
+        .entry-item.read { background-color: #fafafa; }
+        .entry-item.read .entry-title a { color: var(--read-color); }
+        .entry-item.read .entry-summary { color: #d0d0d0; }
+        .entry-item.read .entry-thumbnail { opacity: 0.4; filter: grayscale(100%); }
+        .entry-item.read .new-badge { background-color: #ccc; }
 
-        .entry-title { font-size: 16px; margin: 0 0 5px 0; line-height: 1.4; }
-        .entry-title a { text-decoration: none; color: var(--text-main); }
+        .entry-content-wrapper { flex: 1; min-width: 0; }
+        .entry-thumbnail {
+            width: 100px; height: 75px; object-fit: cover; border-radius: 6px; flex-shrink: 0; border: 1px solid #eee;
+        }
+
+        .entry-title { font-size: 16px; margin: 0 0 6px 0; line-height: 1.4; }
+        .entry-title a { text-decoration: none; color: var(--text-main); font-weight: bold; }
         .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
         .new-badge {
-            display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold;
+            display: inline-block; background-color: var(--new-badge); color: white;
+            font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px;
+            vertical-align: middle; font-weight: bold; transform: translateY(-1px);
         }
 
-        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; }
+        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; margin-bottom: 4px; }
         .entry-summary {
-            font-size: 13px; color: #555; margin-top: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.8;
+            font-size: 13px; color: #555; margin-top: 5px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden; opacity: 0.9; line-height: 1.5;
         }
         .entry-summary img { display: none; }
+
+        /* 空の状態 */
+        .empty-state { padding: 20px; text-align: center; color: #999; font-size: 13px; }
+
+        /* トップへ戻るボタン */
+        #backToTop {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--accent);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            font-size: 20px;
+            z-index: 2000;
+        }
+        #backToTop.show { opacity: 1; visibility: visible; }
+        #backToTop:hover { background-color: var(--accent-hover); transform: translateY(-3px); }
 
         mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
 
@@ -114,8 +221,10 @@
             .container { padding: 15px 10px; }
             summary { padding: 12px; }
             .entry-thumbnail { width: 80px; height: 60px; }
-            .nav-container { flex-direction: column; align-items: stretch; }
-            .search-box { max-width: 100%; margin-top: 10px; }
+            .nav-container { flex-direction: column; align-items: stretch; gap: 10px; }
+            .search-box { max-width: 100%; }
+            .feed-title-text { font-size: 14px; }
+            .count-badge { font-size: 11px; padding: 1px 6px; }
         }
     </style>
 </head>
@@ -123,6 +232,11 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-links">
+                
+                <a href="topics.html" 
+                   class="nav-link ">
+                    ★トピック★
+                </a>
                 
                 <a href="new.html" 
                    class="nav-link ">
@@ -169,11 +283,6 @@
                     ニュース記事
                 </a>
                 
-                <a href="topics.html" 
-                   class="nav-link ">
-                    ★トピック★
-                </a>
-                
             </div>
             <div class="search-box">
                 <input type="text" id="searchInput" class="search-input" placeholder="キーワード検索...">
@@ -184,43 +293,29 @@
     <div class="container">
         <header>
             <h1>ニュース記事</h1>
-            <div class="last-updated">最終更新: 02/03 12:11</div>
+            <div class="last-updated">最終更新: 02/03 13:03</div>
         </header>
 
         
-        <details class="feed-section">
+
+        
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>主要</span>
+                    <span class="feed-title-text">主要</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 8 / 8</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568491?source=rss" data-title="張り手くらった 中盤情勢に野田氏" data-summary="">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/pickup/6568491?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">張り手くらった 中盤情勢に野田氏</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>2時間前</span>
-                        </div>
 
-                        <div class="entry-summary">
-                            
-                        </div>
-                    </div>
-
-                    
-                </li>
                 
                 <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568501?source=rss" data-title="円安巡る首相の発言 財務相が擁護" data-summary="">
                     <div class="entry-content-wrapper">
@@ -232,7 +327,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>57分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -253,7 +348,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>22分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -271,69 +366,6 @@
                             <span class="new-badge">NEW</span>
                             
                             <a href="https://news.yahoo.co.jp/pickup/6568507?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">モームリ社長らを逮捕 容疑否認</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>21分前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568502?source=rss" data-title="沖縄性的暴行 米兵懲役5年確定へ" data-summary="">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/pickup/6568502?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">沖縄性的暴行 米兵懲役5年確定へ</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>57分前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568466?source=rss" data-title="駐車料金「踏み倒し」積雪で続発" data-summary="">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/pickup/6568466?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">駐車料金「踏み倒し」積雪で続発</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>4時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568499?source=rss" data-title="ビール大国ドイツ 年間販売量最低" data-summary="">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/pickup/6568499?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">ビール大国ドイツ 年間販売量最低</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -348,17 +380,101 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568505?source=rss" data-title="BTSが7人で復帰公演 ソウルで3月" data-summary="">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568512?source=rss" data-title="包帯圧迫で指先壊死 病院が賠償へ" data-summary="">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/pickup/6568505?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">BTSが7人で復帰公演 ソウルで3月</a>
+                            <a href="https://news.yahoo.co.jp/pickup/6568512?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">包帯圧迫で指先壊死 病院が賠償へ</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>35分前</span>
+                            <span>25分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568519?source=rss" data-title="Def TechのMicro容疑者を逮捕" data-summary="">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/pickup/6568519?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">Def TechのMicro容疑者を逮捕</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>9分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568510?source=rss" data-title="ツムラ「養命酒」事業の買収検討" data-summary="">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/pickup/6568510?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">ツムラ「養命酒」事業の買収検討</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>45分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568511?source=rss" data-title="本当に地獄 シール流行に店員悲鳴" data-summary="">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/pickup/6568511?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">本当に地獄 シール流行に店員悲鳴</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>47分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568518?source=rss" data-title="高橋ヒロム 新日本プロレスを退団" data-summary="">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/pickup/6568518?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">高橋ヒロム 新日本プロレスを退団</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>22分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -372,26 +488,31 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>カテゴリ-地域</span>
+                    <span class="feed-title-text">カテゴリ-地域</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 10 / 10</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/775b1b45a6eadd3b14a8a7fe9cedd5b7279ce8a2?source=rss" data-title="さっぽろ雪まつり　「会津鶴ヶ城」大雪像の引き渡し式　大通会場８丁目「雪のＨＴＢ広場」(HTB北海道ニュース)" data-summary="あす（４日）開幕するさっぽろ雪まつりを前に会場となる大通公園では大雪像の引き渡し式が行われました。 けさ午前１０時から大通会場８丁目の「雪のＨＴＢ広場」で行われた大雪像の完成引き渡し式。 今年の大雪">
+
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/49bf4d53c2f0c461b693d15171930246db849720?source=rss" data-title="旬のタンカン詰め放題も　東京で「奄美大島フェア」　特産品で魅力PR(南海日日新聞)" data-summary="奄美市笠利町に本所を置くあまみ商工会は1月30日～2月1日、東京都北区のJR赤羽駅北口改札前で「奄美大島フェア2026」を開催した。奄美大島から5事業者が出店し、旬のタンカンや島野菜、海鮮、ハブ加工">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/775b1b45a6eadd3b14a8a7fe9cedd5b7279ce8a2?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">さっぽろ雪まつり　「会津鶴ヶ城」大雪像の引き渡し式　大通会場８丁目「雪のＨＴＢ広場」(HTB北海道ニュース)</a>
+                            <a href="https://news.yahoo.co.jp/articles/49bf4d53c2f0c461b693d15171930246db849720?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">旬のタンカン詰め放題も　東京で「奄美大島フェア」　特産品で魅力PR(南海日日新聞)</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -399,20 +520,20 @@
                         </div>
 
                         <div class="entry-summary">
-                            あす（４日）開幕するさっぽろ雪まつりを前に会場となる大通公園では大雪像の引き渡し式が行われました。 けさ午前１０時から大通会場８丁目の「雪のＨＴＢ広場」で行われた大雪像の完成引き渡し式。 今年の大雪
+                            奄美市笠利町に本所を置くあまみ商工会は1月30日～2月1日、東京都北区のJR赤羽駅北口改札前で「奄美大島フェア2026」を開催した。奄美大島から5事業者が出店し、旬のタンカンや島野菜、海鮮、ハブ加工
                         </div>
                     </div>
 
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/1b0df4e0c5151f5fe949e92255ad7b9ad704b50c?source=rss" data-title="綾町で住宅全焼　けが人なし　宮崎県内全域に乾燥注意報(宮崎ニュースUMK)" data-summary="3日未明に起きた火事のニュースです。 3日午前1時半頃、宮崎県綾町北俣で民家が燃えていると119番通報がありました。 火は約1時間40分後に消し止められましたが、住宅1棟と倉庫を全焼、隣接する空家を">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/f9ad680bb5071220e2a2d49973e6f4ec361bc14f?source=rss" data-title="大浜海浜公園で節分祭　奄美市名瀬　家族連れなど100人来場(南海日日新聞)" data-summary="3日の節分を前にした1日、鹿児島県奄美市名瀬の大浜海浜公園で節分祭があった。袋に小分けされた豆約6キロが用意され、家族連れなどが来場。奄美海洋展示館の飼育員らが扮（ふん）した鬼が登場すると、児童らは">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/1b0df4e0c5151f5fe949e92255ad7b9ad704b50c?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">綾町で住宅全焼　けが人なし　宮崎県内全域に乾燥注意報(宮崎ニュースUMK)</a>
+                            <a href="https://news.yahoo.co.jp/articles/f9ad680bb5071220e2a2d49973e6f4ec361bc14f?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">大浜海浜公園で節分祭　奄美市名瀬　家族連れなど100人来場(南海日日新聞)</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -420,20 +541,20 @@
                         </div>
 
                         <div class="entry-summary">
-                            3日未明に起きた火事のニュースです。 3日午前1時半頃、宮崎県綾町北俣で民家が燃えていると119番通報がありました。 火は約1時間40分後に消し止められましたが、住宅1棟と倉庫を全焼、隣接する空家を
+                            3日の節分を前にした1日、鹿児島県奄美市名瀬の大浜海浜公園で節分祭があった。袋に小分けされた豆約6キロが用意され、家族連れなどが来場。奄美海洋展示館の飼育員らが扮（ふん）した鬼が登場すると、児童らは
                         </div>
                     </div>
 
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/3369e9e9305377543e2bac0e0c27da1b2ec63e07?source=rss" data-title="【衆院選】期日前投票　長野県内は2024年の前回を上回る　有権者の6.11パーセント　県選管「制度が定着し、雪を懸念して早めに投票した人も多かったのではないか」（1月28日～2月1日）(NBS長野放送)" data-summary="2月8日に投開票が行われる衆議院選挙の期日前投票を済ませた人は2024年の前回を上回っています。 長野県選挙管理委員会によりますと、1月28日から2月1日の5日間に期日前投票をした人は10万2768">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/4d1432be506bd110bb60c0c5c48fe86e7d296702?source=rss" data-title="四天王の拠点集落住民が交流　「世之主サミット」初開催　沖永良部島(南海日日新聞)" data-summary="約600年前に沖永良部島を治めていたとされるえらぶ世之主に仕えた4人の強力な豪族「四天王」にゆかりのある集落住民が一堂に会する「世之主サミット」が1月31日、鹿児島県和泊町の国頭研修会館で開催された">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/3369e9e9305377543e2bac0e0c27da1b2ec63e07?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【衆院選】期日前投票　長野県内は2024年の前回を上回る　有権者の6.11パーセント　県選管「制度が定着し、雪を懸念して早めに投票した人も多かったのではないか」（1月28日～2月1日）(NBS長野放送)</a>
+                            <a href="https://news.yahoo.co.jp/articles/4d1432be506bd110bb60c0c5c48fe86e7d296702?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">四天王の拠点集落住民が交流　「世之主サミット」初開催　沖永良部島(南海日日新聞)</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -441,20 +562,20 @@
                         </div>
 
                         <div class="entry-summary">
-                            2月8日に投開票が行われる衆議院選挙の期日前投票を済ませた人は2024年の前回を上回っています。 長野県選挙管理委員会によりますと、1月28日から2月1日の5日間に期日前投票をした人は10万2768
+                            約600年前に沖永良部島を治めていたとされるえらぶ世之主に仕えた4人の強力な豪族「四天王」にゆかりのある集落住民が一堂に会する「世之主サミット」が1月31日、鹿児島県和泊町の国頭研修会館で開催された
                         </div>
                     </div>
 
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/e03619b40e104899bd715b1bdadba1b9de9fd28a?source=rss" data-title="サンフレッチェ広島が清神社で必勝祈願　ガウル監督「三本の矢を心に」 中村新選手会長らと開幕へ決意(RCC中国放送)" data-summary="サンフレッチェ広島が6日のリーグ開幕を前に、練習拠点がある安芸高田市の神社で必勝を祈願しました。 戦国武将・毛利元就にゆかりがある清神社です。サンフレッチェの選手やスタッフたちおよそ60人が訪れ、新">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/c821a9e4669ddcdc14da867d3df1c9a3ae50d1e3?source=rss" data-title="呼気検査拒否に令状請求し採血　アルコール成分を検出　飲酒運転しひき逃げ容疑　石垣市の46歳男を逮捕(沖縄タイムス)" data-summary="沖縄県石垣市内で飲酒後、軽自動車を運転して歩行者の30代女性をはねてけがをさせたとして、八重山署は2日、同市の会社員の容疑者（46）を自動車運転処罰法違反（危険運転致傷）の疑いで逮捕した。調べに黙秘">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/e03619b40e104899bd715b1bdadba1b9de9fd28a?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">サンフレッチェ広島が清神社で必勝祈願　ガウル監督「三本の矢を心に」 中村新選手会長らと開幕へ決意(RCC中国放送)</a>
+                            <a href="https://news.yahoo.co.jp/articles/c821a9e4669ddcdc14da867d3df1c9a3ae50d1e3?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">呼気検査拒否に令状請求し採血　アルコール成分を検出　飲酒運転しひき逃げ容疑　石垣市の46歳男を逮捕(沖縄タイムス)</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -462,20 +583,20 @@
                         </div>
 
                         <div class="entry-summary">
-                            サンフレッチェ広島が6日のリーグ開幕を前に、練習拠点がある安芸高田市の神社で必勝を祈願しました。 戦国武将・毛利元就にゆかりがある清神社です。サンフレッチェの選手やスタッフたちおよそ60人が訪れ、新
+                            沖縄県石垣市内で飲酒後、軽自動車を運転して歩行者の30代女性をはねてけがをさせたとして、八重山署は2日、同市の会社員の容疑者（46）を自動車運転処罰法違反（危険運転致傷）の疑いで逮捕した。調べに黙秘
                         </div>
                     </div>
 
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/6b9fb07311871de8c1c334ef36f779b1333ad97a?source=rss" data-title="【現場動画】昼頃には除雪しているのを目撃...水路に落ちている女性（85）が見つかり死亡確認（山形・最上町）(テレビユー山形)" data-summary="こうした中、各地で雪害事故が相次いでいます。 山形県最上町ではきのう、除雪をしていた女性が水路に落ちているのが見つかり、その後死亡が確認されました。 消防や警察によりますときのう午後3時半ごろ、最">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/01b1862d8e7342c707723faf92d54895d12ba800?source=rss" data-title="「さくらまつり」で地域盛り上げ　多彩なイベントでにぎわう　龍郷町大勝(南海日日新聞)" data-summary="ヒカンザクラの名所として知られる鹿児島県龍郷町大勝で1日、恒例の「大勝さくらまつり」（同実行委員会主催）が開かれた。会場の大勝生活館は家族連れなど多くの地域住民でにぎわい、音楽や踊りのステージイベン">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/6b9fb07311871de8c1c334ef36f779b1333ad97a?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【現場動画】昼頃には除雪しているのを目撃...水路に落ちている女性（85）が見つかり死亡確認（山形・最上町）(テレビユー山形)</a>
+                            <a href="https://news.yahoo.co.jp/articles/01b1862d8e7342c707723faf92d54895d12ba800?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「さくらまつり」で地域盛り上げ　多彩なイベントでにぎわう　龍郷町大勝(南海日日新聞)</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -483,20 +604,20 @@
                         </div>
 
                         <div class="entry-summary">
-                            こうした中、各地で雪害事故が相次いでいます。 山形県最上町ではきのう、除雪をしていた女性が水路に落ちているのが見つかり、その後死亡が確認されました。 消防や警察によりますときのう午後3時半ごろ、最
+                            ヒカンザクラの名所として知られる鹿児島県龍郷町大勝で1日、恒例の「大勝さくらまつり」（同実行委員会主催）が開かれた。会場の大勝生活館は家族連れなど多くの地域住民でにぎわい、音楽や踊りのステージイベン
                         </div>
                     </div>
 
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/179ef664b3caffece6bbeb39a2599f6882fc6a98?source=rss" data-title="アクアスの「シロイルカ」新パフォーマンスは“会場一体型”　観客の指示に合わせて動くシロイルカに大歓声　2月末まで期間限定の予定(BSS山陰放送)" data-summary="江津市と浜田市にまたがるしまね海洋館アクアスの人気者、シロイルカ。先月から新たなパフォーマンスが始まり、注目を集めています。 新たなパフォーマンスを披露するのはアクアスの人気者、シロイルカの兄妹のシ">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/5c30eddf9a6c250afa48738ea55596a52956dd81?source=rss" data-title="福岡発の6人組アイドル「福を架ける少女」西日本ツアーの集大成！1周年記念ライブを福岡で開催【2月28日】(ファンファン福岡)" data-summary="福岡発の6人組アイドルグループ「福を架ける少女」が、デビュー1周年を記念したライブを2026年2月28日（土）に福岡トヨタホールスカラエスパシオ（福岡市中央区）で開催します。大阪・兵庫・長崎・熊本を巡">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/179ef664b3caffece6bbeb39a2599f6882fc6a98?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">アクアスの「シロイルカ」新パフォーマンスは“会場一体型”　観客の指示に合わせて動くシロイルカに大歓声　2月末まで期間限定の予定(BSS山陰放送)</a>
+                            <a href="https://news.yahoo.co.jp/articles/5c30eddf9a6c250afa48738ea55596a52956dd81?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">福岡発の6人組アイドル「福を架ける少女」西日本ツアーの集大成！1周年記念ライブを福岡で開催【2月28日】(ファンファン福岡)</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -504,41 +625,20 @@
                         </div>
 
                         <div class="entry-summary">
-                            江津市と浜田市にまたがるしまね海洋館アクアスの人気者、シロイルカ。先月から新たなパフォーマンスが始まり、注目を集めています。 新たなパフォーマンスを披露するのはアクアスの人気者、シロイルカの兄妹のシ
+                            福岡発の6人組アイドルグループ「福を架ける少女」が、デビュー1周年を記念したライブを2026年2月28日（土）に福岡トヨタホールスカラエスパシオ（福岡市中央区）で開催します。大阪・兵庫・長崎・熊本を巡
                         </div>
                     </div>
 
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/85beffec048a8d911130499462df0b7803443d53?source=rss" data-title="阿智村長選挙が告示　現職と新人の合わせて2人が立候補(ＳＢＣ信越放送)" data-summary="任期満了に伴う阿智村の村長選挙が3日告示され、現職と新人の合わせて2人が立候補しました。 阿智村の村長選に立候補したのは、届け出順に、現職で4期目を目指す熊谷秀樹さん57歳と、新人で会社役員の熊谷章">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/5d4fd36d253ea865b90f3a61e073d93c6b2ebab2?source=rss" data-title="雪かき中にイノシシに襲われる　87歳女性がけが　発見に至らず、住民に注意呼びかけ　長野・木島平(NBS長野放送)" data-summary="長野県木島平村の自宅敷地で除雪作業をしていた87歳の女性がイノシシに襲われ、けがをしました。 2月2日午後5時ごろ、「女性がイノシシに襲われけがをしている」と消防に通報がありました。 警察によりま">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/85beffec048a8d911130499462df0b7803443d53?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">阿智村長選挙が告示　現職と新人の合わせて2人が立候補(ＳＢＣ信越放送)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>2分前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            任期満了に伴う阿智村の村長選挙が3日告示され、現職と新人の合わせて2人が立候補しました。 阿智村の村長選に立候補したのは、届け出順に、現職で4期目を目指す熊谷秀樹さん57歳と、新人で会社役員の熊谷章
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/9298e354c11bbad139efb2bd2218749d12aa3830?source=rss" data-title="【速報】雪の重みで倒壊した車庫の下敷きに 50代男性が心肺停止、屋根には1.5mほどの雪【新潟・柏崎市】(UX新潟テレビ21)" data-summary="柏崎市与板で、雪の重みで倒壊した車庫の下敷きになり住人の50代男性が心肺停止の状態です。 警察と消防によりますと、3日午前6時すぎ、柏崎市与板の住民から「近所の家が雪で倒壊している」と110番通報が">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/articles/9298e354c11bbad139efb2bd2218749d12aa3830?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【速報】雪の重みで倒壊した車庫の下敷きに 50代男性が心肺停止、屋根には1.5mほどの雪【新潟・柏崎市】(UX新潟テレビ21)</a>
+                            <a href="https://news.yahoo.co.jp/articles/5d4fd36d253ea865b90f3a61e073d93c6b2ebab2?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">雪かき中にイノシシに襲われる　87歳女性がけが　発見に至らず、住民に注意呼びかけ　長野・木島平(NBS長野放送)</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -546,49 +646,70 @@
                         </div>
 
                         <div class="entry-summary">
-                            柏崎市与板で、雪の重みで倒壊した車庫の下敷きになり住人の50代男性が心肺停止の状態です。 警察と消防によりますと、3日午前6時すぎ、柏崎市与板の住民から「近所の家が雪で倒壊している」と110番通報が
+                            長野県木島平村の自宅敷地で除雪作業をしていた87歳の女性がイノシシに襲われ、けがをしました。 2月2日午後5時ごろ、「女性がイノシシに襲われけがをしている」と消防に通報がありました。 警察によりま
                         </div>
                     </div>
 
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/a7a096066d9d34a56fc986e37536218cb699ee2c?source=rss" data-title="子どもが泣くほど福が舞い込む 奇祭「モットモ」手熊町に伝わる国の無形民俗文化財《長崎》(長崎国際テレビ)" data-summary="節分を前に、長崎市手熊町に伝わる国の選択無形民俗文化財「モットモ」が行われました。">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/45b62c2016d09f56fd71e39ff53b88e596fb46cf?source=rss" data-title="「事故直前に居眠りしてしまった」11時間飲酒して死亡事故を引き起こす 33歳男を危険運転致死罪で起訴「友人と別れた後、1人でスナックとバーに行った」(HBCニュース北海道)" data-summary="2024年9月、北海道小樽市の国道で飲酒運転をして事故を起こし、当時24歳の大学院生の男性を死亡させたとして、33歳の男が危険運転致死の罪で起訴しました。 2月3日付で危険運転致死の罪で起訴されたの">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/a7a096066d9d34a56fc986e37536218cb699ee2c?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">子どもが泣くほど福が舞い込む 奇祭「モットモ」手熊町に伝わる国の無形民俗文化財《長崎》(長崎国際テレビ)</a>
+                            <a href="https://news.yahoo.co.jp/articles/45b62c2016d09f56fd71e39ff53b88e596fb46cf?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「事故直前に居眠りしてしまった」11時間飲酒して死亡事故を引き起こす 33歳男を危険運転致死罪で起訴「友人と別れた後、1人でスナックとバーに行った」(HBCニュース北海道)</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3分前</span>
+                            <span>4分前</span>
                         </div>
 
                         <div class="entry-summary">
-                            節分を前に、長崎市手熊町に伝わる国の選択無形民俗文化財「モットモ」が行われました。
+                            2024年9月、北海道小樽市の国道で飲酒運転をして事故を起こし、当時24歳の大学院生の男性を死亡させたとして、33歳の男が危険運転致死の罪で起訴しました。 2月3日付で危険運転致死の罪で起訴されたの
                         </div>
                     </div>
 
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/6d8d48d8235328d8dbe4dced386321fda5005ad4?source=rss" data-title="アルコールのにおいも… “重傷ひき逃げ”女（50）を逮捕　名古屋・昭和区(中京テレビＮＥＷＳ)" data-summary="名古屋市昭和区で女性が乗用車にはねられ重傷を負ったひき逃げ事件で、50歳の女が逮捕されました。女は逃走後、現場から数百メートルの場所にいて、アルコールのにおいがしたということです。 ひき逃げと危険運">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/11b7bdbb42a78dccbe2cd7fe98a886d99d64af1f?source=rss" data-title="一般会計、過去最大２０７８億円　金沢市当初予算案内示　７年連続で更新(北國新聞社)" data-summary="金沢市は3日、一般会計2078億円の新年度当初予算案を市議会に内示した。予算規模は前年度比1・4％増となり、7年連続で過去最大を更新した。3月1日告示の市長選を控え、義務的経費や継続事業が主体の骨格">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/6d8d48d8235328d8dbe4dced386321fda5005ad4?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">アルコールのにおいも… “重傷ひき逃げ”女（50）を逮捕　名古屋・昭和区(中京テレビＮＥＷＳ)</a>
+                            <a href="https://news.yahoo.co.jp/articles/11b7bdbb42a78dccbe2cd7fe98a886d99d64af1f?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">一般会計、過去最大２０７８億円　金沢市当初予算案内示　７年連続で更新(北國新聞社)</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3分前</span>
+                            <span>5分前</span>
                         </div>
 
                         <div class="entry-summary">
-                            名古屋市昭和区で女性が乗用車にはねられ重傷を負ったひき逃げ事件で、50歳の女が逮捕されました。女は逃走後、現場から数百メートルの場所にいて、アルコールのにおいがしたということです。 ひき逃げと危険運
+                            金沢市は3日、一般会計2078億円の新年度当初予算案を市議会に内示した。予算規模は前年度比1・4％増となり、7年連続で過去最大を更新した。3月1日告示の市長選を控え、義務的経費や継続事業が主体の骨格
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/3301572d35a251843a06bb49b3f994ea874fca02?source=rss" data-title="【カープ日南キャンプ】栗林100球超える投げ込み　連日のブルペン(RCC中国放送)" data-summary="栗林はきょうもブルペンに入り100球を超す投げ込みをしました。 今シーズンから先発に転向する栗林はきのうも変化球を交え65球を投げ込みました。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/3301572d35a251843a06bb49b3f994ea874fca02?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【カープ日南キャンプ】栗林100球超える投げ込み　連日のブルペン(RCC中国放送)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>8分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            栗林はきょうもブルペンに入り100球を超す投げ込みをしました。 今シーズンから先発に転向する栗林はきのうも変化球を交え65球を投げ込みました。
                         </div>
                     </div>
 
@@ -598,18 +719,23 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>トピックス - 地域</span>
+                    <span class="feed-title-text">トピックス - 地域</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 8 / 8</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
                 
                 <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568507?source=rss" data-title="モームリ社長らを逮捕 容疑否認" data-summary="">
                     <div class="entry-content-wrapper">
@@ -621,7 +747,28 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>21分前</span>
+                            <span>1時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568519?source=rss" data-title="Def TechのMicro容疑者を逮捕" data-summary="">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/pickup/6568519?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">Def TechのMicro容疑者を逮捕</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>9分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -642,7 +789,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>57分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -663,7 +810,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -684,7 +831,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>2時間前</span>
+                            <span>3時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -695,17 +842,17 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568484?source=rss" data-title="東京都の25年転入超過 6万5千人" data-summary="">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568512?source=rss" data-title="包帯圧迫で指先壊死 病院が賠償へ" data-summary="">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/pickup/6568484?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">東京都の25年転入超過 6万5千人</a>
+                            <a href="https://news.yahoo.co.jp/pickup/6568512?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">包帯圧迫で指先壊死 病院が賠償へ</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>2時間前</span>
+                            <span>25分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -723,27 +870,6 @@
                             <span class="new-badge">NEW</span>
                             
                             <a href="https://news.yahoo.co.jp/pickup/6568476?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">ワクチン持ち帰り家族に接種 処分</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>3時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568466?source=rss" data-title="駐車料金「踏み倒し」積雪で続発" data-summary="">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/pickup/6568466?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">駐車料金「踏み倒し」積雪で続発</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -768,7 +894,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3時間前</span>
+                            <span>4時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -782,18 +908,23 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>科学</span>
+                    <span class="feed-title-text">科学</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 7 / 8</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
                 
                 <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568504?source=rss" data-title="マスク氏のスペースX xAIを買収" data-summary="">
                     <div class="entry-content-wrapper">
@@ -805,7 +936,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>35分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -826,7 +957,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>4時間前</span>
+                            <span>5時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -847,7 +978,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>4時間前</span>
+                            <span>5時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -868,7 +999,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>16時間前</span>
+                            <span>17時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -889,7 +1020,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>16時間前</span>
+                            <span>17時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -910,7 +1041,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>18時間前</span>
+                            <span>19時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -964,18 +1095,23 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>IT</span>
+                    <span class="feed-title-text">IT</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 3 / 8</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
                 
                 <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568447?source=rss" data-title="偽アカウントと県発表 本物だった" data-summary="">
                     <div class="entry-content-wrapper">
@@ -987,7 +1123,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>14時間前</span>
+                            <span>15時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1008,7 +1144,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>15時間前</span>
+                            <span>16時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1029,7 +1165,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>18時間前</span>
+                            <span>19時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1138,18 +1274,44 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>スポーツ</span>
+                    <span class="feed-title-text">スポーツ</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 8 / 8</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568518?source=rss" data-title="高橋ヒロム 新日本プロレスを退団" data-summary="">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/pickup/6568518?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">高橋ヒロム 新日本プロレスを退団</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>22分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
                 
                 <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568509?source=rss" data-title="デュプランティエ 背番号0の理由" data-summary="">
                     <div class="entry-content-wrapper">
@@ -1161,7 +1323,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>7分前</span>
+                            <span>59分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1182,7 +1344,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1200,27 +1362,6 @@
                             <span class="new-badge">NEW</span>
                             
                             <a href="https://news.yahoo.co.jp/pickup/6568493?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">ド軍監督息子 マイナーのコーチに</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>2時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568483?source=rss" data-title="村上獲得の米球団 温水便座設置へ" data-summary="">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/pickup/6568483?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">村上獲得の米球団 温水便座設置へ</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -1245,7 +1386,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3時間前</span>
+                            <span>4時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1266,7 +1407,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>4時間前</span>
+                            <span>5時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1287,7 +1428,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>12時間前</span>
+                            <span>13時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1322,18 +1463,23 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>エンタ</span>
+                    <span class="feed-title-text">エンタ</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 8 / 8</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
                 
                 <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568505?source=rss" data-title="BTSが7人で復帰公演 ソウルで3月" data-summary="">
                     <div class="entry-content-wrapper">
@@ -1345,7 +1491,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>35分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1366,7 +1512,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>2時間前</span>
+                            <span>3時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1387,7 +1533,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>4時間前</span>
+                            <span>5時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1408,7 +1554,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>4時間前</span>
+                            <span>5時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1471,7 +1617,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>15時間前</span>
+                            <span>16時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1492,7 +1638,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>18時間前</span>
+                            <span>19時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1506,18 +1652,23 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>経済</span>
+                    <span class="feed-title-text">経済</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 8 / 8</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
                 
                 <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568500?source=rss" data-title="日経平均 一時1700円超値上がり" data-summary="">
                     <div class="entry-content-wrapper">
@@ -1529,7 +1680,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1550,28 +1701,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>22分前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568420?source=rss" data-title="「円安」倒産1月6件 前年同月の倍" data-summary="">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/pickup/6568420?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「円安」倒産1月6件 前年同月の倍</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>17時間前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1592,7 +1722,28 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>3時間前</span>
+                            <span>4時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568510?source=rss" data-title="ツムラ「養命酒」事業の買収検討" data-summary="">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/pickup/6568510?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">ツムラ「養命酒」事業の買収検討</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>45分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1634,7 +1785,28 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>13時間前</span>
+                            <span>14時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568511?source=rss" data-title="本当に地獄 シール流行に店員悲鳴" data-summary="">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/pickup/6568511?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">本当に地獄 シール流行に店員悲鳴</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>47分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1655,28 +1827,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>5時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568413?source=rss" data-title="キリン「晴れ風」ヒットの背景は" data-summary="">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/pickup/6568413?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">キリン「晴れ風」ヒットの背景は</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>17時間前</span>
+                            <span>6時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1690,18 +1841,23 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>国際</span>
+                    <span class="feed-title-text">国際</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 8 / 8</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
                 
                 <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568487?source=rss" data-title="核問題巡り 米イランが6日に協議" data-summary="">
                     <div class="entry-content-wrapper">
@@ -1713,7 +1869,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>2時間前</span>
+                            <span>3時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1734,7 +1890,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>5時間前</span>
+                            <span>6時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1755,7 +1911,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>12時間前</span>
+                            <span>13時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1776,7 +1932,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1797,7 +1953,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>16時間前</span>
+                            <span>17時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1818,7 +1974,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>13時間前</span>
+                            <span>14時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1839,7 +1995,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1860,7 +2016,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>16時間前</span>
+                            <span>17時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1874,18 +2030,23 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>国内</span>
+                    <span class="feed-title-text">国内</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 8 / 8</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
                 
                 <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568501?source=rss" data-title="円安巡る首相の発言 財務相が擁護" data-summary="">
                     <div class="entry-content-wrapper">
@@ -1897,7 +2058,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>57分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1918,7 +2079,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>4時間前</span>
+                            <span>5時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1939,7 +2100,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>4時間前</span>
+                            <span>5時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1960,7 +2121,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>2時間前</span>
+                            <span>3時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -1981,7 +2142,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>13時間前</span>
+                            <span>14時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2002,7 +2163,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>15時間前</span>
+                            <span>16時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2023,7 +2184,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>14時間前</span>
+                            <span>15時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2058,39 +2219,23 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>主要</span>
+                    <span class="feed-title-text">主要</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 8 / 8</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568491?source=rss" data-title="張り手くらった 中盤情勢に野田氏" data-summary="">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/pickup/6568491?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">張り手くらった 中盤情勢に野田氏</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>2時間前</span>
-                        </div>
 
-                        <div class="entry-summary">
-                            
-                        </div>
-                    </div>
-
-                    
-                </li>
                 
                 <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568501?source=rss" data-title="円安巡る首相の発言 財務相が擁護" data-summary="">
                     <div class="entry-content-wrapper">
@@ -2102,7 +2247,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>57分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2123,7 +2268,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>22分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2144,69 +2289,6 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>21分前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568502?source=rss" data-title="沖縄性的暴行 米兵懲役5年確定へ" data-summary="">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/pickup/6568502?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">沖縄性的暴行 米兵懲役5年確定へ</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>57分前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568466?source=rss" data-title="駐車料金「踏み倒し」積雪で続発" data-summary="">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/pickup/6568466?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">駐車料金「踏み倒し」積雪で続発</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>4時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568499?source=rss" data-title="ビール大国ドイツ 年間販売量最低" data-summary="">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/pickup/6568499?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">ビール大国ドイツ 年間販売量最低</a>
-                        </div>
-                        
-                        <div class="entry-meta">
                             <span>1時間前</span>
                         </div>
 
@@ -2218,17 +2300,101 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568505?source=rss" data-title="BTSが7人で復帰公演 ソウルで3月" data-summary="">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568512?source=rss" data-title="包帯圧迫で指先壊死 病院が賠償へ" data-summary="">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/pickup/6568505?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">BTSが7人で復帰公演 ソウルで3月</a>
+                            <a href="https://news.yahoo.co.jp/pickup/6568512?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">包帯圧迫で指先壊死 病院が賠償へ</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>35分前</span>
+                            <span>25分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568519?source=rss" data-title="Def TechのMicro容疑者を逮捕" data-summary="">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/pickup/6568519?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">Def TechのMicro容疑者を逮捕</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>9分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568510?source=rss" data-title="ツムラ「養命酒」事業の買収検討" data-summary="">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/pickup/6568510?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">ツムラ「養命酒」事業の買収検討</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>45分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568511?source=rss" data-title="本当に地獄 シール流行に店員悲鳴" data-summary="">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/pickup/6568511?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">本当に地獄 シール流行に店員悲鳴</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>47分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/pickup/6568518?source=rss" data-title="高橋ヒロム 新日本プロレスを退団" data-summary="">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/pickup/6568518?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">高橋ヒロム 新日本プロレスを退団</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>22分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2242,18 +2408,44 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>みん経</span>
+                    <span class="feed-title-text">みん経</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 10 / 10</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/5a888e72579ce5613d9826e22efbfd1d923f5a5e?source=rss" data-title="萩で「地魚フィッシュカレーフェア」始まる　「アラ活」で新ご当地メニュー(みんなの経済新聞ネットワーク)" data-summary="萩市内の飲食店で2月3日、魚の頭や骨などの未利用部位を活用した新グルメを提案する「萩の地魚フィッシュカレーフェア」が始まった。（山口宇部経済新聞） 「萩の地魚フィッシュカレー」は、廃棄されていた">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/5a888e72579ce5613d9826e22efbfd1d923f5a5e?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">萩で「地魚フィッシュカレーフェア」始まる　「アラ活」で新ご当地メニュー(みんなの経済新聞ネットワーク)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>40分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            萩市内の飲食店で2月3日、魚の頭や骨などの未利用部位を活用した新グルメを提案する「萩の地魚フィッシュカレーフェア」が始まった。（山口宇部経済新聞） 「萩の地魚フィッシュカレー」は、廃棄されていた
+                        </div>
+                    </div>
+
+                    
+                </li>
                 
                 <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/0b394736568fd5b35bb5ba2d3da2e65ab8ddc3a1?source=rss" data-title="名駅南でイベント「説明が長い料理店～害獣とジビエ～」　大学生が企画運営(みんなの経済新聞ネットワーク)" data-summary="料理を通して社会課題を伝える一日限定の体験型イベント「説明が長い料理店～害獣とジビエ～」が2月19日、エルダンジュ名古屋（名古屋市中村区名駅南4）で開催される。企画・運営は、金城学院大学国際情報学部">
                     <div class="entry-content-wrapper">
@@ -2265,11 +2457,32 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>8分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
                             料理を通して社会課題を伝える一日限定の体験型イベント「説明が長い料理店～害獣とジビエ～」が2月19日、エルダンジュ名古屋（名古屋市中村区名駅南4）で開催される。企画・運営は、金城学院大学国際情報学部
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/bf3b0262b52c7d1732e7533401236cc972d9fe95?source=rss" data-title="宇都宮で「こたつ屋台フェス」　屋外こたつ40台を19店舗が囲む(みんなの経済新聞ネットワーク)" data-summary="「屋外こたつ」で食事を楽しむ体験型フードイベント「こたつ屋台フェス 2026」が2月6日～8日、バンバ市民広場（宇都宮市馬場通り4）で開催される。（宇都宮経済新聞） 同イベントは、2023年2月">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/bf3b0262b52c7d1732e7533401236cc972d9fe95?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">宇都宮で「こたつ屋台フェス」　屋外こたつ40台を19店舗が囲む(みんなの経済新聞ネットワーク)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>1時間前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            「屋外こたつ」で食事を楽しむ体験型フードイベント「こたつ屋台フェス 2026」が2月6日～8日、バンバ市民広場（宇都宮市馬場通り4）で開催される。（宇都宮経済新聞） 同イベントは、2023年2月
                         </div>
                     </div>
 
@@ -2286,7 +2499,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>11分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2307,7 +2520,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>12分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2328,7 +2541,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>24分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2349,7 +2562,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>31分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2370,7 +2583,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>39分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2391,7 +2604,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>41分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2412,7 +2625,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>41分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2423,63 +2636,131 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/530847c2341f8c0723fd257e96fdf27f74a28988?source=rss" data-title="宮崎・高千穂で一夜限りの夜神楽野外公演　天岩戸神話の舞台で(みんなの経済新聞ネットワーク)" data-summary="高千穂の夜神楽を楽しむ限定野外公演ツアーが3月14日、宮崎・高千穂町の天岩戸神社（高千穂町岩戸）の天安河原で開催される。（日向経済新聞） 「神話の舞台に舞い降りる『高千穂の夜神楽』限定野外公演ツ">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/articles/530847c2341f8c0723fd257e96fdf27f74a28988?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">宮崎・高千穂で一夜限りの夜神楽野外公演　天岩戸神話の舞台で(みんなの経済新聞ネットワーク)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>1時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            高千穂の夜神楽を楽しむ限定野外公演ツアーが3月14日、宮崎・高千穂町の天岩戸神社（高千穂町岩戸）の天安河原で開催される。（日向経済新聞） 「神話の舞台に舞い降りる『高千穂の夜神楽』限定野外公演ツ
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/23d81c4e0a6ccdc5a5409d777a7ddd83ef76d8a2?source=rss" data-title="宗像・くりえいとに「モックプラス」　ソフトクリームとクレープ提供(みんなの経済新聞ネットワーク)" data-summary="ソフトクリームとクレープの店「MOCCU PLUS（モックプラス） くりえいと宗像店」（宗像市くりえいと3）が1月31日、グランドオープンした。（宗像経済新聞） 副店主の坂口千晴さんが自宅庭に設">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/articles/23d81c4e0a6ccdc5a5409d777a7ddd83ef76d8a2?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">宗像・くりえいとに「モックプラス」　ソフトクリームとクレープ提供(みんなの経済新聞ネットワーク)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>1時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            ソフトクリームとクレープの店「MOCCU PLUS（モックプラス） くりえいと宗像店」（宗像市くりえいと3）が1月31日、グランドオープンした。（宗像経済新聞） 副店主の坂口千晴さんが自宅庭に設
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>ねとらぼ</span>
+                    <span class="feed-title-text">ねとらぼ</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 10 / 10</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/d7f3ecadb6b660f553bd535a9f67abc565585645?source=rss" data-title="箱を開けた瞬間「わー！！かわいい！！」ANNA SUI（アナスイ）の“ネコがま口二つ折り財布”に絶賛の声　「ストーンと猫と蝶、全てが素敵」「可愛さ120点」「使い勝手がとても良い」(ねとらぼ)" data-summary="遊び心を備えた財布を探している人に注目されているのが、ANNA SUI（アナスイ）の「プレイングキャット」シリーズの二つ折り財布です。ネコモチーフを取り入れたデザインと、外側に配置されたがま口仕様の">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/d7f3ecadb6b660f553bd535a9f67abc565585645?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">箱を開けた瞬間「わー！！かわいい！！」ANNA SUI（アナスイ）の“ネコがま口二つ折り財布”に絶賛の声　「ストーンと猫と蝶、全てが素敵」「可愛さ120点」「使い勝手がとても良い」(ねとらぼ)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            遊び心を備えた財布を探している人に注目されているのが、ANNA SUI（アナスイ）の「プレイングキャット」シリーズの二つ折り財布です。ネコモチーフを取り入れたデザインと、外側に配置されたがま口仕様の
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/c4943250d6ccabbe1f3a37d6c4d620e32ada2352?source=rss" data-title="“勝手に一夫多妻”の8人家族が崩壊……　子ども11人作った日本人男性、「気持ち悪い」と言われ決裂→全財産11万円の窮地も「もっと夫人を増やしたい」(ねとらぼ)" data-summary="“勝手に一夫多妻”を実践しているインフルエンサーの渡部竜太さんが1月31日、YouTubeチャンネル「街録ch〜あなたの人生、教えて下さい〜」に出演。一夫多妻が崩壊し、全財産11万円の貧乏生活を送っ">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/c4943250d6ccabbe1f3a37d6c4d620e32ada2352?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">“勝手に一夫多妻”の8人家族が崩壊……　子ども11人作った日本人男性、「気持ち悪い」と言われ決裂→全財産11万円の窮地も「もっと夫人を増やしたい」(ねとらぼ)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>18分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            “勝手に一夫多妻”を実践しているインフルエンサーの渡部竜太さんが1月31日、YouTubeチャンネル「街録ch〜あなたの人生、教えて下さい〜」に出演。一夫多妻が崩壊し、全財産11万円の貧乏生活を送っ
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/05095f163e5f817ff112acc38f1fcb8508cb3ac3?source=rss" data-title="「一袋すぐ無くなる」　静岡・浜松の老舗洋菓子店が生み出す“人気菓子”がおみやげとして高評価！　「名前の由来がまた素敵なんですよ」「苦手なのに食べられてしまう」(ねとらぼ)" data-summary="静岡・浜松の老舗洋菓子店が生み出す、ザクザク食感と素材感豊かな焼き菓子、「あげ潮」を見ていきましょう。 （出典元：浜松駅 人気土産ランキング（2025.12.1-31）｜土産人気ランキング｜JR東">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/05095f163e5f817ff112acc38f1fcb8508cb3ac3?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「一袋すぐ無くなる」　静岡・浜松の老舗洋菓子店が生み出す“人気菓子”がおみやげとして高評価！　「名前の由来がまた素敵なんですよ」「苦手なのに食べられてしまう」(ねとらぼ)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>23分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            静岡・浜松の老舗洋菓子店が生み出す、ザクザク食感と素材感豊かな焼き菓子、「あげ潮」を見ていきましょう。 （出典元：浜松駅 人気土産ランキング（2025.12.1-31）｜土産人気ランキング｜JR東
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/c9d07d3d7eded6fb5651145fc5c54b85964c24f6?source=rss" data-title="「かわいらしい見た目にシビアな難易度」協力型“登山ゲーム”が話題　「友情、根性、そして薄情」「はや3カ月遊び続けている」「めっちゃハラハラする」(ねとらぼ)" data-summary="「PEAK」は、最大4人で挑む協力型サバイバル登山ゲームです。危険な岩場をロープやくさびで支え合いながら進むスリルと、登頂時の達成感が魅力。プレイヤーからは「ソロでも楽しいが仲間と登るともっと楽しい">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/c9d07d3d7eded6fb5651145fc5c54b85964c24f6?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「かわいらしい見た目にシビアな難易度」協力型“登山ゲーム”が話題　「友情、根性、そして薄情」「はや3カ月遊び続けている」「めっちゃハラハラする」(ねとらぼ)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>33分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            「PEAK」は、最大4人で挑む協力型サバイバル登山ゲームです。危険な岩場をロープやくさびで支え合いながら進むスリルと、登頂時の達成感が魅力。プレイヤーからは「ソロでも楽しいが仲間と登るともっと楽しい
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/6aa762e70295c7e83b940fe67dbcacf72d38bdb4?source=rss" data-title="「めちゃ軽いのに暖かい」　ユニクロの“防寒ジャケット”が大人気　「ダウンと変わらないほど暖かい」「小さくして持ち歩けるので1枚あると便利」(ねとらぼ)" data-summary="ユニクロで販売されている“防寒ジャケット”が、軽量で暖かく、コンパクトにできるので持ち歩きにも便利だと人気を集めています。 本記事では、そんな「パフテックジャケット」について紹介します。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/6aa762e70295c7e83b940fe67dbcacf72d38bdb4?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「めちゃ軽いのに暖かい」　ユニクロの“防寒ジャケット”が大人気　「ダウンと変わらないほど暖かい」「小さくして持ち歩けるので1枚あると便利」(ねとらぼ)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>43分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            ユニクロで販売されている“防寒ジャケット”が、軽量で暖かく、コンパクトにできるので持ち歩きにも便利だと人気を集めています。 本記事では、そんな「パフテックジャケット」について紹介します。
+                        </div>
+                    </div>
+
+                    
+                </li>
                 
                 <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/b51eca36e2996d87c0337bc8b45089f4b44e0938?source=rss" data-title="「普通のデニムには戻れません」　無印良品の“2990円イージーデニムパンツ”が大人気！　「厚くも薄くもなくすごく着やすい」「2着で着回してます！」(ねとらぼ)" data-summary="1980年に日本で生まれ、海外でも大きな成功を収めている「無印良品」。シンプルなデザインながら、日常生活で使いやすい機能的な商品をさまざまなカテゴリーで取りそろえているのが特徴です。生産工程を合理化">
                     <div class="entry-content-wrapper">
@@ -2491,7 +2772,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>11分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2512,7 +2793,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>16分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2533,32 +2814,11 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>26分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
                             人生で初めて作ったうちわがすごいと話題に。推しへの愛を詰め込んだ仕上がりに注目が集まり、投稿は記事執筆現在までに364万回以上表示され、6万3000件以上の「いいね！」を獲得しています。 投稿者
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/2f5b35fe390808e1119e993b78449b13cc026d00?source=rss" data-title="「さすが吉田カバン」PORTER（ポーター）の“二つ折り財布”が大人気 「縫製が綺麗」「お札部分とレシートが整理できる」「高級感あり」(ねとらぼ)" data-summary="PORTER（ポーター）は、日本の老舗鞄メーカー・吉田カバンが展開するブランド。機能性とデザイン性に優れたアイテムは、年齢・性別問わず幅広く支持されています。バッグ・財布・ポーチなどいろいろな商品が">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/articles/2f5b35fe390808e1119e993b78449b13cc026d00?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「さすが吉田カバン」PORTER（ポーター）の“二つ折り財布”が大人気 「縫製が綺麗」「お札部分とレシートが整理できる」「高級感あり」(ねとらぼ)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>41分前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            PORTER（ポーター）は、日本の老舗鞄メーカー・吉田カバンが展開するブランド。機能性とデザイン性に優れたアイテムは、年齢・性別問わず幅広く支持されています。バッグ・財布・ポーチなどいろいろな商品が
                         </div>
                     </div>
 
@@ -2575,7 +2835,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>41分前</span>
+                            <span>1時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2586,34 +2846,13 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/fbc803d3fa3909c77117063b42ac43c2daa2d716?source=rss" data-title="春を先取りする一枚。ユニクロの“麻混カーデ”で季節の変わり目に備えよう「サラッと羽織れる」「チクチクしない」(ねとらぼ)" data-summary="「LifeWear」をコンセプトに掲げる日本発のグローバルブランド、ユニクロ。あらゆる人の生活を豊かにするための服作りを目指し、シンプルで高品質、かつ機能的な日常着を適正な価格で提供しています。素材">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/2f5b35fe390808e1119e993b78449b13cc026d00?source=rss" data-title="「さすが吉田カバン」PORTER（ポーター）の“二つ折り財布”が大人気 「縫製が綺麗」「お札部分とレシートが整理できる」「高級感あり」(ねとらぼ)" data-summary="PORTER（ポーター）は、日本の老舗鞄メーカー・吉田カバンが展開するブランド。機能性とデザイン性に優れたアイテムは、年齢・性別問わず幅広く支持されています。バッグ・財布・ポーチなどいろいろな商品が">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/fbc803d3fa3909c77117063b42ac43c2daa2d716?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">春を先取りする一枚。ユニクロの“麻混カーデ”で季節の変わり目に備えよう「サラッと羽織れる」「チクチクしない」(ねとらぼ)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>51分前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            「LifeWear」をコンセプトに掲げる日本発のグローバルブランド、ユニクロ。あらゆる人の生活を豊かにするための服作りを目指し、シンプルで高品質、かつ機能的な日常着を適正な価格で提供しています。素材
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/1073bd1583a3234f69d2b053e4ad0251d7dd0af4?source=rss" data-title="「かわいい上に、とにかく暖かい」　ワークマンの“ベストにもなる1900円アウター”に絶賛の声　「プードルみたいでキャワ」「春先にも着れてGOOD」(ねとらぼ)" data-summary="ワークマンから発売されているプードルファーのアウターが、袖の取り外しができる2WAY仕様で、寒い季節にも、春先の装いにもベストとしてコーディネートできると注目を集めています。 本記事ではそんな「">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/articles/1073bd1583a3234f69d2b053e4ad0251d7dd0af4?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「かわいい上に、とにかく暖かい」　ワークマンの“ベストにもなる1900円アウター”に絶賛の声　「プードルみたいでキャワ」「春先にも着れてGOOD」(ねとらぼ)</a>
+                            <a href="https://news.yahoo.co.jp/articles/2f5b35fe390808e1119e993b78449b13cc026d00?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「さすが吉田カバン」PORTER（ポーター）の“二つ折り財布”が大人気 「縫製が綺麗」「お札部分とレシートが整理できる」「高級感あり」(ねとらぼ)</a>
                         </div>
                         
                         <div class="entry-meta">
@@ -2621,70 +2860,7 @@
                         </div>
 
                         <div class="entry-summary">
-                            ワークマンから発売されているプードルファーのアウターが、袖の取り外しができる2WAY仕様で、寒い季節にも、春先の装いにもベストとしてコーディネートできると注目を集めています。 本記事ではそんな「
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/5a0f2fac9e7ce52c1eaee7145436c098e1f73636?source=rss" data-title="2児ママがふらっとセカスト訪問→110円で買えた、ほぼ新品の“定価1990円”商品に「えぇ!!!」「うらやまです」(ねとらぼ)" data-summary="リサイクルショップ「セカンドストリート」でママが見つけたお買い得商品がThreadsで話題に。投稿は記事執筆時点で6万回以上表示され、「かわいい」「今すぐセカスト行かなければ!!」と注目を呼んでいま">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/articles/5a0f2fac9e7ce52c1eaee7145436c098e1f73636?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">2児ママがふらっとセカスト訪問→110円で買えた、ほぼ新品の“定価1990円”商品に「えぇ!!!」「うらやまです」(ねとらぼ)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>1時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            リサイクルショップ「セカンドストリート」でママが見つけたお買い得商品がThreadsで話題に。投稿は記事執筆時点で6万回以上表示され、「かわいい」「今すぐセカスト行かなければ!!」と注目を呼んでいま
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/1735713b17910650012addc5b72911fc6552c1e5?source=rss" data-title="赤ちゃんの泣き声がうるさくないか心配だったママ→隣人からの手紙を開くと……「やばい、、」　驚きの中身に「惚れてまうやろー！！」(ねとらぼ)" data-summary="赤ちゃんの泣き声が隣人の男性に迷惑をかけていないかと心配していたら……。そんなママに訪れた、心癒やされる展開がThreadsに投稿されました。記事執筆時点でこの投稿の閲覧数は1440万回を突破し、“">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/articles/1735713b17910650012addc5b72911fc6552c1e5?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">赤ちゃんの泣き声がうるさくないか心配だったママ→隣人からの手紙を開くと……「やばい、、」　驚きの中身に「惚れてまうやろー！！」(ねとらぼ)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>1時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            赤ちゃんの泣き声が隣人の男性に迷惑をかけていないかと心配していたら……。そんなママに訪れた、心癒やされる展開がThreadsに投稿されました。記事執筆時点でこの投稿の閲覧数は1440万回を突破し、“
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/1fc88e8be7b2a3f836b160b38add3fe88e5df47f?source=rss" data-title="保育園から「箱ティッシュを持ってきて」→ママが見つけた唯一の1箱は……　まさかのデザインに「人気者間違いなし！」「インパクト強すぎますww」(ねとらぼ)" data-summary="保育園に持っていく「箱ティッシュ」を探していたら……。唯一家にあった衝撃の1箱が、Threadsで「面白すぎる」「涙出るくらい笑った」と注目を呼んでいます。よりにもよってなぜこんなのが!?">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://news.yahoo.co.jp/articles/1fc88e8be7b2a3f836b160b38add3fe88e5df47f?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">保育園から「箱ティッシュを持ってきて」→ママが見つけた唯一の1箱は……　まさかのデザインに「人気者間違いなし！」「インパクト強すぎますww」(ねとらぼ)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>1時間前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            保育園に持っていく「箱ティッシュ」を探していたら……。唯一家にあった衝撃の1箱が、Threadsで「面白すぎる」「涙出るくらい笑った」と注目を呼んでいます。よりにもよってなぜこんなのが!?
+                            PORTER（ポーター）は、日本の老舗鞄メーカー・吉田カバンが展開するブランド。機能性とデザイン性に優れたアイテムは、年齢・性別問わず幅広く支持されています。バッグ・財布・ポーチなどいろいろな商品が
                         </div>
                     </div>
 
@@ -2694,18 +2870,23 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>日経ビジ</span>
+                    <span class="feed-title-text">日経ビジ</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 2 / 10</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
                 
                 <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/cb83386629677e7cf4dfaee29af725b40e000d13?source=rss" data-title="「アナ雪」敗北から復活サンリオ・キティ　ハリウッド映画で北米シェア10％へ(日経ビジネス)" data-summary="米カリフォルニア州サンタクララにあるショッピングモール。その一角に、ピンクを基調とした店舗がある。サンリオの「ハローキティ」をモチーフとした、ハローキティカフェだ。 ドリンク用カップにはキティの">
                     <div class="entry-content-wrapper">
@@ -2717,7 +2898,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>6時間前</span>
+                            <span>7時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2738,7 +2919,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>18時間前</span>
+                            <span>19時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -2904,18 +3085,44 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>ダイ不動</span>
+                    <span class="feed-title-text">ダイ不動</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 2 / 10</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/d5503c329b3c52175d177eba2c68afb949252af2?source=rss" data-title="2026年2月の住宅ローン金利推移は？ 変動・固定のランキングや最新動向も解説！(ダイヤモンド不動産研究所)" data-summary="2026年2月の住宅ローンの金利推移・動向は、変動型は据え置き、10年固定は引き上げ、35年固定は引き上げとなっています。フラット35（買取型）は2.260％で前月から引き上げとなりました。変動型は基">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://news.yahoo.co.jp/articles/d5503c329b3c52175d177eba2c68afb949252af2?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">2026年2月の住宅ローン金利推移は？ 変動・固定のランキングや最新動向も解説！(ダイヤモンド不動産研究所)</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2分前</span>
+                        </div>
+
+                        <div class="entry-summary">
+                            2026年2月の住宅ローンの金利推移・動向は、変動型は据え置き、10年固定は引き上げ、35年固定は引き上げとなっています。フラット35（買取型）は2.260％で前月から引き上げとなりました。変動型は基
+                        </div>
+                    </div>
+
+                    
+                </li>
                 
                 <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/8bbeb6188ae8708efcdce68444b935e8a68f9762?source=rss" data-title="住宅ローンのボーナス払いで破綻する3つのパターンとは？　銀行員がリスクやセーフティネットについて解説！(ダイヤモンド不動産研究所)" data-summary="住宅ローンの返済計画で多くの人が検討する「ボーナス払い」。月々の支払額を抑えられる魅力的な選択肢に見えますが、現役銀行員の視点で見ると、そこには35年という長期スパンならではの無視できないリスクが潜ん">
                     <div class="entry-content-wrapper">
@@ -2927,7 +3134,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -3090,38 +3297,26 @@
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/3c49d3f9aef9f97b046719a8d8a0ff4bdbade47a?source=rss" data-title="マンションを早く売ろうとするのは危険!?　あと100万円高く売るために売主が抑えておきたい基礎知識(ダイヤモンド不動産研究所)" data-summary="売却の進め方を少し変えるだけで、マンションはあと100万円高く売れる可能性があるという。売却価格を上げるのに必要な考え方や行動とは?これまで2000件以上の売却に携わってきた著者が「高く、気持ちよく売">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <a href="https://news.yahoo.co.jp/articles/3c49d3f9aef9f97b046719a8d8a0ff4bdbade47a?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">マンションを早く売ろうとするのは危険!?　あと100万円高く売るために売主が抑えておきたい基礎知識(ダイヤモンド不動産研究所)</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>13日前</span>
-                        </div>
-
-                        <div class="entry-summary">
-                            売却の進め方を少し変えるだけで、マンションはあと100万円高く売れる可能性があるという。売却価格を上げるのに必要な考え方や行動とは?これまで2000件以上の売却に携わってきた著者が「高く、気持ちよく売
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" >
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>税理士</span>
+                    <span class="feed-title-text">税理士</span>
                 </div>
                 
+                <div class="feed-meta">
+                    
+                    <span class="count-badge">10 件</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
                 
                 <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/84b854785e85e7a62e608069507c7ff26f850e3d?source=rss" data-title="【確定申告】年収160万円まで非課税？令和7年分確定申告の疑問点に税理士が回答(税理士ドットコム)" data-summary="今年の確定申告は2月16日（月）〜3月16日（月）までです。ただし、還付申告に関しては1月1日から行うことができるため、すでに確定申告のシーズンが到来しています。 令和7年（2025年）度の税制改正">
                     <div class="entry-content-wrapper">
@@ -3188,7 +3383,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>14日前</span>
+                            <span>15日前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -3316,18 +3511,23 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>選挙</span>
+                    <span class="feed-title-text">選挙</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 6 / 10</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
+                
+
                 
                 <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/30a49b3fca96d7ef364240ac1e79f7a849ee46bd?source=rss" data-title="異例の公認見送りの内幕は？維新・中道・共産・無所属による激戦選挙区「兵庫2区」の情勢を解説【衆院選2026】(選挙ドットコム)" data-summary="1月31日に公開された「選挙ドットコムちゃんねる」では、衆院選2026で注目される兵庫県内の小選挙区を特集！元神戸市会議員の橋本健氏をゲストに迎え、選挙芸人の山本期日前氏が兵庫2区を巡る各党の情勢や選">
                     <div class="entry-content-wrapper">
@@ -3339,7 +3539,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>7分前</span>
+                            <span>59分前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -3360,7 +3560,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>6時間前</span>
+                            <span>7時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -3381,7 +3581,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>12時間前</span>
+                            <span>13時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -3402,7 +3602,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>13時間前</span>
+                            <span>14時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -3423,7 +3623,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>14時間前</span>
+                            <span>15時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -3444,7 +3644,7 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>14時間前</span>
+                            <span>15時間前</span>
                         </div>
 
                         <div class="entry-summary">
@@ -3534,223 +3734,228 @@
             </ul>
         </details>
         
-        <details class="feed-section">
+        <details class="feed-section" open>
             <summary>
-                <div class="feed-header">
+                <div class="feed-info">
                     <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span>ライフ</span>
+                    <span class="feed-title-text">ライフ</span>
                 </div>
                 
-                <span class="feed-status">● New</span>
-                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 10 / 10</span>
+                    
+                </div>
             </summary>
             
             <ul class="entry-list">
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/8d6e6285c6223bdc77e66348d5554304f479d814?source=rss" data-title="手料理がすごいと話題の木村文乃さん、子どもの食事に試行錯誤「冷凍もレトルトもスナックパンも食べない、全然食べない」(マイナビ子育て)" data-summary="Instagramに投稿する美味しそうな手料理がたびたび話題になる、俳優の木村文乃さん。ただ、はたから見れば思わず「食べたい！」とよだれが出るほど美味しそうな手料理も、我が子がなかなか手を付けてくれな">
+
+                
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/40e943e9a88cc20e6cd34ed1ba622b54b01479c9?source=rss" data-title="焼肉の和民、3日間限定“肉の日特別セール”開催　生ビールが1杯税抜29円に(オリコン)" data-summary="ワタミが全国で展開する「焼肉の和民」では、日頃の感謝を込めて、9日の年に一度の「肉の日」にちなみ、9日～11日の期間で同店自慢の『ワタミカルビ（中サイズ）』を通常内容量比29％増量、『ワタミ上カルビ">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/8d6e6285c6223bdc77e66348d5554304f479d814?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">手料理がすごいと話題の木村文乃さん、子どもの食事に試行錯誤「冷凍もレトルトもスナックパンも食べない、全然食べない」(マイナビ子育て)</a>
+                            <a href="https://news.yahoo.co.jp/articles/40e943e9a88cc20e6cd34ed1ba622b54b01479c9?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">焼肉の和民、3日間限定“肉の日特別セール”開催　生ビールが1杯税抜29円に(オリコン)</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>0分前</span>
+                            <span>2分前</span>
                         </div>
 
                         <div class="entry-summary">
-                            Instagramに投稿する美味しそうな手料理がたびたび話題になる、俳優の木村文乃さん。ただ、はたから見れば思わず「食べたい！」とよだれが出るほど美味しそうな手料理も、我が子がなかなか手を付けてくれな
+                            ワタミが全国で展開する「焼肉の和民」では、日頃の感謝を込めて、9日の年に一度の「肉の日」にちなみ、9日～11日の期間で同店自慢の『ワタミカルビ（中サイズ）』を通常内容量比29％増量、『ワタミ上カルビ
                         </div>
                     </div>
 
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/231c69bba12c7153badc2bf66ea73d021ed43f26?source=rss" data-title="中川翔子さんが双子のお宮参り＆イタリアンでお食い初め！ 淡いピンクの着物が素敵「双子と庭園お散歩する夢も叶ったよ」(マイナビ子育て)" data-summary="昨年、双子の男児を出産した中川翔子さんが、お宮参りとお食い初めの模様をInstagramで紹介しました。 ■思い出のホテルで感動 中川翔子さんは2023年4月に一般男性と結婚、昨年9月末に双子の男">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/d7f3ecadb6b660f553bd535a9f67abc565585645?source=rss" data-title="箱を開けた瞬間「わー！！かわいい！！」ANNA SUI（アナスイ）の“ネコがま口二つ折り財布”に絶賛の声　「ストーンと猫と蝶、全てが素敵」「可愛さ120点」「使い勝手がとても良い」(ねとらぼ)" data-summary="遊び心を備えた財布を探している人に注目されているのが、ANNA SUI（アナスイ）の「プレイングキャット」シリーズの二つ折り財布です。ネコモチーフを取り入れたデザインと、外側に配置されたがま口仕様の">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/231c69bba12c7153badc2bf66ea73d021ed43f26?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">中川翔子さんが双子のお宮参り＆イタリアンでお食い初め！ 淡いピンクの着物が素敵「双子と庭園お散歩する夢も叶ったよ」(マイナビ子育て)</a>
+                            <a href="https://news.yahoo.co.jp/articles/d7f3ecadb6b660f553bd535a9f67abc565585645?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">箱を開けた瞬間「わー！！かわいい！！」ANNA SUI（アナスイ）の“ネコがま口二つ折り財布”に絶賛の声　「ストーンと猫と蝶、全てが素敵」「可愛さ120点」「使い勝手がとても良い」(ねとらぼ)</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>0分前</span>
+                            <span>3分前</span>
                         </div>
 
                         <div class="entry-summary">
-                            昨年、双子の男児を出産した中川翔子さんが、お宮参りとお食い初めの模様をInstagramで紹介しました。 ■思い出のホテルで感動 中川翔子さんは2023年4月に一般男性と結婚、昨年9月末に双子の男
+                            遊び心を備えた財布を探している人に注目されているのが、ANNA SUI（アナスイ）の「プレイングキャット」シリーズの二つ折り財布です。ネコモチーフを取り入れたデザインと、外側に配置されたがま口仕様の
                         </div>
                     </div>
 
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/40b63edae6f3c484990f0036580afb445dca1f5e?source=rss" data-title="花粉は“家に入れない”が正解だった…寄せ付けないことに特化した花粉対策グッズ(オリコン)" data-summary="衣類や髪、バッグに付着した花粉をそのまま室内へ持ち込むことで、「家の中でも花粉がつらい」状態に。だからこそ重要なのが、花粉は家に持ち込まないという考え方。外で付いた花粉を玄関で落とし、室内に広げない">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/59dda6caccd49848d600f9434280b706ad062042?source=rss" data-title="【看病レシピ】とろとろ＆つるつる食感で消化をお助け。体もほっこり温まるやさしい主食のアイデア2品(レタスクラブ)" data-summary="食欲が落ちているときや、胃腸が弱っているときは、温かくて口当たりのいい主食が心強い味方。消化に配慮しながら、卵やだしのうまみで栄養も補えるので、体調がすぐれないときにぴったりです。 レシピを教えてく">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/40b63edae6f3c484990f0036580afb445dca1f5e?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">花粉は“家に入れない”が正解だった…寄せ付けないことに特化した花粉対策グッズ(オリコン)</a>
+                            <a href="https://news.yahoo.co.jp/articles/59dda6caccd49848d600f9434280b706ad062042?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【看病レシピ】とろとろ＆つるつる食感で消化をお助け。体もほっこり温まるやさしい主食のアイデア2品(レタスクラブ)</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1分前</span>
+                            <span>3分前</span>
                         </div>
 
                         <div class="entry-summary">
-                            衣類や髪、バッグに付着した花粉をそのまま室内へ持ち込むことで、「家の中でも花粉がつらい」状態に。だからこそ重要なのが、花粉は家に持ち込まないという考え方。外で付いた花粉を玄関で落とし、室内に広げない
+                            食欲が落ちているときや、胃腸が弱っているときは、温かくて口当たりのいい主食が心強い味方。消化に配慮しながら、卵やだしのうまみで栄養も補えるので、体調がすぐれないときにぴったりです。 レシピを教えてく
                         </div>
                     </div>
 
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/cb8ddf3f43cee45508261c34d4654b40977c7f95?source=rss" data-title="あどけない生後8カ月の子猫→たった2カ月で「ドデーン」 貫禄マシマシの成長姿にキュン！(ねこのきもち WEB MAGAZINE)" data-summary="「ちょこん」だった子猫が「ドデーン」に！ ラグドールの成長ぶりに驚き。">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/d1e1004dee652e05d62b0485aaf022d20950ac8a?source=rss" data-title="岩合光昭、愛猫タマトモの遊ぶ姿を公開⇨「2匹の性格の違いがあらわれますネ」「 オリンピアン目指して特訓？」(ハフポスト日本版)" data-summary="写真家の岩合光昭さんが2月2日、Xを更新し、愛猫たちの様子を捉えた写真を投稿しました。 岩合さんは「今週からオリンピックで ネコ歩き新作はしばらくお休み。なので、タマトモを。笑」とコメントし、番組お">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/cb8ddf3f43cee45508261c34d4654b40977c7f95?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">あどけない生後8カ月の子猫→たった2カ月で「ドデーン」 貫禄マシマシの成長姿にキュン！(ねこのきもち WEB MAGAZINE)</a>
+                            <a href="https://news.yahoo.co.jp/articles/d1e1004dee652e05d62b0485aaf022d20950ac8a?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">岩合光昭、愛猫タマトモの遊ぶ姿を公開⇨「2匹の性格の違いがあらわれますネ」「 オリンピアン目指して特訓？」(ハフポスト日本版)</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1分前</span>
+                            <span>6分前</span>
                         </div>
 
                         <div class="entry-summary">
-                            「ちょこん」だった子猫が「ドデーン」に！ ラグドールの成長ぶりに驚き。
+                            写真家の岩合光昭さんが2月2日、Xを更新し、愛猫たちの様子を捉えた写真を投稿しました。 岩合さんは「今週からオリンピックで ネコ歩き新作はしばらくお休み。なので、タマトモを。笑」とコメントし、番組お
                         </div>
                     </div>
 
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/64aada70e23647579ae10334017bab0faeeac5cf?source=rss" data-title="「しばらく行くのはいいかな」　日本通のスペイン人一家が圧倒された場所　「感情表現がストレート」と感じた都市とは(Hint-Pot)" data-summary="東京の洗練された街並みや、京都の歴史的な風情など、訪れるたびに新しい発見がある日本の都市。3度目の訪日というスペイン人女性は、これまで日本のさまざまな街を旅してきたそうです。しかし今回、初めて訪れた">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/90d7d4863830ac315f31847f6267cc3656a8ea2c?source=rss" data-title="住友不動産、リゾートホテル「ヴィラージュ熱海」今夏開業。9階建て82室に温泉大浴場・ルーフトップバーなど(トラベル Watch)" data-summary="住友不動産ヴィラフォンテーヌは2月3日、リゾートホテル「ヴィラージュ熱海」（静岡県熱海市中央町11、地番）を今夏開業することを発表した。 JR熱海駅から徒歩14分の立地で、施設は9階建て82室。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/64aada70e23647579ae10334017bab0faeeac5cf?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「しばらく行くのはいいかな」　日本通のスペイン人一家が圧倒された場所　「感情表現がストレート」と感じた都市とは(Hint-Pot)</a>
+                            <a href="https://news.yahoo.co.jp/articles/90d7d4863830ac315f31847f6267cc3656a8ea2c?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">住友不動産、リゾートホテル「ヴィラージュ熱海」今夏開業。9階建て82室に温泉大浴場・ルーフトップバーなど(トラベル Watch)</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>5分前</span>
+                            <span>8分前</span>
                         </div>
 
                         <div class="entry-summary">
-                            東京の洗練された街並みや、京都の歴史的な風情など、訪れるたびに新しい発見がある日本の都市。3度目の訪日というスペイン人女性は、これまで日本のさまざまな街を旅してきたそうです。しかし今回、初めて訪れた
+                            住友不動産ヴィラフォンテーヌは2月3日、リゾートホテル「ヴィラージュ熱海」（静岡県熱海市中央町11、地番）を今夏開業することを発表した。 JR熱海駅から徒歩14分の立地で、施設は9階建て82室。
                         </div>
                     </div>
 
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/543df171db2456158b5e47492348eeca28279c9f?source=rss" data-title="6年間のお弁当、「最後の日」は突然に　山口もえさんが添えた手紙(朝日新聞Thinkキャンパス)" data-summary="穏やかな口調と明るい笑顔で、家族との時間を大切に重ねてきたタレントの山口もえさん。高3の長女、中3の長男、小2の次女のために、6年間、毎朝5時に起きてお弁当作りを続けてきました。忙しい日々の中で工夫し">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/f6f6ce2484830154ba310b79c300511d680b98f6?source=rss" data-title="Leeが「101」シリーズ誕生101周年記念コレクションを発売(FASHIONSNAP)" data-summary="「リー（Lee）」が、「Lee 101 101st ANNIVERSARY」コレクションを発売した。メンズ12種類、ウィメンズ10種類をラインナップし、価格帯は2万2000〜5万5000円。リー直営">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/543df171db2456158b5e47492348eeca28279c9f?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">6年間のお弁当、「最後の日」は突然に　山口もえさんが添えた手紙(朝日新聞Thinkキャンパス)</a>
+                            <a href="https://news.yahoo.co.jp/articles/f6f6ce2484830154ba310b79c300511d680b98f6?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">Leeが「101」シリーズ誕生101周年記念コレクションを発売(FASHIONSNAP)</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>5分前</span>
+                            <span>12分前</span>
                         </div>
 
                         <div class="entry-summary">
-                            穏やかな口調と明るい笑顔で、家族との時間を大切に重ねてきたタレントの山口もえさん。高3の長女、中3の長男、小2の次女のために、6年間、毎朝5時に起きてお弁当作りを続けてきました。忙しい日々の中で工夫し
+                            「リー（Lee）」が、「Lee 101 101st ANNIVERSARY」コレクションを発売した。メンズ12種類、ウィメンズ10種類をラインナップし、価格帯は2万2000〜5万5000円。リー直営
                         </div>
                     </div>
 
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/d51dff26391fba4d62b770d08673b35e76e1064a?source=rss" data-title="ホストに恋した30代女性のゴミ屋敷→母親からの依頼で床が見える明るい空間に大変身！新しい人生のスタート(LIMO)" data-summary="年度の終わりも近づき、お部屋を片付けて気持ちをスッキリさせたい方も多いのではないでしょうか。 今回ご紹介するご投稿は、ゴミで埋め尽くされた部屋が見違えるほど綺麗になる、驚きのビフォーアフター動画です">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/cc244a4c5fb271158b0914b88e1f178dbc4fe601?source=rss" data-title="爪切りを巡る子猫と飼い主の攻防⇨可愛すぎる“拒否の仕草”に「天才！」と称賛集まる(ハフポスト日本版)" data-summary="「それまで伸び伸びスフィンクスポーズしてたのにモチョ…と手をしまわれた」。そんな投稿をXに寄せたのは、生後8ヶ月の子猫「そば」ちゃんの飼い主（@soba____531）さん。 この日、日向ぼっこでく">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/d51dff26391fba4d62b770d08673b35e76e1064a?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">ホストに恋した30代女性のゴミ屋敷→母親からの依頼で床が見える明るい空間に大変身！新しい人生のスタート(LIMO)</a>
+                            <a href="https://news.yahoo.co.jp/articles/cc244a4c5fb271158b0914b88e1f178dbc4fe601?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">爪切りを巡る子猫と飼い主の攻防⇨可愛すぎる“拒否の仕草”に「天才！」と称賛集まる(ハフポスト日本版)</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>5分前</span>
+                            <span>13分前</span>
                         </div>
 
                         <div class="entry-summary">
-                            年度の終わりも近づき、お部屋を片付けて気持ちをスッキリさせたい方も多いのではないでしょうか。 今回ご紹介するご投稿は、ゴミで埋め尽くされた部屋が見違えるほど綺麗になる、驚きのビフォーアフター動画です
+                            「それまで伸び伸びスフィンクスポーズしてたのにモチョ…と手をしまわれた」。そんな投稿をXに寄せたのは、生後8ヶ月の子猫「そば」ちゃんの飼い主（@soba____531）さん。 この日、日向ぼっこでく
                         </div>
                     </div>
 
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/0c797a3d4475eb0c0c1803bd8657a3e2fb5c3f52?source=rss" data-title="楽ちんなのに着映える♡ ポロ襟ワンピが活躍！(CanCam.jp)" data-summary="トレンドのポロ襟を大人に取り入れるなら、クラシカルなムード漂うニットワンで！ 左胸のエンブレムや、こっくりブラウン×袖の白ラインのコントラストが、上品なスタイリングのアクセントに。 クラシカルなムー">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/cc6b42632ccfd53a19270c6ea938b7b559799f40?source=rss" data-title="【中学受験2026】聖徳学園、立正など…これから出願できる東京都の私立中学校（試験／2月7日以降）(リセマム)" data-summary="東京・神奈川の私立中学校入試も後半戦。多くの受験生が試験に挑み、その経験がさらなる成長につながっていることだろう。この記事では2026年2月7日以降に入試を実施する東京の私立中学校を紹介する。">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/0c797a3d4475eb0c0c1803bd8657a3e2fb5c3f52?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">楽ちんなのに着映える♡ ポロ襟ワンピが活躍！(CanCam.jp)</a>
+                            <a href="https://news.yahoo.co.jp/articles/cc6b42632ccfd53a19270c6ea938b7b559799f40?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【中学受験2026】聖徳学園、立正など…これから出願できる東京都の私立中学校（試験／2月7日以降）(リセマム)</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>5分前</span>
+                            <span>17分前</span>
                         </div>
 
                         <div class="entry-summary">
-                            トレンドのポロ襟を大人に取り入れるなら、クラシカルなムード漂うニットワンで！ 左胸のエンブレムや、こっくりブラウン×袖の白ラインのコントラストが、上品なスタイリングのアクセントに。 クラシカルなムー
+                            東京・神奈川の私立中学校入試も後半戦。多くの受験生が試験に挑み、その経験がさらなる成長につながっていることだろう。この記事では2026年2月7日以降に入試を実施する東京の私立中学校を紹介する。
                         </div>
                     </div>
 
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/7acde1e1eb52f1b61734361d3958802ccfb45675?source=rss" data-title="【広報直撃】さよならロッテリア…千葉ロッテ本拠地・海浜幕張はどうなる？「ゼッテリア」の意外な由来から「新旧バーガー食べ比べ」まで徹底調査！(MonoMax Web)" data-summary="ファーストフードチェーン「ロッテリア」が、2026年3月末までにすべて新業態「ゼッテリア」へと転換することが大きな話題となっています。名前が1文字変わるだけ？ それとも中身も別物？ 気になる「名前の由">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/2c4d3e9dee313e9ded577dee4c39e97801c07a05?source=rss" data-title="【ハーゲンダッツ】どこを食べても「ブリュレチーズケーキ」　なめらかアイス＆カリカリのカラメル新登場(オトナンサー)" data-summary="ハーゲンダッツ ジャパン（東京都目黒区）が、ミニカップシリーズの新商品「ブリュレチーズケーキ」を、2月3日から期間限定で発売します。 同商品は、なめらかさとカリカリ食感のコントラストが楽しめるブ">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/7acde1e1eb52f1b61734361d3958802ccfb45675?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【広報直撃】さよならロッテリア…千葉ロッテ本拠地・海浜幕張はどうなる？「ゼッテリア」の意外な由来から「新旧バーガー食べ比べ」まで徹底調査！(MonoMax Web)</a>
+                            <a href="https://news.yahoo.co.jp/articles/2c4d3e9dee313e9ded577dee4c39e97801c07a05?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【ハーゲンダッツ】どこを食べても「ブリュレチーズケーキ」　なめらかアイス＆カリカリのカラメル新登場(オトナンサー)</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>7分前</span>
+                            <span>18分前</span>
                         </div>
 
                         <div class="entry-summary">
-                            ファーストフードチェーン「ロッテリア」が、2026年3月末までにすべて新業態「ゼッテリア」へと転換することが大きな話題となっています。名前が1文字変わるだけ？ それとも中身も別物？ 気になる「名前の由
+                            ハーゲンダッツ ジャパン（東京都目黒区）が、ミニカップシリーズの新商品「ブリュレチーズケーキ」を、2月3日から期間限定で発売します。 同商品は、なめらかさとカリカリ食感のコントラストが楽しめるブ
                         </div>
                     </div>
 
                     
                 </li>
                 
-                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/5ad301b93f90c56f40b3cc48a952f451e79394bd?source=rss" data-title="ショパール史上最も複雑な腕時計!? 時計通も垂涎な『L.U.C グランド ストライク』(Web LEON)" data-summary="腕時計のプロたちが魅了された一本をリコメンドする本企画。今回は時計ジャーナリストの篠田哲生さんが「ショパール」の『L.U.C グランド ストライク』を選びました！">
+                <li class="entry-item" data-link="https://news.yahoo.co.jp/articles/c71a38e5b5c93ea7cd377a806c86804d03a502e4?source=rss" data-title="【節分調査】「先生」より怖いのはやっぱり…高校生の6割が回答した「周りにいる鬼」の正体は？(LASISA)" data-summary="ワカモノリサーチは2月3日、全国の現役高校生（男女）を対象に実施した「あなたの周りに鬼みたいな人はいますか？」というアンケート調査の結果を発表しました。 これによると、女子高生の52.9％、男子">
                     <div class="entry-content-wrapper">
                         <div class="entry-title">
                             
                             <span class="new-badge">NEW</span>
                             
-                            <a href="https://news.yahoo.co.jp/articles/5ad301b93f90c56f40b3cc48a952f451e79394bd?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">ショパール史上最も複雑な腕時計!? 時計通も垂涎な『L.U.C グランド ストライク』(Web LEON)</a>
+                            <a href="https://news.yahoo.co.jp/articles/c71a38e5b5c93ea7cd377a806c86804d03a502e4?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【節分調査】「先生」より怖いのはやっぱり…高校生の6割が回答した「周りにいる鬼」の正体は？(LASISA)</a>
                         </div>
                         
                         <div class="entry-meta">
-                            <span>7分前</span>
+                            <span>18分前</span>
                         </div>
 
                         <div class="entry-summary">
-                            腕時計のプロたちが魅了された一本をリコメンドする本企画。今回は時計ジャーナリストの篠田哲生さんが「ショパール」の『L.U.C グランド ストライク』を選びました！
+                            ワカモノリサーチは2月3日、全国の現役高校生（男女）を対象に実施した「あなたの周りに鬼みたいな人はいますか？」というアンケート調査の結果を発表しました。 これによると、女子高生の52.9％、男子
                         </div>
                     </div>
 
@@ -3760,56 +3965,51 @@
             </ul>
         </details>
         
-        
     </div>
+
+    <div id="backToTop" title="トップへ戻る">↑</div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // ▼▼▼ 既読管理機能 ▼▼▼
             const STORAGE_KEY = 'rss_read_items';
-            // LocalStorageから既読リストを取得 (Setで管理して高速化)
             let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
-
             const entryItems = document.querySelectorAll('.entry-item');
             
-            // 初期表示: 既読状態の反映
             entryItems.forEach(item => {
                 const link = item.dataset.link;
                 if (readItems.has(link)) {
                     item.classList.add('read');
                 }
-                
-                // クリックイベントの登録
                 const anchor = item.querySelector('a.entry-link');
-                anchor.addEventListener('click', function() {
-                    markAsRead(link, item);
-                });
+                if(anchor) {
+                    anchor.addEventListener('click', function() {
+                        markAsRead(link, item);
+                    });
+                }
             });
 
             function markAsRead(link, itemElement) {
-                // UIを即座に更新
                 itemElement.classList.add('read');
-                
-                // ストレージに保存
                 readItems.add(link);
-                // 容量制限のため、古いものから消す (最大1000件保持)
                 if (readItems.size > 1000) {
                     const array = Array.from(readItems);
                     readItems = new Set(array.slice(array.length - 1000));
                 }
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
             }
-            // ▲▲▲ 既読管理機能 ▲▲▲
 
-            // 検索機能
+            // ▼▼▼ 検索機能 ▼▼▼
             const searchInput = document.getElementById('searchInput');
             const sections = document.querySelectorAll('.feed-section');
 
             entryItems.forEach(entry => {
                 const titleLink = entry.querySelector('.entry-title a');
                 const summaryDiv = entry.querySelector('.entry-summary');
-                entry.dataset.originalTitleHtml = titleLink.innerHTML;
-                entry.dataset.originalSummaryHtml = summaryDiv.innerHTML;
+                if(titleLink && summaryDiv){
+                    entry.dataset.originalTitleHtml = titleLink.innerHTML;
+                    entry.dataset.originalSummaryHtml = summaryDiv.innerHTML;
+                }
             });
 
             searchInput.addEventListener('input', function(e) {
@@ -3818,14 +4018,17 @@
                 if (term === '') {
                     sections.forEach(sec => {
                         sec.style.display = '';
-                        sec.open = false;
+                        // 検索解除時は「新着があるものだけ開く」状態に戻したいが、
+                        // 簡易的に全て閉じる、または今の状態を維持する。
+                        // ここでは「閉じる」挙動にする
+                        sec.open = false; 
                     });
                     entryItems.forEach(entry => {
                         entry.style.display = '';
                         const titleLink = entry.querySelector('.entry-title a');
                         const summaryDiv = entry.querySelector('.entry-summary');
-                        titleLink.innerHTML = entry.dataset.originalTitleHtml;
-                        summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
+                        if(titleLink) titleLink.innerHTML = entry.dataset.originalTitleHtml;
+                        if(summaryDiv) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
                     });
                     return;
                 }
@@ -3835,8 +4038,8 @@
                     const sectionEntries = section.querySelectorAll('.entry-item');
 
                     sectionEntries.forEach(entry => {
-                        const titleText = entry.dataset.title.toLowerCase();
-                        const summaryText = entry.dataset.summary.toLowerCase();
+                        const titleText = (entry.dataset.title || '').toLowerCase();
+                        const summaryText = (entry.dataset.summary || '').toLowerCase();
 
                         if (titleText.includes(term) || summaryText.includes(term)) {
                             entry.style.display = '';
@@ -3857,17 +4060,37 @@
             });
 
             function highlightText(entry, term) {
-                const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
-                const highlightMark = '<mark>$1</mark>';
-                const titleLink = entry.querySelector('.entry-title a');
-                titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
-                const summaryDiv = entry.querySelector('.entry-summary');
-                summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
+                try {
+                    const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
+                    const highlightMark = '<mark>$1</mark>';
+                    const titleLink = entry.querySelector('.entry-title a');
+                    const summaryDiv = entry.querySelector('.entry-summary');
+                    
+                    if(titleLink && entry.dataset.originalTitleHtml) {
+                        titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
+                    }
+                    if(summaryDiv && entry.dataset.originalSummaryHtml) {
+                        summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
+                    }
+                } catch(e) { console.error(e); }
             }
 
             function escapeRegExp(string) {
                 return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             }
+
+            // ▼▼▼ トップへ戻るボタン ▼▼▼
+            const backToTopBtn = document.getElementById('backToTop');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
         });
     </script>
 </body>
