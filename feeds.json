@@ -287,9 +287,9 @@
         ],
     "watches": [
         {
-            "page_title": "★推しトピック",
+            "page_title": "★トピック★",
             "filename": "topics.html",
-            "keywords": ["Google", "AI", "Python", "北海道"],
+            "keywords": ["Python", "北海道", "旭川"],
             "ng_keywords": ["PR"]
         }
     ]
