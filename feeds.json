@@ -2,6 +2,7 @@
     {
         "page_title": "福祉行政",
         "filename": "new.html",
+        "ng_keywords": ["PR", "広告"],
         "feeds": [
             {
                 "title": "厚生労働省",
@@ -283,6 +284,14 @@
                 "title": "ライフ",
                 "url": "https://news.yahoo.co.jp/rss/categories/life.xml"
             }
-        ]
+        ],
+    "watches": [
+        {
+            "page_title": "★推しトピック",
+            "filename": "topics.html",
+            "keywords": ["Google", "AI", "Python", "北海道"],
+            "ng_keywords": ["PR"]
+        }
+    ]
     }
 ]
