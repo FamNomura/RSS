@@ -42,15 +42,10 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap; /* スマホで検索窓が落ちるように */
+            flex-wrap: wrap; 
             gap: 15px;
         }
-        /* カテゴリが増えても折り返す（横スクロール禁止） */
-        .nav-links {
-            display: flex;
-            flex-wrap: wrap; 
-            gap: 8px;
-        }
+        .nav-links { display: flex; flex-wrap: wrap; gap: 8px; }
         .nav-link {
             color: #ecf0f1;
             text-decoration: none;
@@ -63,61 +58,49 @@
             background-color: rgba(255,255,255,0.1);
         }
         .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
-        .nav-link.active {
-            opacity: 1;
-            background-color: var(--accent);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
+        .nav-link.active { opacity: 1; background-color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
-        /* 検索ボックス */
-        .search-box {
-            position: relative;
-            flex-grow: 1;
-            max-width: 250px;
-        }
+        .search-box { position: relative; flex-grow: 1; max-width: 250px; }
         .search-input {
-            width: 100%;
-            padding: 6px 10px;
-            border-radius: 20px; /* 丸みをつける */
-            border: none;
-            font-size: 14px;
-            background-color: rgba(255,255,255,0.95);
-            box-sizing: border-box;
-            transition: box-shadow 0.2s;
+            width: 100%; padding: 6px 10px; border-radius: 20px; border: none; font-size: 14px; 
+            background-color: rgba(255,255,255,0.95); box-sizing: border-box; transition: box-shadow 0.2s;
         }
         .search-input:focus { outline: none; box-shadow: 0 0 0 2px var(--accent); }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        header { margin-bottom: 25px; text-align: center; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        
+        /* ヘッダー周り */
+        header { margin-bottom: 15px; text-align: center; }
         h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
         .last-updated { font-size: 12px; color: var(--text-sub); }
 
+        /* コントロールパネル（一括操作ボタン） */
+        .control-panel {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .control-btn {
+            background: none;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: #fff;
+        }
+        .control-btn:hover { background-color: #f0f0f0; border-color: #aaa; color: #333; }
+
         /* アコーディオン */
         details {
-            background: var(--card-bg);
-            border-radius: 8px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
-            border: 1px solid var(--border);
-            overflow: hidden;
-            transition: box-shadow 0.2s;
+            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden; transition: box-shadow 0.2s;
         }
         details:hover { box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
-        
         summary {
-            list-style: none;
-            cursor: pointer;
-            padding: 15px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: #fff;
-            transition: background 0.2s;
+            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff; transition: background 0.2s;
         }
         summary:hover { background-color: #f8f9fa; }
         summary::-webkit-details-marker { display: none; }
@@ -126,39 +109,16 @@
         .feed-favicon { width: 16px; height: 16px; border-radius: 2px; flex-shrink: 0; }
         .feed-title-text { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* 件数バッジ */
-        .feed-meta {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            flex-shrink: 0;
-        }
-        .count-badge {
-            background-color: #eee;
-            color: #555;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-weight: normal;
-        }
-        .count-badge.has-new {
-            background-color: #fff0f0;
-            color: var(--new-badge);
-            border: 1px solid #ffcccc;
-        }
+        .feed-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; flex-shrink: 0; }
+        .count-badge { background-color: #eee; color: #555; padding: 2px 8px; border-radius: 12px; font-weight: normal; }
+        .count-badge.has-new { background-color: #fff0f0; color: var(--new-badge); border: 1px solid #ffcccc; }
 
         .entry-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
         .entry-item {
-            padding: 15px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            gap: 15px;
-            align-items: flex-start;
-            transition: background-color 0.2s;
+            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start; transition: background-color 0.2s;
         }
         .entry-item:last-child { border-bottom: none; }
         
-        /* 既読スタイル */
         .entry-item.read { background-color: #fafafa; }
         .entry-item.read .entry-title a { color: var(--read-color); }
         .entry-item.read .entry-summary { color: #d0d0d0; }
@@ -166,51 +126,30 @@
         .entry-item.read .new-badge { background-color: #ccc; }
 
         .entry-content-wrapper { flex: 1; min-width: 0; }
-        .entry-thumbnail {
-            width: 100px; height: 75px; object-fit: cover; border-radius: 6px; flex-shrink: 0; border: 1px solid #eee;
-        }
+        .entry-thumbnail { width: 100px; height: 75px; object-fit: cover; border-radius: 6px; flex-shrink: 0; border: 1px solid #eee; }
 
         .entry-title { font-size: 16px; margin: 0 0 6px 0; line-height: 1.4; }
         .entry-title a { text-decoration: none; color: var(--text-main); font-weight: bold; }
         .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
         .new-badge {
-            display: inline-block; background-color: var(--new-badge); color: white;
-            font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px;
-            vertical-align: middle; font-weight: bold; transform: translateY(-1px);
+            display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold; transform: translateY(-1px);
         }
 
-        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; margin-bottom: 4px; }
+        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; margin-bottom: 4px; flex-wrap: wrap; }
+        
+        /* 出典表示用のスタイル */
+        .entry-source { color: #888; border-left: 1px solid #ddd; padding-left: 10px; font-weight: 500; }
+
         .entry-summary {
-            font-size: 13px; color: #555; margin-top: 5px;
-            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-            overflow: hidden; opacity: 0.9; line-height: 1.5;
+            font-size: 13px; color: #555; margin-top: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.9; line-height: 1.5;
         }
         .entry-summary img { display: none; }
 
-        /* 空の状態 */
         .empty-state { padding: 20px; text-align: center; color: #999; font-size: 13px; }
 
-        /* トップへ戻るボタン */
         #backToTop {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: var(--accent);
-            color: white;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-            font-size: 20px;
-            z-index: 2000;
+            position: fixed; bottom: 20px; right: 20px; background-color: var(--accent); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transition: all 0.3s; font-size: 20px; z-index: 2000;
         }
         #backToTop.show { opacity: 1; visibility: visible; }
         #backToTop:hover { background-color: var(--accent-hover); transform: translateY(-3px); }
@@ -298,8 +237,15 @@
     <div class="container">
         <header>
             <h1>総合ニュース</h1>
-            <div class="last-updated">最終更新: 02/03 15:01</div>
+            <div class="last-updated">最終更新: 02/03 15:06</div>
         </header>
+
+        
+        <div class="control-panel">
+            <button class="control-btn" id="btnExpandAll">＋ 全て開く</button>
+            <button class="control-btn" id="btnCollapseAll">－ 全て閉じる</button>
+        </div>
+        
 
         
 
@@ -355,7 +301,8 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>59分前</span>
+                            <span>1時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -377,6 +324,7 @@
                         
                         <div class="entry-meta">
                             <span>2時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -398,6 +346,7 @@
                         
                         <div class="entry-meta">
                             <span>3時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -418,7 +367,8 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>59分前</span>
+                            <span>1時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -439,7 +389,8 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>16分前</span>
+                            <span>22分前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -460,7 +411,8 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>15分前</span>
+                            <span>21分前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -482,6 +434,7 @@
                         
                         <div class="entry-meta">
                             <span>2時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -522,6 +475,7 @@
                         
                         <div class="entry-meta">
                             <span>昨日</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -545,6 +499,7 @@
                         
                         <div class="entry-meta">
                             <span>6時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -568,6 +523,7 @@
                         
                         <div class="entry-meta">
                             <span>8時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -591,6 +547,7 @@
                         
                         <div class="entry-meta">
                             <span>3時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -614,6 +571,7 @@
                         
                         <div class="entry-meta">
                             <span>13時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -637,6 +595,7 @@
                         
                         <div class="entry-meta">
                             <span>5時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -660,6 +619,7 @@
                         
                         <div class="entry-meta">
                             <span>16時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -683,6 +643,7 @@
                         
                         <div class="entry-meta">
                             <span>20時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -704,6 +665,7 @@
                         
                         <div class="entry-meta">
                             <span>昨日</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -727,6 +689,7 @@
                         
                         <div class="entry-meta">
                             <span>14時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -770,7 +733,8 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>59分前</span>
+                            <span>1時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -792,6 +756,7 @@
                         
                         <div class="entry-meta">
                             <span>2時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -813,6 +778,7 @@
                         
                         <div class="entry-meta">
                             <span>3時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -833,7 +799,8 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>59分前</span>
+                            <span>1時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -854,7 +821,8 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>16分前</span>
+                            <span>22分前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -875,7 +843,8 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>15分前</span>
+                            <span>21分前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -897,6 +866,7 @@
                         
                         <div class="entry-meta">
                             <span>2時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -938,7 +908,8 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>16分前</span>
+                            <span>22分前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -959,7 +930,8 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>59分前</span>
+                            <span>1時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -981,6 +953,7 @@
                         
                         <div class="entry-meta">
                             <span>1時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1002,6 +975,7 @@
                         
                         <div class="entry-meta">
                             <span>2時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1023,6 +997,7 @@
                         
                         <div class="entry-meta">
                             <span>2時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1044,6 +1019,7 @@
                         
                         <div class="entry-meta">
                             <span>2時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1065,6 +1041,7 @@
                         
                         <div class="entry-meta">
                             <span>2時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1086,6 +1063,7 @@
                         
                         <div class="entry-meta">
                             <span>3時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1107,6 +1085,7 @@
                         
                         <div class="entry-meta">
                             <span>3時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1128,6 +1107,7 @@
                         
                         <div class="entry-meta">
                             <span>9時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1169,7 +1149,8 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1191,6 +1172,7 @@
                         
                         <div class="entry-meta">
                             <span>21時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1212,6 +1194,7 @@
                         
                         <div class="entry-meta">
                             <span>22時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1231,6 +1214,7 @@
                         
                         <div class="entry-meta">
                             <span>昨日</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1250,6 +1234,7 @@
                         
                         <div class="entry-meta">
                             <span>3日前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1269,6 +1254,7 @@
                         
                         <div class="entry-meta">
                             <span>3日前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1288,6 +1274,7 @@
                         
                         <div class="entry-meta">
                             <span>3日前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1307,6 +1294,7 @@
                         
                         <div class="entry-meta">
                             <span>3日前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1326,6 +1314,7 @@
                         
                         <div class="entry-meta">
                             <span>4日前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1345,6 +1334,7 @@
                         
                         <div class="entry-meta">
                             <span>5日前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1386,7 +1376,8 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>59分前</span>
+                            <span>1時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1407,7 +1398,8 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>1時間前</span>
+                            <span>2時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1429,6 +1421,7 @@
                         
                         <div class="entry-meta">
                             <span>21時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1448,6 +1441,7 @@
                         
                         <div class="entry-meta">
                             <span>昨日</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1467,6 +1461,7 @@
                         
                         <div class="entry-meta">
                             <span>2日前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1486,6 +1481,7 @@
                         
                         <div class="entry-meta">
                             <span>3日前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1505,6 +1501,7 @@
                         
                         <div class="entry-meta">
                             <span>4日前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1524,6 +1521,7 @@
                         
                         <div class="entry-meta">
                             <span>4日前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1543,6 +1541,7 @@
                         
                         <div class="entry-meta">
                             <span>4日前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1562,6 +1561,7 @@
                         
                         <div class="entry-meta">
                             <span>4日前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1603,7 +1603,8 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>16分前</span>
+                            <span>22分前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1625,6 +1626,7 @@
                         
                         <div class="entry-meta">
                             <span>1時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1646,6 +1648,7 @@
                         
                         <div class="entry-meta">
                             <span>1時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1667,6 +1670,7 @@
                         
                         <div class="entry-meta">
                             <span>1時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1688,6 +1692,7 @@
                         
                         <div class="entry-meta">
                             <span>2時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1709,6 +1714,7 @@
                         
                         <div class="entry-meta">
                             <span>3時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1730,6 +1736,7 @@
                         
                         <div class="entry-meta">
                             <span>5時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1751,6 +1758,7 @@
                         
                         <div class="entry-meta">
                             <span>12時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1772,6 +1780,7 @@
                         
                         <div class="entry-meta">
                             <span>18時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1793,6 +1802,7 @@
                         
                         <div class="entry-meta">
                             <span>18時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1834,7 +1844,8 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>15分前</span>
+                            <span>21分前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1855,7 +1866,8 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>59分前</span>
+                            <span>1時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1877,6 +1889,7 @@
                         
                         <div class="entry-meta">
                             <span>1時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1898,6 +1911,7 @@
                         
                         <div class="entry-meta">
                             <span>2時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1919,6 +1933,7 @@
                         
                         <div class="entry-meta">
                             <span>4時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1940,6 +1955,7 @@
                         
                         <div class="entry-meta">
                             <span>4時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1961,6 +1977,7 @@
                         
                         <div class="entry-meta">
                             <span>6時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -1982,6 +1999,7 @@
                         
                         <div class="entry-meta">
                             <span>8時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2003,6 +2021,7 @@
                         
                         <div class="entry-meta">
                             <span>15時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2024,6 +2043,7 @@
                         
                         <div class="entry-meta">
                             <span>18時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2065,7 +2085,8 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>10分前</span>
+                            <span>16分前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2086,7 +2107,8 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>56分前</span>
+                            <span>1時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2108,6 +2130,7 @@
                         
                         <div class="entry-meta">
                             <span>3時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2129,6 +2152,7 @@
                         
                         <div class="entry-meta">
                             <span>3時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2150,6 +2174,7 @@
                         
                         <div class="entry-meta">
                             <span>4時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2171,6 +2196,7 @@
                         
                         <div class="entry-meta">
                             <span>6時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2192,6 +2218,7 @@
                         
                         <div class="entry-meta">
                             <span>6時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2213,6 +2240,7 @@
                         
                         <div class="entry-meta">
                             <span>8時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2234,6 +2262,7 @@
                         
                         <div class="entry-meta">
                             <span>8時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2255,6 +2284,7 @@
                         
                         <div class="entry-meta">
                             <span>8時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2297,6 +2327,7 @@
                         
                         <div class="entry-meta">
                             <span>5時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2318,6 +2349,7 @@
                         
                         <div class="entry-meta">
                             <span>9時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2339,6 +2371,7 @@
                         
                         <div class="entry-meta">
                             <span>9時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2359,7 +2392,8 @@
                         </div>
                         
                         <div class="entry-meta">
-                            <span>9時間前</span>
+                            <span>10時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2381,6 +2415,7 @@
                         
                         <div class="entry-meta">
                             <span>17時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2402,6 +2437,7 @@
                         
                         <div class="entry-meta">
                             <span>18時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2423,6 +2459,7 @@
                         
                         <div class="entry-meta">
                             <span>18時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2444,6 +2481,7 @@
                         
                         <div class="entry-meta">
                             <span>22時間前</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2463,6 +2501,7 @@
                         
                         <div class="entry-meta">
                             <span>昨日</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2482,6 +2521,7 @@
                         
                         <div class="entry-meta">
                             <span>昨日</span>
+                            
                         </div>
 
                         <div class="entry-summary">
@@ -2501,6 +2541,20 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // ▼▼▼ 一括操作ボタン ▼▼▼
+            const detailsElements = document.querySelectorAll('details.feed-section');
+            const btnExpandAll = document.getElementById('btnExpandAll');
+            const btnCollapseAll = document.getElementById('btnCollapseAll');
+
+            if(btnExpandAll && btnCollapseAll) {
+                btnExpandAll.addEventListener('click', () => {
+                    detailsElements.forEach(el => el.open = true);
+                });
+                btnCollapseAll.addEventListener('click', () => {
+                    detailsElements.forEach(el => el.open = false);
+                });
+            }
+
             // ▼▼▼ 既読管理機能 ▼▼▼
             const STORAGE_KEY = 'rss_read_items';
             let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
@@ -2531,7 +2585,6 @@
 
             // ▼▼▼ 検索機能 ▼▼▼
             const searchInput = document.getElementById('searchInput');
-            const sections = document.querySelectorAll('.feed-section');
 
             entryItems.forEach(entry => {
                 const titleLink = entry.querySelector('.entry-title a');
@@ -2546,11 +2599,8 @@
                 const term = e.target.value.trim().toLowerCase();
 
                 if (term === '') {
-                    sections.forEach(sec => {
+                    detailsElements.forEach(sec => {
                         sec.style.display = '';
-                        // 検索解除時は「新着があるものだけ開く」状態に戻したいが、
-                        // 簡易的に全て閉じる、または今の状態を維持する。
-                        // ここでは「閉じる」挙動にする
                         sec.open = false; 
                     });
                     entryItems.forEach(entry => {
@@ -2563,7 +2613,7 @@
                     return;
                 }
 
-                sections.forEach(section => {
+                detailsElements.forEach(section => {
                     let hasVisibleEntry = false;
                     const sectionEntries = section.querySelectorAll('.entry-item');
 
