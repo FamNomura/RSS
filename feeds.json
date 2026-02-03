@@ -1,9 +1,62 @@
 {
     "pages": [
         {
+            "page_title": "総合ニュース",
+            "filename": "index.html",
+            "feeds": [
+                {
+                    "title": "GIGAZINE",
+                    "url": "https://feed.rssad.jp/rss/gigazine/rss_2.0"
+                },
+                {
+                    "title": "NHKニュース",
+                    "url": "https://www.nhk.or.jp/rss/news/cat0.xml"
+                },
+                {
+                    "title": "はてなブックマーク 人気エントリー",
+                    "url": "https://b.hatena.ne.jp/hotentry.rss"
+                },
+                {
+                    "title": "NHK主要ニュース",
+                    "url": "https://news.web.nhk/n-data/conf/na/rss/cat0.xml"
+                },
+                {
+                    "title": "NHKニュース 社会",
+                    "url": "https://news.web.nhk/n-data/conf/na/rss/cat1.xml"
+                },
+                {
+                    "title": "NHKニュース 文化",
+                    "url": "https://news.web.nhk/n-data/conf/na/rss/cat2.xml"
+                },
+                {
+                    "title": "NHKニュース 科学・医療",
+                    "url": "https://news.web.nhk/n-data/conf/na/rss/cat3.xml"
+                },
+                {
+                    "title": "NHKニュース 政治",
+                    "url": "https://news.web.nhk/n-data/conf/na/rss/cat4.xml"
+                },
+                {
+                    "title": "NHKニュース 経済",
+                    "url": "https://news.web.nhk/n-data/conf/na/rss/cat5.xml"
+                },
+                {
+                    "title": "NHKニュース 国際",
+                    "url": "https://news.web.nhk/n-data/conf/na/rss/cat6.xml"
+                },
+                {
+                    "title": "NHKニュース スポーツ",
+                    "url": "https://news.web.nhk/n-data/conf/na/rss/cat7.xml"
+                }
+            ]
+        },
+        {
             "page_title": "福祉行政",
             "filename": "new.html",
-            "ng_keywords": ["PR", "広告"],
+            "ng_keywords": [
+                "PR",
+                "広告"
+            ],
             "feeds": [
                 {
                     "title": "厚生労働省",
@@ -52,52 +105,21 @@
             ]
         },
         {
-            "page_title": "総合ニュース",
-            "filename": "index.html",
+            "page_title": "天気",
+            "filename": "tenki.html",
+            "ng_keywords": [],
             "feeds": [
                 {
-                    "title": "GIGAZINE",
-                    "url": "https://feed.rssad.jp/rss/gigazine/rss_2.0"
+                    "title": "ウェザーマップ",
+                    "url": "https://news.yahoo.co.jp/rss/media/wmap/all.xml"
                 },
                 {
-                    "title": "NHKニュース",
-                    "url": "https://www.nhk.or.jp/rss/news/cat0.xml"
+                    "title": "ウェザーニュース",
+                    "url": "https://news.yahoo.co.jp/rss/media/weather/all.xml"
                 },
                 {
-                    "title": "はてなブックマーク 人気エントリー",
-                    "url": "https://b.hatena.ne.jp/hotentry.rss"
-                },
-                {
-                    "title": "NHK主要ニュース",
-                    "url": "https://news.web.nhk/n-data/conf/na/rss/cat0.xml"
-                },
-                {
-                    "title": "NHKニュース 社会",
-                    "url": "https://news.web.nhk/n-data/conf/na/rss/cat1.xml"
-                },
-                {
-                    "title": "NHKニュース 文化",
-                    "url": "https://news.web.nhk/n-data/conf/na/rss/cat2.xml"
-                },
-                {
-                    "title": "NHKニュース 科学・医療",
-                    "url": "https://news.web.nhk/n-data/conf/na/rss/cat3.xml"
-                },
-                {
-                    "title": "NHKニュース 政治",
-                    "url": "https://news.web.nhk/n-data/conf/na/rss/cat4.xml"
-                },
-                {
-                    "title": "NHKニュース 経済",
-                    "url": "https://news.web.nhk/n-data/conf/na/rss/cat5.xml"
-                },
-                {
-                    "title": "NHKニュース 国際",
-                    "url": "https://news.web.nhk/n-data/conf/na/rss/cat6.xml"
-                },
-                {
-                    "title": "NHKニュース スポーツ",
-                    "url": "https://news.web.nhk/n-data/conf/na/rss/cat7.xml"
+                    "title": "tenki.jp",
+                    "url": "https://news.yahoo.co.jp/rss/media/tenki/all.xml"
                 }
             ]
         },
@@ -292,8 +314,14 @@
         {
             "page_title": "★トピック★",
             "filename": "topics.html",
-            "keywords": ["Python", "北海道", "旭川","生活保護","医療扶助"],
-            "ng_keywords": ["PR"]
+            "keywords": [
+                "Python",
+                "北海道",
+                "旭川",
+                "生活保護",
+                "医療扶助"
+            ],
+            "ng_keywords": []
         }
     ]
 }
