@@ -292,6 +292,29 @@
                     "url": "https://news.yahoo.co.jp/rss/categories/life.xml"
                 }
             ]
+        },
+        {
+            "page_title": "ブログ",
+            "filename": "02_blog.html",
+            "ng_keywords": [],
+            "feeds": [
+                {
+                    "title": "ドサンコどすどす",
+                    "url": "https://rssblog.ameba.jp/sapporo-haruka/rss.html"
+                },
+                {
+                    "title": "ゆっきの戯言",
+                    "url": "https://rssblog.ameba.jp/yukkine/rss.html"
+                },
+                {
+                    "title": "えいじのブログ",
+                    "url": "https://hanadamasaru1976.blog.jp/index.rdf"
+                },
+                {
+                    "title": "森田",
+                    "url": "https://rssblog.ameba.jp/moritashoutenkai/rss.html"
+                }
+            ]
         }
     ],
     "watches": [
