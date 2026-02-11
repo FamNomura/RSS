@@ -1,0 +1,1307 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ブログ</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-sub: #7f8c8d;
+            --accent: #007bff;
+            --accent-hover: #0056b3;
+            --new-badge: #e74c3c;
+            --border: #e9ecef;
+            --highlight: #fff3cd;
+            --read-color: #b0b0b0;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding-bottom: 80px;
+            line-height: 1.6;
+        }
+        
+        /* ナビゲーションバー */
+        .navbar {
+            background-color: #343a40;
+            padding: 0.8rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .nav-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap; 
+            gap: 15px;
+        }
+        .nav-links { display: flex; flex-wrap: wrap; gap: 8px; }
+        .nav-link {
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.85;
+            transition: all 0.2s;
+            background-color: rgba(255,255,255,0.1);
+        }
+        .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
+        .nav-link.active { opacity: 1; background-color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+
+        .search-box { position: relative; flex-grow: 1; max-width: 250px; }
+        .search-input {
+            width: 100%; padding: 6px 10px; border-radius: 20px; border: none; font-size: 14px; 
+            background-color: rgba(255,255,255,0.95); box-sizing: border-box; transition: box-shadow 0.2s;
+        }
+        .search-input:focus { outline: none; box-shadow: 0 0 0 2px var(--accent); }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        
+        /* ヘッダー周り */
+        header { margin-bottom: 15px; text-align: center; }
+        h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
+        .last-updated { font-size: 12px; color: var(--text-sub); }
+
+        /* コントロールパネル（一括操作ボタン） */
+        .control-panel {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .control-btn {
+            background: none;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: #fff;
+        }
+        .control-btn:hover { background-color: #f0f0f0; border-color: #aaa; color: #333; }
+
+        /* アコーディオン */
+        details {
+            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden; transition: box-shadow 0.2s;
+        }
+        details:hover { box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
+        summary {
+            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff; transition: background 0.2s;
+        }
+        summary:hover { background-color: #f8f9fa; }
+        summary::-webkit-details-marker { display: none; }
+        
+        .feed-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+        .feed-favicon { width: 16px; height: 16px; border-radius: 2px; flex-shrink: 0; }
+        .feed-title-text { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .feed-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; flex-shrink: 0; }
+        .count-badge { background-color: #eee; color: #555; padding: 2px 8px; border-radius: 12px; font-weight: normal; }
+        .count-badge.has-new { background-color: #fff0f0; color: var(--new-badge); border: 1px solid #ffcccc; }
+
+        .entry-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
+        .entry-item {
+            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start; transition: background-color 0.2s;
+        }
+        .entry-item:last-child { border-bottom: none; }
+        
+        .entry-item.read { background-color: #fafafa; }
+        .entry-item.read .entry-title a { color: var(--read-color); }
+        .entry-item.read .entry-summary { color: #d0d0d0; }
+        .entry-item.read .entry-thumbnail { opacity: 0.4; filter: grayscale(100%); }
+        .entry-item.read .new-badge { background-color: #ccc; }
+
+        .entry-content-wrapper { flex: 1; min-width: 0; }
+        .entry-thumbnail { width: 100px; height: 75px; object-fit: cover; border-radius: 6px; flex-shrink: 0; border: 1px solid #eee; }
+
+        .entry-title { font-size: 16px; margin: 0 0 6px 0; line-height: 1.4; }
+        .entry-title a { text-decoration: none; color: var(--text-main); font-weight: bold; }
+        .entry-title a:hover { color: var(--accent); text-decoration: underline; }
+
+        .new-badge {
+            display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold; transform: translateY(-1px);
+        }
+
+        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; margin-bottom: 4px; flex-wrap: wrap; }
+        
+        /* 出典表示用のスタイル */
+        .entry-source { color: #888; border-left: 1px solid #ddd; padding-left: 10px; font-weight: 500; }
+
+        .entry-summary {
+            font-size: 13px; color: #555; margin-top: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.9; line-height: 1.5;
+        }
+        .entry-summary img { display: none; }
+
+        .empty-state { padding: 20px; text-align: center; color: #999; font-size: 13px; }
+
+        #backToTop {
+            position: fixed; bottom: 20px; right: 20px; background-color: var(--accent); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transition: all 0.3s; font-size: 20px; z-index: 2000;
+        }
+        #backToTop.show { opacity: 1; visibility: visible; }
+        #backToTop:hover { background-color: var(--accent-hover); transform: translateY(-3px); }
+
+        mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px 10px; }
+            summary { padding: 12px; }
+            .entry-thumbnail { width: 80px; height: 60px; }
+            .nav-container { flex-direction: column; align-items: stretch; gap: 10px; }
+            .search-box { max-width: 100%; }
+            .feed-title-text { font-size: 14px; }
+            .count-badge { font-size: 11px; padding: 1px 6px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-links">
+                
+                <a href="index.html" 
+                   class="nav-link ">
+                    ★トピック★
+                </a>
+                
+                <a href="topics.html" 
+                   class="nav-link ">
+                    総合ニュース
+                </a>
+                
+                <a href="new.html" 
+                   class="nav-link ">
+                    福祉行政
+                </a>
+                
+                <a href="tenki.html" 
+                   class="nav-link ">
+                    天気
+                </a>
+                
+                <a href="recipes.html" 
+                   class="nav-link ">
+                    レシピ・料理
+                </a>
+                
+                <a href="tech.html" 
+                   class="nav-link ">
+                    Tech情報
+                </a>
+                
+                <a href="business.html" 
+                   class="nav-link ">
+                    ビジネス・経済
+                </a>
+                
+                <a href="gadget.html" 
+                   class="nav-link ">
+                    ガジェット・モノ
+                </a>
+                
+                <a href="design.html" 
+                   class="nav-link ">
+                    デザイン・Web制作
+                </a>
+                
+                <a href="entertainment.html" 
+                   class="nav-link ">
+                    エンタメ・コラム
+                </a>
+                
+                <a href="yahoo.html" 
+                   class="nav-link ">
+                    ニュース記事
+                </a>
+                
+                <a href="02_blog.html" 
+                   class="nav-link active">
+                    ブログ
+                </a>
+                
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" class="search-input" placeholder="キーワード検索...">
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>ブログ</h1>
+            <div class="last-updated">最終更新: 02/12 02:43</div>
+        </header>
+
+        
+        <div class="control-panel">
+            <button class="control-btn" id="btnExpandAll">＋ 全て開く</button>
+            <button class="control-btn" id="btnCollapseAll">－ 全て閉じる</button>
+        </div>
+        
+
+        
+
+        
+        <details class="feed-section" open>
+            <summary>
+                <div class="feed-info">
+                    <img src="https://www.google.com/s2/favicons?domain=ameblo.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span class="feed-title-text">ドサンコどすどす</span>
+                </div>
+                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 1 / 10</span>
+                    
+                </div>
+            </summary>
+            
+            <ul class="entry-list">
+                
+
+                
+                <li class="entry-item" data-link="https://ameblo.jp/sapporo-haruka/entry-12956353713.html" data-title="旭川の1番好きなラーメンが違うの問題！" data-summary="私が旭川で1番、て言うか〜世界で1番好きなラーメンは蜂屋なの。でも相方は旭川で1番好きなのはよつ葉なんだよね〜最初蜂屋に行く予定だったけど、1番食べたいのどこ？と聞くと、よつ葉だよ〜って。いつも私の好きなお店ばかりだからよつ葉に行ったわ。私は特製煮干ししお相方は濃厚煮干ししょうゆ岩のり増し。ハートランドビール追加で混ぜ麺白しょうゆ替え玉だけど〜このまま食べても美味しいの〜相方大満足。私は小満足。こちらはミシュランビブグルマン貰ってるけど、多分私は無化調が好きじゃないんだわ〜らーめんよつ葉旭川市豊">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://ameblo.jp/sapporo-haruka/entry-12956353713.html" target="_blank" rel="noopener noreferrer" class="entry-link">旭川の1番好きなラーメンが違うの問題！</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>14時間前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            私が旭川で1番、て言うか〜世界で1番好きなラーメンは蜂屋なの。でも相方は旭川で1番好きなのはよつ葉なんだよね〜最初蜂屋に行く予定だったけど、1番食べたいのどこ？と聞くと、よつ葉だよ〜って。いつも私の好きなお店ばかりだからよつ葉に行ったわ。私は特製煮干ししお相方は濃厚煮干ししょうゆ岩のり増し。ハートランドビール追加で混ぜ麺白しょうゆ替え玉だけど〜このまま食べても美味しいの〜相方大満足。私は小満足。こちらはミシュランビブグルマン貰ってるけど、多分私は無化調が好きじゃないんだわ〜らーめんよつ葉旭川市豊
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/sapporo-haruka/entry-12956144731.html" data-title="ハマっちゃってやめられない❤️激うま肉まん" data-summary="札幌の人気パン屋どんぐりで売ってる手作り具材のプレミアム肉まんハマっちゃってやめられない！最近は江別大麻店で買ってるわ〜大麻店の駐車場で笑顔で頬張ってる人いたら私です！w1個¥400で1個食べたらお腹ポンポンになるわ〜大きさ比較でカップヌードル軽く空気抜いて冷凍しているの出来立ての熱々も美味しいけど冷凍したのをチンしても美味しい〜具材たっぷりで竹の子や大きなキクラゲもお気に入り本当に美味しいから(´ ﾟдﾟ)ぜしっ！最近は肉まんとピザマルゲリータとシナモンクリームしか買ってないわ〜これで痩せたら">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/sapporo-haruka/entry-12956144731.html" target="_blank" rel="noopener noreferrer" class="entry-link">ハマっちゃってやめられない❤️激うま肉まん</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            札幌の人気パン屋どんぐりで売ってる手作り具材のプレミアム肉まんハマっちゃってやめられない！最近は江別大麻店で買ってるわ〜大麻店の駐車場で笑顔で頬張ってる人いたら私です！w1個¥400で1個食べたらお腹ポンポンになるわ〜大きさ比較でカップヌードル軽く空気抜いて冷凍しているの出来立ての熱々も美味しいけど冷凍したのをチンしても美味しい〜具材たっぷりで竹の子や大きなキクラゲもお気に入り本当に美味しいから(´ ﾟдﾟ)ぜしっ！最近は肉まんとピザマルゲリータとシナモンクリームしか買ってないわ〜これで痩せたら
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/sapporo-haruka/entry-12955421325.html" data-title="1番好きな❤️いぬいの御膳そば！" data-summary="水泳後に3人でランチ！久しぶりにいぬいでお蕎麦♡になりました〜まずはつゆ天ぷら御膳そばにしました。美しいそして美味しいです。５種類の蕎麦粉から選んで打ってくれるんです〜私は一生御膳そばがいいわ〜温かい蕎麦は食べたことないわ〜御膳そばの天もりは¥2100でした。3人とも大満足だったけど、食べきれなくてドギーバッグもらって天ぷら持ち帰りました。御膳そばはそばの実の胚芽部分のみなんですよ〜十割そば処いぬい旭川市北門町20 久しぶりに新千歳空港の東亜珈琲館でコーヒーソフトクリーム食べました。やっぱ美">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/sapporo-haruka/entry-12955421325.html" target="_blank" rel="noopener noreferrer" class="entry-link">1番好きな❤️いぬいの御膳そば！</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            水泳後に3人でランチ！久しぶりにいぬいでお蕎麦♡になりました〜まずはつゆ天ぷら御膳そばにしました。美しいそして美味しいです。５種類の蕎麦粉から選んで打ってくれるんです〜私は一生御膳そばがいいわ〜温かい蕎麦は食べたことないわ〜御膳そばの天もりは¥2100でした。3人とも大満足だったけど、食べきれなくてドギーバッグもらって天ぷら持ち帰りました。御膳そばはそばの実の胚芽部分のみなんですよ〜十割そば処いぬい旭川市北門町20 久しぶりに新千歳空港の東亜珈琲館でコーヒーソフトクリーム食べました。やっぱ美
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/sapporo-haruka/entry-12956012616.html" data-title="大満足の極上ランチ❤️" data-summary="昨日お天気良かったので牛カツは終わったけどランチ目当てで行きました。和牛ひつまぶしか〜穴子天丼が良いかな〜と言うと、俺も！と同意見！w私は穴子天丼にしました。穴子大きすぎない？この長さの他にも半分の大きさの穴子が入っていました。相方は和牛ひつまぶしとビールw穴子もそうだけど量が凄いの！目の前で鯛茶漬けの鯛を盛ってたの見てたの〜厚めに切った鯛もモリモリだったわ！俺次回は鯛茶漬けにするわ〜と相方！うん。私もそう思ってた〜美味しかった〜こんな極上ランチが食べられるなんて〜大雪警報で札幌行かなくてラッキ">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/sapporo-haruka/entry-12956012616.html" target="_blank" rel="noopener noreferrer" class="entry-link">大満足の極上ランチ❤️</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            昨日お天気良かったので牛カツは終わったけどランチ目当てで行きました。和牛ひつまぶしか〜穴子天丼が良いかな〜と言うと、俺も！と同意見！w私は穴子天丼にしました。穴子大きすぎない？この長さの他にも半分の大きさの穴子が入っていました。相方は和牛ひつまぶしとビールw穴子もそうだけど量が凄いの！目の前で鯛茶漬けの鯛を盛ってたの見てたの〜厚めに切った鯛もモリモリだったわ！俺次回は鯛茶漬けにするわ〜と相方！うん。私もそう思ってた〜美味しかった〜こんな極上ランチが食べられるなんて〜大雪警報で札幌行かなくてラッキ
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/sapporo-haruka/entry-12955416258.html" data-title="ありがとう留萌本線" data-summary="2026年3月末で廃線になる留萌本線深川のホテルに駅舎の模型があったわ〜深川駅・秩父別駅・北秩父別駅石狩沼田駅・北一已駅先に廃線になった留萌駅峠下駅相方は中学の時に留萌に住んで居たから知ってるけど、私は知らない駅ばかりだわ〜若い頃、札幌に住んでいた時に旭川から遊びに来た友人が電車で旭川に帰ったの。たまに深川駅で１〜２両切り離されて留萌に行く電車があるから気をつけてね！と何度も伝えたんだけど友人は車内放送に気づかず最終の電車として夜の留萌駅に着いたそうです興味がある方はぜしっ！ラ・カンパーニュホテ">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/sapporo-haruka/entry-12955416258.html" target="_blank" rel="noopener noreferrer" class="entry-link">ありがとう留萌本線</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>4日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            2026年3月末で廃線になる留萌本線深川のホテルに駅舎の模型があったわ〜深川駅・秩父別駅・北秩父別駅石狩沼田駅・北一已駅先に廃線になった留萌駅峠下駅相方は中学の時に留萌に住んで居たから知ってるけど、私は知らない駅ばかりだわ〜若い頃、札幌に住んでいた時に旭川から遊びに来た友人が電車で旭川に帰ったの。たまに深川駅で１〜２両切り離されて留萌に行く電車があるから気をつけてね！と何度も伝えたんだけど友人は車内放送に気づかず最終の電車として夜の留萌駅に着いたそうです興味がある方はぜしっ！ラ・カンパーニュホテ
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/sapporo-haruka/entry-12955426683.html" data-title="ふられ続きのガッカリ日" data-summary="週に2回札幌の病院でリハビリなの。この日は家をかなり早めに出て大好きな❤️岩見沢のめんめんで生そうめんを食べる予定だったの〜あらら〜ご店主体調不良のためお休みでした時間に余裕があるから千歳の味の一平が岩見沢に移転して味の一令になってたから行こうかな〜とネットで調べたら街からかなり北に戻るの〜でもラーメン食べたさで走ったわ！写真撮る気にもならなかったけど定休日じゃないのにお休みでしたナニ？岩見沢の麺組合の会合でもあった？国道沿いにあったお店に入りました。こちらも麺はあるけど麺組合の会員じゃないのか">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/sapporo-haruka/entry-12955426683.html" target="_blank" rel="noopener noreferrer" class="entry-link">ふられ続きのガッカリ日</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>5日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            週に2回札幌の病院でリハビリなの。この日は家をかなり早めに出て大好きな❤️岩見沢のめんめんで生そうめんを食べる予定だったの〜あらら〜ご店主体調不良のためお休みでした時間に余裕があるから千歳の味の一平が岩見沢に移転して味の一令になってたから行こうかな〜とネットで調べたら街からかなり北に戻るの〜でもラーメン食べたさで走ったわ！写真撮る気にもならなかったけど定休日じゃないのにお休みでしたナニ？岩見沢の麺組合の会合でもあった？国道沿いにあったお店に入りました。こちらも麺はあるけど麺組合の会員じゃないのか
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/sapporo-haruka/entry-12955430126.html" data-title="相方が病気だとご飯美味しくないわ〜" data-summary="先週末に宮ちゃんに〜予約してなかったけど入れましたたこポン酢ミックス焼き何度も食べているけど激混みだったせいなのか少し焼きが甘かったです😭オム焼そばお好み焼酒房宮ちゃん札幌市中央区南1西26-1-1 ターミナルハイツ円山B1F地下鉄円山公園駅ローソンの下辺り せっかくの宮ちゃんだけど、先週末から相方が体調崩していてお酒飲まなかったの！飲まないと負け！と思っているの？と思える程お酒好きなのに〜どうしたの？と聞くと調子悪いんだ。と、11年前に入院した病気の再発？今回は入院しないで済みそうだけど（">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/sapporo-haruka/entry-12955430126.html" target="_blank" rel="noopener noreferrer" class="entry-link">相方が病気だとご飯美味しくないわ〜</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>6日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            先週末に宮ちゃんに〜予約してなかったけど入れましたたこポン酢ミックス焼き何度も食べているけど激混みだったせいなのか少し焼きが甘かったです😭オム焼そばお好み焼酒房宮ちゃん札幌市中央区南1西26-1-1 ターミナルハイツ円山B1F地下鉄円山公園駅ローソンの下辺り せっかくの宮ちゃんだけど、先週末から相方が体調崩していてお酒飲まなかったの！飲まないと負け！と思っているの？と思える程お酒好きなのに〜どうしたの？と聞くと調子悪いんだ。と、11年前に入院した病気の再発？今回は入院しないで済みそうだけど（
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/sapporo-haruka/entry-12955412748.html" data-title="寿司バイキングとカニバイキング❤️" data-summary="先週は札幌市内の大雪で寿司バイキングは諦めたの〜なので2週ぶり！今週の活北寄も本鮪も相方と顔を見合わせるほど美味しかった大海老とカニ身。美味し〜私のチョイスは偏っているけど種類は色々あるんですよ〜今回オオズワイガニが1杯200円だったの〜安っ！まるでカニバイキングね！ご店主が冷凍してないチルドだから美味しいよ〜と言われたので重めの5杯買いました！自宅に戻って黙々と剥いたわ！これが2皿出来たけど嬉しすぎじゃない？剥く手間はかかるけど5杯で千円って神だわ！価格的にも重さ的にも登別に勝ったわ！毎週大ズ">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/sapporo-haruka/entry-12955412748.html" target="_blank" rel="noopener noreferrer" class="entry-link">寿司バイキングとカニバイキング❤️</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>7日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            先週は札幌市内の大雪で寿司バイキングは諦めたの〜なので2週ぶり！今週の活北寄も本鮪も相方と顔を見合わせるほど美味しかった大海老とカニ身。美味し〜私のチョイスは偏っているけど種類は色々あるんですよ〜今回オオズワイガニが1杯200円だったの〜安っ！まるでカニバイキングね！ご店主が冷凍してないチルドだから美味しいよ〜と言われたので重めの5杯買いました！自宅に戻って黙々と剥いたわ！これが2皿出来たけど嬉しすぎじゃない？剥く手間はかかるけど5杯で千円って神だわ！価格的にも重さ的にも登別に勝ったわ！毎週大ズ
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/sapporo-haruka/entry-12955385581.html" data-title="旭川ホルモン王❤️" data-summary="昔はホルモンがあまり得意じゃなかったけど、弟が旨いから食べに行こう！と行った朝吉のホルモンは驚くほど美味しかったの。それから数十年通い続けています。頼むものは決まっていて毎回頼む塩ホルモン豚バラとタコと上牛サガリ醤油ラーメン大他の方はシメに召し上がられているけど最初に頼んで半分こしてますw今回は追加で上牛サガリと和牛切り落とし海老塩焼き今回も美味しかった〜大満足で帰りました。私の中ではホルモン王wホルモン朝吉旭川市神居4-10午前中から開いてます。 札幌の藻岩山だんごで白玉ソフトクリーム食べ">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/sapporo-haruka/entry-12955385581.html" target="_blank" rel="noopener noreferrer" class="entry-link">旭川ホルモン王❤️</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>8日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            昔はホルモンがあまり得意じゃなかったけど、弟が旨いから食べに行こう！と行った朝吉のホルモンは驚くほど美味しかったの。それから数十年通い続けています。頼むものは決まっていて毎回頼む塩ホルモン豚バラとタコと上牛サガリ醤油ラーメン大他の方はシメに召し上がられているけど最初に頼んで半分こしてますw今回は追加で上牛サガリと和牛切り落とし海老塩焼き今回も美味しかった〜大満足で帰りました。私の中ではホルモン王wホルモン朝吉旭川市神居4-10午前中から開いてます。 札幌の藻岩山だんごで白玉ソフトクリーム食べ
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/sapporo-haruka/entry-12955368119.html" data-title="びくドンの消えたメニューが復活❤️" data-summary="昨年春にメニューから消えてて大ショックだったびっくりドンキーのさくさくイカ唐揚げが期間限定で復活したのこんなに美味しいのにどうしてメニューから消すの？謎すぎだわ〜私はSS &ミートスパ相方はシュリンプ&ポテトハンバーグSと回鍋肉ビールと1年ぶりのさくさくイカ唐揚げテイクアウトも頼んだわ！w（●´ー｀●）美味しかった〜特にイカ❤️びっくりドンキー石山通り店札幌市中央区南7西11 イオンモール旭川西で見たことないアイスがあったの！沖縄のアイスでチョコアイスの上にシャリシャリのココナッツ❤️甘いけど">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/sapporo-haruka/entry-12955368119.html" target="_blank" rel="noopener noreferrer" class="entry-link">びくドンの消えたメニューが復活❤️</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>9日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            昨年春にメニューから消えてて大ショックだったびっくりドンキーのさくさくイカ唐揚げが期間限定で復活したのこんなに美味しいのにどうしてメニューから消すの？謎すぎだわ〜私はSS &ミートスパ相方はシュリンプ&ポテトハンバーグSと回鍋肉ビールと1年ぶりのさくさくイカ唐揚げテイクアウトも頼んだわ！w（●´ー｀●）美味しかった〜特にイカ❤️びっくりドンキー石山通り店札幌市中央区南7西11 イオンモール旭川西で見たことないアイスがあったの！沖縄のアイスでチョコアイスの上にシャリシャリのココナッツ❤️甘いけど
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+            </ul>
+        </details>
+        
+        <details class="feed-section" >
+            <summary>
+                <div class="feed-info">
+                    <img src="https://www.google.com/s2/favicons?domain=ameblo.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span class="feed-title-text">ゆっきの戯言</span>
+                </div>
+                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge">10 件</span>
+                    
+                </div>
+            </summary>
+            
+            <ul class="entry-list">
+                
+
+                
+                <li class="entry-item" data-link="https://ameblo.jp/yukkine/entry-12923841837.html" data-title="牛ホルモン天" data-summary="さかなり久々に牛ホルモン天メニュー撮り忘れたのでネットから↑多分この情報古い。今は多分3千円くらい。タン先ペラペラの牛タンの先なんだけど、なんか妙に美味しくてお代わりした。カルビマルチョウガツ、ヤゲン少し取ってしまったけど、牛サガリ焼く！この先がね、、、食べるのに夢中になりすぎて写真ないなんか久々に焼肉食べ放題したわここは焼肉食べ放題なのに肉質というか、鮮度が良い。そして写真ないけど、うま塩キャベツがとにかく美味しい（少ししょっぱいから少し味薄めならさらに好きなのに）キャベツがね、どんな季節に行">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/yukkine/entry-12923841837.html" target="_blank" rel="noopener noreferrer" class="entry-link">牛ホルモン天</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>177日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            さかなり久々に牛ホルモン天メニュー撮り忘れたのでネットから↑多分この情報古い。今は多分3千円くらい。タン先ペラペラの牛タンの先なんだけど、なんか妙に美味しくてお代わりした。カルビマルチョウガツ、ヤゲン少し取ってしまったけど、牛サガリ焼く！この先がね、、、食べるのに夢中になりすぎて写真ないなんか久々に焼肉食べ放題したわここは焼肉食べ放題なのに肉質というか、鮮度が良い。そして写真ないけど、うま塩キャベツがとにかく美味しい（少ししょっぱいから少し味薄めならさらに好きなのに）キャベツがね、どんな季節に行
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/yukkine/entry-12922865927.html" data-title="解放区" data-summary="1人で解放区へ行ってきたずっと食べてみたかったお弁当を食べに行ったのかなりのボリュームそして美味しそうにも程があるちょっとアップでエビフライが二つ入っていて、このエビフライがかなりの美味しさだった。衣がしっかり付いていて（衣が絶対剥がれない）エビが固くブリッブリエビの身が柔らかくて、衣ゆるゆるとか最悪でしょ？あと私衣は細引きの方が好きなの。なかなかこんな美味しいエビフライないと思うくらいだったこればエビフライ定食もあればいいのに！って思ってメニュー確認したらありましたエビ好きさんにはぜひ試しても">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/yukkine/entry-12922865927.html" target="_blank" rel="noopener noreferrer" class="entry-link">解放区</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>177日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            1人で解放区へ行ってきたずっと食べてみたかったお弁当を食べに行ったのかなりのボリュームそして美味しそうにも程があるちょっとアップでエビフライが二つ入っていて、このエビフライがかなりの美味しさだった。衣がしっかり付いていて（衣が絶対剥がれない）エビが固くブリッブリエビの身が柔らかくて、衣ゆるゆるとか最悪でしょ？あと私衣は細引きの方が好きなの。なかなかこんな美味しいエビフライないと思うくらいだったこればエビフライ定食もあればいいのに！って思ってメニュー確認したらありましたエビ好きさんにはぜひ試しても
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/yukkine/entry-12923260023.html" data-title="おうちごはん　美瑛" data-summary="お盆もいい天気だねー私は晴れ女だから行く先でついさっきまで降ってたなってくらい道路が濡れてても雨には当たらないのこのお盆中も何度かそんなことを繰り返してるわ2度目の訪問。美瑛のピラミッドがある丘のところにあるおうちごはんここです今日は風が吹いていて気持ちが良かったから外のテーブルで食べることに今日もかき揚げと冷たいうどんのセット600円と、肉そば（温）と鮭おにぎりメニューに冷しゃぶそば、うどんもあったけど、ここは温かい肉そばで！鮭おにぎりは、鮭フレークとかじゃなくちゃんと鮭だったかき揚げがとても">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/yukkine/entry-12923260023.html" target="_blank" rel="noopener noreferrer" class="entry-link">おうちごはん　美瑛</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>180日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            お盆もいい天気だねー私は晴れ女だから行く先でついさっきまで降ってたなってくらい道路が濡れてても雨には当たらないのこのお盆中も何度かそんなことを繰り返してるわ2度目の訪問。美瑛のピラミッドがある丘のところにあるおうちごはんここです今日は風が吹いていて気持ちが良かったから外のテーブルで食べることに今日もかき揚げと冷たいうどんのセット600円と、肉そば（温）と鮭おにぎりメニューに冷しゃぶそば、うどんもあったけど、ここは温かい肉そばで！鮭おにぎりは、鮭フレークとかじゃなくちゃんと鮭だったかき揚げがとても
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/yukkine/entry-12923046897.html" data-title="治一郎のバームクーヘン" data-summary="お盆で帰省した従姉妹が買ってきてくれたバームクーヘン「ゆっきが前にこんなに美味しいバームクーヘン食べたことない！って言ってくれたバームクーヘンまた買ってきたよー！」って。ごめん…全然記憶にないとにかく失礼な私よね。でも私特別バームクーヘンを美味しいと思わないので、きっとそれは絶対に本当に美味しかったんだと思う。笑というと、従姉妹大笑い。その時もバームクーヘンそんなに美味しいと思ったことないけど、こんなの初めて言っていたらしい。それがこれびっくりした‼️美味しすぎてこんなに美味しいバームクーヘン食">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/yukkine/entry-12923046897.html" target="_blank" rel="noopener noreferrer" class="entry-link">治一郎のバームクーヘン</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>180日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            お盆で帰省した従姉妹が買ってきてくれたバームクーヘン「ゆっきが前にこんなに美味しいバームクーヘン食べたことない！って言ってくれたバームクーヘンまた買ってきたよー！」って。ごめん…全然記憶にないとにかく失礼な私よね。でも私特別バームクーヘンを美味しいと思わないので、きっとそれは絶対に本当に美味しかったんだと思う。笑というと、従姉妹大笑い。その時もバームクーヘンそんなに美味しいと思ったことないけど、こんなの初めて言っていたらしい。それがこれびっくりした‼️美味しすぎてこんなに美味しいバームクーヘン食
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/yukkine/entry-12922863701.html" data-title="サイゼリヤ　間違え探しの絵が変わった" data-summary="久々のサイゼリヤ先日のオリーブの丘で火がついたのか…息子と2人で時間潰しがてら小腹を満たしましたまず、玉ねぎのズッパあー、おいしいわぁそして、いいこと思いついた！と思い頼んだペペロンチーノと青豆のサラダそれをこう！これが最高すぎて、このアイディア天才かと思ったら、普通にメニュー表の中に推奨されてたそしてアロスティチーニこれがね、今まで何度となく頼んできたアロスティチーニの中でぶっちぎりの美味しさだった肉自体の味もだし、焼き加減が最高すぎて、めっちゃジューシー当たりだったわポテトも頼んだのに、写真">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/yukkine/entry-12922863701.html" target="_blank" rel="noopener noreferrer" class="entry-link">サイゼリヤ　間違え探しの絵が変わった</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>181日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            久々のサイゼリヤ先日のオリーブの丘で火がついたのか…息子と2人で時間潰しがてら小腹を満たしましたまず、玉ねぎのズッパあー、おいしいわぁそして、いいこと思いついた！と思い頼んだペペロンチーノと青豆のサラダそれをこう！これが最高すぎて、このアイディア天才かと思ったら、普通にメニュー表の中に推奨されてたそしてアロスティチーニこれがね、今まで何度となく頼んできたアロスティチーニの中でぶっちぎりの美味しさだった肉自体の味もだし、焼き加減が最高すぎて、めっちゃジューシー当たりだったわポテトも頼んだのに、写真
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/yukkine/entry-12922470032.html" data-title="春香さーん！早速行ってきたよ！オリーブの丘" data-summary="春香さんのブログ『オリーブの丘で激うまみっけ❤️』金曜夜の水泳後の晩御飯で久しぶりにオリーブの丘へビールとシャルドネスパークリングとアイスカプチーノからスタート１番に頼んだ赤海老パエリアいつもよりお米多めだわ…ameblo.jpを見て、絶対行きたくて。ちょうど札幌に行く予定があったので、決めていましたお勧めしていたものは全部頼みたいまずパエリア美味しいパエリアは何度か食べたことあるけど、これがね、水加減焼き加減、とにかく最高すぎて本当天才かと思った。特に今日調理した人がなのかもしれないけどこんな">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/yukkine/entry-12922470032.html" target="_blank" rel="noopener noreferrer" class="entry-link">春香さーん！早速行ってきたよ！オリーブの丘</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>183日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            春香さんのブログ『オリーブの丘で激うまみっけ❤️』金曜夜の水泳後の晩御飯で久しぶりにオリーブの丘へビールとシャルドネスパークリングとアイスカプチーノからスタート１番に頼んだ赤海老パエリアいつもよりお米多めだわ…ameblo.jpを見て、絶対行きたくて。ちょうど札幌に行く予定があったので、決めていましたお勧めしていたものは全部頼みたいまずパエリア美味しいパエリアは何度か食べたことあるけど、これがね、水加減焼き加減、とにかく最高すぎて本当天才かと思った。特に今日調理した人がなのかもしれないけどこんな
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/yukkine/entry-12922195617.html" data-title="鶏の伊藤　　帯広" data-summary="昨日帯広に行ってたの。で、ひまわりという温泉に行ったんだけどそこの常連のおばちゃんが「今日せっかくグルメで日村が来てるね」と、話してたの。へぇー。と思って聞いてたの。で、お風呂を上がってご飯を食べにもう何度か訪れている鶏の伊藤へ。以前行った鳥の伊藤『自由が丘温泉からの鶏の伊藤 〜帯広の旅〜』朝ごはんをたらふく食べて、帯広をぐるぐるして、帯広といえばモール温泉なので、いつもはオベリベリ温泉なんだけど、違うところにも行ってみようと言うことで。ネットで…ameblo.jpとにかく建物の作りがユニークす">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/yukkine/entry-12922195617.html" target="_blank" rel="noopener noreferrer" class="entry-link">鶏の伊藤　　帯広</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>184日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            昨日帯広に行ってたの。で、ひまわりという温泉に行ったんだけどそこの常連のおばちゃんが「今日せっかくグルメで日村が来てるね」と、話してたの。へぇー。と思って聞いてたの。で、お風呂を上がってご飯を食べにもう何度か訪れている鶏の伊藤へ。以前行った鳥の伊藤『自由が丘温泉からの鶏の伊藤 〜帯広の旅〜』朝ごはんをたらふく食べて、帯広をぐるぐるして、帯広といえばモール温泉なので、いつもはオベリベリ温泉なんだけど、違うところにも行ってみようと言うことで。ネットで…ameblo.jpとにかく建物の作りがユニークす
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/yukkine/entry-12920786781.html" data-title="チョリチョリ" data-summary="友達おすすめのカレー店。かなり前におすすめされてたけど、なかなか行く機会がなく、やっと子供達と行って来れたメニュー多分色々こだわりや伝えたいことがあるんだろうなぁとは思うが、とにかく見辛いなので全部は撮らなかった。まずラッシー左奥はマンゴー、右奥はプレーン、私はトマトラッシーどのラッシーもかなり美味しかった。旭川で一番好きかも。Cセットでナン選べるカレー2種類はキーマナスとポークカレーナンがとにかく美味しかった。パリッと焼けてる感じとか、きっと火加減とかが良いのだと思う。うん。ちょっと他のお店と">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/yukkine/entry-12920786781.html" target="_blank" rel="noopener noreferrer" class="entry-link">チョリチョリ</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>187日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            友達おすすめのカレー店。かなり前におすすめされてたけど、なかなか行く機会がなく、やっと子供達と行って来れたメニュー多分色々こだわりや伝えたいことがあるんだろうなぁとは思うが、とにかく見辛いなので全部は撮らなかった。まずラッシー左奥はマンゴー、右奥はプレーン、私はトマトラッシーどのラッシーもかなり美味しかった。旭川で一番好きかも。Cセットでナン選べるカレー2種類はキーマナスとポークカレーナンがとにかく美味しかった。パリッと焼けてる感じとか、きっと火加減とかが良いのだと思う。うん。ちょっと他のお店と
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/yukkine/entry-12920681100.html" data-title="味の松月　上富良野" data-summary="もう言わずものがな大好きなお店松月。去年から参加している上富良野神社祭のお手伝い。２日も通ったのに、忙しすぎて松月には一度も行けずなので、お祭りが終わった翌日、午前中に仕事をこなしお昼松月まで吹っ飛んでいった🚗まず餃子そして何日も前から絶対これを食べると決めていたお魚フライ定食これが、これが食べたかった！！とにかくずっとお魚フライ定食か食べたかったのエビがプリップリで硬くて美味しかった旦那はオム焼きそば焼きそばにイカがはいっているのがたまらないとにかくとにかく大満足！！そして、いつも寄る一色商店">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/yukkine/entry-12920681100.html" target="_blank" rel="noopener noreferrer" class="entry-link">味の松月　上富良野</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>191日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            もう言わずものがな大好きなお店松月。去年から参加している上富良野神社祭のお手伝い。２日も通ったのに、忙しすぎて松月には一度も行けずなので、お祭りが終わった翌日、午前中に仕事をこなしお昼松月まで吹っ飛んでいった🚗まず餃子そして何日も前から絶対これを食べると決めていたお魚フライ定食これが、これが食べたかった！！とにかくずっとお魚フライ定食か食べたかったのエビがプリップリで硬くて美味しかった旦那はオム焼きそば焼きそばにイカがはいっているのがたまらないとにかくとにかく大満足！！そして、いつも寄る一色商店
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/yukkine/entry-12919082849.html" data-title="現役の輓馬に乗った！！" data-summary="今年の1月に初めてばんえい競馬を見てからすっかりその魅力にやられてる私ですレースも面白いけど、とにかく、とにかく輓馬が可愛い🩷推し馬はふれあい牧場のフクスケなんだけど、会う馬会う馬みんな可愛い🩷帯広に行かずに輓馬に会える方法はないのだろうかと春先調べていたら、江別のアースドリーム角山というところで、ばんばの引き馬に乗れるとの情報を見つけ、今年の営業が始まるのを心待ちにしていた。そして、やっと行けるチャンスが来たのうっひょーーーいきなり可愛い🩷この子はプロンガーという名前で引退馬。映画銀の匙で、シ">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/yukkine/entry-12919082849.html" target="_blank" rel="noopener noreferrer" class="entry-link">現役の輓馬に乗った！！</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>199日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            今年の1月に初めてばんえい競馬を見てからすっかりその魅力にやられてる私ですレースも面白いけど、とにかく、とにかく輓馬が可愛い🩷推し馬はふれあい牧場のフクスケなんだけど、会う馬会う馬みんな可愛い🩷帯広に行かずに輓馬に会える方法はないのだろうかと春先調べていたら、江別のアースドリーム角山というところで、ばんばの引き馬に乗れるとの情報を見つけ、今年の営業が始まるのを心待ちにしていた。そして、やっと行けるチャンスが来たのうっひょーーーいきなり可愛い🩷この子はプロンガーという名前で引退馬。映画銀の匙で、シ
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+            </ul>
+        </details>
+        
+        <details class="feed-section" open>
+            <summary>
+                <div class="feed-info">
+                    <img src="https://www.google.com/s2/favicons?domain=hanadamasaru1976.blog.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span class="feed-title-text">えいじのブログ</span>
+                </div>
+                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 1 / 10</span>
+                    
+                </div>
+            </summary>
+            
+            <ul class="entry-list">
+                
+
+                
+                <li class="entry-item" data-link="https://hanadamasaru1976.blog.jp/archives/29366276.html" data-title="呼子に来たんだからイカなんだけど‥  大和" data-summary="さあ。今日からちょっと長めの特集です。成田空港だったんですが、2泊3日なのでちょっと安い駐車場を利用しました。スーパーパーキングという所なのですが、この封筒に情報を書いて、このポストに入れるんですよ。もちろん無人です。凄いですよね。ちなみにちょっと歩くとスーパーパーキングがもう一つあるんですよ。もちろんこっちの方が高いです。って事でやって来たのは、福岡空港。で、レンタカーを借りてボートレースからつへ。いやー。相変わらず綺麗だよなー。でも、水面が非常に見づらい。このフェンスが高くて凄く見づらいんですよね。フードコートはあまり魅力的じゃ無いんですよね。んー。自由席なのに凄く見やすい。イベントも色々やってるんですね。まあもっとのんびりしたい所なんですが、この日は呼子に来たんですよ。やっぱり呼子に来たらイカだよねって事で、呼子台場みなとプラザという所に来ました。そう。なんかここはですね、この辺の魚も刺身にしてくれるらしいんですよ。そしてここで泳いでるイカも捌いてくれるらしいのですが、今の時期のイカは大きくて、一人だと食べきれないくらいの大きさで凄く高く付いちゃうんですって。んー。まあこの辺を試すのもいいのかもしれませんが、やっぱりイカを食べたいよなー。で、すぐ近くにある店なんですが、ちょっと有名な店らしいです。ここでもイカの生き造りを食べれるらしいです。ただ、ちょっと他の店にします。大和っていう店です。ここもイカの生き造りが食べれる店です。で、食べたかったのですが、やっぱり今の時期のイカは大きいので、一人では1匹丸々って訳にはいかないそうで。なので活き造りは出来ないんですって。ただ、この内容は変わらないで、3500円でやってくれるそうで。んー。僕的にはお断りして外に出るとか全然出来るのですが、調べてると、この周辺ってイカを食べるぐらいしか思いつかないんですよね。なのでもういいやって感じになりました。流石にもうお腹が空きすぎました。って事でまずは刺身がやって来ました。うん。まあ美味そうなんですが、やっぱり想像してた物とだいぶ違うので、ガッカリ感はありますよね。とりあえずいただきましょう。うん。美味い。イカのねっとり感がいいですよね。ご飯もそれなりに進みます。まあなんていうか、それなりの値段ですからね。このぐらい美味しくなきゃ困ります。味噌汁は赤出汁でした。へー。そうなんですね。漬物も美味しいです。で、ゲソの天ぷらもやって来ました。これは結構立派でして。まずは天つゆで。おー。いいねー。歯応えがしっかりあるやつでして。僕的には刺身よりもこっちの方が好きですかね。で、塩でもいただきます。うん。こっちの方が好きですかね。結構量があるので、ご飯が足りないぐらいなのですが、まあこれでいいかなって。で、最後になって、イカシュウマイがやって来ました。うん。これもなかなか。まあこの時期ってこういう感じなんでしょうね。僕の勉強不足なのでしょうがないのですが、やっぱり丸々1匹で食べたかったよなー。 ごちそうさまでした。今の時期はアオリイカだそうです。んー。これは、ボートで取り返さなければ。ちなみに凄く狭いです。結構人はいましたけどね。で、ちょっとレースまで時間があったので、近くのスーパーに行ってみました。イカは売ってるのかなって思ったのですが、売ってませんでした。そうだ。長崎はひらまさが美味しいんだっけかな？ちなみにオラレのすぐそばはこんな感じ。ここに来てる人達って漁師の人とかもいるんでしょうね。そう。ここって唐津が開催されないと開いてないらしいんですよ。なので僕からするとここに来る時って唐津がやってるので、なんかもどかしいんですよね。唐津でやってるなら唐津で見たいじゃないですか。普通こういう場所って出走表が何枚も置いてあるのですが、唐津と琵琶湖しか置いてません。あんな小さいモニターをみんなで見つめるのです。車で走ってるとこんな感じの港が何個もあるんですよね。って感じで移動します。続きは今週末です。 ツイッターはこちら@AEGAEGAEG インスタグラムaegsonもやってます。 ツイッターより頻繁に更新してますので、よろしければ。 ランキングもまだ参加してます。 下のボタンを押していただければ順位が上がるのです。 ご協力お願いします。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://hanadamasaru1976.blog.jp/archives/29366276.html" target="_blank" rel="noopener noreferrer" class="entry-link">呼子に来たんだからイカなんだけど‥  大和</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>20時間前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            さあ。今日からちょっと長めの特集です。成田空港だったんですが、2泊3日なのでちょっと安い駐車場を利用しました。スーパーパーキングという所なのですが、この封筒に情報を書いて、このポストに入れるんですよ。もちろん無人です。凄いですよね。ちなみにちょっと歩くとスーパーパーキングがもう一つあるんですよ。もちろんこっちの方が高いです。って事でやって来たのは、福岡空港。で、レンタカーを借りてボートレースからつへ。いやー。相変わらず綺麗だよなー。でも、水面が非常に見づらい。このフェンスが高くて凄く見づらいんですよね。フードコートはあまり魅力的じゃ無いんですよね。んー。自由席なのに凄く見やすい。イベントも色々やってるんですね。まあもっとのんびりしたい所なんですが、この日は呼子に来たんですよ。やっぱり呼子に来たらイカだよねって事で、呼子台場みなとプラザという所に来ました。そう。なんかここはですね、この辺の魚も刺身にしてくれるらしいんですよ。そしてここで泳いでるイカも捌いてくれるらしいのですが、今の時期のイカは大きくて、一人だと食べきれないくらいの大きさで凄く高く付いちゃうんですって。んー。まあこの辺を試すのもいいのかもしれませんが、やっぱりイカを食べたいよなー。で、すぐ近くにある店なんですが、ちょっと有名な店らしいです。ここでもイカの生き造りを食べれるらしいです。ただ、ちょっと他の店にします。大和っていう店です。ここもイカの生き造りが食べれる店です。で、食べたかったのですが、やっぱり今の時期のイカは大きいので、一人では1匹丸々って訳にはいかないそうで。なので活き造りは出来ないんですって。ただ、この内容は変わらないで、3500円でやってくれるそうで。んー。僕的にはお断りして外に出るとか全然出来るのですが、調べてると、この周辺ってイカを食べるぐらいしか思いつかないんですよね。なのでもういいやって感じになりました。流石にもうお腹が空きすぎました。って事でまずは刺身がやって来ました。うん。まあ美味そうなんですが、やっぱり想像してた物とだいぶ違うので、ガッカリ感はありますよね。とりあえずいただきましょう。うん。美味い。イカのねっとり感がいいですよね。ご飯もそれなりに進みます。まあなんていうか、それなりの値段ですからね。このぐらい美味しくなきゃ困ります。味噌汁は赤出汁でした。へー。そうなんですね。漬物も美味しいです。で、ゲソの天ぷらもやって来ました。これは結構立派でして。まずは天つゆで。おー。いいねー。歯応えがしっかりあるやつでして。僕的には刺身よりもこっちの方が好きですかね。で、塩でもいただきます。うん。こっちの方が好きですかね。結構量があるので、ご飯が足りないぐらいなのですが、まあこれでいいかなって。で、最後になって、イカシュウマイがやって来ました。うん。これもなかなか。まあこの時期ってこういう感じなんでしょうね。僕の勉強不足なのでしょうがないのですが、やっぱり丸々1匹で食べたかったよなー。 ごちそうさまでした。今の時期はアオリイカだそうです。んー。これは、ボートで取り返さなければ。ちなみに凄く狭いです。結構人はいましたけどね。で、ちょっとレースまで時間があったので、近くのスーパーに行ってみました。イカは売ってるのかなって思ったのですが、売ってませんでした。そうだ。長崎はひらまさが美味しいんだっけかな？ちなみにオラレのすぐそばはこんな感じ。ここに来てる人達って漁師の人とかもいるんでしょうね。そう。ここって唐津が開催されないと開いてないらしいんですよ。なので僕からするとここに来る時って唐津がやってるので、なんかもどかしいんですよね。唐津でやってるなら唐津で見たいじゃないですか。普通こういう場所って出走表が何枚も置いてあるのですが、唐津と琵琶湖しか置いてません。あんな小さいモニターをみんなで見つめるのです。車で走ってるとこんな感じの港が何個もあるんですよね。って感じで移動します。続きは今週末です。 ツイッターはこちら@AEGAEGAEG インスタグラムaegsonもやってます。 ツイッターより頻繁に更新してますので、よろしければ。 ランキングもまだ参加してます。 下のボタンを押していただければ順位が上がるのです。 ご協力お願いします。
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://hbb.afl.rakuten.co.jp/hsb/18e30de6.62e85c82.16fa560e.c53c3afd/?me_id=2100001&amp;me_adv_id=1421798&amp;t=pict" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://hanadamasaru1976.blog.jp/archives/29280038.html" data-title="今年も月一ペースかな　ラーメン二郎 柏店" data-summary="今年もここにやって来ました。ちなみにここは入口ではありません。店員さんはここから出入りしてる事がありますけどね。さて、この日はお昼を避けたので大丈夫だとは思うのですが、良かった。並び無し。ラーメン二郎柏店です。もちろんいつもの青い食券。ちょっと中で並びましたが案外すぐに座れて、案外早く出て来ました。ラーメン小ニンニクアブラ。あらら。随分大きいキャベツが乗ってますね。記事の順番はひばりヶ丘と逆になりましたが、今年初の二郎はここ柏店です。やっぱり最初は地元の二郎だよね。あー。うめーなー。当たり前にいただいてますけど、ここの味付きのアブラは本当に美味いよね。野菜はクタクタだし、麺はもちろん、デロデロ。全てが僕好みの二郎なんですよ。僕好みの二郎が柏にあるっていうね。こんな幸せな事はありません。豚はこんな感じ。守谷の頃はこういう色をしてるとあまりいい事が無かったのですが、今はしっかり柔らかくて美味いんですよ。豚をおかずに食べる野菜最高。もちろん麺との相性も最高なのです。そしてもちろん、途中でニンニクを。ここでひっくり返します。僕はあまり周りの人の食べ方とか見てないんですが、最初からひっくり返す人が多いんですかね？あー美味い。この瞬間がいつも楽しみ。こっちの豚も美味しいし、食べても食べてもデロ麺最高。歳をどんどん重ねてるわけですが、なんか最近終盤で苦しいって思わなくなったんですよね。いつまでこれが食べれるかわかりませんが、食べれる限りは食べていたいですね。ツイッターはこちら@AEGAEGAEG インスタグラムaegsonもやってます。 ツイッターより頻繁に更新してますので、よろしければ。 ランキングもまだ参加してます。 下のボタンを押していただければ順位が上がるのです。 ご協力お願いします。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://hanadamasaru1976.blog.jp/archives/29280038.html" target="_blank" rel="noopener noreferrer" class="entry-link">今年も月一ペースかな　ラーメン二郎 柏店</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            今年もここにやって来ました。ちなみにここは入口ではありません。店員さんはここから出入りしてる事がありますけどね。さて、この日はお昼を避けたので大丈夫だとは思うのですが、良かった。並び無し。ラーメン二郎柏店です。もちろんいつもの青い食券。ちょっと中で並びましたが案外すぐに座れて、案外早く出て来ました。ラーメン小ニンニクアブラ。あらら。随分大きいキャベツが乗ってますね。記事の順番はひばりヶ丘と逆になりましたが、今年初の二郎はここ柏店です。やっぱり最初は地元の二郎だよね。あー。うめーなー。当たり前にいただいてますけど、ここの味付きのアブラは本当に美味いよね。野菜はクタクタだし、麺はもちろん、デロデロ。全てが僕好みの二郎なんですよ。僕好みの二郎が柏にあるっていうね。こんな幸せな事はありません。豚はこんな感じ。守谷の頃はこういう色をしてるとあまりいい事が無かったのですが、今はしっかり柔らかくて美味いんですよ。豚をおかずに食べる野菜最高。もちろん麺との相性も最高なのです。そしてもちろん、途中でニンニクを。ここでひっくり返します。僕はあまり周りの人の食べ方とか見てないんですが、最初からひっくり返す人が多いんですかね？あー美味い。この瞬間がいつも楽しみ。こっちの豚も美味しいし、食べても食べてもデロ麺最高。歳をどんどん重ねてるわけですが、なんか最近終盤で苦しいって思わなくなったんですよね。いつまでこれが食べれるかわかりませんが、食べれる限りは食べていたいですね。ツイッターはこちら@AEGAEGAEG インスタグラムaegsonもやってます。 ツイッターより頻繁に更新してますので、よろしければ。 ランキングもまだ参加してます。 下のボタンを押していただければ順位が上がるのです。 ご協力お願いします。
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://hbb.afl.rakuten.co.jp/hsb/18e30980.8ea413f4.16fa560e.c53c3afd/?me_id=2101008&amp;me_adv_id=167399&amp;t=pict" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://hanadamasaru1976.blog.jp/archives/29234582.html" data-title="色んな楽しみがあるんだよね　ステーキハンバーグ＆サラダバー けん 白井店" data-summary="白井のけんです。ちなみに店長のブログではなく、オーナーのブログに変わったそうです。内容は多分一緒かと（笑）ディナーメニュー。やっぱりこの日もハンバーグステーキ。2130円は決して安く無いのですが、まあ色々付いてくるんでね。ドレッシングの種類がとんでもない（笑）最近はシンプルなバターチキンカレーを置いてくれてる感じですかね。この日ももちろんパンをいただきます。最初はこんな感じ。って、いつもならこの辺を食べてる途中ぐらいにハンバーグがやってくるのですが、あっという間に来ちゃいました。とりあえずはパンとスープ。そしてハンバーグからいただきます。そうだ。ブログ特典のチーズを乗せなければ。パンを開いてマーガリンを塗って、ハンバーグを挟みます。うめーーーー。これが本当にお気に入りなのです。クルトンも入れ放題。サラダバーも狂ったぐらいに種類があります。もちろんご飯とも合うのですが、やっぱりこれが気に入っちゃってるんですよね。チーズのおかげでブロッコリーも美味しくいただきます。ハンバーグサンドうめーーー。えびせんってなんか取っちゃいますよね。余ったハンバーグで、ご飯を食べたら、ここからが本番。けんはカレーも食べ放題。まずはチキンバターから。生クリームをかけると、これまた美味いのです。ただね、以前よりもチキンバターが好きじゃなくなっちゃいまして。やっぱりノーマルなこっちだよなー。肉がこれでもがってぐらいに入ってるので、自然とカレーは美味くなります。もちろん肉も美味い。いやー。ここで結構お腹いっぱい。まあ、もう一杯食べましたけどね。そう。株主優待と割引が一緒に使えるのを知りませんでした。今まで損しちゃってたなー。 っていう、この後雪が降った日でした。ちなみにこれが2026年の初外食だったんです。 ツイッターはこちら@AEGAEGAEG インスタグラムaegsonもやってます。 ツイッターより頻繁に更新してますので、よろしければ。 ランキングもまだ参加してます。 下のボタンを押していただければ順位が上がるのです。 ご協力お願いします。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://hanadamasaru1976.blog.jp/archives/29234582.html" target="_blank" rel="noopener noreferrer" class="entry-link">色んな楽しみがあるんだよね　ステーキハンバーグ＆サラダバー けん 白井店</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            白井のけんです。ちなみに店長のブログではなく、オーナーのブログに変わったそうです。内容は多分一緒かと（笑）ディナーメニュー。やっぱりこの日もハンバーグステーキ。2130円は決して安く無いのですが、まあ色々付いてくるんでね。ドレッシングの種類がとんでもない（笑）最近はシンプルなバターチキンカレーを置いてくれてる感じですかね。この日ももちろんパンをいただきます。最初はこんな感じ。って、いつもならこの辺を食べてる途中ぐらいにハンバーグがやってくるのですが、あっという間に来ちゃいました。とりあえずはパンとスープ。そしてハンバーグからいただきます。そうだ。ブログ特典のチーズを乗せなければ。パンを開いてマーガリンを塗って、ハンバーグを挟みます。うめーーーー。これが本当にお気に入りなのです。クルトンも入れ放題。サラダバーも狂ったぐらいに種類があります。もちろんご飯とも合うのですが、やっぱりこれが気に入っちゃってるんですよね。チーズのおかげでブロッコリーも美味しくいただきます。ハンバーグサンドうめーーー。えびせんってなんか取っちゃいますよね。余ったハンバーグで、ご飯を食べたら、ここからが本番。けんはカレーも食べ放題。まずはチキンバターから。生クリームをかけると、これまた美味いのです。ただね、以前よりもチキンバターが好きじゃなくなっちゃいまして。やっぱりノーマルなこっちだよなー。肉がこれでもがってぐらいに入ってるので、自然とカレーは美味くなります。もちろん肉も美味い。いやー。ここで結構お腹いっぱい。まあ、もう一杯食べましたけどね。そう。株主優待と割引が一緒に使えるのを知りませんでした。今まで損しちゃってたなー。 っていう、この後雪が降った日でした。ちなみにこれが2026年の初外食だったんです。 ツイッターはこちら@AEGAEGAEG インスタグラムaegsonもやってます。 ツイッターより頻繁に更新してますので、よろしければ。 ランキングもまだ参加してます。 下のボタンを押していただければ順位が上がるのです。 ご協力お願いします。
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://hbb.afl.rakuten.co.jp/hsb/18e30f3e.7aae7d34.16fa560e.c53c3afd/?me_id=1269553&amp;me_adv_id=1670887&amp;t=pict" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://hanadamasaru1976.blog.jp/archives/29302937.html" data-title="西東京屈指の二郎に行って来た　ラーメン二郎 ひばりヶ丘駅前店" data-summary="町田を出発します。朝食バイキングで食べすぎちゃったんでね。夜に向けて胃を調整します。って事でボートレース多摩川へ。なんかのんびり水面で見るのが久しぶりだったので、見てるだけで幸せな気分でした。で、今僕的に多摩川で一番気に入ってるのが、チキンカツ！本当は昼を食べないつもりだったのですが、我慢出来ませんでした。持ってるのがキツい程アツアツ。そして美味いんだよなー。甘辛いソースが絶妙！水神祭も見ることが出来ました。こんなのが出来てたのですが、誰も使ってませんでした。勿体無い‥。いやー。楽しかったなー。ちなみに一度も当たりませんでした。最近ボートの調子が悪すぎるんですよね。って事でこの後友人と合流するはずだったのですが、風邪を引いたとの事なので最後まで一人行動。まあ一人でも同じ事してましたけどね。さて。どのくらい並んでますかね。おー。全然大した事無いじゃん。30分前でこんぐらいだったらラッキーでしょ。これの①でおさまってました。しかも開店前に動き出しましたよ。15分前に開店。実質15分前に並び始めたと一緒。流石に最初は入れませんでしたが、まさかここまで来れるとは。ラーメン二郎ひばりヶ丘駅前店。二郎屈指の人気店です。並ぶのは覚悟の上だったんですよ。なので友人と一緒に並んで、昔話でもしようと思ったのですが、もしいても大して話は出来なかったでしょうね。へー。二郎では珍しいですね。小で1000円。やっぱり高くなりましたが、二郎に関しは元々が安かったですからね。割り箸です。ちなににレンゲは無し。ラーメン小＋味付け玉子。ニンニクアブラ。野菜はコール無しでこの盛りです。もちろん付けました。味付け玉子。んー。野菜は結構クタクタな感じ。しかももやしが細い。これは僕的にはポイントが高いんです。で、これがアブラのコーラ煮。これ美味そうだなー。んー。いいねー。この量の野菜を食べるんだったら、絶対にアブラのコーラ煮は必要。ってか無かったらどうやって食べてたんだろ。スープは乳化したやつ。しっかりカエシの辛さもバッチリ決まってるやつです。麺は二郎にしては細目ですかね。思ったより柔らかくて結構僕好み。それにしても野菜が多い。アブラのコーラ煮は必須でしょ。野菜と麺の相性はバッチリ！やっぱりクタクタ野菜のデロ麺だよなー。ちなみに豚はこんな感じ。で、そろそろ、ひっくり返します。美味い！さすが人気店。まあ味なんて好みの問題ですが、僕的には凄く美味しいと思いました。豚は丁度いい噛み応えで美味いねー。やっぱり直系二郎はデロ麺だよなー。バラも美味い！豚はどっちも最高でした。味玉はしっかり醤油の味が付いたやつ。僕的にはもうちょい味がしないやつが良かったかな。大行列が出来るだけの事はあるなっていう感じでした。でもこれが一番かと言われると、僕的には違いますかね。まあそれこそさっきも書いた通り好みの問題です。二郎に関しては何処も特徴がある上に、ブレも生じますからね。一杯食べたところで一概に評価は出来ないのです。いや、すげー美味しかったですよ。ちなみに店を出た時はこんな感じ。実は警戒し過ぎてたのかも。今度はもっと気軽に来よう。ちょっと離れたらこんな感じの駐車場が。駅から近い二郎ですが、探せば安い駐車場もあるのです。 ツイッターはこちら@AEGAEGAEG インスタグラムaegsonもやってます。 ツイッターより頻繁に更新してますので、よろしければ。 ランキングもまだ参加してます。 下のボタンを押していただければ順位が上がるのです。 ご協力お願いします。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://hanadamasaru1976.blog.jp/archives/29302937.html" target="_blank" rel="noopener noreferrer" class="entry-link">西東京屈指の二郎に行って来た　ラーメン二郎 ひばりヶ丘駅前店</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            町田を出発します。朝食バイキングで食べすぎちゃったんでね。夜に向けて胃を調整します。って事でボートレース多摩川へ。なんかのんびり水面で見るのが久しぶりだったので、見てるだけで幸せな気分でした。で、今僕的に多摩川で一番気に入ってるのが、チキンカツ！本当は昼を食べないつもりだったのですが、我慢出来ませんでした。持ってるのがキツい程アツアツ。そして美味いんだよなー。甘辛いソースが絶妙！水神祭も見ることが出来ました。こんなのが出来てたのですが、誰も使ってませんでした。勿体無い‥。いやー。楽しかったなー。ちなみに一度も当たりませんでした。最近ボートの調子が悪すぎるんですよね。って事でこの後友人と合流するはずだったのですが、風邪を引いたとの事なので最後まで一人行動。まあ一人でも同じ事してましたけどね。さて。どのくらい並んでますかね。おー。全然大した事無いじゃん。30分前でこんぐらいだったらラッキーでしょ。これの①でおさまってました。しかも開店前に動き出しましたよ。15分前に開店。実質15分前に並び始めたと一緒。流石に最初は入れませんでしたが、まさかここまで来れるとは。ラーメン二郎ひばりヶ丘駅前店。二郎屈指の人気店です。並ぶのは覚悟の上だったんですよ。なので友人と一緒に並んで、昔話でもしようと思ったのですが、もしいても大して話は出来なかったでしょうね。へー。二郎では珍しいですね。小で1000円。やっぱり高くなりましたが、二郎に関しは元々が安かったですからね。割り箸です。ちなににレンゲは無し。ラーメン小＋味付け玉子。ニンニクアブラ。野菜はコール無しでこの盛りです。もちろん付けました。味付け玉子。んー。野菜は結構クタクタな感じ。しかももやしが細い。これは僕的にはポイントが高いんです。で、これがアブラのコーラ煮。これ美味そうだなー。んー。いいねー。この量の野菜を食べるんだったら、絶対にアブラのコーラ煮は必要。ってか無かったらどうやって食べてたんだろ。スープは乳化したやつ。しっかりカエシの辛さもバッチリ決まってるやつです。麺は二郎にしては細目ですかね。思ったより柔らかくて結構僕好み。それにしても野菜が多い。アブラのコーラ煮は必須でしょ。野菜と麺の相性はバッチリ！やっぱりクタクタ野菜のデロ麺だよなー。ちなみに豚はこんな感じ。で、そろそろ、ひっくり返します。美味い！さすが人気店。まあ味なんて好みの問題ですが、僕的には凄く美味しいと思いました。豚は丁度いい噛み応えで美味いねー。やっぱり直系二郎はデロ麺だよなー。バラも美味い！豚はどっちも最高でした。味玉はしっかり醤油の味が付いたやつ。僕的にはもうちょい味がしないやつが良かったかな。大行列が出来るだけの事はあるなっていう感じでした。でもこれが一番かと言われると、僕的には違いますかね。まあそれこそさっきも書いた通り好みの問題です。二郎に関しては何処も特徴がある上に、ブレも生じますからね。一杯食べたところで一概に評価は出来ないのです。いや、すげー美味しかったですよ。ちなみに店を出た時はこんな感じ。実は警戒し過ぎてたのかも。今度はもっと気軽に来よう。ちょっと離れたらこんな感じの駐車場が。駅から近い二郎ですが、探せば安い駐車場もあるのです。 ツイッターはこちら@AEGAEGAEG インスタグラムaegsonもやってます。 ツイッターより頻繁に更新してますので、よろしければ。 ランキングもまだ参加してます。 下のボタンを押していただければ順位が上がるのです。 ご協力お願いします。
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://hbb.afl.rakuten.co.jp/hsb/18e30de6.62e85c82.16fa560e.c53c3afd/?me_id=2100001&amp;me_adv_id=1421798&amp;t=pict" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://hanadamasaru1976.blog.jp/archives/29302911.html" data-title="評判通りのフレンチトーストだった！　レンブラントホテル東京町田" data-summary="先週に続いて町田に行った時の話。町田駅からすぐのホテルに泊まってました。アゴダで5000円しなかったんですよ。で、ここに泊まったのは安かっただけではありませんで。そう。ここの朝食がお目当てなのです。ちなみにここの朝食はじゃらんで予約が出来ました。当日払うよりも全然安いです。窓際にしますかね。さて、早速取りに行きましょう。なんか普段食べてるビジネスホテルの朝食に比べてもワンランク上な気がします。オススメの豚しゃぶ。これももちろん楽しみにしてます。色々と、充実してますね。欲しいものがちゃんとあるって感じ。で、パンも種類豊富でいいのですが、このフレンチトーストがとにかく美味しいらしいです。丁度焼きたてだったので一ついただきます。ジュースもおしゃれな感じ。とりあえずはこんな感じ。まずは、パンに合うものをチョイス。とりあえずフレンチトーストから行きますかね。ぱっと見ナイフが無かったんですが、なんとフォークでも切れるんです。うまーーーーい！とにかくフワフワ。ちょっとビックリします。もちろんこのままでもいいんですが、甘さがかなり控えめになってますので、置いてあったシロップをかけてもいいかも。これは冷たい豆乳のコーンスープだそうです。これもいいねー。もちろん定番のやつも美味しい。パンも美味しい。まあフレンチトーストだけを食べ続けるってかなり無理がありますが、あまり好きじゃ無いとしても、是非焼きたてを食べるべきですね。これはちょっと格が違う。とりあえず、パンはこんなもんでいいですかね。オススメの豚しゃぶも食べてみましょう。もちろんご飯にチェンジ。魚は煮魚と焼き魚が置いてありました。豚しゃぶはポン酢でいただきます。おー。こりゃ美味いね。普段しゃぶ葉で豚バラを死ぬほど食べてますが、ロースをあっさり食べるのもいいですね。さすがオススメするだけの事はあります。もちろんご飯が進むやつ。で、焼き魚なんですが、イマイチ。味噌汁もなかなかでした。煮魚は信じられないくらい柔らかいのですが、んー。そこそこですかね。魚自体があまり好きじゃ無いやつです。もちろん納豆も美味しくいただきます。で、また焼きたてだったので持ってきました。これが3個目かな。箸がすっと通って、美味い。これを無限に食べれるっていうだけで1500円の価値があると思います。最後にもう一回豚しゃぶ。オススメが豚しゃぶ？って思ったんですが、これが本当に美味しかった。朝から温まる食べ物っていうのも美味しく感じる理由かもですね。最後はカレー。美味い！でももっと美味しいものがあるので、カレーはちょっとにしておきました。本当はもう一つフレンチトーストを食べようと思ったのですが、あまりに苦しかったのでパイナップルを食べて終了。いやー。最高の朝ごはんだったなー。って事で出かける前に二度寝です。続きはまた明日。 ツイッターはこちら@AEGAEGAEG インスタグラムaegsonもやってます。 ツイッターより頻繁に更新してますので、よろしければ。 ランキングもまだ参加してます。 下のボタンを押していただければ順位が上がるのです。 ご協力お願いします。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://hanadamasaru1976.blog.jp/archives/29302911.html" target="_blank" rel="noopener noreferrer" class="entry-link">評判通りのフレンチトーストだった！　レンブラントホテル東京町田</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>4日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            先週に続いて町田に行った時の話。町田駅からすぐのホテルに泊まってました。アゴダで5000円しなかったんですよ。で、ここに泊まったのは安かっただけではありませんで。そう。ここの朝食がお目当てなのです。ちなみにここの朝食はじゃらんで予約が出来ました。当日払うよりも全然安いです。窓際にしますかね。さて、早速取りに行きましょう。なんか普段食べてるビジネスホテルの朝食に比べてもワンランク上な気がします。オススメの豚しゃぶ。これももちろん楽しみにしてます。色々と、充実してますね。欲しいものがちゃんとあるって感じ。で、パンも種類豊富でいいのですが、このフレンチトーストがとにかく美味しいらしいです。丁度焼きたてだったので一ついただきます。ジュースもおしゃれな感じ。とりあえずはこんな感じ。まずは、パンに合うものをチョイス。とりあえずフレンチトーストから行きますかね。ぱっと見ナイフが無かったんですが、なんとフォークでも切れるんです。うまーーーーい！とにかくフワフワ。ちょっとビックリします。もちろんこのままでもいいんですが、甘さがかなり控えめになってますので、置いてあったシロップをかけてもいいかも。これは冷たい豆乳のコーンスープだそうです。これもいいねー。もちろん定番のやつも美味しい。パンも美味しい。まあフレンチトーストだけを食べ続けるってかなり無理がありますが、あまり好きじゃ無いとしても、是非焼きたてを食べるべきですね。これはちょっと格が違う。とりあえず、パンはこんなもんでいいですかね。オススメの豚しゃぶも食べてみましょう。もちろんご飯にチェンジ。魚は煮魚と焼き魚が置いてありました。豚しゃぶはポン酢でいただきます。おー。こりゃ美味いね。普段しゃぶ葉で豚バラを死ぬほど食べてますが、ロースをあっさり食べるのもいいですね。さすがオススメするだけの事はあります。もちろんご飯が進むやつ。で、焼き魚なんですが、イマイチ。味噌汁もなかなかでした。煮魚は信じられないくらい柔らかいのですが、んー。そこそこですかね。魚自体があまり好きじゃ無いやつです。もちろん納豆も美味しくいただきます。で、また焼きたてだったので持ってきました。これが3個目かな。箸がすっと通って、美味い。これを無限に食べれるっていうだけで1500円の価値があると思います。最後にもう一回豚しゃぶ。オススメが豚しゃぶ？って思ったんですが、これが本当に美味しかった。朝から温まる食べ物っていうのも美味しく感じる理由かもですね。最後はカレー。美味い！でももっと美味しいものがあるので、カレーはちょっとにしておきました。本当はもう一つフレンチトーストを食べようと思ったのですが、あまりに苦しかったのでパイナップルを食べて終了。いやー。最高の朝ごはんだったなー。って事で出かける前に二度寝です。続きはまた明日。 ツイッターはこちら@AEGAEGAEG インスタグラムaegsonもやってます。 ツイッターより頻繁に更新してますので、よろしければ。 ランキングもまだ参加してます。 下のボタンを押していただければ順位が上がるのです。 ご協力お願いします。
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://hbb.afl.rakuten.co.jp/hsb/18e30de6.62e85c82.16fa560e.c53c3afd/?me_id=2100001&amp;me_adv_id=1421798&amp;t=pict" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://hanadamasaru1976.blog.jp/archives/29265527.html" data-title="鶏白湯のつけ麺があるんだって　大勝軒てつ" data-summary="鎌ヶ谷のてつに来ました。この日のお目当ては台湾まぜそば。台湾まぜそばなんて久しぶりだなー。って思ってたのですが売り切れちゃいまして。結局柏のてつに来ました。元々この日はこれにしようかなって思ってたんですよ。なので台湾まぜそばが売り切れてた時点でこっちに来ようって思ってました。チャーハンもあったので一安心。奥行きのあるカウンターが落ち着くねー。テーブル席よりもこっちが良いです。ソースチャーハンが到着。油とソースの組み合わせがたまらないのです。まもなく鶏白湯つけ麺の登場。おー。なんか見た事ない感じのスープですね。麺はいつも通り美しい。チャーシューはロースにしました。さて、鶏白湯つけ麺なんですが、んー！なるほど。鶏の旨みが凝縮って感じですね。でも思ったよりは粘度が無い感じです。なので麺への絡みつきはイマイチかと。中には玉ねぎが入ってます。まあこれも麺には絡まないんですけどね。こんな感じなので、麺はべっとり付けちゃいます。ちなみに大盛りなのでスープのおかわりが出来ます。これは多分おかわりが必要かな。ただ、しっかり味は付いてます。なのでこのまま飲むって感じでも無いです。そしてソースチャーハン。相変わらず美味いねー。このぐらいの量だから丁度いいんでしょうね。って事で、いつもここでつけ麺を食べる時は大盛りにしてたのですが、初めてスープのおかわりをしました。一応情報としては知っていたのですが、食べてた器に追加するんじゃなくて、もう一杯持ってきてくれる感じです。新小岩の一燈みたいな感じですね。これで心配なくべっとりつける事が出来ます。うん。まあスープの量的にはいいんですが、なんていうか、もうちょい麺に絡みついて欲しいんですよね。ロースのチャーシューも美味いし、相変わらず満足な大勝軒てつ。もちろんスープ割。あー。スープ割いいねー。そりゃとんづけの方が好きですが、ここの限定は基本的にはレベルが高いのです。ちなみに1月のとんづけウィークは行けなかったんですよ。なので今から2月のとんづけウィークが楽しみ。ってかレギュラーメニューにしちゃえばいいのにな。ツイッターはこちら@AEGAEGAEG インスタグラムaegsonもやってます。 ツイッターより頻繁に更新してますので、よろしければ。 ランキングもまだ参加してます。 下のボタンを押していただければ順位が上がるのです。 ご協力お願いします。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://hanadamasaru1976.blog.jp/archives/29265527.html" target="_blank" rel="noopener noreferrer" class="entry-link">鶏白湯のつけ麺があるんだって　大勝軒てつ</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>5日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            鎌ヶ谷のてつに来ました。この日のお目当ては台湾まぜそば。台湾まぜそばなんて久しぶりだなー。って思ってたのですが売り切れちゃいまして。結局柏のてつに来ました。元々この日はこれにしようかなって思ってたんですよ。なので台湾まぜそばが売り切れてた時点でこっちに来ようって思ってました。チャーハンもあったので一安心。奥行きのあるカウンターが落ち着くねー。テーブル席よりもこっちが良いです。ソースチャーハンが到着。油とソースの組み合わせがたまらないのです。まもなく鶏白湯つけ麺の登場。おー。なんか見た事ない感じのスープですね。麺はいつも通り美しい。チャーシューはロースにしました。さて、鶏白湯つけ麺なんですが、んー！なるほど。鶏の旨みが凝縮って感じですね。でも思ったよりは粘度が無い感じです。なので麺への絡みつきはイマイチかと。中には玉ねぎが入ってます。まあこれも麺には絡まないんですけどね。こんな感じなので、麺はべっとり付けちゃいます。ちなみに大盛りなのでスープのおかわりが出来ます。これは多分おかわりが必要かな。ただ、しっかり味は付いてます。なのでこのまま飲むって感じでも無いです。そしてソースチャーハン。相変わらず美味いねー。このぐらいの量だから丁度いいんでしょうね。って事で、いつもここでつけ麺を食べる時は大盛りにしてたのですが、初めてスープのおかわりをしました。一応情報としては知っていたのですが、食べてた器に追加するんじゃなくて、もう一杯持ってきてくれる感じです。新小岩の一燈みたいな感じですね。これで心配なくべっとりつける事が出来ます。うん。まあスープの量的にはいいんですが、なんていうか、もうちょい麺に絡みついて欲しいんですよね。ロースのチャーシューも美味いし、相変わらず満足な大勝軒てつ。もちろんスープ割。あー。スープ割いいねー。そりゃとんづけの方が好きですが、ここの限定は基本的にはレベルが高いのです。ちなみに1月のとんづけウィークは行けなかったんですよ。なので今から2月のとんづけウィークが楽しみ。ってかレギュラーメニューにしちゃえばいいのにな。ツイッターはこちら@AEGAEGAEG インスタグラムaegsonもやってます。 ツイッターより頻繁に更新してますので、よろしければ。 ランキングもまだ参加してます。 下のボタンを押していただければ順位が上がるのです。 ご協力お願いします。
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://hbb.afl.rakuten.co.jp/hsb/18e30980.8ea413f4.16fa560e.c53c3afd/?me_id=2101008&amp;me_adv_id=167399&amp;t=pict" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://hanadamasaru1976.blog.jp/archives/29182586.html" data-title="やっぱり味噌なら誉だよね　こってりらーめん 誉" data-summary="すいません。まだまだ去年の話でした。基本的には古い順に書いてるんですけど、すぐにブログにしたい記事なんかを繰り上げたりしてる内に、どんどんズレちゃったりするのです。あー。クリスマスイブの話なんですね。誉にやってきました。そうか。この日なら空いてるかもって思って来たんだった。ここでは迷わず、味噌ラーメンの大盛りにします。クーポンで味玉を追加。チャーシューは増やしました。何枚増やしたんだっけかな？もちろんギタギタにしました。油多めって事です。んーー。やっぱりここの味噌ラーメンは美味いねー。醤油ラーメンと違って、背脂がスープに溶け込んでる感じ。やっぱりいいねー。麺は固めにしてもらいました。思ったより歯応えがあっていいねー。あれ？今もメンマって増やせるんだっけかな？それにしてもここの味噌は丁度いい。なりたけで味噌を頼むと、しょっぱ過ぎるんですよね。そして野菜はスープと一緒に火を通してるんですよ。なので味がしっかり染みてるのです。薬味って誉でも増やせるんだっけかな？あまり気にした事がなかったかも。そしてチャーシュー。タイプはなりたけと変わらないのですが、スモークの香りがするのと、チャーシュー自体の暑さが全然違うんですよね。ってな感じで非常にレベルが高いんですよ。さっきから名前が出てるなりたけっていう店は、この店と繋がりがある店でして。僕的になりたけが最近イマイチなんですよ。となると、誉にはこれまで以上に期待しちゃうんですよね。うん。味玉は普通かな。無料なので感謝。味噌ラーメンは元々なりたけより好きですし、多分醤油もこっちの方が美味しいんじゃないかな？最近味噌しか食べてないからよくわからないけど。そう。案外下の方に野菜が沈んでるのでご注意を。美味かった。つけ麺食べてる人が多いから、今度久しぶりにつけ麺を試してみますかね。そう。西口にまいばすけっとができたんですね。東口にも出来たら便利なんだけどなー。 ツイッターはこちら@AEGAEGAEG インスタグラムaegsonもやってます。 ツイッターより頻繁に更新してますので、よろしければ。 ランキングもまだ参加してます。 下のボタンを押していただければ順位が上がるのです。 ご協力お願いします。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://hanadamasaru1976.blog.jp/archives/29182586.html" target="_blank" rel="noopener noreferrer" class="entry-link">やっぱり味噌なら誉だよね　こってりらーめん 誉</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>6日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            すいません。まだまだ去年の話でした。基本的には古い順に書いてるんですけど、すぐにブログにしたい記事なんかを繰り上げたりしてる内に、どんどんズレちゃったりするのです。あー。クリスマスイブの話なんですね。誉にやってきました。そうか。この日なら空いてるかもって思って来たんだった。ここでは迷わず、味噌ラーメンの大盛りにします。クーポンで味玉を追加。チャーシューは増やしました。何枚増やしたんだっけかな？もちろんギタギタにしました。油多めって事です。んーー。やっぱりここの味噌ラーメンは美味いねー。醤油ラーメンと違って、背脂がスープに溶け込んでる感じ。やっぱりいいねー。麺は固めにしてもらいました。思ったより歯応えがあっていいねー。あれ？今もメンマって増やせるんだっけかな？それにしてもここの味噌は丁度いい。なりたけで味噌を頼むと、しょっぱ過ぎるんですよね。そして野菜はスープと一緒に火を通してるんですよ。なので味がしっかり染みてるのです。薬味って誉でも増やせるんだっけかな？あまり気にした事がなかったかも。そしてチャーシュー。タイプはなりたけと変わらないのですが、スモークの香りがするのと、チャーシュー自体の暑さが全然違うんですよね。ってな感じで非常にレベルが高いんですよ。さっきから名前が出てるなりたけっていう店は、この店と繋がりがある店でして。僕的になりたけが最近イマイチなんですよ。となると、誉にはこれまで以上に期待しちゃうんですよね。うん。味玉は普通かな。無料なので感謝。味噌ラーメンは元々なりたけより好きですし、多分醤油もこっちの方が美味しいんじゃないかな？最近味噌しか食べてないからよくわからないけど。そう。案外下の方に野菜が沈んでるのでご注意を。美味かった。つけ麺食べてる人が多いから、今度久しぶりにつけ麺を試してみますかね。そう。西口にまいばすけっとができたんですね。東口にも出来たら便利なんだけどなー。 ツイッターはこちら@AEGAEGAEG インスタグラムaegsonもやってます。 ツイッターより頻繁に更新してますので、よろしければ。 ランキングもまだ参加してます。 下のボタンを押していただければ順位が上がるのです。 ご協力お願いします。
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://hbb.afl.rakuten.co.jp/hsb/18e30f3e.7aae7d34.16fa560e.c53c3afd/?me_id=1269553&amp;me_adv_id=1670887&amp;t=pict" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://hanadamasaru1976.blog.jp/archives/29133594.html" data-title="久しぶりの麻婆麺　Neo町中華ししょう" data-summary="久しぶりのししょうです。結構SNSを拝見してるのですが、なかなか個性的ですよね。麻婆麺1200円。中辛にすると1400円。前も辛さって選べましたっけ？んー。店内もかなり個性的。ちょっとだけカウンターが手前に傾いてるんですよね。今回は中辛にしてみました。相変わらずの盛り付け。溢れそうっていうか溢れてます。ぱっと見は辛く無さそうですけどね。そしてライスも到着。麻婆麺だもん。ライスは必要だよね。で、ここの麻婆麺はスープ全体が麻婆な感じでして。うん。以前と比べると随分サラサラなスープになったんですね。でも相変わらずスープが麺に絡みついてきまして。流石メニューを絞ってるだけの事はあるなって感じですかね。キクラゲも大きなのが入ってます。挽肉はたっぷり入ってるのですが、太麺なので麺に絡まないのが残念。まあ麺はそのまま楽しんで、豆腐と挽肉は後で楽しみましょう。そう。紅生姜は別にご飯にはいらないので、こうやって食べます。さあ、ここからが本番。んー。やっぱり以前よりもサラサラですかね。ただそれはそれで、ご飯とあったりもするのです。あんかけの麻婆豆腐では無くて、お茶漬け感覚で食べれる感じ。まだまだ一杯残ってるので、無くなってはかけて、最後まで楽しめるのです。米の固さも丁度いいんだよなー。 ツイッターはこちら@AEGAEGAEG インスタグラムaegsonもやってます。 ツイッターより頻繁に更新してますので、よろしければ。 ランキングもまだ参加してます。 下のボタンを押していただければ順位が上がるのです。 ご協力お願いします。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://hanadamasaru1976.blog.jp/archives/29133594.html" target="_blank" rel="noopener noreferrer" class="entry-link">久しぶりの麻婆麺　Neo町中華ししょう</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>7日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            久しぶりのししょうです。結構SNSを拝見してるのですが、なかなか個性的ですよね。麻婆麺1200円。中辛にすると1400円。前も辛さって選べましたっけ？んー。店内もかなり個性的。ちょっとだけカウンターが手前に傾いてるんですよね。今回は中辛にしてみました。相変わらずの盛り付け。溢れそうっていうか溢れてます。ぱっと見は辛く無さそうですけどね。そしてライスも到着。麻婆麺だもん。ライスは必要だよね。で、ここの麻婆麺はスープ全体が麻婆な感じでして。うん。以前と比べると随分サラサラなスープになったんですね。でも相変わらずスープが麺に絡みついてきまして。流石メニューを絞ってるだけの事はあるなって感じですかね。キクラゲも大きなのが入ってます。挽肉はたっぷり入ってるのですが、太麺なので麺に絡まないのが残念。まあ麺はそのまま楽しんで、豆腐と挽肉は後で楽しみましょう。そう。紅生姜は別にご飯にはいらないので、こうやって食べます。さあ、ここからが本番。んー。やっぱり以前よりもサラサラですかね。ただそれはそれで、ご飯とあったりもするのです。あんかけの麻婆豆腐では無くて、お茶漬け感覚で食べれる感じ。まだまだ一杯残ってるので、無くなってはかけて、最後まで楽しめるのです。米の固さも丁度いいんだよなー。 ツイッターはこちら@AEGAEGAEG インスタグラムaegsonもやってます。 ツイッターより頻繁に更新してますので、よろしければ。 ランキングもまだ参加してます。 下のボタンを押していただければ順位が上がるのです。 ご協力お願いします。
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://hbb.afl.rakuten.co.jp/hsb/18e30f3e.7aae7d34.16fa560e.c53c3afd/?me_id=1269553&amp;me_adv_id=1670887&amp;t=pict" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://hanadamasaru1976.blog.jp/archives/28931789.html" data-title="無料のバイキングが最高すぎるんだよね。　感動の肉と米 柏店" data-summary="これも去年の話だっけかな？肉と米に行ってきました。相変わらずリーズナブル。食券を買ったらすぐに渡して、すぐ焼いてくれてすぐに受け取るシステムです。今回は初めてハンバーグにしてみますかね。こんな風に呼び出し番号って書いてありますが、すぐに受け取る事が殆どです。ハンバーグの食べ方の紙ももらえます。味噌汁も、ご飯も、この辺も食べ放題。トマトソースとチーズも付いてきて、こんな感じです。ちょっと慌てました。これを受け取ってからご飯などを取りに行くので、この間がちょっと勿体無いなって思うんですよね。ちょっと冷めちゃう。しかもハンバーグは自分でもやらなきゃいけない事が結構ありまして。切って、こうやって押し付けて、焼いた後に、チーズを乗せます。んー。こりゃ溶けなそうだなー。とりあえずいただきましょう。チーズは押し付けていただきます。んー。まあこんなもんですかね。そう、ここのご飯美味しいんですよね。まあ正直いうと、熱々の状態で切ったり押し付けたりっていうのはやりたいよなっていうのが本音です。そうだ。トマトソースをかけてみますか。んー。なんかマルシンハンバーグ食べてるみたい（笑）いや、マルシンハンバーグも美味しいんですが、ケチャップをかけると尚更マルシンハンバーグ感が出るんですよ。味噌汁はしっかり美味しい。そっか。もうひっくり返しておこう。そうすると結構焦げる。ハンバーグを食べてる感じは、鉄板がそんなに熱々な感じは無いですけどね。味付けは、やっぱりステーキのタレの方が、しっくり来ますかね。これはいきなりステーキと一緒。んー。やっぱりマルシンハンバーグだな。まあこれでもご飯は進むので、もちろんおかわり。ただお楽しみは、これからでして。そう。この店はこれも食べ放題なのがいいんですよ。以前は肉そぼろだけで食べてたんですが、このキムチが凄くいい！全部乗せて混ぜて食べると最高なのです。もちろんおかわり。キムチもドバッと入れます。わかめナムルも結構いい味でして。これを崩しながら食べると言うよりは、混ぜながら食べましょう。これが凄く気に入っちゃいましてね。ケチらずたっぷり使えるのがいいですよね。肉そぼろの味付けが控えめなので、たっぷりかけても塩っぱく無いんですよ。まあ僕的にはハンバーグがちょっとイマイチだったんですが、ステーキはなかなかだと思います。そして最後にこれが待ってるっていうのが凄くいいんですよね。美味かった。相変わらず大満足。次は絶対にステーキだな。玉子が無くても大満足だし、必要なら注文すればいいのかなと。そうだ。そろそろ落ち着いたし、資さんうどんも来なきゃな。柏店はまだ来た事が無いのです。 ツイッターはこちら@AEGAEGAEG インスタグラムaegsonもやってます。 ツイッターより頻繁に更新してますので、よろしければ。 ランキングもまだ参加してます。 下のボタンを押していただければ順位が上がるのです。 ご協力お願いします。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://hanadamasaru1976.blog.jp/archives/28931789.html" target="_blank" rel="noopener noreferrer" class="entry-link">無料のバイキングが最高すぎるんだよね。　感動の肉と米 柏店</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>8日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            これも去年の話だっけかな？肉と米に行ってきました。相変わらずリーズナブル。食券を買ったらすぐに渡して、すぐ焼いてくれてすぐに受け取るシステムです。今回は初めてハンバーグにしてみますかね。こんな風に呼び出し番号って書いてありますが、すぐに受け取る事が殆どです。ハンバーグの食べ方の紙ももらえます。味噌汁も、ご飯も、この辺も食べ放題。トマトソースとチーズも付いてきて、こんな感じです。ちょっと慌てました。これを受け取ってからご飯などを取りに行くので、この間がちょっと勿体無いなって思うんですよね。ちょっと冷めちゃう。しかもハンバーグは自分でもやらなきゃいけない事が結構ありまして。切って、こうやって押し付けて、焼いた後に、チーズを乗せます。んー。こりゃ溶けなそうだなー。とりあえずいただきましょう。チーズは押し付けていただきます。んー。まあこんなもんですかね。そう、ここのご飯美味しいんですよね。まあ正直いうと、熱々の状態で切ったり押し付けたりっていうのはやりたいよなっていうのが本音です。そうだ。トマトソースをかけてみますか。んー。なんかマルシンハンバーグ食べてるみたい（笑）いや、マルシンハンバーグも美味しいんですが、ケチャップをかけると尚更マルシンハンバーグ感が出るんですよ。味噌汁はしっかり美味しい。そっか。もうひっくり返しておこう。そうすると結構焦げる。ハンバーグを食べてる感じは、鉄板がそんなに熱々な感じは無いですけどね。味付けは、やっぱりステーキのタレの方が、しっくり来ますかね。これはいきなりステーキと一緒。んー。やっぱりマルシンハンバーグだな。まあこれでもご飯は進むので、もちろんおかわり。ただお楽しみは、これからでして。そう。この店はこれも食べ放題なのがいいんですよ。以前は肉そぼろだけで食べてたんですが、このキムチが凄くいい！全部乗せて混ぜて食べると最高なのです。もちろんおかわり。キムチもドバッと入れます。わかめナムルも結構いい味でして。これを崩しながら食べると言うよりは、混ぜながら食べましょう。これが凄く気に入っちゃいましてね。ケチらずたっぷり使えるのがいいですよね。肉そぼろの味付けが控えめなので、たっぷりかけても塩っぱく無いんですよ。まあ僕的にはハンバーグがちょっとイマイチだったんですが、ステーキはなかなかだと思います。そして最後にこれが待ってるっていうのが凄くいいんですよね。美味かった。相変わらず大満足。次は絶対にステーキだな。玉子が無くても大満足だし、必要なら注文すればいいのかなと。そうだ。そろそろ落ち着いたし、資さんうどんも来なきゃな。柏店はまだ来た事が無いのです。 ツイッターはこちら@AEGAEGAEG インスタグラムaegsonもやってます。 ツイッターより頻繁に更新してますので、よろしければ。 ランキングもまだ参加してます。 下のボタンを押していただければ順位が上がるのです。 ご協力お願いします。
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://hbb.afl.rakuten.co.jp/hsb/18e30980.8ea413f4.16fa560e.c53c3afd/?me_id=2101008&amp;me_adv_id=167399&amp;t=pict" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://hanadamasaru1976.blog.jp/archives/29234549.html" data-title="最後はやっぱりしゃぶ葉だよね　しゃぶ葉 柏呼塚店" data-summary="毎度のしゃぶ葉です。ランチの方がお得なんですが、最近はディナーに来る事が多いですかね。まあそこまで値段は変わらないんでね。ちょっとだけ株主優待が残ってました。ちなみにまだ去年の話でして。これが2025年最後の外食でした。まあ、いつも通りのラインナップ。あら。春雨が2種類ある。へー。さつまいも春雨。いいねー。って事でこんな感じ。最初はこれを食べながら待ちます。ポテサラに食べるラー油。これマジで最高。そうそう。タブレットでちゃんと送信が出来てませんで。ちょっと待つ事になっちゃいました。とりあえずいつも通りに香味野菜と春雨。春雨はさつまいも春雨にしました。うん。豚も良さそうね。辛い鍋の方ができるまでは、白だしで豚バラをしゃぶしゃぶして、うまーーーい！正直これだけでも満足。でももちろんこれだけでは終わりません。そろそろ、こっちにも豚バラを。そしてニラ。で、ここにニンニクを少々。スープをちょっとだけ入れて、出来上がり。うまーーーい！大辛にすればそれなりに辛いんです。これがクセになるんですよね。おー。さつまいも春雨いいじゃん。デロンデロンにならないで歯応えがあります。こっちの方が好きかも。で、近年いけない事を覚えてしまいまして。ここに豆板醤マヨを溶かすと、あー。やっぱりヤバい。これは最高。ちょっとだけ湯豆腐も食べます。あとは最初からやった事を、繰り返すだけです。食べるラー油とゴマだれの相性が、これまた最高。いやー止まらない。ご飯おかわり。豚バラが、食べても食べても、止まらない。最後はもちろん中華麺。ちょっとだけゴマだれを入れて、ここにも食べるラー油を。ここに辛いスープを注いで、麺を入れます。ちょっとびっくりするくらい早く麺を上げて、ネギを振って出来上がり。いやーたまらない。これまた、止まらない。もちろん最後はカレー。これが、なんか美味いんだよなー。多分これだけ出されても大して美味しいとは思わないと思うんですが、最後に食べると凄く美味しいんですよね。2025最後の外食にふさわしいパフォーマンスでした。 ツイッターはこちら@AEGAEGAEG インスタグラムaegsonもやってます。 ツイッターより頻繁に更新してますので、よろしければ。 ランキングもまだ参加してます。 下のボタンを押していただければ順位が上がるのです。 ご協力お願いします。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://hanadamasaru1976.blog.jp/archives/29234549.html" target="_blank" rel="noopener noreferrer" class="entry-link">最後はやっぱりしゃぶ葉だよね　しゃぶ葉 柏呼塚店</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>9日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            毎度のしゃぶ葉です。ランチの方がお得なんですが、最近はディナーに来る事が多いですかね。まあそこまで値段は変わらないんでね。ちょっとだけ株主優待が残ってました。ちなみにまだ去年の話でして。これが2025年最後の外食でした。まあ、いつも通りのラインナップ。あら。春雨が2種類ある。へー。さつまいも春雨。いいねー。って事でこんな感じ。最初はこれを食べながら待ちます。ポテサラに食べるラー油。これマジで最高。そうそう。タブレットでちゃんと送信が出来てませんで。ちょっと待つ事になっちゃいました。とりあえずいつも通りに香味野菜と春雨。春雨はさつまいも春雨にしました。うん。豚も良さそうね。辛い鍋の方ができるまでは、白だしで豚バラをしゃぶしゃぶして、うまーーーい！正直これだけでも満足。でももちろんこれだけでは終わりません。そろそろ、こっちにも豚バラを。そしてニラ。で、ここにニンニクを少々。スープをちょっとだけ入れて、出来上がり。うまーーーい！大辛にすればそれなりに辛いんです。これがクセになるんですよね。おー。さつまいも春雨いいじゃん。デロンデロンにならないで歯応えがあります。こっちの方が好きかも。で、近年いけない事を覚えてしまいまして。ここに豆板醤マヨを溶かすと、あー。やっぱりヤバい。これは最高。ちょっとだけ湯豆腐も食べます。あとは最初からやった事を、繰り返すだけです。食べるラー油とゴマだれの相性が、これまた最高。いやー止まらない。ご飯おかわり。豚バラが、食べても食べても、止まらない。最後はもちろん中華麺。ちょっとだけゴマだれを入れて、ここにも食べるラー油を。ここに辛いスープを注いで、麺を入れます。ちょっとびっくりするくらい早く麺を上げて、ネギを振って出来上がり。いやーたまらない。これまた、止まらない。もちろん最後はカレー。これが、なんか美味いんだよなー。多分これだけ出されても大して美味しいとは思わないと思うんですが、最後に食べると凄く美味しいんですよね。2025最後の外食にふさわしいパフォーマンスでした。 ツイッターはこちら@AEGAEGAEG インスタグラムaegsonもやってます。 ツイッターより頻繁に更新してますので、よろしければ。 ランキングもまだ参加してます。 下のボタンを押していただければ順位が上がるのです。 ご協力お願いします。
+                        </div>
+                    </div>
+
+                    
+                    <img src="https://hbb.afl.rakuten.co.jp/hsb/18e30980.8ea413f4.16fa560e.c53c3afd/?me_id=2101008&amp;me_adv_id=167399&amp;t=pict" class="entry-thumbnail" loading="lazy" alt="">
+                    
+                </li>
+                
+            </ul>
+        </details>
+        
+        <details class="feed-section" open>
+            <summary>
+                <div class="feed-info">
+                    <img src="https://www.google.com/s2/favicons?domain=ameblo.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                    <span class="feed-title-text">森田</span>
+                </div>
+                
+                <div class="feed-meta">
+                    
+                    <span class="count-badge has-new">新着 1 / 10</span>
+                    
+                </div>
+            </summary>
+            
+            <ul class="entry-list">
+                
+
+                
+                <li class="entry-item" data-link="https://ameblo.jp/moritashoutenkai/entry-12956253792.html" data-title="盛りすぎチャレンジ（ローソン）" data-summary="流石に飽きてきたのかもこの日はヒルモリタ終わり。 毎週毎週ランチには苦労する。 休憩時間になってる店が殆どだからチェーン店に行くか、コンビニにするか食べないか。 あ～たまには行ってみるか・・とローソンへ。 そう言えば、この日は猛吹雪警報が出てたんだ。👈️ホワイトアウトってた。Ｂ級グルメランキング コンビニも誰も居ない。到着した。 誰も居ない。 時間が15：00前だったからか？ それとも、吹雪だったからか？ いずれにしても、店員だけ。 またか・・・前回も思ったけど、もう「またか」感が強い。 一層">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <span class="new-badge">NEW</span>
+                            
+                            <a href="https://ameblo.jp/moritashoutenkai/entry-12956253792.html" target="_blank" rel="noopener noreferrer" class="entry-link">盛りすぎチャレンジ（ローソン）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2時間前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            流石に飽きてきたのかもこの日はヒルモリタ終わり。 毎週毎週ランチには苦労する。 休憩時間になってる店が殆どだからチェーン店に行くか、コンビニにするか食べないか。 あ～たまには行ってみるか・・とローソンへ。 そう言えば、この日は猛吹雪警報が出てたんだ。👈️ホワイトアウトってた。Ｂ級グルメランキング コンビニも誰も居ない。到着した。 誰も居ない。 時間が15：00前だったからか？ それとも、吹雪だったからか？ いずれにしても、店員だけ。 またか・・・前回も思ったけど、もう「またか」感が強い。 一層
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/moritashoutenkai/entry-12956190678.html" data-title="愛宕 弁慶（旭川市豊岡13条５丁目２-18）" data-summary="久しぶりの再会私が初めて旭川に来たのが2007年9月。 その時に、連れてきた方がヒゲコバさんと言う方。 当時、ヒゲが生えてる小林さんなのでヒゲコバ。 今はなんと、南米ペルーに在住してるw 今回は3年ぶりに極秘来日し、極秘来旭したので極秘に会ってきたw そういや、もうペルーに着いたかな？👈️3年位内に行かないとな。Ｂ級グルメランキング 指定されたお店。極秘来旭だから極秘な場所で。 と指定された。 で、更にちゃんこ鍋が食べたいと。 それも、弁慶のちゃんこ鍋が食べたいと。 あとは、極秘なのでお任せ。">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/moritashoutenkai/entry-12956190678.html" target="_blank" rel="noopener noreferrer" class="entry-link">愛宕 弁慶（旭川市豊岡13条５丁目２-18）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>昨日</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            久しぶりの再会私が初めて旭川に来たのが2007年9月。 その時に、連れてきた方がヒゲコバさんと言う方。 当時、ヒゲが生えてる小林さんなのでヒゲコバ。 今はなんと、南米ペルーに在住してるw 今回は3年ぶりに極秘来日し、極秘来旭したので極秘に会ってきたw そういや、もうペルーに着いたかな？👈️3年位内に行かないとな。Ｂ級グルメランキング 指定されたお店。極秘来旭だから極秘な場所で。 と指定された。 で、更にちゃんこ鍋が食べたいと。 それも、弁慶のちゃんこ鍋が食べたいと。 あとは、極秘なのでお任せ。
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/moritashoutenkai/entry-12956144312.html" data-title="ら～麺いそはま（旭川市豊岡2条8丁目1-5）" data-summary="旭川にはないパンチある節系喰らいてぇ、ガツンとパンチを喰らいてぇ。 と意味わからん事言ってるが、実際にここで食べる時は完全にパンチを食らう。 あとは、営業してるかしてないか問題。 それでカウンターを食らうことが結構あるからな。 時々ガツンと行きたくなるんだよねぇ。👈️旭川一と言っていいだろうＢ級グルメランキング 良かったぁ。。実は、この時の時間が14：00 大体の店は休憩中。 ここは、15：00までと書いてあったので、一か八かで来てみたら暖簾かかってたのでホッとした。 ちなみに、14：45L.">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/moritashoutenkai/entry-12956144312.html" target="_blank" rel="noopener noreferrer" class="entry-link">ら～麺いそはま（旭川市豊岡2条8丁目1-5）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>2日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            旭川にはないパンチある節系喰らいてぇ、ガツンとパンチを喰らいてぇ。 と意味わからん事言ってるが、実際にここで食べる時は完全にパンチを食らう。 あとは、営業してるかしてないか問題。 それでカウンターを食らうことが結構あるからな。 時々ガツンと行きたくなるんだよねぇ。👈️旭川一と言っていいだろうＢ級グルメランキング 良かったぁ。。実は、この時の時間が14：00 大体の店は休憩中。 ここは、15：00までと書いてあったので、一か八かで来てみたら暖簾かかってたのでホッとした。 ちなみに、14：45L.
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/moritashoutenkai/entry-12955852515.html" data-title="上川合同庁舎食堂（旭川市永山6条19丁目1 上川合同庁舎 4F）" data-summary="とにかく景色がいいね久しぶりの上川合同庁舎。 ここの食堂は4階に有ってとにかく景色が良い。 まぁ、この日はちょっと曇ってたが、それでもどこかの市役所食堂とは比べものにならんな。 やっぱり、こう言うとこの食堂の場所は上の階でしょ！ 1階で、しかも手続きする場所の横って設計は誰がした？👈️あれでOK誰がした？Ｂ級グルメランキング 誰でも行ける。役所の食堂って誰でも行けるんだけど、昼時は職員で埋まってるから、ちょっと居づらい。 14時までと書いてあったが、14：35到着。 もう、ラストオーダー終わっ">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/moritashoutenkai/entry-12955852515.html" target="_blank" rel="noopener noreferrer" class="entry-link">上川合同庁舎食堂（旭川市永山6条19丁目1 上川合同庁舎 4F）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>3日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            とにかく景色がいいね久しぶりの上川合同庁舎。 ここの食堂は4階に有ってとにかく景色が良い。 まぁ、この日はちょっと曇ってたが、それでもどこかの市役所食堂とは比べものにならんな。 やっぱり、こう言うとこの食堂の場所は上の階でしょ！ 1階で、しかも手続きする場所の横って設計は誰がした？👈️あれでOK誰がした？Ｂ級グルメランキング 誰でも行ける。役所の食堂って誰でも行けるんだけど、昼時は職員で埋まってるから、ちょっと居づらい。 14時までと書いてあったが、14：35到着。 もう、ラストオーダー終わっ
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/moritashoutenkai/entry-12955730895.html" data-title="マクドナルド神楽生協店（旭川市神楽4条5丁目1-22）" data-summary="殆どテイクアウト？この日は、食べたいものが浮かばない。 しかも、行こうかなと思ったお店が殆ど店休日。 ん～もう考えるのも嫌になったので、久しぶりにマックで食べることに。 ただ、意外な事実を知ることになった。 ハンバーガー、アメリカで毎日食べてたのが懐かしい👈️日本ではあまり食べないなＢ級グルメランキング 一番近い店。近いお店は2つある。 ここと宮下通。 でも、ちょっとでも近い方ってことでこっちに来た。 そして、覚えたモバイルオーダーで注文。 ひるマックそういや、ひるマックという言葉を聞き始">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/moritashoutenkai/entry-12955730895.html" target="_blank" rel="noopener noreferrer" class="entry-link">マクドナルド神楽生協店（旭川市神楽4条5丁目1-22）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>4日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            殆どテイクアウト？この日は、食べたいものが浮かばない。 しかも、行こうかなと思ったお店が殆ど店休日。 ん～もう考えるのも嫌になったので、久しぶりにマックで食べることに。 ただ、意外な事実を知ることになった。 ハンバーガー、アメリカで毎日食べてたのが懐かしい👈️日本ではあまり食べないなＢ級グルメランキング 一番近い店。近いお店は2つある。 ここと宮下通。 でも、ちょっとでも近い方ってことでこっちに来た。 そして、覚えたモバイルオーダーで注文。 ひるマックそういや、ひるマックという言葉を聞き始
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/moritashoutenkai/entry-12955636752.html" data-title="ふらの家本町酒場（富良野市本町2丁目5番地）" data-summary="外国の方は喜ぶかな八神純子コンサートin富良野 という事で、先日富良野で久しぶりにお会いしてきた。 終わったら会食しましょう。 という事で、その前にスタッフと食事。 富良野で初めて宿泊したよ。👈️大体日帰りの距離だしね。Ｂ級グルメランキング 紹介してもらった。日曜日。 ちょっと遅い時間。 なので、閉まってる店が多かったり、空いてても混んでたりで店が決まらない。 ホテルのお姉さんに紹介してもらってやっとここに来た。 メニュー電話した時に片付けるからちょっと待ってください。 と言われて、到着したの">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/moritashoutenkai/entry-12955636752.html" target="_blank" rel="noopener noreferrer" class="entry-link">ふらの家本町酒場（富良野市本町2丁目5番地）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>5日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            外国の方は喜ぶかな八神純子コンサートin富良野 という事で、先日富良野で久しぶりにお会いしてきた。 終わったら会食しましょう。 という事で、その前にスタッフと食事。 富良野で初めて宿泊したよ。👈️大体日帰りの距離だしね。Ｂ級グルメランキング 紹介してもらった。日曜日。 ちょっと遅い時間。 なので、閉まってる店が多かったり、空いてても混んでたりで店が決まらない。 ホテルのお姉さんに紹介してもらってやっとここに来た。 メニュー電話した時に片付けるからちょっと待ってください。 と言われて、到着したの
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/moritashoutenkai/entry-12955525655.html" data-title="すき家旭川神居店（旭川市神居2条1丁目1-17）" data-summary="今日は2月最初の金曜日。 先月末、何とか山下局長と契約合意に至って、今シーズンもヒルモリタを生放送でお送り出来ることになりました！ いやぁ、契約できなかったら自分のマイクを持って自費放送しなきゃならなかった💦 という事で、12時からヒルモリタ2026 2月の陣がスタートします。 FMりべーるから生放送！リスラジからぜひお聴きくださいね。 皆様からのメッセージもお待ちしております。 皆さんは何処派かな。多くがどこ派もねえよって方なんだろうなぁ。👈️松屋派が意外と多いＢ級グルメランキング 買いに行">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/moritashoutenkai/entry-12955525655.html" target="_blank" rel="noopener noreferrer" class="entry-link">すき家旭川神居店（旭川市神居2条1丁目1-17）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>6日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            今日は2月最初の金曜日。 先月末、何とか山下局長と契約合意に至って、今シーズンもヒルモリタを生放送でお送り出来ることになりました！ いやぁ、契約できなかったら自分のマイクを持って自費放送しなきゃならなかった💦 という事で、12時からヒルモリタ2026 2月の陣がスタートします。 FMりべーるから生放送！リスラジからぜひお聴きくださいね。 皆様からのメッセージもお待ちしております。 皆さんは何処派かな。多くがどこ派もねえよって方なんだろうなぁ。👈️松屋派が意外と多いＢ級グルメランキング 買いに行
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/moritashoutenkai/entry-12955501780.html" data-title="食事処 プチトマト（旭川市豊岡3条4丁目3番 ビッグトマト豊岡店）" data-summary="メニューは最新を見て行こうパチンコ店併設の食堂。 探したら、まだ行ってない店が有った。 しかも、かなり安い。 ラーメン500円、カレー450円 これ、両方食べちゃおうかな何て思いながら向かったんだけど・・ 最新のメニューってなかなか載ってなかったりする👈️値上げに結構驚くわＢ級グルメランキング ビックトマト豊岡店 多分来たのは初めてだ。 トマトのマークがるのは知ってたけど、来たことはない。 南6条のお店は私がまだ旭川で誰も知らない頃に、自転車で一人淋しく行ってたなぁ。。 帰りに、マックで50円バ">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/moritashoutenkai/entry-12955501780.html" target="_blank" rel="noopener noreferrer" class="entry-link">食事処 プチトマト（旭川市豊岡3条4丁目3番 ビッグトマト豊岡店）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>7日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            メニューは最新を見て行こうパチンコ店併設の食堂。 探したら、まだ行ってない店が有った。 しかも、かなり安い。 ラーメン500円、カレー450円 これ、両方食べちゃおうかな何て思いながら向かったんだけど・・ 最新のメニューってなかなか載ってなかったりする👈️値上げに結構驚くわＢ級グルメランキング ビックトマト豊岡店 多分来たのは初めてだ。 トマトのマークがるのは知ってたけど、来たことはない。 南6条のお店は私がまだ旭川で誰も知らない頃に、自転車で一人淋しく行ってたなぁ。。 帰りに、マックで50円バ
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/moritashoutenkai/entry-12955383705.html" data-title="お食事の店 すず（旭川市東5条2丁目3-8）" data-summary="色んなタイプのチャーハン珍しく12：00過ぎに訪問。 まぁ、案の定激混み。 と言うか、見てるとこれ11：30には満席になっていそうな雰囲気だな。 まぁ覚悟の上で来たから良いんだけど。 世間では11：00からランチが始まってるのか？👈️だからいつも13：00過ぎＢ級グルメランキング 人気店は特にだね。何か無性にチャーハン食べたくなった。 で、どこ行くかなぁと調べてたらまぁまぁ店休日が多い日で、ここがヒットした。 ただ、きっと混んでいるだろうなと思っていたけど案の定激混み。 何なら同時に到着した人">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/moritashoutenkai/entry-12955383705.html" target="_blank" rel="noopener noreferrer" class="entry-link">お食事の店 すず（旭川市東5条2丁目3-8）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>8日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            色んなタイプのチャーハン珍しく12：00過ぎに訪問。 まぁ、案の定激混み。 と言うか、見てるとこれ11：30には満席になっていそうな雰囲気だな。 まぁ覚悟の上で来たから良いんだけど。 世間では11：00からランチが始まってるのか？👈️だからいつも13：00過ぎＢ級グルメランキング 人気店は特にだね。何か無性にチャーハン食べたくなった。 で、どこ行くかなぁと調べてたらまぁまぁ店休日が多い日で、ここがヒットした。 ただ、きっと混んでいるだろうなと思っていたけど案の定激混み。 何なら同時に到着した人
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+                <li class="entry-item" data-link="https://ameblo.jp/moritashoutenkai/entry-12955089124.html" data-title="アリーナ食堂（旭川市神楽４条７丁目1-52）" data-summary="おばちゃん優しくて良かったこの日はヒルモリタの日。 終わってからは大体の店が休憩に入ってるので、毎週ランチに悩む。 で、思い出した！ ここなら14：30までやってる筈だ。 と、向かったは良いけども・・・ なぜ終了時間はまちまちに表示されんだろう。👈️統一して欲しいね。Ｂ級グルメランキング まだ間に合う。14時にラジオが終わる。 で、軽く打ちあわせして到着したのが14：16 間に合った。 信号に止まらなきゃ、7分で付く。 やったー！ と思ってたんだけど・・・ 危ねぇ。うん、間違いない。 14：">
+                    <div class="entry-content-wrapper">
+                        <div class="entry-title">
+                            
+                            <a href="https://ameblo.jp/moritashoutenkai/entry-12955089124.html" target="_blank" rel="noopener noreferrer" class="entry-link">アリーナ食堂（旭川市神楽４条７丁目1-52）</a>
+                        </div>
+                        
+                        <div class="entry-meta">
+                            <span>9日前</span>
+                            
+                        </div>
+
+                        <div class="entry-summary">
+                            おばちゃん優しくて良かったこの日はヒルモリタの日。 終わってからは大体の店が休憩に入ってるので、毎週ランチに悩む。 で、思い出した！ ここなら14：30までやってる筈だ。 と、向かったは良いけども・・・ なぜ終了時間はまちまちに表示されんだろう。👈️統一して欲しいね。Ｂ級グルメランキング まだ間に合う。14時にラジオが終わる。 で、軽く打ちあわせして到着したのが14：16 間に合った。 信号に止まらなきゃ、7分で付く。 やったー！ と思ってたんだけど・・・ 危ねぇ。うん、間違いない。 14：
+                        </div>
+                    </div>
+
+                    
+                </li>
+                
+            </ul>
+        </details>
+        
+    </div>
+
+    <div id="backToTop" title="トップへ戻る">↑</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // ▼▼▼ 一括操作ボタン ▼▼▼
+            const detailsElements = document.querySelectorAll('details.feed-section');
+            const btnExpandAll = document.getElementById('btnExpandAll');
+            const btnCollapseAll = document.getElementById('btnCollapseAll');
+
+            if(btnExpandAll && btnCollapseAll) {
+                btnExpandAll.addEventListener('click', () => {
+                    detailsElements.forEach(el => el.open = true);
+                });
+                btnCollapseAll.addEventListener('click', () => {
+                    detailsElements.forEach(el => el.open = false);
+                });
+            }
+
+            // ▼▼▼ 既読管理機能 ▼▼▼
+            const STORAGE_KEY = 'rss_read_items';
+            let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+            const entryItems = document.querySelectorAll('.entry-item');
+            
+            entryItems.forEach(item => {
+                const link = item.dataset.link;
+                if (readItems.has(link)) {
+                    item.classList.add('read');
+                }
+                const anchor = item.querySelector('a.entry-link');
+                if(anchor) {
+                    anchor.addEventListener('click', function() {
+                        markAsRead(link, item);
+                    });
+                }
+            });
+
+            function markAsRead(link, itemElement) {
+                itemElement.classList.add('read');
+                readItems.add(link);
+                if (readItems.size > 1000) {
+                    const array = Array.from(readItems);
+                    readItems = new Set(array.slice(array.length - 1000));
+                }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
+            }
+
+            // ▼▼▼ 検索機能 ▼▼▼
+            const searchInput = document.getElementById('searchInput');
+
+            entryItems.forEach(entry => {
+                const titleLink = entry.querySelector('.entry-title a');
+                const summaryDiv = entry.querySelector('.entry-summary');
+                if(titleLink && summaryDiv){
+                    entry.dataset.originalTitleHtml = titleLink.innerHTML;
+                    entry.dataset.originalSummaryHtml = summaryDiv.innerHTML;
+                }
+            });
+
+            searchInput.addEventListener('input', function(e) {
+                const term = e.target.value.trim().toLowerCase();
+
+                if (term === '') {
+                    detailsElements.forEach(sec => {
+                        sec.style.display = '';
+                        sec.open = false; 
+                    });
+                    entryItems.forEach(entry => {
+                        entry.style.display = '';
+                        const titleLink = entry.querySelector('.entry-title a');
+                        const summaryDiv = entry.querySelector('.entry-summary');
+                        if(titleLink) titleLink.innerHTML = entry.dataset.originalTitleHtml;
+                        if(summaryDiv) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
+                    });
+                    return;
+                }
+
+                detailsElements.forEach(section => {
+                    let hasVisibleEntry = false;
+                    const sectionEntries = section.querySelectorAll('.entry-item');
+
+                    sectionEntries.forEach(entry => {
+                        const titleText = (entry.dataset.title || '').toLowerCase();
+                        const summaryText = (entry.dataset.summary || '').toLowerCase();
+
+                        if (titleText.includes(term) || summaryText.includes(term)) {
+                            entry.style.display = '';
+                            hasVisibleEntry = true;
+                            highlightText(entry, term);
+                        } else {
+                            entry.style.display = 'none';
+                        }
+                    });
+
+                    if (hasVisibleEntry) {
+                        section.style.display = '';
+                        section.open = true;
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+            });
+
+            function highlightText(entry, term) {
+                try {
+                    const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
+                    const highlightMark = '<mark>$1</mark>';
+                    const titleLink = entry.querySelector('.entry-title a');
+                    const summaryDiv = entry.querySelector('.entry-summary');
+                    
+                    if(titleLink && entry.dataset.originalTitleHtml) {
+                        titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
+                    }
+                    if(summaryDiv && entry.dataset.originalSummaryHtml) {
+                        summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
+                    }
+                } catch(e) { console.error(e); }
+            }
+
+            function escapeRegExp(string) {
+                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+
+            // ▼▼▼ トップへ戻るボタン ▼▼▼
+            const backToTopBtn = document.getElementById('backToTop');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
