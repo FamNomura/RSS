@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -27,7 +27,6 @@
             line-height: 1.6;
         }
         
-        /* ナビゲーションバー */
         .navbar {
             background-color: #343a40;
             padding: 0.8rem 1rem;
@@ -69,12 +68,10 @@
 
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         
-        /* ヘッダー周り */
         header { margin-bottom: 15px; text-align: center; }
         h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
         .last-updated { font-size: 12px; color: var(--text-sub); }
 
-        /* コントロールパネル（一括操作ボタン） */
         .control-panel {
             display: flex;
             justify-content: flex-end;
@@ -94,7 +91,6 @@
         }
         .control-btn:hover { background-color: #f0f0f0; border-color: #aaa; color: #333; }
 
-        /* アコーディオン */
         details {
             background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden; transition: box-shadow 0.2s;
         }
@@ -137,8 +133,6 @@
         }
 
         .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; margin-bottom: 4px; flex-wrap: wrap; }
-        
-        /* 出典表示用のスタイル */
         .entry-source { color: #888; border-left: 1px solid #ddd; padding-left: 10px; font-weight: 500; }
 
         .entry-summary {
@@ -202,7 +196,7 @@
         {% endif %}
 
         {% for feed in feeds_data %}
-        <details class="feed-section" {% if feed.has_new %}open{% endif %}>
+        <details class="feed-section">
             <summary>
                 <div class="feed-info">
                     <img src="{{ feed.favicon }}" class="feed-favicon" alt="" onerror="this.style.display='none'">
@@ -259,7 +253,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // ▼▼▼ 一括操作ボタン ▼▼▼
             const detailsElements = document.querySelectorAll('details.feed-section');
             const btnExpandAll = document.getElementById('btnExpandAll');
             const btnCollapseAll = document.getElementById('btnCollapseAll');
@@ -273,7 +266,6 @@
                 });
             }
 
-            // ▼▼▼ 既読管理機能 ▼▼▼
             const STORAGE_KEY = 'rss_read_items';
             let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
             const entryItems = document.querySelectorAll('.entry-item');
@@ -301,7 +293,6 @@
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
             }
 
-            // ▼▼▼ 検索機能 ▼▼▼
             const searchInput = document.getElementById('searchInput');
 
             entryItems.forEach(entry => {
@@ -377,7 +368,6 @@
                 return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             }
 
-            // ▼▼▼ トップへ戻るボタン ▼▼▼
             const backToTopBtn = document.getElementById('backToTop');
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 300) {
