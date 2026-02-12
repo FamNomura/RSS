@@ -1,16 +1,18 @@
-﻿import json
+import json
 import feedparser
 import datetime
 import pytz
 import sys
 import time
 import re
+import os
 from urllib.parse import urlparse
 from jinja2 import Environment, FileSystemLoader
 
 # 設定
 feeds_file = 'feeds.json'
 template_file = 'template.html'
+output_dir = 'docs'  # 出力先フォルダ
 max_entries = 10 
 new_threshold_hours = 24
 
@@ -101,7 +103,7 @@ def process_entry(entry, feed_title, feed_link, now_utc):
         'summary': text_content,
         'image': image_url,
         'timestamp': timestamp,
-        'source_title': feed_title # 出典表示に使用
+        'source_title': feed_title
     }
 
 def fetch_all_feeds(config):
@@ -142,6 +144,9 @@ def fetch_all_feeds(config):
     return results
 
 def main():
+    # 出力ディレクトリの作成
+    os.makedirs(output_dir, exist_ok=True)
+
     config = load_config(feeds_file)
     
     navigation = []
@@ -165,7 +170,6 @@ def main():
         target_filename = page_config['filename']
         print(f"Building Page: {target_filename}")
         
-        # フラグ設定: これは通常ページ
         page_config['is_topic'] = False 
         
         ng_keywords = page_config.get('ng_keywords', [])
@@ -191,7 +195,9 @@ def main():
                     'entries': valid_entries
                 })
         
-        with open(target_filename, 'w', encoding='utf-8') as f:
+        # 出力パスを変更 (docs/filename)
+        output_path = os.path.join(output_dir, target_filename)
+        with open(output_path, 'w', encoding='utf-8') as f:
             f.write(template.render(
                 navigation=navigation,
                 current_page=page_config,
@@ -204,7 +210,6 @@ def main():
         target_filename = watch_config['filename']
         print(f"Building Watch Page: {target_filename}")
         
-        # フラグ設定: これはトピックページ
         watch_config['is_topic'] = True
         
         keywords = watch_config.get('keywords', [])
@@ -241,7 +246,9 @@ def main():
                     'entries': matched_entries
                 })
 
-        with open(target_filename, 'w', encoding='utf-8') as f:
+        # 出力パスを変更 (docs/filename)
+        output_path = os.path.join(output_dir, target_filename)
+        with open(output_path, 'w', encoding='utf-8') as f:
             f.write(template.render(
                 navigation=navigation,
                 current_page=watch_config,
