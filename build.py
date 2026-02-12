@@ -6,6 +6,7 @@ import sys
 import time
 import re
 import os
+import socket
 from urllib.parse import urlparse
 from jinja2 import Environment, FileSystemLoader
 
@@ -15,6 +16,10 @@ template_file = 'template.html'
 output_dir = 'docs'  # 出力先フォルダ
 max_entries = 10 
 new_threshold_hours = 24
+timeout_seconds = 15 # タイムアウト設定(秒)
+
+# タイムアウトを強制設定（これで無限フリーズを防ぎます）
+socket.setdefaulttimeout(timeout_seconds)
 
 def load_config(path):
     try:
@@ -112,17 +117,30 @@ def fetch_all_feeds(config):
     
     for page in config.get('pages', []):
         for feed in page.get('feeds', []):
-            all_urls.add((feed['url'], feed.get('title')))
+            # URLの改行コードなどを除去 (.strip())
+            clean_url = feed['url'].strip()
+            all_urls.add((clean_url, feed.get('title')))
     
     print(f"Fetching {len(all_urls)} unique feeds...")
     
     now_utc = datetime.datetime.now(pytz.utc)
     results = {}
     
+    # User-Agentを設定（ブロック回避のため）
+    user_agent = 'Mozilla/5.0 (compatible; MyRSSReader/1.0)'
+
     for url, title_override in all_urls:
         print(f"  Fetching: {url}...")
         try:
-            d = feedparser.parse(url)
+            # agentパラメータを追加
+            d = feedparser.parse(url, agent=user_agent)
+            
+            # パースエラー（bozo）があっても、中身が取れていれば続行する
+            if d.bozo:
+                # 接続エラーなどの致命的な例外のみキャッチ
+                if isinstance(d.bozo_exception, (socket.timeout, socket.error)):
+                     raise d.bozo_exception
+
             feed_title = title_override if title_override else d.feed.get('title', 'Unknown Feed')
             domain = get_domain(d.feed.get('link', url))
             favicon = f"https://www.google.com/s2/favicons?domain={domain}"
@@ -176,7 +194,7 @@ def main():
         page_feeds_display = []
         
         for feed_conf in page_config['feeds']:
-            url = feed_conf['url']
+            url = feed_conf['url'].strip() # ここでもstrip
             source_data = all_feeds_data.get(url)
             
             if source_data:
@@ -195,7 +213,6 @@ def main():
                     'entries': valid_entries
                 })
         
-        # 出力パスを変更 (docs/filename)
         output_path = os.path.join(output_dir, target_filename)
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write(template.render(
@@ -246,7 +263,6 @@ def main():
                     'entries': matched_entries
                 })
 
-        # 出力パスを変更 (docs/filename)
         output_path = os.path.join(output_dir, target_filename)
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write(template.render(
