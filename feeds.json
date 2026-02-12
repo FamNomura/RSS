@@ -5,14 +5,6 @@
             "filename": "topics.html",
             "feeds": [
                 {
-                    "title": "GIGAZINE",
-                    "url": "https://feed.rssad.jp/rss/gigazine/rss_2.0"
-                },
-                {
-                    "title": "NHKニュース",
-                    "url": "https://www.nhk.or.jp/rss/news/cat0.xml"
-                },
-                {
                     "title": "はてなブックマーク 人気エントリー",
                     "url": "https://b.hatena.ne.jp/hotentry.rss"
                 },
@@ -152,16 +144,12 @@
             ]
         },
         {
-            "page_title": "ビジネス・経済",
+            "page_title": "ビジネス誌",
             "filename": "business.html",
             "feeds": [
                 {
                     "title": "東洋経済オンライン",
                     "url": "https://toyokeizai.net/list/feed/rss"
-                },
-                {
-                    "title": "ダイヤモンド・オンライン",
-                    "url": "https://diamond.jp/list/feed/rss"
                 },
                 {
                     "title": "ITmedia ビジネスオンライン",
@@ -170,9 +158,37 @@
             ]
         },
         {
-            "page_title": "ガジェット・モノ",
+            "page_title": "ガジェット",
             "filename": "gadget.html",
             "feeds": [
+                {
+                    "title": "ガルマックス",
+                    "url": "https://garumax.com/feed"
+                },
+                {
+                    "title": "mitsu-blog",
+                    "url": "https://mitsublog.net/feed/"
+                },
+                {
+                    "title": "ミスターガジェット",
+                    "url": "https://mister-gadget.net/feed/"
+                },
+                {
+                    "title": "マクリン",
+                    "url": "https://makuring.jp/feed/"
+                },
+                {
+                    "title": "デジスタ",
+                    "url": "https://digital-style.jp/feed"
+                },
+                {
+                    "title": "こまめブログ",
+                    "url": "https://komameblog.jp/feed/"
+                },
+                {
+                    "title": "がじぇっとりっぷ",
+                    "url": "https://gadgetrip.jp/feed/"
+                },
                 {
                     "title": "ギズモード・ジャパン",
                     "url": "https://www.gizmodo.jp/index.xml"
@@ -322,10 +338,10 @@
             "page_title": "★トピック★",
             "filename": "index.html",
             "keywords": [
-                "旭川",
                 "医療扶助",
                 "生活保護",
                 "Python",
+                "旭川",
                 "北海道"
             ],
             "ng_keywords": []
