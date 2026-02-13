@@ -50,8 +50,8 @@ jobs:
         # docsフォルダ内の変更を追加
         git add docs/
         
-        # ルートにある古いHTMLファイルがあれば削除 (お片付け)
-        git rm --ignore-unmatch *.html
+        # ルートにある古いHTMLファイルを削除（ただし template.html は除外する！）
+        find . -maxdepth 1 -name "*.html" ! -name "template.html" -exec git rm --ignore-unmatch {} +
         
         # 変更がある場合のみコミット
         git diff --quiet && git diff --staged --quiet || (git commit -m "Update RSS feed [skip ci]" && git push)
