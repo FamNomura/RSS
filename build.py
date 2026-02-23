@@ -1,4 +1,3 @@
-# パス: famnomura/rss/RSS-c13b0806bf5095367d0824d5f30d3dcd6854c59a/build.py
 
 import yaml
 import feedparser
@@ -300,3 +299,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
