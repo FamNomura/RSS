@@ -214,7 +214,7 @@ def main():
                 current_page=page_config,
                 entries=page_entries,
                 feeds=page_feeds,
-                topics=[], # 修正箇所: 通常ページはトピックデータを空で渡す
+                topics=[], 
                 last_updated=now_str
             ))
 
@@ -228,8 +228,8 @@ def main():
         ng_keywords = watch_config.get('ng_keywords', [])
         
         watch_entries = []
-        watch_topics = [] # 修正箇所: トピック（キーワード）別のデータを分離
-        site_data_dict = {} # 修正箇所: サイト別にまとめるための辞書
+        watch_topics = [] 
+        site_data_dict = {} 
         seen_links = set()
         
         for kw in keywords:
@@ -292,7 +292,7 @@ def main():
                 current_page=watch_config,
                 entries=watch_entries,
                 feeds=watch_feeds,
-                topics=watch_topics, # 修正箇所: トピック別データを渡す
+                topics=watch_topics, 
                 last_updated=now_str
             ))
 
