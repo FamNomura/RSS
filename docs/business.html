@@ -35,16 +35,28 @@
             z-index: 1000;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+        /* 修正箇所: ナビゲーションの折り返しを禁止し、横スクロールに対応 */
         .nav-container {
             max-width: 900px;
             margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap; 
             gap: 15px;
         }
-        .nav-links { display: flex; flex-wrap: wrap; gap: 8px; }
+        .nav-links { 
+            display: flex; 
+            flex-wrap: nowrap; 
+            overflow-x: auto; 
+            white-space: nowrap; 
+            gap: 8px; 
+            flex-grow: 1;
+            -webkit-overflow-scrolling: touch; 
+            scrollbar-width: none;
+            padding-bottom: 2px;
+        }
+        .nav-links::-webkit-scrollbar { display: none; }
+
         .nav-link {
             color: #ecf0f1;
             text-decoration: none;
@@ -59,70 +71,49 @@
         .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
         .nav-link.active { opacity: 1; background-color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
-        .search-box { position: relative; flex-grow: 1; max-width: 250px; }
-        .search-input {
-            width: 100%; padding: 6px 10px; border-radius: 20px; border: none; font-size: 14px; 
-            background-color: rgba(255,255,255,0.95); box-sizing: border-box; transition: box-shadow 0.2s;
+        /* 修正箇所: 検索ボックスをアイコンタップ展開式に変更 */
+        .search-container { position: relative; display: flex; align-items: center; }
+        .search-toggle-btn { 
+            background: none; border: none; font-size: 18px; cursor: pointer; color: #ecf0f1; padding: 5px; margin-right: 5px; 
         }
-        .search-input:focus { outline: none; box-shadow: 0 0 0 2px var(--accent); }
+        .search-input {
+            width: 0; opacity: 0; padding: 0; border: none; border-radius: 20px; font-size: 14px; 
+            background-color: rgba(255,255,255,0.95); transition: all 0.3s ease; pointer-events: none;
+        }
+        .search-input.active { 
+            width: 180px; opacity: 1; padding: 6px 10px; box-shadow: 0 0 0 2px var(--accent); pointer-events: auto; 
+        }
 
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         
-        header { margin-bottom: 15px; text-align: center; }
+        header { margin-bottom: 25px; text-align: center; }
         h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
         .last-updated { font-size: 12px; color: var(--text-sub); }
 
-        .control-panel {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .control-btn {
-            background: none;
-            border: 1px solid #ccc;
-            border-radius: 20px;
-            padding: 4px 12px;
-            font-size: 12px;
-            color: #666;
-            cursor: pointer;
-            transition: all 0.2s;
-            background-color: #fff;
-        }
-        .control-btn:hover { background-color: #f0f0f0; border-color: #aaa; color: #333; }
-
-        details {
-            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden; transition: box-shadow 0.2s;
-        }
-        details:hover { box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
-        summary {
-            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff; transition: background 0.2s;
-        }
-        summary:hover { background-color: #f8f9fa; }
-        summary::-webkit-details-marker { display: none; }
+        /* 修正箇所: タイムライン型カードUIのスタイルを追加 */
+        .timeline-container { display: flex; flex-direction: column; gap: 15px; }
         
-        .feed-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
-        .feed-favicon { width: 16px; height: 16px; border-radius: 2px; flex-shrink: 0; }
-        .feed-title-text { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        .feed-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; flex-shrink: 0; }
-        .count-badge { background-color: #eee; color: #555; padding: 2px 8px; border-radius: 12px; font-weight: normal; }
-        .count-badge.has-new { background-color: #fff0f0; color: var(--new-badge); border: 1px solid #ffcccc; }
-
-        .entry-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
-        .entry-item {
-            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start; transition: background-color 0.2s;
+        .card {
+            background: var(--card-bg); border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border); overflow: hidden; display: flex; gap: 15px; padding: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .entry-item:last-child { border-bottom: none; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         
-        .entry-item.read { background-color: #fafafa; }
-        .entry-item.read .entry-title a { color: var(--read-color); }
-        .entry-item.read .entry-summary { color: #d0d0d0; }
-        .entry-item.read .entry-thumbnail { opacity: 0.4; filter: grayscale(100%); }
-        .entry-item.read .new-badge { background-color: #ccc; }
+        .card.read { background-color: #fafafa; opacity: 0.85; }
+        .card.read .entry-title a { color: var(--read-color); }
+        .card.read .entry-summary { color: #b5b5b5; }
+        .card.read .entry-thumbnail { filter: grayscale(100%); opacity: 0.5; }
+        .card.read .new-badge { background-color: #ccc; }
 
-        .entry-content-wrapper { flex: 1; min-width: 0; }
-        .entry-thumbnail { width: 100px; height: 75px; object-fit: cover; border-radius: 6px; flex-shrink: 0; border: 1px solid #eee; }
+        .card-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
+        
+        .entry-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-sub); margin-bottom: 8px; flex-wrap: wrap; }
+        .feed-favicon { width: 14px; height: 14px; border-radius: 2px; }
+        .entry-source { font-weight: 600; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+        .entry-time { border-left: 1px solid #ddd; padding-left: 8px; white-space: nowrap; }
+
+        .entry-thumbnail { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee; }
 
         .entry-title { font-size: 16px; margin: 0 0 6px 0; line-height: 1.4; }
         .entry-title a { text-decoration: none; color: var(--text-main); font-weight: bold; }
@@ -132,15 +123,12 @@
             display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold; transform: translateY(-1px);
         }
 
-        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; margin-bottom: 4px; flex-wrap: wrap; }
-        .entry-source { color: #888; border-left: 1px solid #ddd; padding-left: 10px; font-weight: 500; }
-
         .entry-summary {
             font-size: 13px; color: #555; margin-top: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.9; line-height: 1.5;
         }
         .entry-summary img { display: none; }
 
-        .empty-state { padding: 20px; text-align: center; color: #999; font-size: 13px; }
+        .empty-state { padding: 40px 20px; text-align: center; color: #999; font-size: 14px; background: #fff; border-radius: 8px; border: 1px dashed #ccc; }
 
         #backToTop {
             position: fixed; bottom: 20px; right: 20px; background-color: var(--accent); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transition: all 0.3s; font-size: 20px; z-index: 2000;
@@ -152,12 +140,10 @@
 
         @media (max-width: 600px) {
             .container { padding: 15px 10px; }
-            summary { padding: 12px; }
-            .entry-thumbnail { width: 80px; height: 60px; }
-            .nav-container { flex-direction: column; align-items: stretch; gap: 10px; }
-            .search-box { max-width: 100%; }
-            .feed-title-text { font-size: 14px; }
-            .count-badge { font-size: 11px; padding: 1px 6px; }
+            .card { padding: 12px; gap: 10px; }
+            .entry-thumbnail { width: 90px; height: 70px; }
+            .entry-source { max-width: 130px; }
+            .search-input.active { width: 140px; }
         }
     </style>
 </head>
@@ -227,7 +213,8 @@
                 </a>
                 
             </div>
-            <div class="search-box">
+            <div class="search-container">
+                <button id="searchToggle" class="search-toggle-btn">🔍</button>
                 <input type="text" id="searchInput" class="search-input" placeholder="キーワード検索...">
             </div>
         </div>
@@ -236,523 +223,485 @@
     <div class="container">
         <header>
             <h1>ビジネス誌</h1>
-            <div class="last-updated">最終更新: 02/23 22:00</div>
+            <div class="last-updated">最終更新: 02/23 22:59</div>
         </header>
 
-        
-        <div class="control-panel">
-            <button class="control-btn" id="btnExpandAll">＋ 全て開く</button>
-            <button class="control-btn" id="btnCollapseAll">－ 全て閉じる</button>
+        <div class="timeline-container">
+            
+
+            
+            <div class="card entry-item" data-link="https://toyokeizai.net/articles/-/934263?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="最短で答えを求めない｢スルーしない人生｣の正解 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン" data-summary="「会議で自分の意見が言えない」「企画のアイデアがまったく浮かんでこない」「人の意見に流されてしまう…">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=toyokeizai.net" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">東洋経済オンライン</span>
+                        <span class="entry-time">9時間前</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://toyokeizai.net/articles/-/934263?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">最短で答えを求めない｢スルーしない人生｣の正解 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン</a>
+                    </div>
+
+                    <div class="entry-summary">
+                        「会議で自分の意見が言えない」「企画のアイデアがまったく浮かんでこない」「人の意見に流されてしまう…
+                    </div>
+                </div>
+
+                
+                <img src="https://tk.ismcdn.jp/mwimgs/7/3/1200w/img_739a9881f20ce419e2d8049fb1071997209315.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://toyokeizai.net/articles/-/934833?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="新しい資産形成法？｢農業で稼ぐ｣夢と現実 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン" data-summary="日本の食料自給率の低さは何十年も前から問題視されてきた。農村地帯の過疎化、農家の後継者不足も叫ばれ…">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=toyokeizai.net" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">東洋経済オンライン</span>
+                        <span class="entry-time">10時間前</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://toyokeizai.net/articles/-/934833?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">新しい資産形成法？｢農業で稼ぐ｣夢と現実 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン</a>
+                    </div>
+
+                    <div class="entry-summary">
+                        日本の食料自給率の低さは何十年も前から問題視されてきた。農村地帯の過疎化、農家の後継者不足も叫ばれ…
+                    </div>
+                </div>
+
+                
+                <img src="https://tk.ismcdn.jp/mwimgs/0/8/1200w/img_0880eed4d5ce00a9f98180e5175eef5b467205.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://toyokeizai.net/articles/-/931479?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="｢話が浅い人｣が知らずに犯している"4つのミス" | リーダーシップ・教養・資格・スキル | 東洋経済オンライン" data-summary="悪い人じゃないんだけど、なんか話が浅いんだよなあ……。こんな風に感じてしまう人は、あなたの周りにも…">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=toyokeizai.net" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">東洋経済オンライン</span>
+                        <span class="entry-time">11時間前</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://toyokeizai.net/articles/-/931479?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">｢話が浅い人｣が知らずに犯している"4つのミス" | リーダーシップ・教養・資格・スキル | 東洋経済オンライン</a>
+                    </div>
+
+                    <div class="entry-summary">
+                        悪い人じゃないんだけど、なんか話が浅いんだよなあ……。こんな風に感じてしまう人は、あなたの周りにも…
+                    </div>
+                </div>
+
+                
+                <img src="https://tk.ismcdn.jp/mwimgs/9/5/1200w/img_9599eede531654622b7b0cd44b312ed6374183.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://toyokeizai.net/articles/-/934876?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="彼が定時退社のホワイト企業辞めた令和的な理由 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン" data-summary="ここ数年取りざたされる「ホワイトハラスメント」。『部下をもったらいちばん最初に読む本』を上梓した橋…">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=toyokeizai.net" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">東洋経済オンライン</span>
+                        <span class="entry-time">12時間前</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://toyokeizai.net/articles/-/934876?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">彼が定時退社のホワイト企業辞めた令和的な理由 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン</a>
+                    </div>
+
+                    <div class="entry-summary">
+                        ここ数年取りざたされる「ホワイトハラスメント」。『部下をもったらいちばん最初に読む本』を上梓した橋…
+                    </div>
+                </div>
+
+                
+                <img src="https://tk.ismcdn.jp/mwimgs/5/8/1200w/img_586d1b359eca2e69359a56191ee95209262667.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://toyokeizai.net/articles/-/933556?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="｢25歳差､唯一愛した人｣との別れが"楽しかった"訳 | 逆境からの人々 | 東洋経済オンライン" data-summary="※この記事は2025年12月公開記事を再配信したものです。「お父さん、（向こうで）待ってろよ！」漫画家・…">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=toyokeizai.net" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">東洋経済オンライン</span>
+                        <span class="entry-time">13時間前</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://toyokeizai.net/articles/-/933556?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">｢25歳差､唯一愛した人｣との別れが"楽しかった"訳 | 逆境からの人々 | 東洋経済オンライン</a>
+                    </div>
+
+                    <div class="entry-summary">
+                        ※この記事は2025年12月公開記事を再配信したものです。「お父さん、（向こうで）待ってろよ！」漫画家・…
+                    </div>
+                </div>
+
+                
+                <img src="https://tk.ismcdn.jp/mwimgs/d/a/1200w/img_da0023fc2883631d2cf74c246e0e0573327904.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://toyokeizai.net/articles/-/929539?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="｢毒親｣では説明しきれない"強烈な母親"の人物像 | 36 | 東洋経済オンライン" data-summary="母の用意した「不自由のない環境」の下、母に逆らうことなど考えられない家庭で過ごす女子高生・杏（あん…">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=toyokeizai.net" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">東洋経済オンライン</span>
+                        <span class="entry-time">14時間前</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://toyokeizai.net/articles/-/929539?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">｢毒親｣では説明しきれない"強烈な母親"の人物像 | 36 | 東洋経済オンライン</a>
+                    </div>
+
+                    <div class="entry-summary">
+                        母の用意した「不自由のない環境」の下、母に逆らうことなど考えられない家庭で過ごす女子高生・杏（あん…
+                    </div>
+                </div>
+
+                
+                <img src="https://tk.ismcdn.jp/mwimgs/f/2/1200w/img_f201d3e80af2b3af50f4385d7b452f8d483256.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/23/news002.html" data-title="サーモンは偶然のヒットではなかった？　養殖の経済合理性" data-summary="世界で定番となったサーモン寿司。その人気の背景には味や見た目だけでなく、養殖による安定供給や加工のしやすさなど、寿司ビジネスに適した生産構造があった。国産養殖の取り組みも広がり、今後も欠かせない存在であり続ける。">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=www.itmedia.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">ITmedia ビジネスオンライン</span>
+                        <span class="entry-time">14時間前</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.itmedia.co.jp/business/articles/2602/23/news002.html" target="_blank" rel="noopener noreferrer" class="entry-link">サーモンは偶然のヒットではなかった？　養殖の経済合理性</a>
+                    </div>
+
+                    <div class="entry-summary">
+                        世界で定番となったサーモン寿司。その人気の背景には味や見た目だけでなく、養殖による安定供給や加工のしやすさなど、寿司ビジネスに適した生産構造があった。国産養殖の取り組みも広がり、今後も欠かせない存在であり続ける。
+                    </div>
+                </div>
+
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/22/news010.html" data-title="使っていないクレカの種類1位は？　その理由を聞いた" data-summary="クロス・マーケティングは、全国の男女1100人を対象に「クレジットカードに関する調査」を実施。クレジットカードの保有率や、保有するクレジットカードの種類で多いのは？">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=www.itmedia.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">ITmedia ビジネスオンライン</span>
+                        <span class="entry-time">15時間前</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://www.itmedia.co.jp/business/articles/2602/22/news010.html" target="_blank" rel="noopener noreferrer" class="entry-link">使っていないクレカの種類1位は？　その理由を聞いた</a>
+                    </div>
+
+                    <div class="entry-summary">
+                        クロス・マーケティングは、全国の男女1100人を対象に「クレジットカードに関する調査」を実施。クレジットカードの保有率や、保有するクレジットカードの種類で多いのは？
+                    </div>
+                </div>
+
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://toyokeizai.net/articles/-/935518?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="首位70％超､株主優待が高利回りの2月企業TOP50 | 企業ランキング | 東洋経済オンライン" data-summary="物価高が続いている。同じ買い物をするにしても、少しでも安く手に入れたいのが人情だろう。百貨店やスー…">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=toyokeizai.net" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">東洋経済オンライン</span>
+                        <span class="entry-time">15時間前</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://toyokeizai.net/articles/-/935518?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">首位70％超､株主優待が高利回りの2月企業TOP50 | 企業ランキング | 東洋経済オンライン</a>
+                    </div>
+
+                    <div class="entry-summary">
+                        物価高が続いている。同じ買い物をするにしても、少しでも安く手に入れたいのが人情だろう。百貨店やスー…
+                    </div>
+                </div>
+
+                
+                <img src="https://tk.ismcdn.jp/mwimgs/7/1/1200w/img_71417987d3ed6664c3be95a4531c503b261342.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://toyokeizai.net/articles/-/935050?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="元校長に悔いなし､新年度｢しないことリスト｣4つ | 東洋経済education×ICT | 東洋経済オンライン" data-summary="「新年度に向けてしないこと・減らすことリスト」これを書くことで、一部の学校関係者の怒りを買うかも……">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=toyokeizai.net" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">東洋経済オンライン</span>
+                        <span class="entry-time">16時間前</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://toyokeizai.net/articles/-/935050?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">元校長に悔いなし､新年度｢しないことリスト｣4つ | 東洋経済education×ICT | 東洋経済オンライン</a>
+                    </div>
+
+                    <div class="entry-summary">
+                        「新年度に向けてしないこと・減らすことリスト」これを書くことで、一部の学校関係者の怒りを買うかも……
+                    </div>
+                </div>
+
+                
+                <img src="https://tk.ismcdn.jp/mwimgs/1/2/1200w/img_12170575119d58ee0a5ee7b4c5385ee954559.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://toyokeizai.net/articles/-/935484?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="｢ひとりっ子の方がマシ｣介護で噴出する兄弟格差 | 家庭 | 東洋経済オンライン" data-summary="親の介護が必要となったとき、きょうだいで協力体制を築ければいいのですが、家族だから話し合いがうまく…">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=toyokeizai.net" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">東洋経済オンライン</span>
+                        <span class="entry-time">17時間前</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://toyokeizai.net/articles/-/935484?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">｢ひとりっ子の方がマシ｣介護で噴出する兄弟格差 | 家庭 | 東洋経済オンライン</a>
+                    </div>
+
+                    <div class="entry-summary">
+                        親の介護が必要となったとき、きょうだいで協力体制を築ければいいのですが、家族だから話し合いがうまく…
+                    </div>
+                </div>
+
+                
+                <img src="https://tk.ismcdn.jp/mwimgs/2/e/1200w/img_2ecbf59e9c557b21d7b5959d6e6950ae490128.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://toyokeizai.net/articles/-/934892?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="アラフィフ｢5日間で世界一周弾丸旅｣に挑んだ結果 | 旅行 | 東洋経済オンライン" data-summary="近年、世界一周が静かなブームになっている。筆者の周りで、世界一周航空券を利用してビジネスクラスの旅…">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=toyokeizai.net" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">東洋経済オンライン</span>
+                        <span class="entry-time">17時間前</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        
+                        <span class="new-badge">NEW</span>
+                        
+                        <a href="https://toyokeizai.net/articles/-/934892?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">アラフィフ｢5日間で世界一周弾丸旅｣に挑んだ結果 | 旅行 | 東洋経済オンライン</a>
+                    </div>
+
+                    <div class="entry-summary">
+                        近年、世界一周が静かなブームになっている。筆者の周りで、世界一周航空券を利用してビジネスクラスの旅…
+                    </div>
+                </div>
+
+                
+                <img src="https://tk.ismcdn.jp/mwimgs/0/a/1200w/img_0a1a2299f87b5bdd7102836a4d5e156b559970.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/22/news001.html" data-title="サーモンはどうやって寿司市場を制したのか" data-summary="1980年代、日本で生食されていなかったサーモンが寿司ネタへと転換した。養殖技術の進化と現場の気付き、そしてノルウェーの輸出戦略が重なり、いまや定番となったサーモン寿司の誕生と、その裏にあるビジネスの構図をたどる。">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=www.itmedia.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">ITmedia ビジネスオンライン</span>
+                        <span class="entry-time">昨日</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        
+                        <a href="https://www.itmedia.co.jp/business/articles/2602/22/news001.html" target="_blank" rel="noopener noreferrer" class="entry-link">サーモンはどうやって寿司市場を制したのか</a>
+                    </div>
+
+                    <div class="entry-summary">
+                        1980年代、日本で生食されていなかったサーモンが寿司ネタへと転換した。養殖技術の進化と現場の気付き、そしてノルウェーの輸出戦略が重なり、いまや定番となったサーモン寿司の誕生と、その裏にあるビジネスの構図をたどる。
+                    </div>
+                </div>
+
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/22/news018.html" data-title="なぜレクサスは人気高級車になったのか　元ブランドマネジメント部長が語った「勝ち方」" data-summary="トヨタ自動車の人気高級車レクサス。2025年の全世界販売実績は、過去最高を記録した。レクサスはなぜ、ここまでの人気車種になったのか。元トヨタ自動車の高田敦史氏が解説する。">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=www.itmedia.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">ITmedia ビジネスオンライン</span>
+                        <span class="entry-time">昨日</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        
+                        <a href="https://www.itmedia.co.jp/business/articles/2602/22/news018.html" target="_blank" rel="noopener noreferrer" class="entry-link">なぜレクサスは人気高級車になったのか　元ブランドマネジメント部長が語った「勝ち方」</a>
+                    </div>
+
+                    <div class="entry-summary">
+                        トヨタ自動車の人気高級車レクサス。2025年の全世界販売実績は、過去最高を記録した。レクサスはなぜ、ここまでの人気車種になったのか。元トヨタ自動車の高田敦史氏が解説する。
+                    </div>
+                </div>
+
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/22/news016.html" data-title="独居房はどう生まれ変わったのか　「星のや奈良監獄」ホテルの舞台裏を聞いた" data-summary="1908年に建てられた重要文化財「旧奈良監獄」が、ホテルに生まれ変わる。独居房をつなげた客室や改修の工夫など、その舞台裏を総支配人に聞いた。">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=www.itmedia.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">ITmedia ビジネスオンライン</span>
+                        <span class="entry-time">昨日</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        
+                        <a href="https://www.itmedia.co.jp/business/articles/2602/22/news016.html" target="_blank" rel="noopener noreferrer" class="entry-link">独居房はどう生まれ変わったのか　「星のや奈良監獄」ホテルの舞台裏を聞いた</a>
+                    </div>
+
+                    <div class="entry-summary">
+                        1908年に建てられた重要文化財「旧奈良監獄」が、ホテルに生まれ変わる。独居房をつなげた客室や改修の工夫など、その舞台裏を総支配人に聞いた。
+                    </div>
+                </div>
+
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/22/news002.html" data-title="「つながらない権利」現場の実態は？　正社員の7割が勤務時間外連絡を経験" data-summary="マイナビが勤務時間外の連絡に関する「つながらない権利」の現状を調査。正社員の7割が経験しており、役職や年代によって受け止め方に差があることが分かった。">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=www.itmedia.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">ITmedia ビジネスオンライン</span>
+                        <span class="entry-time">昨日</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        
+                        <a href="https://www.itmedia.co.jp/business/articles/2602/22/news002.html" target="_blank" rel="noopener noreferrer" class="entry-link">「つながらない権利」現場の実態は？　正社員の7割が勤務時間外連絡を経験</a>
+                    </div>
+
+                    <div class="entry-summary">
+                        マイナビが勤務時間外の連絡に関する「つながらない権利」の現状を調査。正社員の7割が経験しており、役職や年代によって受け止め方に差があることが分かった。
+                    </div>
+                </div>
+
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/22/news008.html" data-title="セブン、ファミマ、ローソンの「猫の日」施策は？　「ネコノミクス」が急拡大、約2.9兆円市場へ" data-summary="2月22日は「猫の日」だ。近年、猫関連の経済効果「ネコノミクス」が急拡大している。そんな中、大手コンビニ各社はどんな取り組みを実施しているのか。">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=www.itmedia.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">ITmedia ビジネスオンライン</span>
+                        <span class="entry-time">昨日</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        
+                        <a href="https://www.itmedia.co.jp/business/articles/2602/22/news008.html" target="_blank" rel="noopener noreferrer" class="entry-link">セブン、ファミマ、ローソンの「猫の日」施策は？　「ネコノミクス」が急拡大、約2.9兆円市場へ</a>
+                    </div>
+
+                    <div class="entry-summary">
+                        2月22日は「猫の日」だ。近年、猫関連の経済効果「ネコノミクス」が急拡大している。そんな中、大手コンビニ各社はどんな取り組みを実施しているのか。
+                    </div>
+                </div>
+
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/21/news001.html" data-title="Z世代はAIをどれくらい信用してる？　社会人と学生で約20ポイント差" data-summary="マイナビが実施した「Z世代のAI活用状況調査」によれば、AIを人に例えると、社会人は「カウンセラー」、大学生は「友達」と捉えている人が多いことが分かった。AIの回答への信頼度はどうだろうか。">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=www.itmedia.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">ITmedia ビジネスオンライン</span>
+                        <span class="entry-time">2日前</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        
+                        <a href="https://www.itmedia.co.jp/business/articles/2602/21/news001.html" target="_blank" rel="noopener noreferrer" class="entry-link">Z世代はAIをどれくらい信用してる？　社会人と学生で約20ポイント差</a>
+                    </div>
+
+                    <div class="entry-summary">
+                        マイナビが実施した「Z世代のAI活用状況調査」によれば、AIを人に例えると、社会人は「カウンセラー」、大学生は「友達」と捉えている人が多いことが分かった。AIの回答への信頼度はどうだろうか。
+                    </div>
+                </div>
+
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/21/news002.html" data-title="こたつ市場が縮む中で、なぜひのきだったのか？　創業112年の“26.5センチ四方”の挑戦" data-summary="こたつ市場が縮小する中、創業112年の老舗が挑んだのは、伊勢神宮ゆかりの東濃ひのきを使った26.5センチ四方の小型こたつ。香りや素材感で「暮らしの質」を提案する新戦略とは。">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=www.itmedia.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">ITmedia ビジネスオンライン</span>
+                        <span class="entry-time">2日前</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        
+                        <a href="https://www.itmedia.co.jp/business/articles/2602/21/news002.html" target="_blank" rel="noopener noreferrer" class="entry-link">こたつ市場が縮む中で、なぜひのきだったのか？　創業112年の“26.5センチ四方”の挑戦</a>
+                    </div>
+
+                    <div class="entry-summary">
+                        こたつ市場が縮小する中、創業112年の老舗が挑んだのは、伊勢神宮ゆかりの東濃ひのきを使った26.5センチ四方の小型こたつ。香りや素材感で「暮らしの質」を提案する新戦略とは。
+                    </div>
+                </div>
+
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/20/news026.html" data-title="26卒が後輩にすすめたい企業　メーカー1位は「味の素」、IT・通信は？" data-summary="就活会議は「26卒が後輩におすすめしたい企業ランキング」を発表した。その結果……。">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=www.itmedia.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">ITmedia ビジネスオンライン</span>
+                        <span class="entry-time">3日前</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        
+                        <a href="https://www.itmedia.co.jp/business/articles/2602/20/news026.html" target="_blank" rel="noopener noreferrer" class="entry-link">26卒が後輩にすすめたい企業　メーカー1位は「味の素」、IT・通信は？</a>
+                    </div>
+
+                    <div class="entry-summary">
+                        就活会議は「26卒が後輩におすすめしたい企業ランキング」を発表した。その結果……。
+                    </div>
+                </div>
+
+                
+            </div>
+            
         </div>
-        
-
-        
-
-        
-        <details class="feed-section">
-            <summary>
-                <div class="feed-info">
-                    <img src="https://www.google.com/s2/favicons?domain=toyokeizai.net" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span class="feed-title-text">東洋経済オンライン</span>
-                </div>
-                
-                <div class="feed-meta">
-                    
-                    <span class="count-badge has-new">新着 10 / 10</span>
-                    
-                </div>
-            </summary>
-            
-            <ul class="entry-list">
-                
-
-                
-                <li class="entry-item" data-link="https://toyokeizai.net/articles/-/934263?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="最短で答えを求めない｢スルーしない人生｣の正解 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン" data-summary="「会議で自分の意見が言えない」「企画のアイデアがまったく浮かんでこない」「人の意見に流されてしまう…">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://toyokeizai.net/articles/-/934263?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">最短で答えを求めない｢スルーしない人生｣の正解 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>8時間前</span>
-                            
-                        </div>
-
-                        <div class="entry-summary">
-                            「会議で自分の意見が言えない」「企画のアイデアがまったく浮かんでこない」「人の意見に流されてしまう…
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://tk.ismcdn.jp/mwimgs/7/3/1200w/img_739a9881f20ce419e2d8049fb1071997209315.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://toyokeizai.net/articles/-/934833?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="新しい資産形成法？｢農業で稼ぐ｣夢と現実 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン" data-summary="日本の食料自給率の低さは何十年も前から問題視されてきた。農村地帯の過疎化、農家の後継者不足も叫ばれ…">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://toyokeizai.net/articles/-/934833?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">新しい資産形成法？｢農業で稼ぐ｣夢と現実 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>9時間前</span>
-                            
-                        </div>
-
-                        <div class="entry-summary">
-                            日本の食料自給率の低さは何十年も前から問題視されてきた。農村地帯の過疎化、農家の後継者不足も叫ばれ…
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://tk.ismcdn.jp/mwimgs/0/8/1200w/img_0880eed4d5ce00a9f98180e5175eef5b467205.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://toyokeizai.net/articles/-/931479?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="｢話が浅い人｣が知らずに犯している"4つのミス" | リーダーシップ・教養・資格・スキル | 東洋経済オンライン" data-summary="悪い人じゃないんだけど、なんか話が浅いんだよなあ……。こんな風に感じてしまう人は、あなたの周りにも…">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://toyokeizai.net/articles/-/931479?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">｢話が浅い人｣が知らずに犯している"4つのミス" | リーダーシップ・教養・資格・スキル | 東洋経済オンライン</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>10時間前</span>
-                            
-                        </div>
-
-                        <div class="entry-summary">
-                            悪い人じゃないんだけど、なんか話が浅いんだよなあ……。こんな風に感じてしまう人は、あなたの周りにも…
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://tk.ismcdn.jp/mwimgs/9/5/1200w/img_9599eede531654622b7b0cd44b312ed6374183.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://toyokeizai.net/articles/-/934876?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="彼が定時退社のホワイト企業辞めた令和的な理由 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン" data-summary="ここ数年取りざたされる「ホワイトハラスメント」。『部下をもったらいちばん最初に読む本』を上梓した橋…">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://toyokeizai.net/articles/-/934876?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">彼が定時退社のホワイト企業辞めた令和的な理由 | リーダーシップ・教養・資格・スキル | 東洋経済オンライン</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>11時間前</span>
-                            
-                        </div>
-
-                        <div class="entry-summary">
-                            ここ数年取りざたされる「ホワイトハラスメント」。『部下をもったらいちばん最初に読む本』を上梓した橋…
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://tk.ismcdn.jp/mwimgs/5/8/1200w/img_586d1b359eca2e69359a56191ee95209262667.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://toyokeizai.net/articles/-/933556?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="｢25歳差､唯一愛した人｣との別れが"楽しかった"訳 | 逆境からの人々 | 東洋経済オンライン" data-summary="※この記事は2025年12月公開記事を再配信したものです。「お父さん、（向こうで）待ってろよ！」漫画家・…">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://toyokeizai.net/articles/-/933556?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">｢25歳差､唯一愛した人｣との別れが"楽しかった"訳 | 逆境からの人々 | 東洋経済オンライン</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>12時間前</span>
-                            
-                        </div>
-
-                        <div class="entry-summary">
-                            ※この記事は2025年12月公開記事を再配信したものです。「お父さん、（向こうで）待ってろよ！」漫画家・…
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://tk.ismcdn.jp/mwimgs/d/a/1200w/img_da0023fc2883631d2cf74c246e0e0573327904.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://toyokeizai.net/articles/-/929539?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="｢毒親｣では説明しきれない"強烈な母親"の人物像 | 36 | 東洋経済オンライン" data-summary="母の用意した「不自由のない環境」の下、母に逆らうことなど考えられない家庭で過ごす女子高生・杏（あん…">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://toyokeizai.net/articles/-/929539?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">｢毒親｣では説明しきれない"強烈な母親"の人物像 | 36 | 東洋経済オンライン</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>13時間前</span>
-                            
-                        </div>
-
-                        <div class="entry-summary">
-                            母の用意した「不自由のない環境」の下、母に逆らうことなど考えられない家庭で過ごす女子高生・杏（あん…
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://tk.ismcdn.jp/mwimgs/f/2/1200w/img_f201d3e80af2b3af50f4385d7b452f8d483256.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://toyokeizai.net/articles/-/935518?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="首位70％超､株主優待が高利回りの2月企業TOP50 | 企業ランキング | 東洋経済オンライン" data-summary="物価高が続いている。同じ買い物をするにしても、少しでも安く手に入れたいのが人情だろう。百貨店やスー…">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://toyokeizai.net/articles/-/935518?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">首位70％超､株主優待が高利回りの2月企業TOP50 | 企業ランキング | 東洋経済オンライン</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>14時間前</span>
-                            
-                        </div>
-
-                        <div class="entry-summary">
-                            物価高が続いている。同じ買い物をするにしても、少しでも安く手に入れたいのが人情だろう。百貨店やスー…
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://tk.ismcdn.jp/mwimgs/7/1/1200w/img_71417987d3ed6664c3be95a4531c503b261342.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://toyokeizai.net/articles/-/935050?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="元校長に悔いなし､新年度｢しないことリスト｣4つ | 東洋経済education×ICT | 東洋経済オンライン" data-summary="「新年度に向けてしないこと・減らすことリスト」これを書くことで、一部の学校関係者の怒りを買うかも……">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://toyokeizai.net/articles/-/935050?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">元校長に悔いなし､新年度｢しないことリスト｣4つ | 東洋経済education×ICT | 東洋経済オンライン</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>15時間前</span>
-                            
-                        </div>
-
-                        <div class="entry-summary">
-                            「新年度に向けてしないこと・減らすことリスト」これを書くことで、一部の学校関係者の怒りを買うかも……
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://tk.ismcdn.jp/mwimgs/1/2/1200w/img_12170575119d58ee0a5ee7b4c5385ee954559.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://toyokeizai.net/articles/-/935484?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="｢ひとりっ子の方がマシ｣介護で噴出する兄弟格差 | 家庭 | 東洋経済オンライン" data-summary="親の介護が必要となったとき、きょうだいで協力体制を築ければいいのですが、家族だから話し合いがうまく…">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://toyokeizai.net/articles/-/935484?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">｢ひとりっ子の方がマシ｣介護で噴出する兄弟格差 | 家庭 | 東洋経済オンライン</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>16時間前</span>
-                            
-                        </div>
-
-                        <div class="entry-summary">
-                            親の介護が必要となったとき、きょうだいで協力体制を築ければいいのですが、家族だから話し合いがうまく…
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://tk.ismcdn.jp/mwimgs/2/e/1200w/img_2ecbf59e9c557b21d7b5959d6e6950ae490128.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://toyokeizai.net/articles/-/934892?utm_source=rss&utm_medium=http&utm_campaign=link_back" data-title="アラフィフ｢5日間で世界一周弾丸旅｣に挑んだ結果 | 旅行 | 東洋経済オンライン" data-summary="近年、世界一周が静かなブームになっている。筆者の周りで、世界一周航空券を利用してビジネスクラスの旅…">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://toyokeizai.net/articles/-/934892?utm_source=rss&utm_medium=http&utm_campaign=link_back" target="_blank" rel="noopener noreferrer" class="entry-link">アラフィフ｢5日間で世界一周弾丸旅｣に挑んだ結果 | 旅行 | 東洋経済オンライン</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>16時間前</span>
-                            
-                        </div>
-
-                        <div class="entry-summary">
-                            近年、世界一周が静かなブームになっている。筆者の周りで、世界一周航空券を利用してビジネスクラスの旅…
-                        </div>
-                    </div>
-
-                    
-                    <img src="https://tk.ismcdn.jp/mwimgs/0/a/1200w/img_0a1a2299f87b5bdd7102836a4d5e156b559970.jpg?nextgen=false" class="entry-thumbnail" loading="lazy" alt="">
-                    
-                </li>
-                
-            </ul>
-        </details>
-        
-        <details class="feed-section">
-            <summary>
-                <div class="feed-info">
-                    <img src="https://www.google.com/s2/favicons?domain=www.itmedia.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span class="feed-title-text">ITmedia ビジネスオンライン</span>
-                </div>
-                
-                <div class="feed-meta">
-                    
-                    <span class="count-badge has-new">新着 2 / 10</span>
-                    
-                </div>
-            </summary>
-            
-            <ul class="entry-list">
-                
-
-                
-                <li class="entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/23/news002.html" data-title="サーモンは偶然のヒットではなかった？　養殖の経済合理性" data-summary="世界で定番となったサーモン寿司。その人気の背景には味や見た目だけでなく、養殖による安定供給や加工のしやすさなど、寿司ビジネスに適した生産構造があった。国産養殖の取り組みも広がり、今後も欠かせない存在であり続ける。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://www.itmedia.co.jp/business/articles/2602/23/news002.html" target="_blank" rel="noopener noreferrer" class="entry-link">サーモンは偶然のヒットではなかった？　養殖の経済合理性</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>13時間前</span>
-                            
-                        </div>
-
-                        <div class="entry-summary">
-                            世界で定番となったサーモン寿司。その人気の背景には味や見た目だけでなく、養殖による安定供給や加工のしやすさなど、寿司ビジネスに適した生産構造があった。国産養殖の取り組みも広がり、今後も欠かせない存在であり続ける。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/22/news010.html" data-title="使っていないクレカの種類1位は？　その理由を聞いた" data-summary="クロス・マーケティングは、全国の男女1100人を対象に「クレジットカードに関する調査」を実施。クレジットカードの保有率や、保有するクレジットカードの種類で多いのは？">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <span class="new-badge">NEW</span>
-                            
-                            <a href="https://www.itmedia.co.jp/business/articles/2602/22/news010.html" target="_blank" rel="noopener noreferrer" class="entry-link">使っていないクレカの種類1位は？　その理由を聞いた</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>14時間前</span>
-                            
-                        </div>
-
-                        <div class="entry-summary">
-                            クロス・マーケティングは、全国の男女1100人を対象に「クレジットカードに関する調査」を実施。クレジットカードの保有率や、保有するクレジットカードの種類で多いのは？
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/22/news001.html" data-title="サーモンはどうやって寿司市場を制したのか" data-summary="1980年代、日本で生食されていなかったサーモンが寿司ネタへと転換した。養殖技術の進化と現場の気付き、そしてノルウェーの輸出戦略が重なり、いまや定番となったサーモン寿司の誕生と、その裏にあるビジネスの構図をたどる。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <a href="https://www.itmedia.co.jp/business/articles/2602/22/news001.html" target="_blank" rel="noopener noreferrer" class="entry-link">サーモンはどうやって寿司市場を制したのか</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>昨日</span>
-                            
-                        </div>
-
-                        <div class="entry-summary">
-                            1980年代、日本で生食されていなかったサーモンが寿司ネタへと転換した。養殖技術の進化と現場の気付き、そしてノルウェーの輸出戦略が重なり、いまや定番となったサーモン寿司の誕生と、その裏にあるビジネスの構図をたどる。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/22/news018.html" data-title="なぜレクサスは人気高級車になったのか　元ブランドマネジメント部長が語った「勝ち方」" data-summary="トヨタ自動車の人気高級車レクサス。2025年の全世界販売実績は、過去最高を記録した。レクサスはなぜ、ここまでの人気車種になったのか。元トヨタ自動車の高田敦史氏が解説する。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <a href="https://www.itmedia.co.jp/business/articles/2602/22/news018.html" target="_blank" rel="noopener noreferrer" class="entry-link">なぜレクサスは人気高級車になったのか　元ブランドマネジメント部長が語った「勝ち方」</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>昨日</span>
-                            
-                        </div>
-
-                        <div class="entry-summary">
-                            トヨタ自動車の人気高級車レクサス。2025年の全世界販売実績は、過去最高を記録した。レクサスはなぜ、ここまでの人気車種になったのか。元トヨタ自動車の高田敦史氏が解説する。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/22/news016.html" data-title="独居房はどう生まれ変わったのか　「星のや奈良監獄」ホテルの舞台裏を聞いた" data-summary="1908年に建てられた重要文化財「旧奈良監獄」が、ホテルに生まれ変わる。独居房をつなげた客室や改修の工夫など、その舞台裏を総支配人に聞いた。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <a href="https://www.itmedia.co.jp/business/articles/2602/22/news016.html" target="_blank" rel="noopener noreferrer" class="entry-link">独居房はどう生まれ変わったのか　「星のや奈良監獄」ホテルの舞台裏を聞いた</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>昨日</span>
-                            
-                        </div>
-
-                        <div class="entry-summary">
-                            1908年に建てられた重要文化財「旧奈良監獄」が、ホテルに生まれ変わる。独居房をつなげた客室や改修の工夫など、その舞台裏を総支配人に聞いた。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/22/news002.html" data-title="「つながらない権利」現場の実態は？　正社員の7割が勤務時間外連絡を経験" data-summary="マイナビが勤務時間外の連絡に関する「つながらない権利」の現状を調査。正社員の7割が経験しており、役職や年代によって受け止め方に差があることが分かった。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <a href="https://www.itmedia.co.jp/business/articles/2602/22/news002.html" target="_blank" rel="noopener noreferrer" class="entry-link">「つながらない権利」現場の実態は？　正社員の7割が勤務時間外連絡を経験</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>昨日</span>
-                            
-                        </div>
-
-                        <div class="entry-summary">
-                            マイナビが勤務時間外の連絡に関する「つながらない権利」の現状を調査。正社員の7割が経験しており、役職や年代によって受け止め方に差があることが分かった。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/22/news008.html" data-title="セブン、ファミマ、ローソンの「猫の日」施策は？　「ネコノミクス」が急拡大、約2.9兆円市場へ" data-summary="2月22日は「猫の日」だ。近年、猫関連の経済効果「ネコノミクス」が急拡大している。そんな中、大手コンビニ各社はどんな取り組みを実施しているのか。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <a href="https://www.itmedia.co.jp/business/articles/2602/22/news008.html" target="_blank" rel="noopener noreferrer" class="entry-link">セブン、ファミマ、ローソンの「猫の日」施策は？　「ネコノミクス」が急拡大、約2.9兆円市場へ</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>昨日</span>
-                            
-                        </div>
-
-                        <div class="entry-summary">
-                            2月22日は「猫の日」だ。近年、猫関連の経済効果「ネコノミクス」が急拡大している。そんな中、大手コンビニ各社はどんな取り組みを実施しているのか。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/21/news001.html" data-title="Z世代はAIをどれくらい信用してる？　社会人と学生で約20ポイント差" data-summary="マイナビが実施した「Z世代のAI活用状況調査」によれば、AIを人に例えると、社会人は「カウンセラー」、大学生は「友達」と捉えている人が多いことが分かった。AIの回答への信頼度はどうだろうか。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <a href="https://www.itmedia.co.jp/business/articles/2602/21/news001.html" target="_blank" rel="noopener noreferrer" class="entry-link">Z世代はAIをどれくらい信用してる？　社会人と学生で約20ポイント差</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>2日前</span>
-                            
-                        </div>
-
-                        <div class="entry-summary">
-                            マイナビが実施した「Z世代のAI活用状況調査」によれば、AIを人に例えると、社会人は「カウンセラー」、大学生は「友達」と捉えている人が多いことが分かった。AIの回答への信頼度はどうだろうか。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/21/news002.html" data-title="こたつ市場が縮む中で、なぜひのきだったのか？　創業112年の“26.5センチ四方”の挑戦" data-summary="こたつ市場が縮小する中、創業112年の老舗が挑んだのは、伊勢神宮ゆかりの東濃ひのきを使った26.5センチ四方の小型こたつ。香りや素材感で「暮らしの質」を提案する新戦略とは。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <a href="https://www.itmedia.co.jp/business/articles/2602/21/news002.html" target="_blank" rel="noopener noreferrer" class="entry-link">こたつ市場が縮む中で、なぜひのきだったのか？　創業112年の“26.5センチ四方”の挑戦</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>2日前</span>
-                            
-                        </div>
-
-                        <div class="entry-summary">
-                            こたつ市場が縮小する中、創業112年の老舗が挑んだのは、伊勢神宮ゆかりの東濃ひのきを使った26.5センチ四方の小型こたつ。香りや素材感で「暮らしの質」を提案する新戦略とは。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-                <li class="entry-item" data-link="https://www.itmedia.co.jp/business/articles/2602/20/news026.html" data-title="26卒が後輩にすすめたい企業　メーカー1位は「味の素」、IT・通信は？" data-summary="就活会議は「26卒が後輩におすすめしたい企業ランキング」を発表した。その結果……。">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            
-                            <a href="https://www.itmedia.co.jp/business/articles/2602/20/news026.html" target="_blank" rel="noopener noreferrer" class="entry-link">26卒が後輩にすすめたい企業　メーカー1位は「味の素」、IT・通信は？</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>3日前</span>
-                            
-                        </div>
-
-                        <div class="entry-summary">
-                            就活会議は「26卒が後輩におすすめしたい企業ランキング」を発表した。その結果……。
-                        </div>
-                    </div>
-
-                    
-                </li>
-                
-            </ul>
-        </details>
-        
     </div>
 
     <div id="backToTop" title="トップへ戻る">↑</div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const detailsElements = document.querySelectorAll('details.feed-section');
-            const btnExpandAll = document.getElementById('btnExpandAll');
-            const btnCollapseAll = document.getElementById('btnCollapseAll');
-
-            if(btnExpandAll && btnCollapseAll) {
-                btnExpandAll.addEventListener('click', () => {
-                    detailsElements.forEach(el => el.open = true);
-                });
-                btnCollapseAll.addEventListener('click', () => {
-                    detailsElements.forEach(el => el.open = false);
-                });
-            }
+            // 修正箇所: アコーディオン開閉ロジックの削除
 
             const STORAGE_KEY = 'rss_read_items';
             let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
@@ -781,7 +730,18 @@
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
             }
 
+            // 修正箇所: 検索窓アイコンのトグル動作を追加
+            const searchToggle = document.getElementById('searchToggle');
             const searchInput = document.getElementById('searchInput');
+            
+            if (searchToggle && searchInput) {
+                searchToggle.addEventListener('click', () => {
+                    searchInput.classList.toggle('active');
+                    if(searchInput.classList.contains('active')) {
+                        searchInput.focus();
+                    }
+                });
+            }
 
             entryItems.forEach(entry => {
                 const titleLink = entry.querySelector('.entry-title a');
@@ -792,46 +752,30 @@
                 }
             });
 
+            // 修正箇所: 階層構造廃止に伴い、検索処理をシンプルにカード単位の非表示化へ変更
             searchInput.addEventListener('input', function(e) {
                 const term = e.target.value.trim().toLowerCase();
 
                 if (term === '') {
-                    detailsElements.forEach(sec => {
-                        sec.style.display = '';
-                        sec.open = false; 
-                    });
                     entryItems.forEach(entry => {
                         entry.style.display = '';
                         const titleLink = entry.querySelector('.entry-title a');
                         const summaryDiv = entry.querySelector('.entry-summary');
-                        if(titleLink) titleLink.innerHTML = entry.dataset.originalTitleHtml;
-                        if(summaryDiv) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
+                        if(titleLink && entry.dataset.originalTitleHtml) titleLink.innerHTML = entry.dataset.originalTitleHtml;
+                        if(summaryDiv && entry.dataset.originalSummaryHtml) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
                     });
                     return;
                 }
 
-                detailsElements.forEach(section => {
-                    let hasVisibleEntry = false;
-                    const sectionEntries = section.querySelectorAll('.entry-item');
+                entryItems.forEach(entry => {
+                    const titleText = (entry.dataset.title || '').toLowerCase();
+                    const summaryText = (entry.dataset.summary || '').toLowerCase();
 
-                    sectionEntries.forEach(entry => {
-                        const titleText = (entry.dataset.title || '').toLowerCase();
-                        const summaryText = (entry.dataset.summary || '').toLowerCase();
-
-                        if (titleText.includes(term) || summaryText.includes(term)) {
-                            entry.style.display = '';
-                            hasVisibleEntry = true;
-                            highlightText(entry, term);
-                        } else {
-                            entry.style.display = 'none';
-                        }
-                    });
-
-                    if (hasVisibleEntry) {
-                        section.style.display = '';
-                        section.open = true;
+                    if (titleText.includes(term) || summaryText.includes(term)) {
+                        entry.style.display = '';
+                        highlightText(entry, term);
                     } else {
-                        section.style.display = 'none';
+                        entry.style.display = 'none';
                     }
                 });
             });
