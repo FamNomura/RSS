@@ -1,6 +1,4 @@
-# パス: famnomura/rss/RSS-c13b0806bf5095367d0824d5f30d3dcd6854c59a/build.py
-
-import json
+import yaml # 修正箇所: JSONからYAMLに変更
 import feedparser
 import datetime
 import pytz
@@ -13,20 +11,19 @@ from urllib.parse import urlparse
 from jinja2 import Environment, FileSystemLoader
 
 # 設定
-feeds_file = 'feeds.json'
+feeds_file = 'feeds.yml' # 修正箇所: 読み込みファイルを yml に変更
 template_file = 'template.html'
-output_dir = 'docs'  # 出力先フォルダ
+output_dir = 'docs'
 max_entries = 10 
 new_threshold_hours = 24
-timeout_seconds = 15 # タイムアウト設定(秒)
+timeout_seconds = 15
 
-# タイムアウトを強制設定
 socket.setdefaulttimeout(timeout_seconds)
 
 def load_config(path):
     try:
         with open(path, 'r', encoding='utf-8-sig') as f:
-            return json.load(f)
+            return yaml.safe_load(f) # 修正箇所: YAMLの読み込み処理
     except Exception as e:
         print(f"Error loading config: {e}")
         sys.exit(1)
@@ -114,9 +111,7 @@ def process_entry(entry, feed_title, feed_link, now_utc):
     }
 
 def fetch_all_feeds(config):
-    url_map = {}
     all_urls = set()
-    
     for page in config.get('pages', []):
         for feed in page.get('feeds', []):
             clean_url = feed['url'].strip()
@@ -160,10 +155,13 @@ def main():
     config = load_config(feeds_file)
     
     navigation = []
+    # 修正箇所: hiddenフラグがTrueのものはナビゲーションから除外（裏メニュー化）
     for watch in config.get('watches', []):
-        navigation.append({'page_title': watch['page_title'], 'filename': watch['filename']})
+        if not watch.get('hidden', False):
+            navigation.append({'page_title': watch['page_title'], 'filename': watch['filename']})
     for page in config.get('pages', []):
-        navigation.append({'page_title': page['page_title'], 'filename': page['filename']})
+        if not page.get('hidden', False):
+            navigation.append({'page_title': page['page_title'], 'filename': page['filename']})
     
     all_feeds_data = fetch_all_feeds(config)
     
@@ -181,23 +179,33 @@ def main():
         page_config['is_topic'] = False 
         ng_keywords = page_config.get('ng_keywords', [])
         
-        # 修正箇所: アコーディオン廃止に伴い、記事をページ単位でフラットにまとめる
-        page_entries = []
+        page_entries = [] # タイムライン用
+        page_feeds = []   # サイト別アコーディオン用
         
-        for feed_conf in page_config['feeds']:
+        for feed_conf in page_config.get('feeds', []):
             url = feed_conf['url'].strip()
             source_data = all_feeds_data.get(url)
             
             if source_data:
                 valid_entries = [e for e in source_data['entries'] if not is_ng_content(e, ng_keywords)]
-                # 修正箇所: タイムライン表示時に配信元がわかるよう情報を各記事に付与
-                for e in valid_entries:
-                    e_copy = e.copy()
-                    e_copy['favicon'] = source_data['favicon']
-                    e_copy['source_title'] = source_data['title']
-                    page_entries.append(e_copy)
+                if valid_entries:
+                    # タイムライン用にデータを複製して平坦化
+                    for e in valid_entries:
+                        e_copy = e.copy()
+                        e_copy['favicon'] = source_data['favicon']
+                        e_copy['source_title'] = source_data['title']
+                        page_entries.append(e_copy)
+                    
+                    # サイト別用にグループ化して保持
+                    page_feeds.append({
+                        'title': source_data['title'],
+                        'favicon': source_data['favicon'],
+                        'entries': valid_entries,
+                        'total_count': len(valid_entries),
+                        'new_count': sum(1 for e in valid_entries if e['is_new']),
+                        'has_new': any(e['is_new'] for e in valid_entries)
+                    })
         
-        # 修正箇所: 真のタイムラインを実現するため、全フィードの記事を日時の降順でソート
         page_entries.sort(key=lambda x: x['timestamp'], reverse=True)
         
         output_path = os.path.join(output_dir, target_filename)
@@ -205,7 +213,8 @@ def main():
             f.write(template.render(
                 navigation=navigation,
                 current_page=page_config,
-                entries=page_entries, # 修正箇所: 階層構造の feeds_data から entries に変更
+                entries=page_entries,  # タイムライン用
+                feeds=page_feeds,      # サイト別用
                 last_updated=now_str
             ))
 
@@ -218,11 +227,12 @@ def main():
         keywords = watch_config.get('keywords', [])
         ng_keywords = watch_config.get('ng_keywords', [])
         
-        # 修正箇所: ウォッチページもキーワードごとの階層を廃止しフラット化
         watch_entries = []
+        watch_feeds = []
         seen_links = set()
         
         for kw in keywords:
+            kw_entries = []
             for url, source_data in all_feeds_data.items():
                 if not source_data: continue
                 
@@ -231,15 +241,25 @@ def main():
                         continue
                     text_to_search = (entry['title'] + entry['summary']).lower()
                     if kw.lower() in text_to_search:
-                        # 修正箇所: 複数キーワードにヒットした記事の重複を除外
                         if entry['link'] not in seen_links:
                             seen_links.add(entry['link'])
                             e_copy = entry.copy()
                             e_copy['favicon'] = source_data['favicon']
                             e_copy['source_title'] = source_data['title']
                             watch_entries.append(e_copy)
+                            kw_entries.append(e_copy)
+                            
+            if kw_entries:
+                kw_entries.sort(key=lambda x: x['timestamp'], reverse=True)
+                watch_feeds.append({
+                    'title': f"検索: {kw}",
+                    'favicon': '',
+                    'entries': kw_entries,
+                    'total_count': len(kw_entries),
+                    'new_count': sum(1 for e in kw_entries if e['is_new']),
+                    'has_new': any(e['is_new'] for e in kw_entries)
+                })
             
-        # 修正箇所: 日時の降順でソート
         watch_entries.sort(key=lambda x: x['timestamp'], reverse=True)
 
         output_path = os.path.join(output_dir, target_filename)
@@ -247,7 +267,8 @@ def main():
             f.write(template.render(
                 navigation=navigation,
                 current_page=watch_config,
-                entries=watch_entries, # 修正箇所: entries に変更
+                entries=watch_entries,
+                feeds=watch_feeds,
                 last_updated=now_str
             ))
 
