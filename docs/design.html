@@ -35,7 +35,6 @@
             z-index: 1000;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        /* 修正箇所: ナビゲーションの折り返しを禁止し、横スクロールに対応 */
         .nav-container {
             max-width: 900px;
             margin: 0 auto;
@@ -46,17 +45,10 @@
         }
         .nav-links { 
             display: flex; 
-            flex-wrap: nowrap; 
-            overflow-x: auto; 
-            white-space: nowrap; 
+            flex-wrap: wrap; /* 修正箇所: PCで折り返し多段表示にするため wrap に変更 */
             gap: 8px; 
             flex-grow: 1;
-            -webkit-overflow-scrolling: touch; 
-            scrollbar-width: none;
-            padding-bottom: 2px;
         }
-        .nav-links::-webkit-scrollbar { display: none; }
-
         .nav-link {
             color: #ecf0f1;
             text-decoration: none;
@@ -67,11 +59,23 @@
             opacity: 0.85;
             transition: all 0.2s;
             background-color: rgba(255,255,255,0.1);
+            white-space: nowrap;
         }
         .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
         .nav-link.active { opacity: 1; background-color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
-        /* 修正箇所: 検索ボックスをアイコンタップ展開式に変更 */
+        /* スマホ向けナビゲーション（横スクロール） */
+        @media (max-width: 600px) {
+            .nav-links {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                padding-bottom: 2px;
+            }
+            .nav-links::-webkit-scrollbar { display: none; }
+        }
+
         .search-container { position: relative; display: flex; align-items: center; }
         .search-toggle-btn { 
             background: none; border: none; font-size: 18px; cursor: pointer; color: #ecf0f1; padding: 5px; margin-right: 5px; 
@@ -86,61 +90,96 @@
 
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         
-        header { margin-bottom: 25px; text-align: center; }
+        header { margin-bottom: 20px; text-align: center; border-radius: 8px; padding: 10px; transition: all 0.3s; }
         h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
         .last-updated { font-size: 12px; color: var(--text-sub); }
 
-        /* 修正箇所: タイムライン型カードUIのスタイルを追加 */
-        .timeline-container { display: flex; flex-direction: column; gap: 15px; }
+        /* 修正箇所: トピックページ用の特別デザイン */
+        .header-topic {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e0edff 100%);
+            border-left: 5px solid #007bff;
+            padding: 20px;
+        }
+        .topic-desc {
+            font-size: 12px; color: #0056b3; margin: 8px 0; font-weight: bold; line-height: 1.4;
+        }
+
+        /* 修正箇所: タブ切り替えUI */
+        .view-tabs {
+            display: flex; gap: 10px; margin-bottom: 20px; justify-content: flex-end;
+        }
+        .view-tab {
+            padding: 8px 16px; background: #fff; border: 1px solid var(--border); border-radius: 20px;
+            cursor: pointer; font-size: 13px; font-weight: bold; color: var(--text-sub); transition: all 0.2s;
+        }
+        .view-tab:hover { background: #f0f0f0; }
+        .view-tab.active { background: var(--text-main); color: #fff; border-color: var(--text-main); }
         
+        .view-content { display: none; }
+        .view-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* タイムライン型 UI */
+        .timeline-container { display: flex; flex-direction: column; gap: 15px; }
         .card {
             background: var(--card-bg); border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             border: 1px solid var(--border); overflow: hidden; display: flex; gap: 15px; padding: 15px;
             transition: transform 0.2s, box-shadow 0.2s;
         }
         .card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        
-        .card.read { background-color: #fafafa; opacity: 0.85; }
-        .card.read .entry-title a { color: var(--read-color); }
-        .card.read .entry-summary { color: #b5b5b5; }
-        .card.read .entry-thumbnail { filter: grayscale(100%); opacity: 0.5; }
-        .card.read .new-badge { background-color: #ccc; }
-
         .card-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
-        
+        .entry-thumbnail { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee; }
+
+        /* アコーディオン型 (サイト別) UI */
+        details {
+            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
+        }
+        summary {
+            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff;
+        }
+        summary::-webkit-details-marker { display: none; }
+        .feed-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+        .feed-title-text { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .feed-meta-count { display: flex; align-items: center; gap: 8px; font-size: 12px; flex-shrink: 0; }
+        .count-badge { background-color: #eee; color: #555; padding: 2px 8px; border-radius: 12px; font-weight: normal; }
+        .count-badge.has-new { background-color: #fff0f0; color: var(--new-badge); border: 1px solid #ffcccc; }
+        .entry-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
+        .list-item {
+            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start;
+        }
+        .list-item:last-child { border-bottom: none; }
+
+        /* 共通エントリスタイル */
+        .read { background-color: #fafafa; opacity: 0.85; }
+        .read .entry-title a { color: var(--read-color); }
+        .read .entry-summary { color: #b5b5b5; }
+        .read .entry-thumbnail { filter: grayscale(100%); opacity: 0.5; }
+        .read .new-badge { background-color: #ccc; }
+
         .entry-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-sub); margin-bottom: 8px; flex-wrap: wrap; }
         .feed-favicon { width: 14px; height: 14px; border-radius: 2px; }
         .entry-source { font-weight: 600; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
         .entry-time { border-left: 1px solid #ddd; padding-left: 8px; white-space: nowrap; }
-
-        .entry-thumbnail { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee; }
-
+        
         .entry-title { font-size: 16px; margin: 0 0 6px 0; line-height: 1.4; }
         .entry-title a { text-decoration: none; color: var(--text-main); font-weight: bold; }
         .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
-        .new-badge {
-            display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold; transform: translateY(-1px);
-        }
+        .new-badge { display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold; transform: translateY(-1px); }
 
-        .entry-summary {
-            font-size: 13px; color: #555; margin-top: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.9; line-height: 1.5;
-        }
+        .entry-summary { font-size: 13px; color: #555; margin-top: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.9; line-height: 1.5; }
         .entry-summary img { display: none; }
 
         .empty-state { padding: 40px 20px; text-align: center; color: #999; font-size: 14px; background: #fff; border-radius: 8px; border: 1px dashed #ccc; }
 
-        #backToTop {
-            position: fixed; bottom: 20px; right: 20px; background-color: var(--accent); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transition: all 0.3s; font-size: 20px; z-index: 2000;
-        }
+        #backToTop { position: fixed; bottom: 20px; right: 20px; background-color: var(--accent); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transition: all 0.3s; font-size: 20px; z-index: 2000; }
         #backToTop.show { opacity: 1; visibility: visible; }
-        #backToTop:hover { background-color: var(--accent-hover); transform: translateY(-3px); }
-
+        
         mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
 
         @media (max-width: 600px) {
             .container { padding: 15px 10px; }
-            .card { padding: 12px; gap: 10px; }
+            .card, .list-item { padding: 12px; gap: 10px; }
             .entry-thumbnail { width: 90px; height: 70px; }
             .entry-source { max-width: 130px; }
             .search-input.active { width: 140px; }
@@ -221,14 +260,22 @@
     </nav>
 
     <div class="container">
-        <header>
+        <header class="">
             <h1>デザイン・Web制作</h1>
-            <div class="last-updated">最終更新: 02/23 23:12</div>
+            
+            <div class="last-updated">最終更新: 02/23 23:43</div>
         </header>
 
-        <div class="timeline-container">
-            
+        
+        <div class="view-tabs">
+            <button class="view-tab active" data-target="view-timeline">🕒 タイムライン</button>
+            <button class="view-tab" data-target="view-feed">📁 サイト別</button>
+        </div>
+        
 
+        
+
+        <div id="view-timeline" class="view-content active timeline-container">
             
             <div class="card entry-item" data-link="https://coliss.com/articles/book-review/isbn-9784802615372.html" data-title="さらに便利で使いやすくなった！ 最新のCanvaに対応、プロユースでも使えるデザインのテクニックまでよく分かる解説書 -Canva使い方入門 増補改訂版" data-summary="※本ページは、アフィリエイト広告を利用しています。 ここ数年、Canvaの躍進が目立ちます。 一昔前はできることは限られていましたが、現在ではかなりいろいろなことができ、プロユースとしても十分な機能を備えています。 Ca […]">
                 <div class="card-content">
@@ -237,17 +284,12 @@
                         <span class="entry-source">コリス</span>
                         <span class="entry-time">3日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://coliss.com/articles/book-review/isbn-9784802615372.html" target="_blank" rel="noopener noreferrer" class="entry-link">さらに便利で使いやすくなった！ 最新のCanvaに対応、プロユースでも使えるデザインのテクニックまでよく分かる解説書 -Canva使い方入門 増補改訂版</a>
                     </div>
-
-                    <div class="entry-summary">
-                        ※本ページは、アフィリエイト広告を利用しています。 ここ数年、Canvaの躍進が目立ちます。 一昔前はできることは限られていましたが、現在ではかなりいろいろなことができ、プロユースとしても十分な機能を備えています。 Ca […]
-                    </div>
+                    <div class="entry-summary">※本ページは、アフィリエイト広告を利用しています。 ここ数年、Canvaの躍進が目立ちます。 一昔前はできることは限られていましたが、現在ではかなりいろいろなことができ、プロユースとしても十分な機能を備えています。 Ca […]</div>
                 </div>
-
                 
             </div>
             
@@ -258,17 +300,12 @@
                         <span class="entry-source">コリス</span>
                         <span class="entry-time">4日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://coliss.com/articles/build-websites/operation/work/screen-sizes-and-resolutions-for-different-devices.html" target="_blank" rel="noopener noreferrer" class="entry-link">ブックマークしておくと便利！ さまざまなデバイスのスクリーンサイズ・解像度・ピクセル密度などの仕様が一覧できる -What Is My Screen Size?</a>
                     </div>
-
-                    <div class="entry-summary">
-                        iPhoneやiPadのスクリーンサイズと解像度とピクセル密度っていくつだっけ？ GalaxyやPixelのスクリーンサイズと解像度とピクセル密度は？ もちろんそれぞれの公式サイトで探せば見つかりますが、けっこう手間です […]
-                    </div>
+                    <div class="entry-summary">iPhoneやiPadのスクリーンサイズと解像度とピクセル密度っていくつだっけ？ GalaxyやPixelのスクリーンサイズと解像度とピクセル密度は？ もちろんそれぞれの公式サイトで探せば見つかりますが、けっこう手間です […]</div>
                 </div>
-
                 
             </div>
             
@@ -279,17 +316,12 @@
                         <span class="entry-source">コリス</span>
                         <span class="entry-time">5日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://coliss.com/articles/freebies/freefont-rinka.html" target="_blank" rel="noopener noreferrer" class="entry-link">筆文字の新作日本語フリーフォントがリリース！ 凛とした佇まいが美しい、気高い雰囲気を持ったフォント「藍原筆文字 凜華」</a>
                     </div>
-
-                    <div class="entry-summary">
-                        「藍原相撲字」「藍原江戸文字」「藍原勘亭流」「藍原筆文字楷書」「藍原筆文字隷書」などの手書きフォントをリリースされている藍原彼方さんから、新作の筆文字フォントがリリースされました！ 無料版と有料版が用意されており、無料版 […]
-                    </div>
+                    <div class="entry-summary">「藍原相撲字」「藍原江戸文字」「藍原勘亭流」「藍原筆文字楷書」「藍原筆文字隷書」などの手書きフォントをリリースされている藍原彼方さんから、新作の筆文字フォントがリリースされました！ 無料版と有料版が用意されており、無料版 […]</div>
                 </div>
-
                 
             </div>
             
@@ -300,17 +332,12 @@
                         <span class="entry-source">コリス</span>
                         <span class="entry-time">6日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://coliss.com/articles/build-websites/operation/css/css-only-elastic-hover-effect.html" target="_blank" rel="noopener noreferrer" class="entry-link">このホバーエフェクト、楽しい！ CSSのみで実装する、弓の弦のように弾けるホバーエフェクト（方向も認識）</a>
                     </div>
-
-                    <div class="entry-summary">
-                        カーソルで下からホバーすると弓の弦のように上から弾け、上からホバーすると下から弾ける、操作するのが楽しくなるホバーエフェクトを紹介します。 弓の弦のように弾けるホバーエフェクトはモダンCSSの機能（shape(), si […]
-                    </div>
+                    <div class="entry-summary">カーソルで下からホバーすると弓の弦のように上から弾け、上からホバーすると下から弾ける、操作するのが楽しくなるホバーエフェクトを紹介します。 弓の弦のように弾けるホバーエフェクトはモダンCSSの機能（shape(), si […]</div>
                 </div>
-
                 
             </div>
             
@@ -321,17 +348,12 @@
                         <span class="entry-source">Webクリエイターボックス</span>
                         <span class="entry-time">6日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://www.webcreatorbox.com//blog/fujihill-pace" target="_blank" rel="noopener noreferrer" class="entry-link">自転車レース「富士ヒル」のペース配分表を開発してわかった、人間だからこそ気づけたこと</a>
                     </div>
-
-                    <div class="entry-summary">
-                        今年はWebアプリやWebサイトを10個作るぞ！と決め、今月は2つ目のアプリが完成！富士山五合目を目指して走る人気自転車レースの練習補助になるようなアプリを作ってみました！
-                    </div>
+                    <div class="entry-summary">今年はWebアプリやWebサイトを10個作るぞ！と決め、今月は2つ目のアプリが完成！富士山五合目を目指して走る人気自転車レースの練習補助になるようなアプリを作ってみました！</div>
                 </div>
-
                 
             </div>
             
@@ -342,17 +364,12 @@
                         <span class="entry-source">コリス</span>
                         <span class="entry-time">7日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://coliss.com/articles/build-websites/operation/work/grid-overlay-pro.html" target="_blank" rel="noopener noreferrer" class="entry-link">シンプルだから使いやすい！ レスポンシブ対応のグリッドをオーバーレイ表示できるChromeの拡張機能 -Grid Overlay Pro</a>
                     </div>
-
-                    <div class="entry-summary">
-                        ブラウザに表示したあらゆるWebページにレスポンシブに対応したFigmaみたいなグリッドをオーバーレイー表示できるChromeの機能拡張を紹介します。 グリッドのオーバーレイはブラウザ内で完全にローカルで実行されるため、 […]
-                    </div>
+                    <div class="entry-summary">ブラウザに表示したあらゆるWebページにレスポンシブに対応したFigmaみたいなグリッドをオーバーレイー表示できるChromeの機能拡張を紹介します。 グリッドのオーバーレイはブラウザ内で完全にローカルで実行されるため、 […]</div>
                 </div>
-
                 
             </div>
             
@@ -363,17 +380,12 @@
                         <span class="entry-source">コリス</span>
                         <span class="entry-time">10日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://coliss.com/articles/book-review/isbn-9784295207283.html" target="_blank" rel="noopener noreferrer" class="entry-link">ロゴはまさに究極のミニマルデザイン！ デザインすることの面白さに気づかせてくれる良書 -カンタンでちょっぴり深いロゴづくり</a>
                     </div>
-
-                    <div class="entry-summary">
-                        ※本ページは、アフィリエイト広告を利用しています。 本書の感想を一言で言うと、「デザインすることの面白さに気づかせてくれる」 なぜこの形なのか、なぜこの文字なのか、なぜこの余白なのか、なぜ太くするのか、なぜこの角度なのか […]
-                    </div>
+                    <div class="entry-summary">※本ページは、アフィリエイト広告を利用しています。 本書の感想を一言で言うと、「デザインすることの面白さに気づかせてくれる」 なぜこの形なのか、なぜこの文字なのか、なぜこの余白なのか、なぜ太くするのか、なぜこの角度なのか […]</div>
                 </div>
-
                 
             </div>
             
@@ -384,17 +396,12 @@
                         <span class="entry-source">コリス</span>
                         <span class="entry-time">11日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://coliss.com/articles/build-websites/operation/work/chrome-145-adds-6-new-css-feature.html" target="_blank" rel="noopener noreferrer" class="entry-link">Chromeの安定版でついにタブの分割がサポートされました！ Chrome 145で新しく追加された6個のCSSとUIの機能</a>
                     </div>
-
-                    <div class="entry-summary">
-                        2/11にアップデートされたChrome 145に追加された、CSSとUIに関する新しい機能を紹介します。 今回のアップデートで注目すべきは、まずタブの分割が正式サポートされたこと。そしてテキストの配置方法を制御するte […]
-                    </div>
+                    <div class="entry-summary">2/11にアップデートされたChrome 145に追加された、CSSとUIに関する新しい機能を紹介します。 今回のアップデートで注目すべきは、まずタブの分割が正式サポートされたこと。そしてテキストの配置方法を制御するte […]</div>
                 </div>
-
                 
             </div>
             
@@ -405,17 +412,12 @@
                         <span class="entry-source">コリス</span>
                         <span class="entry-time">13日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://coliss.com/articles/products/sourcenext-202602.html" target="_blank" rel="noopener noreferrer" class="entry-link">ソースネクストで特大セールが開催！ 1Passwordが公式の半額以下で、かなりお買い得です</a>
                     </div>
-
-                    <div class="entry-summary">
-                        ※本ページは、アフィリエイト広告を利用しています。 ソースネクストで、1Password 3年版が驚くほどお安くなっています！ 1Passwordの公式サイトで購入すると約17,000円のところ、なんと7,800円！！ […]
-                    </div>
+                    <div class="entry-summary">※本ページは、アフィリエイト広告を利用しています。 ソースネクストで、1Password 3年版が驚くほどお安くなっています！ 1Passwordの公式サイトで購入すると約17,000円のところ、なんと7,800円！！ […]</div>
                 </div>
-
                 
             </div>
             
@@ -426,17 +428,12 @@
                         <span class="entry-source">コリス</span>
                         <span class="entry-time">14日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://coliss.com/articles/products/kindle-sales-20260209.html" target="_blank" rel="noopener noreferrer" class="entry-link">今回のKindleセールはお買い得！ 90％オフや70％オフもあり、デザイン・Web制作・イラストの良書がセール対象です</a>
                     </div>
-
-                    <div class="entry-summary">
-                        ※本ページは、アフィリエイト広告を利用しています。 Kindle本の特大セールが開催です！ Webや紙のデザイン、HTML/CSSなどWeb制作の解説書、同人誌・絵師さん向けのイラストの良書がたくさんセール対象になってい […]
-                    </div>
+                    <div class="entry-summary">※本ページは、アフィリエイト広告を利用しています。 Kindle本の特大セールが開催です！ Webや紙のデザイン、HTML/CSSなどWeb制作の解説書、同人誌・絵師さん向けのイラストの良書がたくさんセール対象になってい […]</div>
                 </div>
-
                 
             </div>
             
@@ -447,17 +444,12 @@
                         <span class="entry-source">コリス</span>
                         <span class="entry-time">17日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://coliss.com/articles/book-review/isbn-9784297153762.html" target="_blank" rel="noopener noreferrer" class="entry-link">オンラインサービスの認証やID管理を設計・実装するときに必要となる知識をしっかり学べる解説書 -はじめてのデジタルアイデンティティ</a>
                     </div>
-
-                    <div class="entry-summary">
-                        ※本ページは、アフィリエイト広告を利用しています。 「デジタルアイデンティティ」とは、オンラインサービスにログインするときに使用するIDなど、個人に関連づけされた属性情報の集合です。日常的に使用しているログイン認証・当人 […]
-                    </div>
+                    <div class="entry-summary">※本ページは、アフィリエイト広告を利用しています。 「デジタルアイデンティティ」とは、オンラインサービスにログインするときに使用するIDなど、個人に関連づけされた属性情報の集合です。日常的に使用しているログイン認証・当人 […]</div>
                 </div>
-
                 
             </div>
             
@@ -468,17 +460,12 @@
                         <span class="entry-source">Webクリエイターボックス</span>
                         <span class="entry-time">20日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://www.webcreatorbox.com//blog/slidevars" target="_blank" rel="noopener noreferrer" class="entry-link">CSSカスタムプロパティをグリグリ動かせる「slideVars」が便利</a>
                     </div>
-
-                    <div class="entry-summary">
-                        Webデザインの勉強や実験をしているとき、色や余白を微調整しながら試行錯誤すること、ありますよね。そのたびにCSSの数値を書き換えて、プレビューが更新されるのを待って…というのは、正直ちょっと面倒だったりします。今回は、そんな悩みを解決してくれる「slideVars」というライブラリを紹介します！これを使うと、CSSカスタムプロパティをブラウザー上で直接いじれるコントローラーが自動で生成されますよ！
-                    </div>
+                    <div class="entry-summary">Webデザインの勉強や実験をしているとき、色や余白を微調整しながら試行錯誤すること、ありますよね。そのたびにCSSの数値を書き換えて、プレビューが更新されるのを待って…というのは、正直ちょっと面倒だったりします。今回は、そんな悩みを解決してくれる「slideVars」というライブラリを紹介します！これを使うと、CSSカスタムプロパティをブラウザー上で直接いじれるコントローラーが自動で生成されますよ！</div>
                 </div>
-
                 
             </div>
             
@@ -489,17 +476,12 @@
                         <span class="entry-source">Webクリエイターボックス</span>
                         <span class="entry-time">26日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://www.webcreatorbox.com//blog/ai-phase-planner" target="_blank" rel="noopener noreferrer" class="entry-link">Antigravityを使ってコーディング（ほぼ）なしで目標設定アプリ作った</a>
                     </div>
-
-                    <div class="entry-summary">
-                        今年はWebアプリやWebサイトを10個作ってみるぞー！とやる気に満ちて新年を迎えましたよ。ということで、1つ目のアプリ。月間目標を決めたら、それを4つの段階に細分化して提案してくれるWebサイト『AI Phase Planner』を公開しました！
-                    </div>
+                    <div class="entry-summary">今年はWebアプリやWebサイトを10個作ってみるぞー！とやる気に満ちて新年を迎えましたよ。ということで、1つ目のアプリ。月間目標を決めたら、それを4つの段階に細分化して提案してくれるWebサイト『AI Phase Planner』を公開しました！</div>
                 </div>
-
                 
             </div>
             
@@ -510,17 +492,12 @@
                         <span class="entry-source">Webクリエイターボックス</span>
                         <span class="entry-time">39日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://www.webcreatorbox.com//blog/website-2000ver" target="_blank" rel="noopener noreferrer" class="entry-link">最新AIでイニシエのWebサイトを作ってもらった 〜2000年の君へ〜</a>
                     </div>
-
-                    <div class="entry-summary">
-                        AntigravityというAIツールをご存じですか？ 指示（プロンプト）を与えるだけで、いろんなWebサイトがサクッと作れてしまうのが面白くて、最近いろいろといじり倒しています。そこでふと、逆に古い技術のサイトも作れるの？と疑問が湧いたので、実験してみました。
-                    </div>
+                    <div class="entry-summary">AntigravityというAIツールをご存じですか？ 指示（プロンプト）を与えるだけで、いろんなWebサイトがサクッと作れてしまうのが面白くて、最近いろいろといじり倒しています。そこでふと、逆に古い技術のサイトも作れるの？と疑問が湧いたので、実験してみました。</div>
                 </div>
-
                 
             </div>
             
@@ -531,17 +508,12 @@
                         <span class="entry-source">Webクリエイターボックス</span>
                         <span class="entry-time">49日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://www.webcreatorbox.com//blog/wcb-book8" target="_blank" rel="noopener noreferrer" class="entry-link">書籍執筆しました！『1冊ですべて身につくPhotoshop入門講座』</a>
                     </div>
-
-                    <div class="entry-summary">
-                        これまでHTMLやCSS、WordPress、JavaScript、デザインの入門書を書いてきた私ですが、このたび新たにAdobe Photoshopの入門書、『1冊ですべて身につくPhotoshop入門講座』という本を執筆しました！2026年2月27日発売で、予約受付中です！
-                    </div>
+                    <div class="entry-summary">これまでHTMLやCSS、WordPress、JavaScript、デザインの入門書を書いてきた私ですが、このたび新たにAdobe Photoshopの入門書、『1冊ですべて身につくPhotoshop入門講座』という本を執筆しました！2026年2月27日発売で、予約受付中です！</div>
                 </div>
-
                 
             </div>
             
@@ -552,17 +524,12 @@
                         <span class="entry-source">Webクリエイターボックス</span>
                         <span class="entry-time">61日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://www.webcreatorbox.com//blog/wcb-2025" target="_blank" rel="noopener noreferrer" class="entry-link">Webクリエイターボックスの2025年を振り返る</a>
                     </div>
-
-                    <div class="entry-summary">
-                        今年も残りあとわずか！一年間お世話になりました！毎年思いますが早いですね。という事で例年どおり、Webクリエイターボックスが今年1年どんな変貌を遂げたのか、そしてWebクリエイターボックス内でよく読んでもらった記事やSNSでシェアした記事などを紹介しようと思います。いくつ覚えていただけてますかね？ :3
-                    </div>
+                    <div class="entry-summary">今年も残りあとわずか！一年間お世話になりました！毎年思いますが早いですね。という事で例年どおり、Webクリエイターボックスが今年1年どんな変貌を遂げたのか、そしてWebクリエイターボックス内でよく読んでもらった記事やSNSでシェアした記事などを紹介しようと思います。いくつ覚えていただけてますかね？ :3</div>
                 </div>
-
                 
             </div>
             
@@ -573,17 +540,12 @@
                         <span class="entry-source">Webクリエイターボックス</span>
                         <span class="entry-time">66日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://www.webcreatorbox.com//blog/applewatch-1000days" target="_blank" rel="noopener noreferrer" class="entry-link">継続をデザインする！Apple Watchのアクティビティで1000日連続達成した記録</a>
                     </div>
-
-                    <div class="entry-summary">
-                        みなさん、運動してますか？ 我々の仕事って基本座りっぱなしで、運動しなきゃと思いつつ、なかなか実行できなかったりしますよね。実は私もそうでした。コロナ禍を経て、気づけば身体はぷくぷく…。これはまずい！と一念発起し、「継続すること」自体をデザインの課題として捉え直し、2023年1月1日から毎日運動を続けました。そしてついに、ムーブゴール連続1000日を達成！そこで、継続できた仕組みづくりと、愛用しているツールやアプリ、そして1000日の軌跡をご紹介します。
-                    </div>
+                    <div class="entry-summary">みなさん、運動してますか？ 我々の仕事って基本座りっぱなしで、運動しなきゃと思いつつ、なかなか実行できなかったりしますよね。実は私もそうでした。コロナ禍を経て、気づけば身体はぷくぷく…。これはまずい！と一念発起し、「継続すること」自体をデザインの課題として捉え直し、2023年1月1日から毎日運動を続けました。そしてついに、ムーブゴール連続1000日を達成！そこで、継続できた仕組みづくりと、愛用しているツールやアプリ、そして1000日の軌跡をご紹介します。</div>
                 </div>
-
                 
             </div>
             
@@ -594,17 +556,12 @@
                         <span class="entry-source">Webクリエイターボックス</span>
                         <span class="entry-time">74日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://www.webcreatorbox.com//blog/card-one" target="_blank" rel="noopener noreferrer" class="entry-link">特殊加工名刺を「カードワン」さんで作ってみた</a>
                     </div>
-
-                    <div class="entry-summary">
-                        名刺の残り枚数が少なくなってきたので「そろそろ注文しなきゃなー」とのんびり構えていたところ、ずっと利用していた印刷会社さんがまさかの閉鎖！あれこれ探し回った結果、素敵な印刷会社さんに出会い、名刺を再現していただきました。これから名刺を作りたいデザイナーさんや、自分の名刺をグレードアップさせたいフリーランスの方の参考になれば嬉しいです！
-                    </div>
+                    <div class="entry-summary">名刺の残り枚数が少なくなってきたので「そろそろ注文しなきゃなー」とのんびり構えていたところ、ずっと利用していた印刷会社さんがまさかの閉鎖！あれこれ探し回った結果、素敵な印刷会社さんに出会い、名刺を再現していただきました。これから名刺を作りたいデザイナーさんや、自分の名刺をグレードアップさせたいフリーランスの方の参考になれば嬉しいです！</div>
                 </div>
-
                 
             </div>
             
@@ -615,17 +572,12 @@
                         <span class="entry-source">Webクリエイターボックス</span>
                         <span class="entry-time">83日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://www.webcreatorbox.com//blog/slido" target="_blank" rel="noopener noreferrer" class="entry-link">プレゼンの質疑応答が劇的に変わる「Slido」を使ってみた</a>
                     </div>
-
-                    <div class="entry-summary">
-                        私は登壇するとき、なるべく質疑応答の時間を用意しています。ただ、参加者からしたら手を上げてみんなの前で質問ってなかなかハードル高いですよね。実際質問をされるのも1、2名くらい。そこで、「Slido（スライド）」というツールを使って質疑応答の時間を工夫したお話を紹介します！
-                    </div>
+                    <div class="entry-summary">私は登壇するとき、なるべく質疑応答の時間を用意しています。ただ、参加者からしたら手を上げてみんなの前で質問ってなかなかハードル高いですよね。実際質問をされるのも1、2名くらい。そこで、「Slido（スライド）」というツールを使って質疑応答の時間を工夫したお話を紹介します！</div>
                 </div>
-
                 
             </div>
             
@@ -636,19 +588,332 @@
                         <span class="entry-source">Webクリエイターボックス</span>
                         <span class="entry-time">97日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://www.webcreatorbox.com//blog/podcast-meetup-2" target="_blank" rel="noopener noreferrer" class="entry-link">エンジニアポッドキャストMeetup #2に参加しました！</a>
                     </div>
-
-                    <div class="entry-summary">
-                        先日、「エンジニアポッドキャストMeetup #2」というイベントに、私自身が運営しているポッドキャスト番組『ManaのWebクリエイターカフェ』のホストとして参加してきました！今回はイベントの様子はもちろん、耳からのインプット＝ポッドキャストがおすすめな理由や、私の登壇経験からの気づきもシェアします！
-                    </div>
+                    <div class="entry-summary">先日、「エンジニアポッドキャストMeetup #2」というイベントに、私自身が運営しているポッドキャスト番組『ManaのWebクリエイターカフェ』のホストとして参加してきました！今回はイベントの様子はもちろん、耳からのインプット＝ポッドキャストがおすすめな理由や、私の登壇経験からの気づきもシェアします！</div>
                 </div>
-
                 
             </div>
+            
+        </div>
+
+        <div id="view-feed" class="view-content">
+            
+            <details class="feed-section">
+                <summary>
+                    <div class="feed-info">
+                        <img src="https://www.google.com/s2/favicons?domain=coliss.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="feed-title-text">コリス</span>
+                    </div>
+                    <div class="feed-meta-count">
+                        
+                        <span class="count-badge">10 件</span>
+                        
+                    </div>
+                </summary>
+                <ul class="entry-list">
+                    
+                    <li class="list-item entry-item" data-link="https://coliss.com/articles/book-review/isbn-9784802615372.html" data-title="さらに便利で使いやすくなった！ 最新のCanvaに対応、プロユースでも使えるデザインのテクニックまでよく分かる解説書 -Canva使い方入門 増補改訂版" data-summary="※本ページは、アフィリエイト広告を利用しています。 ここ数年、Canvaの躍進が目立ちます。 一昔前はできることは限られていましたが、現在ではかなりいろいろなことができ、プロユースとしても十分な機能を備えています。 Ca […]">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://coliss.com/articles/book-review/isbn-9784802615372.html" target="_blank" rel="noopener noreferrer" class="entry-link">さらに便利で使いやすくなった！ 最新のCanvaに対応、プロユースでも使えるデザインのテクニックまでよく分かる解説書 -Canva使い方入門 増補改訂版</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">3日前</span>
+                            </div>
+                            <div class="entry-summary">※本ページは、アフィリエイト広告を利用しています。 ここ数年、Canvaの躍進が目立ちます。 一昔前はできることは限られていましたが、現在ではかなりいろいろなことができ、プロユースとしても十分な機能を備えています。 Ca […]</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://coliss.com/articles/build-websites/operation/work/screen-sizes-and-resolutions-for-different-devices.html" data-title="ブックマークしておくと便利！ さまざまなデバイスのスクリーンサイズ・解像度・ピクセル密度などの仕様が一覧できる -What Is My Screen Size?" data-summary="iPhoneやiPadのスクリーンサイズと解像度とピクセル密度っていくつだっけ？ GalaxyやPixelのスクリーンサイズと解像度とピクセル密度は？ もちろんそれぞれの公式サイトで探せば見つかりますが、けっこう手間です […]">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://coliss.com/articles/build-websites/operation/work/screen-sizes-and-resolutions-for-different-devices.html" target="_blank" rel="noopener noreferrer" class="entry-link">ブックマークしておくと便利！ さまざまなデバイスのスクリーンサイズ・解像度・ピクセル密度などの仕様が一覧できる -What Is My Screen Size?</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">4日前</span>
+                            </div>
+                            <div class="entry-summary">iPhoneやiPadのスクリーンサイズと解像度とピクセル密度っていくつだっけ？ GalaxyやPixelのスクリーンサイズと解像度とピクセル密度は？ もちろんそれぞれの公式サイトで探せば見つかりますが、けっこう手間です […]</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://coliss.com/articles/freebies/freefont-rinka.html" data-title="筆文字の新作日本語フリーフォントがリリース！ 凛とした佇まいが美しい、気高い雰囲気を持ったフォント「藍原筆文字 凜華」" data-summary="「藍原相撲字」「藍原江戸文字」「藍原勘亭流」「藍原筆文字楷書」「藍原筆文字隷書」などの手書きフォントをリリースされている藍原彼方さんから、新作の筆文字フォントがリリースされました！ 無料版と有料版が用意されており、無料版 […]">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://coliss.com/articles/freebies/freefont-rinka.html" target="_blank" rel="noopener noreferrer" class="entry-link">筆文字の新作日本語フリーフォントがリリース！ 凛とした佇まいが美しい、気高い雰囲気を持ったフォント「藍原筆文字 凜華」</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">5日前</span>
+                            </div>
+                            <div class="entry-summary">「藍原相撲字」「藍原江戸文字」「藍原勘亭流」「藍原筆文字楷書」「藍原筆文字隷書」などの手書きフォントをリリースされている藍原彼方さんから、新作の筆文字フォントがリリースされました！ 無料版と有料版が用意されており、無料版 […]</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://coliss.com/articles/build-websites/operation/css/css-only-elastic-hover-effect.html" data-title="このホバーエフェクト、楽しい！ CSSのみで実装する、弓の弦のように弾けるホバーエフェクト（方向も認識）" data-summary="カーソルで下からホバーすると弓の弦のように上から弾け、上からホバーすると下から弾ける、操作するのが楽しくなるホバーエフェクトを紹介します。 弓の弦のように弾けるホバーエフェクトはモダンCSSの機能（shape(), si […]">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://coliss.com/articles/build-websites/operation/css/css-only-elastic-hover-effect.html" target="_blank" rel="noopener noreferrer" class="entry-link">このホバーエフェクト、楽しい！ CSSのみで実装する、弓の弦のように弾けるホバーエフェクト（方向も認識）</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">6日前</span>
+                            </div>
+                            <div class="entry-summary">カーソルで下からホバーすると弓の弦のように上から弾け、上からホバーすると下から弾ける、操作するのが楽しくなるホバーエフェクトを紹介します。 弓の弦のように弾けるホバーエフェクトはモダンCSSの機能（shape(), si […]</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://coliss.com/articles/build-websites/operation/work/grid-overlay-pro.html" data-title="シンプルだから使いやすい！ レスポンシブ対応のグリッドをオーバーレイ表示できるChromeの拡張機能 -Grid Overlay Pro" data-summary="ブラウザに表示したあらゆるWebページにレスポンシブに対応したFigmaみたいなグリッドをオーバーレイー表示できるChromeの機能拡張を紹介します。 グリッドのオーバーレイはブラウザ内で完全にローカルで実行されるため、 […]">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://coliss.com/articles/build-websites/operation/work/grid-overlay-pro.html" target="_blank" rel="noopener noreferrer" class="entry-link">シンプルだから使いやすい！ レスポンシブ対応のグリッドをオーバーレイ表示できるChromeの拡張機能 -Grid Overlay Pro</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">7日前</span>
+                            </div>
+                            <div class="entry-summary">ブラウザに表示したあらゆるWebページにレスポンシブに対応したFigmaみたいなグリッドをオーバーレイー表示できるChromeの機能拡張を紹介します。 グリッドのオーバーレイはブラウザ内で完全にローカルで実行されるため、 […]</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://coliss.com/articles/book-review/isbn-9784295207283.html" data-title="ロゴはまさに究極のミニマルデザイン！ デザインすることの面白さに気づかせてくれる良書 -カンタンでちょっぴり深いロゴづくり" data-summary="※本ページは、アフィリエイト広告を利用しています。 本書の感想を一言で言うと、「デザインすることの面白さに気づかせてくれる」 なぜこの形なのか、なぜこの文字なのか、なぜこの余白なのか、なぜ太くするのか、なぜこの角度なのか […]">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://coliss.com/articles/book-review/isbn-9784295207283.html" target="_blank" rel="noopener noreferrer" class="entry-link">ロゴはまさに究極のミニマルデザイン！ デザインすることの面白さに気づかせてくれる良書 -カンタンでちょっぴり深いロゴづくり</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">10日前</span>
+                            </div>
+                            <div class="entry-summary">※本ページは、アフィリエイト広告を利用しています。 本書の感想を一言で言うと、「デザインすることの面白さに気づかせてくれる」 なぜこの形なのか、なぜこの文字なのか、なぜこの余白なのか、なぜ太くするのか、なぜこの角度なのか […]</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://coliss.com/articles/build-websites/operation/work/chrome-145-adds-6-new-css-feature.html" data-title="Chromeの安定版でついにタブの分割がサポートされました！ Chrome 145で新しく追加された6個のCSSとUIの機能" data-summary="2/11にアップデートされたChrome 145に追加された、CSSとUIに関する新しい機能を紹介します。 今回のアップデートで注目すべきは、まずタブの分割が正式サポートされたこと。そしてテキストの配置方法を制御するte […]">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://coliss.com/articles/build-websites/operation/work/chrome-145-adds-6-new-css-feature.html" target="_blank" rel="noopener noreferrer" class="entry-link">Chromeの安定版でついにタブの分割がサポートされました！ Chrome 145で新しく追加された6個のCSSとUIの機能</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">11日前</span>
+                            </div>
+                            <div class="entry-summary">2/11にアップデートされたChrome 145に追加された、CSSとUIに関する新しい機能を紹介します。 今回のアップデートで注目すべきは、まずタブの分割が正式サポートされたこと。そしてテキストの配置方法を制御するte […]</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://coliss.com/articles/products/sourcenext-202602.html" data-title="ソースネクストで特大セールが開催！ 1Passwordが公式の半額以下で、かなりお買い得です" data-summary="※本ページは、アフィリエイト広告を利用しています。 ソースネクストで、1Password 3年版が驚くほどお安くなっています！ 1Passwordの公式サイトで購入すると約17,000円のところ、なんと7,800円！！ […]">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://coliss.com/articles/products/sourcenext-202602.html" target="_blank" rel="noopener noreferrer" class="entry-link">ソースネクストで特大セールが開催！ 1Passwordが公式の半額以下で、かなりお買い得です</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">13日前</span>
+                            </div>
+                            <div class="entry-summary">※本ページは、アフィリエイト広告を利用しています。 ソースネクストで、1Password 3年版が驚くほどお安くなっています！ 1Passwordの公式サイトで購入すると約17,000円のところ、なんと7,800円！！ […]</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://coliss.com/articles/products/kindle-sales-20260209.html" data-title="今回のKindleセールはお買い得！ 90％オフや70％オフもあり、デザイン・Web制作・イラストの良書がセール対象です" data-summary="※本ページは、アフィリエイト広告を利用しています。 Kindle本の特大セールが開催です！ Webや紙のデザイン、HTML/CSSなどWeb制作の解説書、同人誌・絵師さん向けのイラストの良書がたくさんセール対象になってい […]">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://coliss.com/articles/products/kindle-sales-20260209.html" target="_blank" rel="noopener noreferrer" class="entry-link">今回のKindleセールはお買い得！ 90％オフや70％オフもあり、デザイン・Web制作・イラストの良書がセール対象です</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">14日前</span>
+                            </div>
+                            <div class="entry-summary">※本ページは、アフィリエイト広告を利用しています。 Kindle本の特大セールが開催です！ Webや紙のデザイン、HTML/CSSなどWeb制作の解説書、同人誌・絵師さん向けのイラストの良書がたくさんセール対象になってい […]</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://coliss.com/articles/book-review/isbn-9784297153762.html" data-title="オンラインサービスの認証やID管理を設計・実装するときに必要となる知識をしっかり学べる解説書 -はじめてのデジタルアイデンティティ" data-summary="※本ページは、アフィリエイト広告を利用しています。 「デジタルアイデンティティ」とは、オンラインサービスにログインするときに使用するIDなど、個人に関連づけされた属性情報の集合です。日常的に使用しているログイン認証・当人 […]">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://coliss.com/articles/book-review/isbn-9784297153762.html" target="_blank" rel="noopener noreferrer" class="entry-link">オンラインサービスの認証やID管理を設計・実装するときに必要となる知識をしっかり学べる解説書 -はじめてのデジタルアイデンティティ</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">17日前</span>
+                            </div>
+                            <div class="entry-summary">※本ページは、アフィリエイト広告を利用しています。 「デジタルアイデンティティ」とは、オンラインサービスにログインするときに使用するIDなど、個人に関連づけされた属性情報の集合です。日常的に使用しているログイン認証・当人 […]</div>
+                        </div>
+                        
+                    </li>
+                    
+                </ul>
+            </details>
+            
+            <details class="feed-section">
+                <summary>
+                    <div class="feed-info">
+                        <img src="https://www.google.com/s2/favicons?domain=www.webcreatorbox.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="feed-title-text">Webクリエイターボックス</span>
+                    </div>
+                    <div class="feed-meta-count">
+                        
+                        <span class="count-badge">10 件</span>
+                        
+                    </div>
+                </summary>
+                <ul class="entry-list">
+                    
+                    <li class="list-item entry-item" data-link="https://www.webcreatorbox.com//blog/fujihill-pace" data-title="自転車レース「富士ヒル」のペース配分表を開発してわかった、人間だからこそ気づけたこと" data-summary="今年はWebアプリやWebサイトを10個作るぞ！と決め、今月は2つ目のアプリが完成！富士山五合目を目指して走る人気自転車レースの練習補助になるようなアプリを作ってみました！">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.webcreatorbox.com//blog/fujihill-pace" target="_blank" rel="noopener noreferrer" class="entry-link">自転車レース「富士ヒル」のペース配分表を開発してわかった、人間だからこそ気づけたこと</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">6日前</span>
+                            </div>
+                            <div class="entry-summary">今年はWebアプリやWebサイトを10個作るぞ！と決め、今月は2つ目のアプリが完成！富士山五合目を目指して走る人気自転車レースの練習補助になるようなアプリを作ってみました！</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.webcreatorbox.com//blog/slidevars" data-title="CSSカスタムプロパティをグリグリ動かせる「slideVars」が便利" data-summary="Webデザインの勉強や実験をしているとき、色や余白を微調整しながら試行錯誤すること、ありますよね。そのたびにCSSの数値を書き換えて、プレビューが更新されるのを待って…というのは、正直ちょっと面倒だったりします。今回は、そんな悩みを解決してくれる「slideVars」というライブラリを紹介します！これを使うと、CSSカスタムプロパティをブラウザー上で直接いじれるコントローラーが自動で生成されますよ！">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.webcreatorbox.com//blog/slidevars" target="_blank" rel="noopener noreferrer" class="entry-link">CSSカスタムプロパティをグリグリ動かせる「slideVars」が便利</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">20日前</span>
+                            </div>
+                            <div class="entry-summary">Webデザインの勉強や実験をしているとき、色や余白を微調整しながら試行錯誤すること、ありますよね。そのたびにCSSの数値を書き換えて、プレビューが更新されるのを待って…というのは、正直ちょっと面倒だったりします。今回は、そんな悩みを解決してくれる「slideVars」というライブラリを紹介します！これを使うと、CSSカスタムプロパティをブラウザー上で直接いじれるコントローラーが自動で生成されますよ！</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.webcreatorbox.com//blog/ai-phase-planner" data-title="Antigravityを使ってコーディング（ほぼ）なしで目標設定アプリ作った" data-summary="今年はWebアプリやWebサイトを10個作ってみるぞー！とやる気に満ちて新年を迎えましたよ。ということで、1つ目のアプリ。月間目標を決めたら、それを4つの段階に細分化して提案してくれるWebサイト『AI Phase Planner』を公開しました！">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.webcreatorbox.com//blog/ai-phase-planner" target="_blank" rel="noopener noreferrer" class="entry-link">Antigravityを使ってコーディング（ほぼ）なしで目標設定アプリ作った</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">26日前</span>
+                            </div>
+                            <div class="entry-summary">今年はWebアプリやWebサイトを10個作ってみるぞー！とやる気に満ちて新年を迎えましたよ。ということで、1つ目のアプリ。月間目標を決めたら、それを4つの段階に細分化して提案してくれるWebサイト『AI Phase Planner』を公開しました！</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.webcreatorbox.com//blog/website-2000ver" data-title="最新AIでイニシエのWebサイトを作ってもらった 〜2000年の君へ〜" data-summary="AntigravityというAIツールをご存じですか？ 指示（プロンプト）を与えるだけで、いろんなWebサイトがサクッと作れてしまうのが面白くて、最近いろいろといじり倒しています。そこでふと、逆に古い技術のサイトも作れるの？と疑問が湧いたので、実験してみました。">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.webcreatorbox.com//blog/website-2000ver" target="_blank" rel="noopener noreferrer" class="entry-link">最新AIでイニシエのWebサイトを作ってもらった 〜2000年の君へ〜</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">39日前</span>
+                            </div>
+                            <div class="entry-summary">AntigravityというAIツールをご存じですか？ 指示（プロンプト）を与えるだけで、いろんなWebサイトがサクッと作れてしまうのが面白くて、最近いろいろといじり倒しています。そこでふと、逆に古い技術のサイトも作れるの？と疑問が湧いたので、実験してみました。</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.webcreatorbox.com//blog/wcb-book8" data-title="書籍執筆しました！『1冊ですべて身につくPhotoshop入門講座』" data-summary="これまでHTMLやCSS、WordPress、JavaScript、デザインの入門書を書いてきた私ですが、このたび新たにAdobe Photoshopの入門書、『1冊ですべて身につくPhotoshop入門講座』という本を執筆しました！2026年2月27日発売で、予約受付中です！">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.webcreatorbox.com//blog/wcb-book8" target="_blank" rel="noopener noreferrer" class="entry-link">書籍執筆しました！『1冊ですべて身につくPhotoshop入門講座』</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">49日前</span>
+                            </div>
+                            <div class="entry-summary">これまでHTMLやCSS、WordPress、JavaScript、デザインの入門書を書いてきた私ですが、このたび新たにAdobe Photoshopの入門書、『1冊ですべて身につくPhotoshop入門講座』という本を執筆しました！2026年2月27日発売で、予約受付中です！</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.webcreatorbox.com//blog/wcb-2025" data-title="Webクリエイターボックスの2025年を振り返る" data-summary="今年も残りあとわずか！一年間お世話になりました！毎年思いますが早いですね。という事で例年どおり、Webクリエイターボックスが今年1年どんな変貌を遂げたのか、そしてWebクリエイターボックス内でよく読んでもらった記事やSNSでシェアした記事などを紹介しようと思います。いくつ覚えていただけてますかね？ :3">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.webcreatorbox.com//blog/wcb-2025" target="_blank" rel="noopener noreferrer" class="entry-link">Webクリエイターボックスの2025年を振り返る</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">61日前</span>
+                            </div>
+                            <div class="entry-summary">今年も残りあとわずか！一年間お世話になりました！毎年思いますが早いですね。という事で例年どおり、Webクリエイターボックスが今年1年どんな変貌を遂げたのか、そしてWebクリエイターボックス内でよく読んでもらった記事やSNSでシェアした記事などを紹介しようと思います。いくつ覚えていただけてますかね？ :3</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.webcreatorbox.com//blog/applewatch-1000days" data-title="継続をデザインする！Apple Watchのアクティビティで1000日連続達成した記録" data-summary="みなさん、運動してますか？ 我々の仕事って基本座りっぱなしで、運動しなきゃと思いつつ、なかなか実行できなかったりしますよね。実は私もそうでした。コロナ禍を経て、気づけば身体はぷくぷく…。これはまずい！と一念発起し、「継続すること」自体をデザインの課題として捉え直し、2023年1月1日から毎日運動を続けました。そしてついに、ムーブゴール連続1000日を達成！そこで、継続できた仕組みづくりと、愛用しているツールやアプリ、そして1000日の軌跡をご紹介します。">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.webcreatorbox.com//blog/applewatch-1000days" target="_blank" rel="noopener noreferrer" class="entry-link">継続をデザインする！Apple Watchのアクティビティで1000日連続達成した記録</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">66日前</span>
+                            </div>
+                            <div class="entry-summary">みなさん、運動してますか？ 我々の仕事って基本座りっぱなしで、運動しなきゃと思いつつ、なかなか実行できなかったりしますよね。実は私もそうでした。コロナ禍を経て、気づけば身体はぷくぷく…。これはまずい！と一念発起し、「継続すること」自体をデザインの課題として捉え直し、2023年1月1日から毎日運動を続けました。そしてついに、ムーブゴール連続1000日を達成！そこで、継続できた仕組みづくりと、愛用しているツールやアプリ、そして1000日の軌跡をご紹介します。</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.webcreatorbox.com//blog/card-one" data-title="特殊加工名刺を「カードワン」さんで作ってみた" data-summary="名刺の残り枚数が少なくなってきたので「そろそろ注文しなきゃなー」とのんびり構えていたところ、ずっと利用していた印刷会社さんがまさかの閉鎖！あれこれ探し回った結果、素敵な印刷会社さんに出会い、名刺を再現していただきました。これから名刺を作りたいデザイナーさんや、自分の名刺をグレードアップさせたいフリーランスの方の参考になれば嬉しいです！">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.webcreatorbox.com//blog/card-one" target="_blank" rel="noopener noreferrer" class="entry-link">特殊加工名刺を「カードワン」さんで作ってみた</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">74日前</span>
+                            </div>
+                            <div class="entry-summary">名刺の残り枚数が少なくなってきたので「そろそろ注文しなきゃなー」とのんびり構えていたところ、ずっと利用していた印刷会社さんがまさかの閉鎖！あれこれ探し回った結果、素敵な印刷会社さんに出会い、名刺を再現していただきました。これから名刺を作りたいデザイナーさんや、自分の名刺をグレードアップさせたいフリーランスの方の参考になれば嬉しいです！</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.webcreatorbox.com//blog/slido" data-title="プレゼンの質疑応答が劇的に変わる「Slido」を使ってみた" data-summary="私は登壇するとき、なるべく質疑応答の時間を用意しています。ただ、参加者からしたら手を上げてみんなの前で質問ってなかなかハードル高いですよね。実際質問をされるのも1、2名くらい。そこで、「Slido（スライド）」というツールを使って質疑応答の時間を工夫したお話を紹介します！">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.webcreatorbox.com//blog/slido" target="_blank" rel="noopener noreferrer" class="entry-link">プレゼンの質疑応答が劇的に変わる「Slido」を使ってみた</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">83日前</span>
+                            </div>
+                            <div class="entry-summary">私は登壇するとき、なるべく質疑応答の時間を用意しています。ただ、参加者からしたら手を上げてみんなの前で質問ってなかなかハードル高いですよね。実際質問をされるのも1、2名くらい。そこで、「Slido（スライド）」というツールを使って質疑応答の時間を工夫したお話を紹介します！</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.webcreatorbox.com//blog/podcast-meetup-2" data-title="エンジニアポッドキャストMeetup #2に参加しました！" data-summary="先日、「エンジニアポッドキャストMeetup #2」というイベントに、私自身が運営しているポッドキャスト番組『ManaのWebクリエイターカフェ』のホストとして参加してきました！今回はイベントの様子はもちろん、耳からのインプット＝ポッドキャストがおすすめな理由や、私の登壇経験からの気づきもシェアします！">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.webcreatorbox.com//blog/podcast-meetup-2" target="_blank" rel="noopener noreferrer" class="entry-link">エンジニアポッドキャストMeetup #2に参加しました！</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">97日前</span>
+                            </div>
+                            <div class="entry-summary">先日、「エンジニアポッドキャストMeetup #2」というイベントに、私自身が運営しているポッドキャスト番組『ManaのWebクリエイターカフェ』のホストとして参加してきました！今回はイベントの様子はもちろん、耳からのインプット＝ポッドキャストがおすすめな理由や、私の登壇経験からの気づきもシェアします！</div>
+                        </div>
+                        
+                    </li>
+                    
+                </ul>
+            </details>
             
         </div>
     </div>
@@ -657,8 +922,19 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 修正箇所: アコーディオン開閉ロジックの削除
+            // タブ切り替えロジック
+            const tabs = document.querySelectorAll('.view-tab');
+            const contents = document.querySelectorAll('.view-content');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    contents.forEach(c => c.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.target).classList.add('active');
+                });
+            });
 
+            // 既読管理
             const STORAGE_KEY = 'rss_read_items';
             let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
             const entryItems = document.querySelectorAll('.entry-item');
@@ -671,22 +947,21 @@
                 const anchor = item.querySelector('a.entry-link');
                 if(anchor) {
                     anchor.addEventListener('click', function() {
-                        markAsRead(link, item);
+                        // 両方のビューの同じ記事を同時に既読にする
+                        document.querySelectorAll(`.entry-item[data-link="${link}"]`).forEach(el => {
+                            el.classList.add('read');
+                        });
+                        readItems.add(link);
+                        if (readItems.size > 1000) {
+                            const array = Array.from(readItems);
+                            readItems = new Set(array.slice(array.length - 1000));
+                        }
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
                     });
                 }
             });
 
-            function markAsRead(link, itemElement) {
-                itemElement.classList.add('read');
-                readItems.add(link);
-                if (readItems.size > 1000) {
-                    const array = Array.from(readItems);
-                    readItems = new Set(array.slice(array.length - 1000));
-                }
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
-            }
-
-            // 修正箇所: 検索窓アイコンのトグル動作を追加
+            // 検索・絞り込み
             const searchToggle = document.getElementById('searchToggle');
             const searchInput = document.getElementById('searchInput');
             
@@ -708,7 +983,6 @@
                 }
             });
 
-            // 修正箇所: 階層構造廃止に伴い、検索処理をシンプルにカード単位の非表示化へ変更
             searchInput.addEventListener('input', function(e) {
                 const term = e.target.value.trim().toLowerCase();
 
@@ -719,6 +993,11 @@
                         const summaryDiv = entry.querySelector('.entry-summary');
                         if(titleLink && entry.dataset.originalTitleHtml) titleLink.innerHTML = entry.dataset.originalTitleHtml;
                         if(summaryDiv && entry.dataset.originalSummaryHtml) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
+                    });
+                    
+                    // アコーディオンの表示もリセット
+                    document.querySelectorAll('details.feed-section').forEach(sec => {
+                        sec.style.display = '';
                     });
                     return;
                 }
@@ -732,6 +1011,17 @@
                         highlightText(entry, term);
                     } else {
                         entry.style.display = 'none';
+                    }
+                });
+
+                // アコーディオン内で表示できる記事がない場合は親要素ごと隠す
+                document.querySelectorAll('details.feed-section').forEach(section => {
+                    const visibleItems = Array.from(section.querySelectorAll('.list-item')).filter(el => el.style.display !== 'none');
+                    if(visibleItems.length === 0) {
+                        section.style.display = 'none';
+                    } else {
+                        section.style.display = '';
+                        section.open = true; // ヒットしたら開いておく
                     }
                 });
             });
