@@ -45,7 +45,7 @@
         }
         .nav-links { 
             display: flex; 
-            flex-wrap: wrap; /* 修正箇所: PCで折り返し多段表示にするため wrap に変更 */
+            flex-wrap: wrap;
             gap: 8px; 
             flex-grow: 1;
         }
@@ -64,7 +64,6 @@
         .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
         .nav-link.active { opacity: 1; background-color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
-        /* スマホ向けナビゲーション（横スクロール） */
         @media (max-width: 600px) {
             .nav-links {
                 flex-wrap: nowrap;
@@ -94,7 +93,6 @@
         h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
         .last-updated { font-size: 12px; color: var(--text-sub); }
 
-        /* 修正箇所: トピックページ用の特別デザイン */
         .header-topic {
             background: linear-gradient(135deg, #f0f7ff 0%, #e0edff 100%);
             border-left: 5px solid #007bff;
@@ -104,7 +102,6 @@
             font-size: 12px; color: #0056b3; margin: 8px 0; font-weight: bold; line-height: 1.4;
         }
 
-        /* 修正箇所: タブ切り替えUI */
         .view-tabs {
             display: flex; gap: 10px; margin-bottom: 20px; justify-content: flex-end;
         }
@@ -130,7 +127,7 @@
         .card-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
         .entry-thumbnail { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee; }
 
-        /* アコーディオン型 (サイト別) UI */
+        /* アコーディオン型 (サイト別・トピック別) UI */
         details {
             background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
         }
@@ -263,14 +260,18 @@
         <header class="">
             <h1>福祉行政</h1>
             
-            <div class="last-updated">最終更新: 02/23 23:43</div>
+            <div class="last-updated">最終更新: 02/23 23:56</div>
         </header>
 
         
         <div class="view-tabs">
+            
             <button class="view-tab active" data-target="view-timeline">🕒 タイムライン</button>
             <button class="view-tab" data-target="view-feed">📁 サイト別</button>
+            
         </div>
+        
+
         
 
         
@@ -282,7 +283,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=www.hokkaido-np.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">道新</span>
-                        <span class="entry-time">14分前</span>
+                        <span class="entry-time">27分前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -346,7 +347,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=www.hokkaido-np.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">道新</span>
-                        <span class="entry-time">2時間前</span>
+                        <span class="entry-time">3時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -362,7 +363,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">STVニュース北海道</span>
-                        <span class="entry-time">2時間前</span>
+                        <span class="entry-time">3時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -410,7 +411,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">HBCニュース北海道</span>
-                        <span class="entry-time">3時間前</span>
+                        <span class="entry-time">4時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -506,7 +507,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">HTB北海道ニュース</span>
-                        <span class="entry-time">4時間前</span>
+                        <span class="entry-time">5時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -522,7 +523,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">HBCニュース北海道</span>
-                        <span class="entry-time">4時間前</span>
+                        <span class="entry-time">5時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -538,7 +539,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">北海道ニュースUHB</span>
-                        <span class="entry-time">4時間前</span>
+                        <span class="entry-time">5時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -698,7 +699,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">HBCニュース北海道</span>
-                        <span class="entry-time">5時間前</span>
+                        <span class="entry-time">6時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -714,7 +715,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">HBCニュース北海道</span>
-                        <span class="entry-time">5時間前</span>
+                        <span class="entry-time">6時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -938,7 +939,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">HBCニュース北海道</span>
-                        <span class="entry-time">7時間前</span>
+                        <span class="entry-time">8時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -2376,7 +2377,7 @@
                                 <a href="https://www.hokkaido-np.co.jp/article/1278845/" target="_blank" rel="noopener noreferrer" class="entry-link">ウクライナ、開会式参加を　冬季パラでIPC会長</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">14分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">27分前</span>
                             </div>
                             <div class="entry-summary">【ミラノ共同】国際パラリンピック委員会（IPC）のパーソンズ会...</div>
                         </div>
@@ -2390,7 +2391,7 @@
                                 <a href="https://www.hokkaido-np.co.jp/article/1278840/" target="_blank" rel="noopener noreferrer" class="entry-link">ロシア大使館が「勝利」の垂れ幕　韓国は懸念を伝達</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">2時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">3時間前</span>
                             </div>
                             <div class="entry-summary">【ソウル共同】在韓国ロシア大使館がウクライナ侵攻から4年となる...</div>
                         </div>
@@ -2690,7 +2691,7 @@
                                 <a href="https://news.yahoo.co.jp/articles/ccef2fea287368195a359ff2447893f0cfb4a932?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">歓迎!バス運転手がやって来た…冬は閑散期の広島県から北海道に“レンタル移籍”生活路線を守り、観光路線は増便で運行会社はがっちり(HBCニュース北海道)</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">3時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">4時間前</span>
                             </div>
                             <div class="entry-summary">深刻な運転手不足に悩むバス会社にやって来た「レンタル移籍」の運転手が、期待を上回る活躍。地域の住民も大喜びです。 冬の観光シーズンまっ盛りの北海道内、観光地には国内外から客が訪れています。 ■運転</div>
                         </div>
@@ -2704,7 +2705,7 @@
                                 <a href="https://news.yahoo.co.jp/articles/d89bf5599cdd01305aa624191097d467b0719b36?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【核のごみ】調査の推進を訴えた現職が圧勝　次の段階「概要調査」は鈴木直道知事の意向が焦点に(HBCニュース北海道)</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">4時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">5時間前</span>
                             </div>
                             <div class="entry-summary">原発から出る高レベル放射性廃棄物いわゆる「核のごみ」の最終処分場選びで、第2段階の「概要調査」に進むかどうかが争点だった北海道神恵内村の村長選挙。 調査の推進を訴えた現職が圧勝し、7選を果たしました。</div>
                         </div>
@@ -2760,7 +2761,7 @@
                                 <a href="https://news.yahoo.co.jp/articles/d44172d8659b2a862025a4a7b235e0fa02dd66a4?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【流氷に乗るのやめて!】死に至るリスク専門家が警鐘「何千本もの針が刺さったような…」水難学会・斎藤秀俊理事「泳いで戻れば一巻のおしまい」(HBCニュース北海道)</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">5時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">6時間前</span>
                             </div>
                             <div class="entry-summary">2月、北海道オホーツク海側の小清水町の海岸で、流氷に乗った男子大学生が沖に流され救助されました。命に関わる危険な行為だとして専門家が警鐘を鳴らしています。 オホーツク海を埋め尽くす「流氷」。冬の神秘</div>
                         </div>
@@ -2774,7 +2775,7 @@
                                 <a href="https://news.yahoo.co.jp/articles/3c9f716d1d2b02b52552a64a66b6d09317e59e9e?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">年間532人の小中高生が自殺する現実　過去最多の事態に大人たちがサポート方法を意見交換(HBCニュース北海道)</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">5時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">6時間前</span>
                             </div>
                             <div class="entry-summary">いま全国で年間500人もの子どもたちが自ら命を絶っています。 命を救うために何ができるのか考える講演会が札幌で開かれました。 23日、札幌の会議室に集まったのは、行政などで子どもの支援に関わる大人た</div>
                         </div>
@@ -2816,7 +2817,7 @@
                                 <a href="https://news.yahoo.co.jp/articles/8ac18eeeba60b6629f5b97c9075bf917e2a039a6?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【暴風雪警報】北海道・稚内市、猿払村、豊富町、礼文町、利尻町、利尻富士町などに発表 23日15:42時点(HBCニュース北海道)</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">7時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">8時間前</span>
                             </div>
                             <div class="entry-summary">気象台は、午後3時42分に、暴風雪警報を稚内市、猿払村、豊富町、礼文町、利尻町、利尻富士町、幌延町に発表しました。 宗谷地方では、23日夜のはじめ頃まで暴風雪に、23日夜遅くまで高波に警戒してくださ</div>
                         </div>
@@ -2875,7 +2876,7 @@
                                 <a href="https://news.yahoo.co.jp/articles/b0c9dde0e6ddb4e03a58afdc87a80ff4cc935fe7?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【交通安全キャンペーン】トンネルや高速で この時季最も油断できない「スリップ事故の危険」(HTB北海道ニュース)</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">4時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">5時間前</span>
                             </div>
                             <div class="entry-summary">今週は「交通安全キャンペーン」と題して、冬道に潜む危険と事故を防ぐ対策についてお伝えします。今回はこの時季も注意が必要な「スリップ事故」についてです。 夜の交差点でスリップし雪山に衝突。 高速道路で</div>
                         </div>
@@ -3032,7 +3033,7 @@
                                 <a href="https://news.yahoo.co.jp/articles/e9292cfad0ebdbfe2e0f17a7a9d1fd5c305c83f3?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">莫大な交付金で温泉施設も建設　住民の審判は…安全と経済的恩恵に揺れるマチ　北海道・神恵内村長選(STVニュース北海道)</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">2時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">3時間前</span>
                             </div>
                             <div class="entry-summary">いわゆる「核のごみ」の概要調査への移行が争点となった後志の神恵内村長選挙は、推進派の現職が７選を果たしました。 過疎と向き合うマチの未来に、住民はどのような思いを抱いているのでしょうか。 ２月２２</div>
                         </div>
@@ -3517,7 +3518,7 @@
                                 <a href="https://news.yahoo.co.jp/articles/ab63b9a0fadbdcb8d0774b5ca8796209d53de40b?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【ファイターズ】新戦力のカッちゃん＆西川遥輝が豪快アーチ！達孝太 自身も納得の快投でオープン戦初勝利！(北海道ニュースUHB)</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">4時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">5時間前</span>
                             </div>
                             <div class="entry-summary">2月23日(月・祝)北海道日本ハムファイターズ沖縄名護キャンプ「第5クール3日目」は昨年のセ・リーグ王者「阪神タイガース」とオープン戦が行われました。 ファイターズの先発は開幕カード3戦目が内定</div>
                         </div>
@@ -3775,7 +3776,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // タブ切り替えロジック
             const tabs = document.querySelectorAll('.view-tab');
             const contents = document.querySelectorAll('.view-content');
             tabs.forEach(tab => {
@@ -3787,7 +3787,6 @@
                 });
             });
 
-            // 既読管理
             const STORAGE_KEY = 'rss_read_items';
             let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
             const entryItems = document.querySelectorAll('.entry-item');
@@ -3800,7 +3799,6 @@
                 const anchor = item.querySelector('a.entry-link');
                 if(anchor) {
                     anchor.addEventListener('click', function() {
-                        // 両方のビューの同じ記事を同時に既読にする
                         document.querySelectorAll(`.entry-item[data-link="${link}"]`).forEach(el => {
                             el.classList.add('read');
                         });
@@ -3814,7 +3812,6 @@
                 }
             });
 
-            // 検索・絞り込み
             const searchToggle = document.getElementById('searchToggle');
             const searchInput = document.getElementById('searchInput');
             
@@ -3848,9 +3845,10 @@
                         if(summaryDiv && entry.dataset.originalSummaryHtml) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
                     });
                     
-                    // アコーディオンの表示もリセット
+                    // 修正箇所: 検索クリア時にアコーディオンを全て閉じた状態に戻す
                     document.querySelectorAll('details.feed-section').forEach(sec => {
                         sec.style.display = '';
+                        sec.open = false; 
                     });
                     return;
                 }
@@ -3867,14 +3865,13 @@
                     }
                 });
 
-                // アコーディオン内で表示できる記事がない場合は親要素ごと隠す
                 document.querySelectorAll('details.feed-section').forEach(section => {
                     const visibleItems = Array.from(section.querySelectorAll('.list-item')).filter(el => el.style.display !== 'none');
                     if(visibleItems.length === 0) {
                         section.style.display = 'none';
                     } else {
                         section.style.display = '';
-                        section.open = true; // ヒットしたら開いておく
+                        section.open = true; 
                     }
                 });
             });

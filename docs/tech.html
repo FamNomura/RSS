@@ -45,7 +45,7 @@
         }
         .nav-links { 
             display: flex; 
-            flex-wrap: wrap; /* 修正箇所: PCで折り返し多段表示にするため wrap に変更 */
+            flex-wrap: wrap;
             gap: 8px; 
             flex-grow: 1;
         }
@@ -64,7 +64,6 @@
         .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
         .nav-link.active { opacity: 1; background-color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
-        /* スマホ向けナビゲーション（横スクロール） */
         @media (max-width: 600px) {
             .nav-links {
                 flex-wrap: nowrap;
@@ -94,7 +93,6 @@
         h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
         .last-updated { font-size: 12px; color: var(--text-sub); }
 
-        /* 修正箇所: トピックページ用の特別デザイン */
         .header-topic {
             background: linear-gradient(135deg, #f0f7ff 0%, #e0edff 100%);
             border-left: 5px solid #007bff;
@@ -104,7 +102,6 @@
             font-size: 12px; color: #0056b3; margin: 8px 0; font-weight: bold; line-height: 1.4;
         }
 
-        /* 修正箇所: タブ切り替えUI */
         .view-tabs {
             display: flex; gap: 10px; margin-bottom: 20px; justify-content: flex-end;
         }
@@ -130,7 +127,7 @@
         .card-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
         .entry-thumbnail { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee; }
 
-        /* アコーディオン型 (サイト別) UI */
+        /* アコーディオン型 (サイト別・トピック別) UI */
         details {
             background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
         }
@@ -263,14 +260,18 @@
         <header class="">
             <h1>Tech情報</h1>
             
-            <div class="last-updated">最終更新: 02/23 23:43</div>
+            <div class="last-updated">最終更新: 02/23 23:56</div>
         </header>
 
         
         <div class="view-tabs">
+            
             <button class="view-tab active" data-target="view-timeline">🕒 タイムライン</button>
             <button class="view-tab" data-target="view-feed">📁 サイト別</button>
+            
         </div>
+        
+
         
 
         
@@ -282,7 +283,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=www.publickey1.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">Publickey</span>
-                        <span class="entry-time">-94分前</span>
+                        <span class="entry-time">-80分前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -298,13 +299,29 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=www.publickey1.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">Publickey</span>
-                        <span class="entry-time">-30分前</span>
+                        <span class="entry-time">-17分前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
                         <a href="https://www.publickey1.jp/blog/26/anthropicclaude_code_security.html" target="_blank" rel="noopener noreferrer" class="entry-link">Anthropic、ルールベースではなく、コード分析により複雑な脆弱性も発見できる新機能「Claude Code Security」を提供開始</a>
                     </div>
                     <div class="entry-summary">AnthropicはClaude Codeの新機能として、複雑な脆弱性も発見できる「Claude Code Security」をリサーチプレビューとして提供開始したことを発表しました。 人間のセキュリティ専門家のようにコードを分析 Calude Code Securityはルールベースの静的解析ではなく、人間のセキュリティ研究者と同じようにコードを分析し、複雑な脆弱性も発見できると、次のように説明されています。 Rather than scanning for known……</div>
+                </div>
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://dev.classmethod.jp/articles/alert-investigation-automation-opsmethod-1/" data-title="【登壇資料】「アラート調査の自動化にむけて」というタイトルでopsmethod #1に登壇しました #opsmethod" data-summary="【登壇資料】「アラート調査の自動化にむけて」というタイトルでopsmethod #1に登壇しました #opsmethod">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=dev.classmethod.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">DevelopersIO</span>
+                        <span class="entry-time">5分前</span>
+                    </div>
+                    <div class="entry-title">
+                        <span class="new-badge">NEW</span>
+                        <a href="https://dev.classmethod.jp/articles/alert-investigation-automation-opsmethod-1/" target="_blank" rel="noopener noreferrer" class="entry-link">【登壇資料】「アラート調査の自動化にむけて」というタイトルでopsmethod #1に登壇しました #opsmethod</a>
+                    </div>
+                    <div class="entry-summary">【登壇資料】「アラート調査の自動化にむけて」というタイトルでopsmethod #1に登壇しました #opsmethod</div>
                 </div>
                 
             </div>
@@ -389,12 +406,30 @@
                 
             </div>
             
+            <div class="card entry-item" data-link="https://azukiazusa.dev/blog/claude-code-worktree-worktreeinclude-gitignore/" data-title="Claude Code デスクトップで Worktree を作成するとき .worktreeinclude で .gitignore で除外されているファイルを含める" data-summary="Claude Code デスクトップで Worktree を作成するとき .worktreeinclude で .gitignore で除外されているファイルを含めるClaude Code デスクトップ Claude Code のデスクトップ版で新しいセッションを開始するとき Worktree を作成するのは簡単です。セッションの作成画面で「Worktree」チェックボックスをオンにするだけです。 Claude Code によって作成された Worktree は git worktree list コマンドで確認できます。 $ git worktree list...">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=b.hatena.ne.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">はてなブックマーク IT</span>
+                        <span class="entry-time">5時間前</span>
+                    </div>
+                    <div class="entry-title">
+                        <span class="new-badge">NEW</span>
+                        <a href="https://azukiazusa.dev/blog/claude-code-worktree-worktreeinclude-gitignore/" target="_blank" rel="noopener noreferrer" class="entry-link">Claude Code デスクトップで Worktree を作成するとき .worktreeinclude で .gitignore で除外されているファイルを含める</a>
+                    </div>
+                    <div class="entry-summary">Claude Code デスクトップで Worktree を作成するとき .worktreeinclude で .gitignore で除外されているファイルを含めるClaude Code デスクトップ Claude Code のデスクトップ版で新しいセッションを開始するとき Worktree を作成するのは簡単です。セッションの作成画面で「Worktree」チェックボックスをオンにするだけです。 Claude Code によって作成された Worktree は git worktree list コマンドで確認できます。 $ git worktree list...</div>
+                </div>
+                
+                <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fazukiazusa.dev%2Fblog%2Fclaude-code-worktree-worktreeinclude-gitignore%2F" class="entry-thumbnail" loading="lazy" alt="">
+                
+            </div>
+            
             <div class="card entry-item" data-link="https://dev.classmethod.jp/articles/ecs-native-blue-green-deployment-lifecycle-hooks-amazon-q-developer-slack/" data-title="ECS Native Blue/Green DeploymentのライフサイクルフックとAmazon Q Developer in chat applicationsでSlack通知およびカスタムアクションボタンによる本番トラフィックの再ルーティングとロールバックを制御してみた" data-summary="将来的にはユーザーが自作するのではなくサービスの機能として提供されて欲しい">
                 <div class="card-content">
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=dev.classmethod.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">DevelopersIO</span>
-                        <span class="entry-time">5時間前</span>
+                        <span class="entry-time">6時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -449,22 +484,6 @@
                         <a href="https://dev.classmethod.jp/articles/2026-02-23-fsx-multiaz-vs-efs-az-benchmark/" target="_blank" rel="noopener noreferrer" class="entry-link">AZを跨いだFSx for OpenZFSとEFSの速度比較を行ってみた</a>
                     </div>
                     <div class="entry-summary">AZを跨いだFSx for OpenZFSとEFSの速度比較を行ってみた</div>
-                </div>
-                
-            </div>
-            
-            <div class="card entry-item" data-link="https://dev.classmethod.jp/articles/github-pull-request-files-changed-ui-improvement/" data-title="[パブリックプレビュー] GitHub でプルリクエストの「Files changed」の UI が大幅に改善されました" data-summary="説明やコメントをタブを切り替えずに表示可能となり、またページ表示速度も向上しました。">
-                <div class="card-content">
-                    <div class="entry-meta">
-                        <img src="https://www.google.com/s2/favicons?domain=dev.classmethod.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                        <span class="entry-source">DevelopersIO</span>
-                        <span class="entry-time">9時間前</span>
-                    </div>
-                    <div class="entry-title">
-                        <span class="new-badge">NEW</span>
-                        <a href="https://dev.classmethod.jp/articles/github-pull-request-files-changed-ui-improvement/" target="_blank" rel="noopener noreferrer" class="entry-link">[パブリックプレビュー] GitHub でプルリクエストの「Files changed」の UI が大幅に改善されました</a>
-                    </div>
-                    <div class="entry-summary">説明やコメントをタブを切り替えずに表示可能となり、またページ表示速度も向上しました。</div>
                 </div>
                 
             </div>
@@ -580,32 +599,14 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=zenn.dev" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">Zenn トレンド</span>
-                        <span class="entry-time">23時間前</span>
-                    </div>
-                    <div class="entry-title">
-                        <span class="new-badge">NEW</span>
-                        <a href="https://zenn.dev/teba_eleven/articles/1765035114d00b" target="_blank" rel="noopener noreferrer" class="entry-link">【ハッカソンでClean Architecture】4人対戦ババ抜きWebSocketサーバーの設計と7つのこだわり</a>
-                    </div>
-                    <div class="entry-summary">はじめに 2026年2月21-22日に AWS Startup Loft Tokyo で開催された Progateハッカソン powered by AWS に参加しました。学生エンジニア向けの2日間ハッカソンです。 チームで作ったのは 「ババ抜きに、革命を！」 — 4人オンライン対戦のババ抜きに、テーマルーレットとAI画像生成を組み合わせたゲームです。(ババ抜きに革命はないのがポイントです) https://topaz.dev/projects/19fa10d5d28e056cd0cf 私の担当は WebSocketサーバー（バックエンド全般） です。本記事では、2日間でどう設計し、...</div>
-                </div>
-                
-            </div>
-            
-            <div class="card entry-item" data-link="https://recruit.group.gmo/engineer/jisedai/blog/openclaw_stock_trading/" data-title="OpenClawでTelegramを使ってトレーディング戦略を構築してみた - GMOインターネットグループ グループ研究開発本部" data-summary="OpenClawでTelegramを使ってトレーディング戦略を構築してみた - GMOインターネットグループ グループ研究開発本部こんにちは。AI研究開発室のK.S.です。 今月の頭（2026年2月）には、2025年11月のリリースからわずか数ヶ月でOpenClaw（旧称：Clawdbot、Moltbot）がGitHubで驚異的にスターを獲得し、その影響でAppleのMac miniが次々と売り切れているという話題を聞いたりしませんか？ このブログはやや出遅れ気味ですが、何が起こって...">
-                <div class="card-content">
-                    <div class="entry-meta">
-                        <img src="https://www.google.com/s2/favicons?domain=b.hatena.ne.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                        <span class="entry-source">はてなブックマーク IT</span>
                         <span class="entry-time">昨日</span>
                     </div>
                     <div class="entry-title">
                         
-                        <a href="https://recruit.group.gmo/engineer/jisedai/blog/openclaw_stock_trading/" target="_blank" rel="noopener noreferrer" class="entry-link">OpenClawでTelegramを使ってトレーディング戦略を構築してみた - GMOインターネットグループ グループ研究開発本部</a>
+                        <a href="https://zenn.dev/teba_eleven/articles/1765035114d00b" target="_blank" rel="noopener noreferrer" class="entry-link">【ハッカソンでClean Architecture】4人対戦ババ抜きWebSocketサーバーの設計と7つのこだわり</a>
                     </div>
-                    <div class="entry-summary">OpenClawでTelegramを使ってトレーディング戦略を構築してみた - GMOインターネットグループ グループ研究開発本部こんにちは。AI研究開発室のK.S.です。 今月の頭（2026年2月）には、2025年11月のリリースからわずか数ヶ月でOpenClaw（旧称：Clawdbot、Moltbot）がGitHubで驚異的にスターを獲得し、その影響でAppleのMac miniが次々と売り切れているという話題を聞いたりしませんか？ このブログはやや出遅れ気味ですが、何が起こって...</div>
+                    <div class="entry-summary">はじめに 2026年2月21-22日に AWS Startup Loft Tokyo で開催された Progateハッカソン powered by AWS に参加しました。学生エンジニア向けの2日間ハッカソンです。 チームで作ったのは 「ババ抜きに、革命を！」 — 4人オンライン対戦のババ抜きに、テーマルーレットとAI画像生成を組み合わせたゲームです。(ババ抜きに革命はないのがポイントです) https://topaz.dev/projects/19fa10d5d28e056cd0cf 私の担当は WebSocketサーバー（バックエンド全般） です。本記事では、2日間でどう設計し、...</div>
                 </div>
-                
-                <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Frecruit.group.gmo%2Fengineer%2Fjisedai%2Fblog%2Fopenclaw_stock_trading%2F" class="entry-thumbnail" loading="lazy" alt="">
                 
             </div>
             
@@ -1122,7 +1123,7 @@
                                 <a href="https://www.publickey1.jp/blog/26/nistaiai_agent_standards_initiative.html" target="_blank" rel="noopener noreferrer" class="entry-link">NIST（米国国立標準技術研究所）がAIエージェントの技術標準を作る取り組み「AI Agent Standards Initiative」発表。相互運用可能かつ安全なイノベーションのために</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">-94分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">-80分前</span>
                             </div>
                             <div class="entry-summary">米国商務省傘下のNIST（National Institute of Standards and Technology：米国国立標準技術研究所）は、AIエージェントの技術標準策定に取り組む「AI Agent Standards Initiative」を発表しました。 これはNIST内に設けられた組織「CAISI」（Center for AI Standards and Innovation：人工知能標準化イノベーションセンター）が行う取り組みです。 CAISIは商用AIシステ……</div>
                         </div>
@@ -1136,7 +1137,7 @@
                                 <a href="https://www.publickey1.jp/blog/26/anthropicclaude_code_security.html" target="_blank" rel="noopener noreferrer" class="entry-link">Anthropic、ルールベースではなく、コード分析により複雑な脆弱性も発見できる新機能「Claude Code Security」を提供開始</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">-30分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">-17分前</span>
                             </div>
                             <div class="entry-summary">AnthropicはClaude Codeの新機能として、複雑な脆弱性も発見できる「Claude Code Security」をリサーチプレビューとして提供開始したことを発表しました。 人間のセキュリティ専門家のようにコードを分析 Calude Code Securityはルールベースの静的解析ではなく、人間のセキュリティ研究者と同じようにコードを分析し、複雑な脆弱性も発見できると、次のように説明されています。 Rather than scanning for known……</div>
                         </div>
@@ -1272,6 +1273,20 @@
                 </summary>
                 <ul class="entry-list">
                     
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/alert-investigation-automation-opsmethod-1/" data-title="【登壇資料】「アラート調査の自動化にむけて」というタイトルでopsmethod #1に登壇しました #opsmethod" data-summary="【登壇資料】「アラート調査の自動化にむけて」というタイトルでopsmethod #1に登壇しました #opsmethod">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/alert-investigation-automation-opsmethod-1/" target="_blank" rel="noopener noreferrer" class="entry-link">【登壇資料】「アラート調査の自動化にむけて」というタイトルでopsmethod #1に登壇しました #opsmethod</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">5分前</span>
+                            </div>
+                            <div class="entry-summary">【登壇資料】「アラート調査の自動化にむけて」というタイトルでopsmethod #1に登壇しました #opsmethod</div>
+                        </div>
+                        
+                    </li>
+                    
                     <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/kiro-cli-custom-agent-sudo/" data-title="AIによるAWS操作を安全に。Kiro CLIで作るsudo的なIAM権限昇格" data-summary="AIエージェント（Kiro CLI）に安全にAWSを操作させるため、AWS CLIのネイティブAssumeRoleとカスタムエージェントを組み合わせた「sudo的」なIAM権限昇格の実装方法を解説します。すぐに試せるCFnテンプレート付きです。">
                         <div class="card-content">
                             <div class="entry-title">
@@ -1349,7 +1364,7 @@
                                 <a href="https://dev.classmethod.jp/articles/ecs-native-blue-green-deployment-lifecycle-hooks-amazon-q-developer-slack/" target="_blank" rel="noopener noreferrer" class="entry-link">ECS Native Blue/Green DeploymentのライフサイクルフックとAmazon Q Developer in chat applicationsでSlack通知およびカスタムアクションボタンによる本番トラフィックの再ルーティングとロールバックを制御してみた</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">5時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">6時間前</span>
                             </div>
                             <div class="entry-summary">将来的にはユーザーが自作するのではなくサービスの機能として提供されて欲しい</div>
                         </div>
@@ -1394,20 +1409,6 @@
                                 <span class="entry-time" style="border-left:none; padding-left:0;">7時間前</span>
                             </div>
                             <div class="entry-summary">AZを跨いだFSx for OpenZFSとEFSの速度比較を行ってみた</div>
-                        </div>
-                        
-                    </li>
-                    
-                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/github-pull-request-files-changed-ui-improvement/" data-title="[パブリックプレビュー] GitHub でプルリクエストの「Files changed」の UI が大幅に改善されました" data-summary="説明やコメントをタブを切り替えずに表示可能となり、またページ表示速度も向上しました。">
-                        <div class="card-content">
-                            <div class="entry-title">
-                                <span class="new-badge">NEW</span>
-                                <a href="https://dev.classmethod.jp/articles/github-pull-request-files-changed-ui-improvement/" target="_blank" rel="noopener noreferrer" class="entry-link">[パブリックプレビュー] GitHub でプルリクエストの「Files changed」の UI が大幅に改善されました</a>
-                            </div>
-                            <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">9時間前</span>
-                            </div>
-                            <div class="entry-summary">説明やコメントをタブを切り替えずに表示可能となり、またページ表示速度も向上しました。</div>
                         </div>
                         
                     </li>
@@ -1580,7 +1581,7 @@
                     </div>
                     <div class="feed-meta-count">
                         
-                        <span class="count-badge has-new">新着 5 / 10</span>
+                        <span class="count-badge has-new">新着 6 / 10</span>
                         
                     </div>
                 </summary>
@@ -1599,6 +1600,22 @@
                         </div>
                         
                         <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fnote.com%2Fjunya_tsutsui%2Fn%2Fn601cdf7e72eb" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://note.com/it_navi/n/ne26d4d078386" data-title="Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT navi" data-summary="Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT naviAIを使ったスライド作成は以前から可能でしたが、作った後に編集できないという課題がついて回りました。例えばNotebookLMでは、多彩なデザインのスライドをpptxファイルとして出力できるものの、各ページが1枚の画像として埋め込まれるため、文字や図表を後から修正するのが困難です。 その点、Claudeで作成したスライ...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://note.com/it_navi/n/ne26d4d078386" target="_blank" rel="noopener noreferrer" class="entry-link">Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT navi</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">13時間前</span>
+                            </div>
+                            <div class="entry-summary">Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT naviAIを使ったスライド作成は以前から可能でしたが、作った後に編集できないという課題がついて回りました。例えばNotebookLMでは、多彩なデザインのスライドをpptxファイルとして出力できるものの、各ページが1枚の画像として埋め込まれるため、文字や図表を後から修正するのが困難です。 その点、Claudeで作成したスライ...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fnote.com%2Fit_navi%2Fn%2Fne26d4d078386" class="entry-thumbnail" loading="lazy" alt="">
                         
                     </li>
                     
@@ -1631,22 +1648,6 @@
                         </div>
                         
                         <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fzenn.dev%2Fbadmonster%2Farticles%2F92338955317115" class="entry-thumbnail" loading="lazy" alt="">
-                        
-                    </li>
-                    
-                    <li class="list-item entry-item" data-link="https://note.com/it_navi/n/ne26d4d078386" data-title="Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT navi" data-summary="Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT naviAIを使ったスライド作成は以前から可能でしたが、作った後に編集できないという課題がついて回りました。例えばNotebookLMでは、多彩なデザインのスライドをpptxファイルとして出力できるものの、各ページが1枚の画像として埋め込まれるため、文字や図表を後から修正するのが困難です。 その点、Claudeで作成したスライ...">
-                        <div class="card-content">
-                            <div class="entry-title">
-                                <span class="new-badge">NEW</span>
-                                <a href="https://note.com/it_navi/n/ne26d4d078386" target="_blank" rel="noopener noreferrer" class="entry-link">Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT navi</a>
-                            </div>
-                            <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">13時間前</span>
-                            </div>
-                            <div class="entry-summary">Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT naviAIを使ったスライド作成は以前から可能でしたが、作った後に編集できないという課題がついて回りました。例えばNotebookLMでは、多彩なデザインのスライドをpptxファイルとして出力できるものの、各ページが1枚の画像として埋め込まれるため、文字や図表を後から修正するのが困難です。 その点、Claudeで作成したスライ...</div>
-                        </div>
-                        
-                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fnote.com%2Fit_navi%2Fn%2Fne26d4d078386" class="entry-thumbnail" loading="lazy" alt="">
                         
                     </li>
                     
@@ -1698,22 +1699,6 @@
                         
                     </li>
                     
-                    <li class="list-item entry-item" data-link="https://posfie.com/@taimport/p/IgKIfG8" data-title="技術力は高いけど小さい会社の社長が「大手企業の購買部が会社を潰す。最後は日本をダメにする。安く買うことしか考えてないから」とおっしゃっていた話" data-summary="技術力は高いけど小さい会社の社長が「大手企業の購買部が会社を潰す。最後は日本をダメにする。安く買うことしか考えてないから」とおっしゃっていた話かこか 🔧 生産技術系エンジニア課長 @kakoka_2019 技術力は高いけど小さい会社の社長が「大手企業の購買部が会社を潰す。最後は日本をダメにする。安く買うことしか考えてないから」とおっしゃっていた。 購買部で一生懸命努力している方もいるだろうから申し訳ないんだけど、この意見には賛成せざるを得ない 2026-02-2...">
-                        <div class="card-content">
-                            <div class="entry-title">
-                                
-                                <a href="https://posfie.com/@taimport/p/IgKIfG8" target="_blank" rel="noopener noreferrer" class="entry-link">技術力は高いけど小さい会社の社長が「大手企業の購買部が会社を潰す。最後は日本をダメにする。安く買うことしか考えてないから」とおっしゃっていた話</a>
-                            </div>
-                            <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">昨日</span>
-                            </div>
-                            <div class="entry-summary">技術力は高いけど小さい会社の社長が「大手企業の購買部が会社を潰す。最後は日本をダメにする。安く買うことしか考えてないから」とおっしゃっていた話かこか 🔧 生産技術系エンジニア課長 @kakoka_2019 技術力は高いけど小さい会社の社長が「大手企業の購買部が会社を潰す。最後は日本をダメにする。安く買うことしか考えてないから」とおっしゃっていた。 購買部で一生懸命努力している方もいるだろうから申し訳ないんだけど、この意見には賛成せざるを得ない 2026-02-2...</div>
-                        </div>
-                        
-                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fposfie.com%2F%40taimport%2Fp%2FIgKIfG8" class="entry-thumbnail" loading="lazy" alt="">
-                        
-                    </li>
-                    
                     <li class="list-item entry-item" data-link="https://zenn.dev/kimmaru/articles/6c0f67f6003b94" data-title="Figma MCP × Claude Codeで1ページ8時間の作業が20分になった話" data-summary="Figma MCP × Claude Codeで1ページ8時間の作業が20分になった話はじめに 業務でWebサイトリニューアルをやっています。 テキスト量の多い静的ページを、Figmaデザインからモック（HTML/CSS）→ Laravel組み込み（3言語対応）まで実装する作業がありました。 最初は手作業で1ページ8時間かかっていました。 Figma MCP + Claude Codeを導入したら、1ページ20分になりました。 この記事は...">
                         <div class="card-content">
                             <div class="entry-title">
@@ -1730,19 +1715,35 @@
                         
                     </li>
                     
-                    <li class="list-item entry-item" data-link="https://recruit.group.gmo/engineer/jisedai/blog/openclaw_stock_trading/" data-title="OpenClawでTelegramを使ってトレーディング戦略を構築してみた - GMOインターネットグループ グループ研究開発本部" data-summary="OpenClawでTelegramを使ってトレーディング戦略を構築してみた - GMOインターネットグループ グループ研究開発本部こんにちは。AI研究開発室のK.S.です。 今月の頭（2026年2月）には、2025年11月のリリースからわずか数ヶ月でOpenClaw（旧称：Clawdbot、Moltbot）がGitHubで驚異的にスターを獲得し、その影響でAppleのMac miniが次々と売り切れているという話題を聞いたりしませんか？ このブログはやや出遅れ気味ですが、何が起こって...">
+                    <li class="list-item entry-item" data-link="https://posfie.com/@taimport/p/IgKIfG8" data-title="技術力は高いけど小さい会社の社長が「大手企業の購買部が会社を潰す。最後は日本をダメにする。安く買うことしか考えてないから」とおっしゃっていた話" data-summary="技術力は高いけど小さい会社の社長が「大手企業の購買部が会社を潰す。最後は日本をダメにする。安く買うことしか考えてないから」とおっしゃっていた話かこか 🔧 生産技術系エンジニア課長 @kakoka_2019 技術力は高いけど小さい会社の社長が「大手企業の購買部が会社を潰す。最後は日本をダメにする。安く買うことしか考えてないから」とおっしゃっていた。 購買部で一生懸命努力している方もいるだろうから申し訳ないんだけど、この意見には賛成せざるを得ない 2026-02-2...">
                         <div class="card-content">
                             <div class="entry-title">
                                 
-                                <a href="https://recruit.group.gmo/engineer/jisedai/blog/openclaw_stock_trading/" target="_blank" rel="noopener noreferrer" class="entry-link">OpenClawでTelegramを使ってトレーディング戦略を構築してみた - GMOインターネットグループ グループ研究開発本部</a>
+                                <a href="https://posfie.com/@taimport/p/IgKIfG8" target="_blank" rel="noopener noreferrer" class="entry-link">技術力は高いけど小さい会社の社長が「大手企業の購買部が会社を潰す。最後は日本をダメにする。安く買うことしか考えてないから」とおっしゃっていた話</a>
                             </div>
                             <div class="entry-meta">
                                 <span class="entry-time" style="border-left:none; padding-left:0;">昨日</span>
                             </div>
-                            <div class="entry-summary">OpenClawでTelegramを使ってトレーディング戦略を構築してみた - GMOインターネットグループ グループ研究開発本部こんにちは。AI研究開発室のK.S.です。 今月の頭（2026年2月）には、2025年11月のリリースからわずか数ヶ月でOpenClaw（旧称：Clawdbot、Moltbot）がGitHubで驚異的にスターを獲得し、その影響でAppleのMac miniが次々と売り切れているという話題を聞いたりしませんか？ このブログはやや出遅れ気味ですが、何が起こって...</div>
+                            <div class="entry-summary">技術力は高いけど小さい会社の社長が「大手企業の購買部が会社を潰す。最後は日本をダメにする。安く買うことしか考えてないから」とおっしゃっていた話かこか 🔧 生産技術系エンジニア課長 @kakoka_2019 技術力は高いけど小さい会社の社長が「大手企業の購買部が会社を潰す。最後は日本をダメにする。安く買うことしか考えてないから」とおっしゃっていた。 購買部で一生懸命努力している方もいるだろうから申し訳ないんだけど、この意見には賛成せざるを得ない 2026-02-2...</div>
                         </div>
                         
-                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Frecruit.group.gmo%2Fengineer%2Fjisedai%2Fblog%2Fopenclaw_stock_trading%2F" class="entry-thumbnail" loading="lazy" alt="">
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fposfie.com%2F%40taimport%2Fp%2FIgKIfG8" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://azukiazusa.dev/blog/claude-code-worktree-worktreeinclude-gitignore/" data-title="Claude Code デスクトップで Worktree を作成するとき .worktreeinclude で .gitignore で除外されているファイルを含める" data-summary="Claude Code デスクトップで Worktree を作成するとき .worktreeinclude で .gitignore で除外されているファイルを含めるClaude Code デスクトップ Claude Code のデスクトップ版で新しいセッションを開始するとき Worktree を作成するのは簡単です。セッションの作成画面で「Worktree」チェックボックスをオンにするだけです。 Claude Code によって作成された Worktree は git worktree list コマンドで確認できます。 $ git worktree list...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://azukiazusa.dev/blog/claude-code-worktree-worktreeinclude-gitignore/" target="_blank" rel="noopener noreferrer" class="entry-link">Claude Code デスクトップで Worktree を作成するとき .worktreeinclude で .gitignore で除外されているファイルを含める</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">5時間前</span>
+                            </div>
+                            <div class="entry-summary">Claude Code デスクトップで Worktree を作成するとき .worktreeinclude で .gitignore で除外されているファイルを含めるClaude Code デスクトップ Claude Code のデスクトップ版で新しいセッションを開始するとき Worktree を作成するのは簡単です。セッションの作成画面で「Worktree」チェックボックスをオンにするだけです。 Claude Code によって作成された Worktree は git worktree list コマンドで確認できます。 $ git worktree list...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fazukiazusa.dev%2Fblog%2Fclaude-code-worktree-worktreeinclude-gitignore%2F" class="entry-thumbnail" loading="lazy" alt="">
                         
                     </li>
                     
@@ -1757,7 +1758,7 @@
                     </div>
                     <div class="feed-meta-count">
                         
-                        <span class="count-badge has-new">新着 2 / 10</span>
+                        <span class="count-badge has-new">新着 1 / 10</span>
                         
                     </div>
                 </summary>
@@ -1780,11 +1781,11 @@
                     <li class="list-item entry-item" data-link="https://zenn.dev/teba_eleven/articles/1765035114d00b" data-title="【ハッカソンでClean Architecture】4人対戦ババ抜きWebSocketサーバーの設計と7つのこだわり" data-summary="はじめに 2026年2月21-22日に AWS Startup Loft Tokyo で開催された Progateハッカソン powered by AWS に参加しました。学生エンジニア向けの2日間ハッカソンです。 チームで作ったのは 「ババ抜きに、革命を！」 — 4人オンライン対戦のババ抜きに、テーマルーレットとAI画像生成を組み合わせたゲームです。(ババ抜きに革命はないのがポイントです) https://topaz.dev/projects/19fa10d5d28e056cd0cf 私の担当は WebSocketサーバー（バックエンド全般） です。本記事では、2日間でどう設計し、...">
                         <div class="card-content">
                             <div class="entry-title">
-                                <span class="new-badge">NEW</span>
+                                
                                 <a href="https://zenn.dev/teba_eleven/articles/1765035114d00b" target="_blank" rel="noopener noreferrer" class="entry-link">【ハッカソンでClean Architecture】4人対戦ババ抜きWebSocketサーバーの設計と7つのこだわり</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">23時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">昨日</span>
                             </div>
                             <div class="entry-summary">はじめに 2026年2月21-22日に AWS Startup Loft Tokyo で開催された Progateハッカソン powered by AWS に参加しました。学生エンジニア向けの2日間ハッカソンです。 チームで作ったのは 「ババ抜きに、革命を！」 — 4人オンライン対戦のババ抜きに、テーマルーレットとAI画像生成を組み合わせたゲームです。(ババ抜きに革命はないのがポイントです) https://topaz.dev/projects/19fa10d5d28e056cd0cf 私の担当は WebSocketサーバー（バックエンド全般） です。本記事では、2日間でどう設計し、...</div>
                         </div>
@@ -1913,7 +1914,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // タブ切り替えロジック
             const tabs = document.querySelectorAll('.view-tab');
             const contents = document.querySelectorAll('.view-content');
             tabs.forEach(tab => {
@@ -1925,7 +1925,6 @@
                 });
             });
 
-            // 既読管理
             const STORAGE_KEY = 'rss_read_items';
             let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
             const entryItems = document.querySelectorAll('.entry-item');
@@ -1938,7 +1937,6 @@
                 const anchor = item.querySelector('a.entry-link');
                 if(anchor) {
                     anchor.addEventListener('click', function() {
-                        // 両方のビューの同じ記事を同時に既読にする
                         document.querySelectorAll(`.entry-item[data-link="${link}"]`).forEach(el => {
                             el.classList.add('read');
                         });
@@ -1952,7 +1950,6 @@
                 }
             });
 
-            // 検索・絞り込み
             const searchToggle = document.getElementById('searchToggle');
             const searchInput = document.getElementById('searchInput');
             
@@ -1986,9 +1983,10 @@
                         if(summaryDiv && entry.dataset.originalSummaryHtml) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
                     });
                     
-                    // アコーディオンの表示もリセット
+                    // 修正箇所: 検索クリア時にアコーディオンを全て閉じた状態に戻す
                     document.querySelectorAll('details.feed-section').forEach(sec => {
                         sec.style.display = '';
+                        sec.open = false; 
                     });
                     return;
                 }
@@ -2005,14 +2003,13 @@
                     }
                 });
 
-                // アコーディオン内で表示できる記事がない場合は親要素ごと隠す
                 document.querySelectorAll('details.feed-section').forEach(section => {
                     const visibleItems = Array.from(section.querySelectorAll('.list-item')).filter(el => el.style.display !== 'none');
                     if(visibleItems.length === 0) {
                         section.style.display = 'none';
                     } else {
                         section.style.display = '';
-                        section.open = true; // ヒットしたら開いておく
+                        section.open = true; 
                     }
                 });
             });

@@ -45,7 +45,7 @@
         }
         .nav-links { 
             display: flex; 
-            flex-wrap: wrap; /* 修正箇所: PCで折り返し多段表示にするため wrap に変更 */
+            flex-wrap: wrap;
             gap: 8px; 
             flex-grow: 1;
         }
@@ -64,7 +64,6 @@
         .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
         .nav-link.active { opacity: 1; background-color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
-        /* スマホ向けナビゲーション（横スクロール） */
         @media (max-width: 600px) {
             .nav-links {
                 flex-wrap: nowrap;
@@ -94,7 +93,6 @@
         h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
         .last-updated { font-size: 12px; color: var(--text-sub); }
 
-        /* 修正箇所: トピックページ用の特別デザイン */
         .header-topic {
             background: linear-gradient(135deg, #f0f7ff 0%, #e0edff 100%);
             border-left: 5px solid #007bff;
@@ -104,7 +102,6 @@
             font-size: 12px; color: #0056b3; margin: 8px 0; font-weight: bold; line-height: 1.4;
         }
 
-        /* 修正箇所: タブ切り替えUI */
         .view-tabs {
             display: flex; gap: 10px; margin-bottom: 20px; justify-content: flex-end;
         }
@@ -130,7 +127,7 @@
         .card-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
         .entry-thumbnail { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee; }
 
-        /* アコーディオン型 (サイト別) UI */
+        /* アコーディオン型 (サイト別・トピック別) UI */
         details {
             background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
         }
@@ -263,26 +260,46 @@
         <header class="">
             <h1>ニュース記事</h1>
             
-            <div class="last-updated">最終更新: 02/23 23:43</div>
+            <div class="last-updated">最終更新: 02/23 23:56</div>
         </header>
 
         
         <div class="view-tabs">
+            
             <button class="view-tab active" data-target="view-timeline">🕒 タイムライン</button>
             <button class="view-tab" data-target="view-feed">📁 サイト別</button>
+            
         </div>
+        
+
         
 
         
 
         <div id="view-timeline" class="view-content active timeline-container">
             
+            <div class="card entry-item" data-link="https://news.yahoo.co.jp/articles/2a68dc0b6a2232a96664ac6726c38fbeef88a60c?source=rss" data-title="9300万円相当を55回にわたりだましとられる　警察官名乗る男から「逮捕状出ている」「身の潔白を証明する」　警察官を名乗る電話は『詐欺』の可能性(MBSニュース)" data-summary="9300万円相当の暗号資産が50回以上にわたってだましとられました。兵庫県三木市の会社員の63歳の男性をだましたのは「逮捕状が出ている」などと警察官を名乗った男らでした。 警察によりますと、三木市">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">カテゴリ-地域</span>
+                        <span class="entry-time">3分前</span>
+                    </div>
+                    <div class="entry-title">
+                        <span class="new-badge">NEW</span>
+                        <a href="https://news.yahoo.co.jp/articles/2a68dc0b6a2232a96664ac6726c38fbeef88a60c?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">9300万円相当を55回にわたりだましとられる　警察官名乗る男から「逮捕状出ている」「身の潔白を証明する」　警察官を名乗る電話は『詐欺』の可能性(MBSニュース)</a>
+                    </div>
+                    <div class="entry-summary">9300万円相当の暗号資産が50回以上にわたってだましとられました。兵庫県三木市の会社員の63歳の男性をだましたのは「逮捕状が出ている」などと警察官を名乗った男らでした。 警察によりますと、三木市</div>
+                </div>
+                
+            </div>
+            
             <div class="card entry-item" data-link="https://news.yahoo.co.jp/articles/1c76ac76ae480681f887de4b90fc2df9e2f9943a?source=rss" data-title="【100均DIY】ダイソーの〈棚板と棚受け〉→洗濯機上が〈ホテルのような収納空間〉に大変身！(LIMO)" data-summary="DIYテクニックを発信しているInstagramerが、洗濯機上の使いづらいラックを、ダイソーグッズでホテルライクな壁面収納へと大変身させて、話題になっています。 動画を投稿したのは、「@asune">
                 <div class="card-content">
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">ライフ</span>
-                        <span class="entry-time">11分前</span>
+                        <span class="entry-time">24分前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -298,7 +315,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">カテゴリ-地域</span>
-                        <span class="entry-time">12分前</span>
+                        <span class="entry-time">25分前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -313,8 +330,40 @@
                 <div class="card-content">
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">主要</span>
+                        <span class="entry-time">34分前</span>
+                    </div>
+                    <div class="entry-title">
+                        <span class="new-badge">NEW</span>
+                        <a href="https://news.yahoo.co.jp/pickup/6570996?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">兵器搭載AI 高度化急ぐウクライナ</a>
+                    </div>
+                    <div class="entry-summary"></div>
+                </div>
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://news.yahoo.co.jp/pickup/6570996?source=rss" data-title="兵器搭載AI 高度化急ぐウクライナ" data-summary="">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">IT</span>
-                        <span class="entry-time">21分前</span>
+                        <span class="entry-time">34分前</span>
+                    </div>
+                    <div class="entry-title">
+                        <span class="new-badge">NEW</span>
+                        <a href="https://news.yahoo.co.jp/pickup/6570996?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">兵器搭載AI 高度化急ぐウクライナ</a>
+                    </div>
+                    <div class="entry-summary"></div>
+                </div>
+                
+            </div>
+            
+            <div class="card entry-item" data-link="https://news.yahoo.co.jp/pickup/6570996?source=rss" data-title="兵器搭載AI 高度化急ぐウクライナ" data-summary="">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">主要</span>
+                        <span class="entry-time">34分前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -330,7 +379,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">国際</span>
-                        <span class="entry-time">22分前</span>
+                        <span class="entry-time">35分前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -346,7 +395,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">カテゴリ-地域</span>
-                        <span class="entry-time">26分前</span>
+                        <span class="entry-time">40分前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -362,7 +411,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">主要</span>
-                        <span class="entry-time">41分前</span>
+                        <span class="entry-time">54分前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -378,7 +427,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">国内</span>
-                        <span class="entry-time">41分前</span>
+                        <span class="entry-time">54分前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -394,7 +443,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">主要</span>
-                        <span class="entry-time">41分前</span>
+                        <span class="entry-time">54分前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -410,7 +459,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">ライフ</span>
-                        <span class="entry-time">42分前</span>
+                        <span class="entry-time">55分前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -426,7 +475,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">主要</span>
-                        <span class="entry-time">42分前</span>
+                        <span class="entry-time">56分前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -442,7 +491,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">国際</span>
-                        <span class="entry-time">42分前</span>
+                        <span class="entry-time">56分前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -458,7 +507,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">主要</span>
-                        <span class="entry-time">42分前</span>
+                        <span class="entry-time">56分前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -474,7 +523,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">ライフ</span>
-                        <span class="entry-time">51分前</span>
+                        <span class="entry-time">1時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -490,7 +539,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">ライフ</span>
-                        <span class="entry-time">52分前</span>
+                        <span class="entry-time">1時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -505,40 +554,8 @@
                 <div class="card-content">
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                        <span class="entry-source">主要</span>
-                        <span class="entry-time">54分前</span>
-                    </div>
-                    <div class="entry-title">
-                        <span class="new-badge">NEW</span>
-                        <a href="https://news.yahoo.co.jp/pickup/6570993?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">核ごみ巡り 安全と恩恵に揺れる村</a>
-                    </div>
-                    <div class="entry-summary"></div>
-                </div>
-                
-            </div>
-            
-            <div class="card entry-item" data-link="https://news.yahoo.co.jp/pickup/6570993?source=rss" data-title="核ごみ巡り 安全と恩恵に揺れる村" data-summary="">
-                <div class="card-content">
-                    <div class="entry-meta">
-                        <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">トピックス - 地域</span>
-                        <span class="entry-time">54分前</span>
-                    </div>
-                    <div class="entry-title">
-                        <span class="new-badge">NEW</span>
-                        <a href="https://news.yahoo.co.jp/pickup/6570993?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">核ごみ巡り 安全と恩恵に揺れる村</a>
-                    </div>
-                    <div class="entry-summary"></div>
-                </div>
-                
-            </div>
-            
-            <div class="card entry-item" data-link="https://news.yahoo.co.jp/pickup/6570993?source=rss" data-title="核ごみ巡り 安全と恩恵に揺れる村" data-summary="">
-                <div class="card-content">
-                    <div class="entry-meta">
-                        <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                        <span class="entry-source">主要</span>
-                        <span class="entry-time">54分前</span>
+                        <span class="entry-time">1時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -554,7 +571,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">カテゴリ-地域</span>
-                        <span class="entry-time">59分前</span>
+                        <span class="entry-time">1時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -1029,28 +1046,12 @@
                 
             </div>
             
-            <div class="card entry-item" data-link="https://news.yahoo.co.jp/articles/c1151f30543cbaf05949bd4c90342bd4a05c91cb?source=rss" data-title="朝霞市死亡ひき逃げ事件　配送業の31歳の女を逮捕／埼玉県(テレ玉)" data-summary="22日夜、朝霞市の丁字路交差点で横断歩道を横断中の女性がはねられ死亡したひき逃げ事件で、警察は、23日、配送業の31歳の女を逮捕しました。 過失運転致傷とひき逃げの疑いで逮捕されたのは、越谷市神">
-                <div class="card-content">
-                    <div class="entry-meta">
-                        <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                        <span class="entry-source">カテゴリ-地域</span>
-                        <span class="entry-time">1時間前</span>
-                    </div>
-                    <div class="entry-title">
-                        <span class="new-badge">NEW</span>
-                        <a href="https://news.yahoo.co.jp/articles/c1151f30543cbaf05949bd4c90342bd4a05c91cb?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">朝霞市死亡ひき逃げ事件　配送業の31歳の女を逮捕／埼玉県(テレ玉)</a>
-                    </div>
-                    <div class="entry-summary">22日夜、朝霞市の丁字路交差点で横断歩道を横断中の女性がはねられ死亡したひき逃げ事件で、警察は、23日、配送業の31歳の女を逮捕しました。 過失運転致傷とひき逃げの疑いで逮捕されたのは、越谷市神</div>
-                </div>
-                
-            </div>
-            
             <div class="card entry-item" data-link="https://news.yahoo.co.jp/pickup/6570986?source=rss" data-title="先発初球で危険球退場 敗戦投手に" data-summary="">
                 <div class="card-content">
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">スポーツ</span>
-                        <span class="entry-time">1時間前</span>
+                        <span class="entry-time">2時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -1066,7 +1067,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">スポーツ</span>
-                        <span class="entry-time">1時間前</span>
+                        <span class="entry-time">2時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -1242,7 +1243,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">エンタ</span>
-                        <span class="entry-time">2時間前</span>
+                        <span class="entry-time">3時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -1258,7 +1259,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">みん経</span>
-                        <span class="entry-time">2時間前</span>
+                        <span class="entry-time">3時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -1354,7 +1355,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">科学</span>
-                        <span class="entry-time">3時間前</span>
+                        <span class="entry-time">4時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -1658,7 +1659,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">スポーツ</span>
-                        <span class="entry-time">5時間前</span>
+                        <span class="entry-time">6時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -1674,7 +1675,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">国際</span>
-                        <span class="entry-time">5時間前</span>
+                        <span class="entry-time">6時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -1898,7 +1899,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">国際</span>
-                        <span class="entry-time">8時間前</span>
+                        <span class="entry-time">9時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -1946,7 +1947,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">エンタ</span>
-                        <span class="entry-time">9時間前</span>
+                        <span class="entry-time">10時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -1978,7 +1979,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">国内</span>
-                        <span class="entry-time">13時間前</span>
+                        <span class="entry-time">14時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -2869,14 +2870,14 @@
                         
                     </li>
                     
-                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/pickup/6570993?source=rss" data-title="核ごみ巡り 安全と恩恵に揺れる村" data-summary="">
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/pickup/6570996?source=rss" data-title="兵器搭載AI 高度化急ぐウクライナ" data-summary="">
                         <div class="card-content">
                             <div class="entry-title">
                                 <span class="new-badge">NEW</span>
-                                <a href="https://news.yahoo.co.jp/pickup/6570993?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">核ごみ巡り 安全と恩恵に揺れる村</a>
+                                <a href="https://news.yahoo.co.jp/pickup/6570996?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">兵器搭載AI 高度化急ぐウクライナ</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">54分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">34分前</span>
                             </div>
                             <div class="entry-summary"></div>
                         </div>
@@ -2890,7 +2891,7 @@
                                 <a href="https://news.yahoo.co.jp/pickup/6570994?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">メキシコ全土で暴動 軍の作戦受け</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">42分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">56分前</span>
                             </div>
                             <div class="entry-summary"></div>
                         </div>
@@ -2918,7 +2919,7 @@
                                 <a href="https://news.yahoo.co.jp/pickup/6570995?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">元受刑者語る 社会の風当たり強さ</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">41分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">54分前</span>
                             </div>
                             <div class="entry-summary"></div>
                         </div>
@@ -2984,6 +2985,20 @@
                 </summary>
                 <ul class="entry-list">
                     
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/articles/2a68dc0b6a2232a96664ac6726c38fbeef88a60c?source=rss" data-title="9300万円相当を55回にわたりだましとられる　警察官名乗る男から「逮捕状出ている」「身の潔白を証明する」　警察官を名乗る電話は『詐欺』の可能性(MBSニュース)" data-summary="9300万円相当の暗号資産が50回以上にわたってだましとられました。兵庫県三木市の会社員の63歳の男性をだましたのは「逮捕状が出ている」などと警察官を名乗った男らでした。 警察によりますと、三木市">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://news.yahoo.co.jp/articles/2a68dc0b6a2232a96664ac6726c38fbeef88a60c?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">9300万円相当を55回にわたりだましとられる　警察官名乗る男から「逮捕状出ている」「身の潔白を証明する」　警察官を名乗る電話は『詐欺』の可能性(MBSニュース)</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">3分前</span>
+                            </div>
+                            <div class="entry-summary">9300万円相当の暗号資産が50回以上にわたってだましとられました。兵庫県三木市の会社員の63歳の男性をだましたのは「逮捕状が出ている」などと警察官を名乗った男らでした。 警察によりますと、三木市</div>
+                        </div>
+                        
+                    </li>
+                    
                     <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/articles/13cbb82035bae485d668ecfb756e5e518ea85d4c?source=rss" data-title="八女市で竹林火災　高齢男性の遺体見つかる(九州朝日放送)" data-summary="２３日夕方、福岡県八女市の竹林で火事があり、焼け跡から高齢男性の遺体が見つかりました。 野焼きが延焼したとみられています。 警察と消防によりますと、２３日午後５時半すぎ八女市立花町下辺春で「山が燃">
                         <div class="card-content">
                             <div class="entry-title">
@@ -2991,7 +3006,7 @@
                                 <a href="https://news.yahoo.co.jp/articles/13cbb82035bae485d668ecfb756e5e518ea85d4c?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">八女市で竹林火災　高齢男性の遺体見つかる(九州朝日放送)</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">12分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">25分前</span>
                             </div>
                             <div class="entry-summary">２３日夕方、福岡県八女市の竹林で火事があり、焼け跡から高齢男性の遺体が見つかりました。 野焼きが延焼したとみられています。 警察と消防によりますと、２３日午後５時半すぎ八女市立花町下辺春で「山が燃</div>
                         </div>
@@ -3005,7 +3020,7 @@
                                 <a href="https://news.yahoo.co.jp/articles/99f8a6f1fcee197cfe72d37e1ef6fddad270cbdd?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">志布志市で重体事故　オートバイが転倒　40歳男性が意識不明(南日本新聞)</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">26分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">40分前</span>
                             </div>
                             <div class="entry-summary">２３日午後５時２５分ごろ、鹿児島県志布志市志布志町田之浦の県道で、鹿屋市寿４丁目、会社役員男性（４０）のオートバイが転倒しているのが見つかった。男性は意識不明の重体。 志布志署によると、通</div>
                         </div>
@@ -3019,7 +3034,7 @@
                                 <a href="https://news.yahoo.co.jp/articles/5f625facbb2faeafbb60d8c8d345786ff2fd25b1?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">志布志市の県道でバイク転倒　会社役員が意識不明の重体に　鹿児島県(MBC南日本放送)</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">59分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
                             </div>
                             <div class="entry-summary">鹿児島県志布志市の県道で23日夕方、バイクが転倒しているのが見つかり、運転していたとみられる会社役員の男性が意識不明の重体となっています。 志布志警察署によりますと、23日午後5時半ごろ、志布志市志</div>
                         </div>
@@ -3110,20 +3125,6 @@
                         
                     </li>
                     
-                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/articles/c1151f30543cbaf05949bd4c90342bd4a05c91cb?source=rss" data-title="朝霞市死亡ひき逃げ事件　配送業の31歳の女を逮捕／埼玉県(テレ玉)" data-summary="22日夜、朝霞市の丁字路交差点で横断歩道を横断中の女性がはねられ死亡したひき逃げ事件で、警察は、23日、配送業の31歳の女を逮捕しました。 過失運転致傷とひき逃げの疑いで逮捕されたのは、越谷市神">
-                        <div class="card-content">
-                            <div class="entry-title">
-                                <span class="new-badge">NEW</span>
-                                <a href="https://news.yahoo.co.jp/articles/c1151f30543cbaf05949bd4c90342bd4a05c91cb?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">朝霞市死亡ひき逃げ事件　配送業の31歳の女を逮捕／埼玉県(テレ玉)</a>
-                            </div>
-                            <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
-                            </div>
-                            <div class="entry-summary">22日夜、朝霞市の丁字路交差点で横断歩道を横断中の女性がはねられ死亡したひき逃げ事件で、警察は、23日、配送業の31歳の女を逮捕しました。 過失運転致傷とひき逃げの疑いで逮捕されたのは、越谷市神</div>
-                        </div>
-                        
-                    </li>
-                    
                 </ul>
             </details>
             
@@ -3176,7 +3177,7 @@
                                 <a href="https://news.yahoo.co.jp/pickup/6570993?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">核ごみ巡り 安全と恩恵に揺れる村</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">54分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
                             </div>
                             <div class="entry-summary"></div>
                         </div>
@@ -3277,7 +3278,7 @@
                                 <a href="https://news.yahoo.co.jp/pickup/6570971?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">珍しい生きた「幽霊」イカ 発見</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">3時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">4時間前</span>
                             </div>
                             <div class="entry-summary"></div>
                         </div>
@@ -3406,7 +3407,7 @@
                                 <a href="https://news.yahoo.co.jp/pickup/6570996?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">兵器搭載AI 高度化急ぐウクライナ</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">21分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">34分前</span>
                             </div>
                             <div class="entry-summary"></div>
                         </div>
@@ -3549,7 +3550,7 @@
                                 <a href="https://news.yahoo.co.jp/pickup/6570985?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">侍フィーバーすごかった 球場取材</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">2時間前</span>
                             </div>
                             <div class="entry-summary"></div>
                         </div>
@@ -3619,7 +3620,7 @@
                                 <a href="https://news.yahoo.co.jp/pickup/6570955?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">五輪彩った「敗れざる者」の物語</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">5時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">6時間前</span>
                             </div>
                             <div class="entry-summary"></div>
                         </div>
@@ -3633,7 +3634,7 @@
                                 <a href="https://news.yahoo.co.jp/pickup/6570986?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">先発初球で危険球退場 敗戦投手に</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">2時間前</span>
                             </div>
                             <div class="entry-summary"></div>
                         </div>
@@ -3664,7 +3665,7 @@
                                 <a href="https://news.yahoo.co.jp/pickup/6570979?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">菅野美穂が突然即興劇 共演者爆笑</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">2時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">3時間前</span>
                             </div>
                             <div class="entry-summary"></div>
                         </div>
@@ -3734,7 +3735,7 @@
                                 <a href="https://news.yahoo.co.jp/pickup/6570923?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">真矢さん急死 底抜けに明るい人柄</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">9時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">10時間前</span>
                             </div>
                             <div class="entry-summary"></div>
                         </div>
@@ -3936,7 +3937,7 @@
                                 <a href="https://news.yahoo.co.jp/pickup/6570994?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">メキシコ全土で暴動 軍の作戦受け</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">42分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">56分前</span>
                             </div>
                             <div class="entry-summary"></div>
                         </div>
@@ -3964,7 +3965,7 @@
                                 <a href="https://news.yahoo.co.jp/pickup/6570928?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">北朝鮮 金正恩氏を党総書記に再任</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">8時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">9時間前</span>
                             </div>
                             <div class="entry-summary"></div>
                         </div>
@@ -3978,7 +3979,7 @@
                                 <a href="https://news.yahoo.co.jp/pickup/6570954?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">露政権 戦争疲れに神経とがらせ</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">5時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">6時間前</span>
                             </div>
                             <div class="entry-summary"></div>
                         </div>
@@ -4006,7 +4007,7 @@
                                 <a href="https://news.yahoo.co.jp/pickup/6570997?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">春節 中国経済厳しくコスパ重視に</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">22分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">35分前</span>
                             </div>
                             <div class="entry-summary"></div>
                         </div>
@@ -4079,7 +4080,7 @@
                                 <a href="https://news.yahoo.co.jp/pickup/6570900?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">自民党圧勝でかすむ 選挙制度改革</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">13時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">14時間前</span>
                             </div>
                             <div class="entry-summary"></div>
                         </div>
@@ -4121,7 +4122,7 @@
                                 <a href="https://news.yahoo.co.jp/pickup/6570995?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">元受刑者語る 社会の風当たり強さ</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">41分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">54分前</span>
                             </div>
                             <div class="entry-summary"></div>
                         </div>
@@ -4187,14 +4188,14 @@
                         
                     </li>
                     
-                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/pickup/6570993?source=rss" data-title="核ごみ巡り 安全と恩恵に揺れる村" data-summary="">
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/pickup/6570996?source=rss" data-title="兵器搭載AI 高度化急ぐウクライナ" data-summary="">
                         <div class="card-content">
                             <div class="entry-title">
                                 <span class="new-badge">NEW</span>
-                                <a href="https://news.yahoo.co.jp/pickup/6570993?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">核ごみ巡り 安全と恩恵に揺れる村</a>
+                                <a href="https://news.yahoo.co.jp/pickup/6570996?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">兵器搭載AI 高度化急ぐウクライナ</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">54分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">34分前</span>
                             </div>
                             <div class="entry-summary"></div>
                         </div>
@@ -4208,7 +4209,7 @@
                                 <a href="https://news.yahoo.co.jp/pickup/6570994?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">メキシコ全土で暴動 軍の作戦受け</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">42分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">56分前</span>
                             </div>
                             <div class="entry-summary"></div>
                         </div>
@@ -4236,7 +4237,7 @@
                                 <a href="https://news.yahoo.co.jp/pickup/6570995?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">元受刑者語る 社会の風当たり強さ</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">41分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">54分前</span>
                             </div>
                             <div class="entry-summary"></div>
                         </div>
@@ -4323,7 +4324,7 @@
                                 <a href="https://news.yahoo.co.jp/articles/e9524423942d175f493ec9ebf10f88741333d684?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">錦糸町で新日本フィル特別演奏会　堀井美香さんと高見沢俊彦さんが朗読(みんなの経済新聞ネットワーク)</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">2時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">3時間前</span>
                             </div>
                             <div class="entry-summary">朗読とオーケストラ演奏を組み合わせた特別公演「堀井美香が贈る お疲れ様コンサート あの人のリーディングとともに 新日本フィルハーモニー交響楽団特別演奏会」が2月20日、すみだトリフォニーホール（墨田</div>
                         </div>
@@ -5251,7 +5252,7 @@
                                 <a href="https://news.yahoo.co.jp/articles/1c76ac76ae480681f887de4b90fc2df9e2f9943a?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【100均DIY】ダイソーの〈棚板と棚受け〉→洗濯機上が〈ホテルのような収納空間〉に大変身！(LIMO)</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">11分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">24分前</span>
                             </div>
                             <div class="entry-summary">DIYテクニックを発信しているInstagramerが、洗濯機上の使いづらいラックを、ダイソーグッズでホテルライクな壁面収納へと大変身させて、話題になっています。 動画を投稿したのは、「@asune</div>
                         </div>
@@ -5265,7 +5266,7 @@
                                 <a href="https://news.yahoo.co.jp/articles/7eca4a5a2b5bbfecb92141ad833f1d65036b10c4?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【衝撃】「炭水化物を食べて」お腹痩せ？ 内臓脂肪を撃退する“最強の食材3選”。米管理栄養士が教える新常識【米】(ウィメンズヘルス)</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">42分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">55分前</span>
                             </div>
                             <div class="entry-summary">「お腹まわりの脂肪は、健康に良くない」といわれているとおり、近年の研究では、過剰な内臓脂肪が「心臓の老化」を早める可能性があることがわかっている。皮膚のすぐ下にある“つまめる”脂肪（皮下脂肪）とは異な</div>
                         </div>
@@ -5279,7 +5280,7 @@
                                 <a href="https://news.yahoo.co.jp/articles/249f81e08ece37bb96df7961e9af61e55225dae7?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【アスレティア、アッカカッパほか】買ってよかった！編集部員の私物フレグランス3選(＠BAILA)</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">51分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
                             </div>
                             <div class="entry-summary">編集部員が「買って正解だった」と愛用中の香水を、実際にまとってみた感想とともにご紹介！ 日常にそっと彩りを添えてくれるフレグランス。ふとした瞬間に自分だけにふわりと香るたび、気分が切り替わり、仕事への</div>
                         </div>
@@ -5293,7 +5294,7 @@
                                 <a href="https://news.yahoo.co.jp/articles/dde98adbd4990c1ded8cd6ca419117f43a0dfa11?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">Netflix『脱出おひとり島』ロケ地も！ラグジュアリーな体験ができる韓国ホテル 3選(ELLE DIGITAL)</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">52分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
                             </div>
                             <div class="entry-summary">きらびやかな色彩や大理石やレザーといった高級感あふれる素材、インテリアの随所から非日常感があふれる"コリアンラグジュアリー"なホテルがいま気になる！ステイすれば、まるで自分がドラマやリアリティーショー</div>
                         </div>
@@ -5394,7 +5395,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // タブ切り替えロジック
             const tabs = document.querySelectorAll('.view-tab');
             const contents = document.querySelectorAll('.view-content');
             tabs.forEach(tab => {
@@ -5406,7 +5406,6 @@
                 });
             });
 
-            // 既読管理
             const STORAGE_KEY = 'rss_read_items';
             let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
             const entryItems = document.querySelectorAll('.entry-item');
@@ -5419,7 +5418,6 @@
                 const anchor = item.querySelector('a.entry-link');
                 if(anchor) {
                     anchor.addEventListener('click', function() {
-                        // 両方のビューの同じ記事を同時に既読にする
                         document.querySelectorAll(`.entry-item[data-link="${link}"]`).forEach(el => {
                             el.classList.add('read');
                         });
@@ -5433,7 +5431,6 @@
                 }
             });
 
-            // 検索・絞り込み
             const searchToggle = document.getElementById('searchToggle');
             const searchInput = document.getElementById('searchInput');
             
@@ -5467,9 +5464,10 @@
                         if(summaryDiv && entry.dataset.originalSummaryHtml) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
                     });
                     
-                    // アコーディオンの表示もリセット
+                    // 修正箇所: 検索クリア時にアコーディオンを全て閉じた状態に戻す
                     document.querySelectorAll('details.feed-section').forEach(sec => {
                         sec.style.display = '';
+                        sec.open = false; 
                     });
                     return;
                 }
@@ -5486,14 +5484,13 @@
                     }
                 });
 
-                // アコーディオン内で表示できる記事がない場合は親要素ごと隠す
                 document.querySelectorAll('details.feed-section').forEach(section => {
                     const visibleItems = Array.from(section.querySelectorAll('.list-item')).filter(el => el.style.display !== 'none');
                     if(visibleItems.length === 0) {
                         section.style.display = 'none';
                     } else {
                         section.style.display = '';
-                        section.open = true; // ヒットしたら開いておく
+                        section.open = true; 
                     }
                 });
             });

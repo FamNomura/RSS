@@ -45,7 +45,7 @@
         }
         .nav-links { 
             display: flex; 
-            flex-wrap: wrap; /* 修正箇所: PCで折り返し多段表示にするため wrap に変更 */
+            flex-wrap: wrap;
             gap: 8px; 
             flex-grow: 1;
         }
@@ -64,7 +64,6 @@
         .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
         .nav-link.active { opacity: 1; background-color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
-        /* スマホ向けナビゲーション（横スクロール） */
         @media (max-width: 600px) {
             .nav-links {
                 flex-wrap: nowrap;
@@ -94,7 +93,6 @@
         h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
         .last-updated { font-size: 12px; color: var(--text-sub); }
 
-        /* 修正箇所: トピックページ用の特別デザイン */
         .header-topic {
             background: linear-gradient(135deg, #f0f7ff 0%, #e0edff 100%);
             border-left: 5px solid #007bff;
@@ -104,7 +102,6 @@
             font-size: 12px; color: #0056b3; margin: 8px 0; font-weight: bold; line-height: 1.4;
         }
 
-        /* 修正箇所: タブ切り替えUI */
         .view-tabs {
             display: flex; gap: 10px; margin-bottom: 20px; justify-content: flex-end;
         }
@@ -130,7 +127,7 @@
         .card-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
         .entry-thumbnail { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee; }
 
-        /* アコーディオン型 (サイト別) UI */
+        /* アコーディオン型 (サイト別・トピック別) UI */
         details {
             background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
         }
@@ -263,14 +260,18 @@
         <header class="">
             <h1>ガジェット</h1>
             
-            <div class="last-updated">最終更新: 02/23 23:43</div>
+            <div class="last-updated">最終更新: 02/23 23:56</div>
         </header>
 
         
         <div class="view-tabs">
+            
             <button class="view-tab active" data-target="view-timeline">🕒 タイムライン</button>
             <button class="view-tab" data-target="view-feed">📁 サイト別</button>
+            
         </div>
+        
+
         
 
         
@@ -282,7 +283,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=www.gizmodo.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">ギズモード・ジャパン</span>
-                        <span class="entry-time">42分前</span>
+                        <span class="entry-time">55分前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -424,7 +425,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=www.gizmodo.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">ギズモード・ジャパン</span>
-                        <span class="entry-time">6時間前</span>
+                        <span class="entry-time">7時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -460,7 +461,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=www.gizmodo.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">ギズモード・ジャパン</span>
-                        <span class="entry-time">7時間前</span>
+                        <span class="entry-time">8時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -3147,7 +3148,7 @@
                                 <a href="https://www.gizmodo.jp/2026/02/smart_gears-uvi.html" target="_blank" rel="noopener noreferrer" class="entry-link">備えあればうれしいな。リュックに付けるだけで生活がよりスマートになるギア</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">42分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">55分前</span>
                             </div>
                             <div class="entry-summary">Photo:SUMA-KIYO2025年11月24日の記事を編集して再掲載しています。みなさんリュックやバッグになにか付けてますか？カラビナやキーチェーンなんかが定番ですよね。でもこのアクセスの良い場所、使わない手はない！今日はカチャっとつけるだけでお出かけがグッとスマートになるギアを3つ紹介します。ポータブル性◎なスマホ三脚Photo:SUMA-KIYO自撮りや動画視聴に便利なスマホ三脚ですが、</div>
                         </div>
@@ -3259,7 +3260,7 @@
                                 <a href="https://www.gizmodo.jp/2026/02/costorypo-tinylsplit-review1-1351662211.html" target="_blank" rel="noopener noreferrer" class="entry-link">令和の時代に「あえてCDを聴く」ってエモい。Bluetooth CDプレーヤーで思い出に浸ってみた</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">6時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">7時間前</span>
                             </div>
                             <div class="entry-summary">サブスク未解禁の名盤を聴きたいのにプレーヤーがない……。そんな悩みを解決するモジュール式CDプレーヤー「TINYL SPLIT」をレビュー！ スピーカーがパチッと分離する不思議なギミックや便利なBluetooth対応など、今の時代に「あえてCDを聴く」ってエモいです。</div>
                         </div>
@@ -3291,7 +3292,7 @@
                                 <a href="https://www.gizmodo.jp/2026/02/314017-costorypo-spritz-start-1369195002.html" target="_blank" rel="noopener noreferrer" class="entry-link">プラモも家具もガンガン塗れる。色替え5秒の電動スプレーガンが塗装の面倒を解決</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">7時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">8時間前</span>
                             </div>
                             <div class="entry-summary">ノズル一体型ボトルが洗浄不要の色替えを実現。コードレスだから大きい対象も快適に塗れる。エアブラシモードも搭載しているから、繊細なフィギュアの塗装もOK。創作活動をドライブする塗装ガジェットが今ならセール中です。</div>
                         </div>
@@ -3624,7 +3625,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // タブ切り替えロジック
             const tabs = document.querySelectorAll('.view-tab');
             const contents = document.querySelectorAll('.view-content');
             tabs.forEach(tab => {
@@ -3636,7 +3636,6 @@
                 });
             });
 
-            // 既読管理
             const STORAGE_KEY = 'rss_read_items';
             let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
             const entryItems = document.querySelectorAll('.entry-item');
@@ -3649,7 +3648,6 @@
                 const anchor = item.querySelector('a.entry-link');
                 if(anchor) {
                     anchor.addEventListener('click', function() {
-                        // 両方のビューの同じ記事を同時に既読にする
                         document.querySelectorAll(`.entry-item[data-link="${link}"]`).forEach(el => {
                             el.classList.add('read');
                         });
@@ -3663,7 +3661,6 @@
                 }
             });
 
-            // 検索・絞り込み
             const searchToggle = document.getElementById('searchToggle');
             const searchInput = document.getElementById('searchInput');
             
@@ -3697,9 +3694,10 @@
                         if(summaryDiv && entry.dataset.originalSummaryHtml) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
                     });
                     
-                    // アコーディオンの表示もリセット
+                    // 修正箇所: 検索クリア時にアコーディオンを全て閉じた状態に戻す
                     document.querySelectorAll('details.feed-section').forEach(sec => {
                         sec.style.display = '';
+                        sec.open = false; 
                     });
                     return;
                 }
@@ -3716,14 +3714,13 @@
                     }
                 });
 
-                // アコーディオン内で表示できる記事がない場合は親要素ごと隠す
                 document.querySelectorAll('details.feed-section').forEach(section => {
                     const visibleItems = Array.from(section.querySelectorAll('.list-item')).filter(el => el.style.display !== 'none');
                     if(visibleItems.length === 0) {
                         section.style.display = 'none';
                     } else {
                         section.style.display = '';
-                        section.open = true; // ヒットしたら開いておく
+                        section.open = true; 
                     }
                 });
             });

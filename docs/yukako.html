@@ -45,7 +45,7 @@
         }
         .nav-links { 
             display: flex; 
-            flex-wrap: wrap; /* 修正箇所: PCで折り返し多段表示にするため wrap に変更 */
+            flex-wrap: wrap;
             gap: 8px; 
             flex-grow: 1;
         }
@@ -64,7 +64,6 @@
         .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
         .nav-link.active { opacity: 1; background-color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
-        /* スマホ向けナビゲーション（横スクロール） */
         @media (max-width: 600px) {
             .nav-links {
                 flex-wrap: nowrap;
@@ -94,7 +93,6 @@
         h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
         .last-updated { font-size: 12px; color: var(--text-sub); }
 
-        /* 修正箇所: トピックページ用の特別デザイン */
         .header-topic {
             background: linear-gradient(135deg, #f0f7ff 0%, #e0edff 100%);
             border-left: 5px solid #007bff;
@@ -104,7 +102,6 @@
             font-size: 12px; color: #0056b3; margin: 8px 0; font-weight: bold; line-height: 1.4;
         }
 
-        /* 修正箇所: タブ切り替えUI */
         .view-tabs {
             display: flex; gap: 10px; margin-bottom: 20px; justify-content: flex-end;
         }
@@ -130,7 +127,7 @@
         .card-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
         .entry-thumbnail { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee; }
 
-        /* アコーディオン型 (サイト別) UI */
+        /* アコーディオン型 (サイト別・トピック別) UI */
         details {
             background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
         }
@@ -267,7 +264,7 @@
                 ※設定したキーワード（起業, 訪問看護, ピタットナース, 助成金）に合致する記事を抽出しています
             </div>
             
-            <div class="last-updated">最終更新: 02/23 23:43</div>
+            <div class="last-updated">最終更新: 02/23 23:56</div>
         </header>
 
         
@@ -276,7 +273,13 @@
         <div class="empty-state">表示する記事がありません</div>
         
 
-        <div id="view-timeline" class="view-content active timeline-container">
+        
+        <div id="view-topic" class="view-content active">
+            
+        </div>
+        
+
+        <div id="view-timeline" class="view-content  timeline-container">
             
         </div>
 
@@ -289,7 +292,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // タブ切り替えロジック
             const tabs = document.querySelectorAll('.view-tab');
             const contents = document.querySelectorAll('.view-content');
             tabs.forEach(tab => {
@@ -301,7 +303,6 @@
                 });
             });
 
-            // 既読管理
             const STORAGE_KEY = 'rss_read_items';
             let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
             const entryItems = document.querySelectorAll('.entry-item');
@@ -314,7 +315,6 @@
                 const anchor = item.querySelector('a.entry-link');
                 if(anchor) {
                     anchor.addEventListener('click', function() {
-                        // 両方のビューの同じ記事を同時に既読にする
                         document.querySelectorAll(`.entry-item[data-link="${link}"]`).forEach(el => {
                             el.classList.add('read');
                         });
@@ -328,7 +328,6 @@
                 }
             });
 
-            // 検索・絞り込み
             const searchToggle = document.getElementById('searchToggle');
             const searchInput = document.getElementById('searchInput');
             
@@ -362,9 +361,10 @@
                         if(summaryDiv && entry.dataset.originalSummaryHtml) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
                     });
                     
-                    // アコーディオンの表示もリセット
+                    // 修正箇所: 検索クリア時にアコーディオンを全て閉じた状態に戻す
                     document.querySelectorAll('details.feed-section').forEach(sec => {
                         sec.style.display = '';
+                        sec.open = false; 
                     });
                     return;
                 }
@@ -381,14 +381,13 @@
                     }
                 });
 
-                // アコーディオン内で表示できる記事がない場合は親要素ごと隠す
                 document.querySelectorAll('details.feed-section').forEach(section => {
                     const visibleItems = Array.from(section.querySelectorAll('.list-item')).filter(el => el.style.display !== 'none');
                     if(visibleItems.length === 0) {
                         section.style.display = 'none';
                     } else {
                         section.style.display = '';
-                        section.open = true; // ヒットしたら開いておく
+                        section.open = true; 
                     }
                 });
             });

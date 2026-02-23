@@ -45,7 +45,7 @@
         }
         .nav-links { 
             display: flex; 
-            flex-wrap: wrap; /* 修正箇所: PCで折り返し多段表示にするため wrap に変更 */
+            flex-wrap: wrap;
             gap: 8px; 
             flex-grow: 1;
         }
@@ -64,7 +64,6 @@
         .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
         .nav-link.active { opacity: 1; background-color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
-        /* スマホ向けナビゲーション（横スクロール） */
         @media (max-width: 600px) {
             .nav-links {
                 flex-wrap: nowrap;
@@ -94,7 +93,6 @@
         h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
         .last-updated { font-size: 12px; color: var(--text-sub); }
 
-        /* 修正箇所: トピックページ用の特別デザイン */
         .header-topic {
             background: linear-gradient(135deg, #f0f7ff 0%, #e0edff 100%);
             border-left: 5px solid #007bff;
@@ -104,7 +102,6 @@
             font-size: 12px; color: #0056b3; margin: 8px 0; font-weight: bold; line-height: 1.4;
         }
 
-        /* 修正箇所: タブ切り替えUI */
         .view-tabs {
             display: flex; gap: 10px; margin-bottom: 20px; justify-content: flex-end;
         }
@@ -130,7 +127,7 @@
         .card-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
         .entry-thumbnail { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee; }
 
-        /* アコーディオン型 (サイト別) UI */
+        /* アコーディオン型 (サイト別・トピック別) UI */
         details {
             background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
         }
@@ -263,14 +260,18 @@
         <header class="">
             <h1>総合ニュース</h1>
             
-            <div class="last-updated">最終更新: 02/23 23:43</div>
+            <div class="last-updated">最終更新: 02/23 23:56</div>
         </header>
 
         
         <div class="view-tabs">
+            
             <button class="view-tab active" data-target="view-timeline">🕒 タイムライン</button>
             <button class="view-tab" data-target="view-feed">📁 サイト別</button>
+            
         </div>
+        
+
         
 
         
@@ -282,7 +283,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.web.nhk" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">NHK主要ニュース</span>
-                        <span class="entry-time">22分前</span>
+                        <span class="entry-time">36分前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -298,7 +299,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.web.nhk" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">NHKニュース 国際</span>
-                        <span class="entry-time">22分前</span>
+                        <span class="entry-time">36分前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -314,7 +315,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.web.nhk" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">NHK主要ニュース</span>
-                        <span class="entry-time">56分前</span>
+                        <span class="entry-time">1時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -330,7 +331,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.web.nhk" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">NHKニュース スポーツ</span>
-                        <span class="entry-time">56分前</span>
+                        <span class="entry-time">1時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -346,7 +347,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.web.nhk" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">NHKニュース スポーツ</span>
-                        <span class="entry-time">1時間前</span>
+                        <span class="entry-time">2時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -542,7 +543,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.web.nhk" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">NHKニュース 国際</span>
-                        <span class="entry-time">4時間前</span>
+                        <span class="entry-time">5時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -882,7 +883,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.web.nhk" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">NHKニュース 国際</span>
-                        <span class="entry-time">11時間前</span>
+                        <span class="entry-time">12時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -1034,7 +1035,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.web.nhk" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">NHKニュース スポーツ</span>
-                        <span class="entry-time">15時間前</span>
+                        <span class="entry-time">16時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -1787,6 +1788,22 @@
                         
                     </li>
                     
+                    <li class="list-item entry-item" data-link="https://note.com/it_navi/n/ne26d4d078386" data-title="Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT navi" data-summary="Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT naviAIを使ったスライド作成は以前から可能でしたが、作った後に編集できないという課題がついて回りました。例えばNotebookLMでは、多彩なデザインのスライドをpptxファイルとして出力できるものの、各ページが1枚の画像として埋め込まれるため、文字や図表を後から修正するのが困難です。 その点、Claudeで作成したスライ...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://note.com/it_navi/n/ne26d4d078386" target="_blank" rel="noopener noreferrer" class="entry-link">Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT navi</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">13時間前</span>
+                            </div>
+                            <div class="entry-summary">Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT naviAIを使ったスライド作成は以前から可能でしたが、作った後に編集できないという課題がついて回りました。例えばNotebookLMでは、多彩なデザインのスライドをpptxファイルとして出力できるものの、各ページが1枚の画像として埋め込まれるため、文字や図表を後から修正するのが困難です。 その点、Claudeで作成したスライ...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fnote.com%2Fit_navi%2Fn%2Fne26d4d078386" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
                     <li class="list-item entry-item" data-link="https://www.cnn.co.jp/world/35244198.html" data-title="ウクライナ侵攻から4年、今も「致命的誤算」の代償を払うロシア" data-summary="ウクライナ侵攻から4年、今も「致命的誤算」の代償を払うロシアロシアのプーチン大統領/Photo Illustration by Alberto Mier/CNN/Getty Images （CNN） 2022年2月24日未明。ウクライナ首都キーウのホテルの凍てつく屋上に立っていると、国境地帯に部隊が集結しているとはいえ、ロシアがウクライナに全面侵攻するとはその時点でもほとんど想像できなかった。 確かに、クレムリン（ロシ...">
                         <div class="card-content">
                             <div class="entry-title">
@@ -1800,22 +1817,6 @@
                         </div>
                         
                         <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fwww.cnn.co.jp%2Fworld%2F35244198.html" class="entry-thumbnail" loading="lazy" alt="">
-                        
-                    </li>
-                    
-                    <li class="list-item entry-item" data-link="https://zenn.dev/kaiware0x/articles/to-be-or-not-to-be" data-title="この先生きのこるには" data-summary="この先生きのこるにはこういった、昨今のLLM事情を憂いる記事は親の顔より見ているが、やはり書かずにはいられなかった。 一点言い訳をしておくと、私は普段からLLMを使いまくっている。LLMを使っている人を批判したい意図は無い。 この記事を読んで、今一度LLMの使い方を俯瞰して見てもらえたら嬉しい。 LLM とわたし これでいいんだっけ？ ...">
-                        <div class="card-content">
-                            <div class="entry-title">
-                                
-                                <a href="https://zenn.dev/kaiware0x/articles/to-be-or-not-to-be" target="_blank" rel="noopener noreferrer" class="entry-link">この先生きのこるには</a>
-                            </div>
-                            <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">昨日</span>
-                            </div>
-                            <div class="entry-summary">この先生きのこるにはこういった、昨今のLLM事情を憂いる記事は親の顔より見ているが、やはり書かずにはいられなかった。 一点言い訳をしておくと、私は普段からLLMを使いまくっている。LLMを使っている人を批判したい意図は無い。 この記事を読んで、今一度LLMの使い方を俯瞰して見てもらえたら嬉しい。 LLM とわたし これでいいんだっけ？ ...</div>
-                        </div>
-                        
-                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fzenn.dev%2Fkaiware0x%2Farticles%2Fto-be-or-not-to-be" class="entry-thumbnail" loading="lazy" alt="">
                         
                     </li>
                     
@@ -1835,6 +1836,22 @@
                         
                     </li>
                     
+                    <li class="list-item entry-item" data-link="https://zenn.dev/kaiware0x/articles/to-be-or-not-to-be" data-title="この先生きのこるには" data-summary="この先生きのこるにはこういった、昨今のLLM事情を憂いる記事は親の顔より見ているが、やはり書かずにはいられなかった。 一点言い訳をしておくと、私は普段からLLMを使いまくっている。LLMを使っている人を批判したい意図は無い。 この記事を読んで、今一度LLMの使い方を俯瞰して見てもらえたら嬉しい。 LLM とわたし これでいいんだっけ？ ...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/kaiware0x/articles/to-be-or-not-to-be" target="_blank" rel="noopener noreferrer" class="entry-link">この先生きのこるには</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">昨日</span>
+                            </div>
+                            <div class="entry-summary">この先生きのこるにはこういった、昨今のLLM事情を憂いる記事は親の顔より見ているが、やはり書かずにはいられなかった。 一点言い訳をしておくと、私は普段からLLMを使いまくっている。LLMを使っている人を批判したい意図は無い。 この記事を読んで、今一度LLMの使い方を俯瞰して見てもらえたら嬉しい。 LLM とわたし これでいいんだっけ？ ...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fzenn.dev%2Fkaiware0x%2Farticles%2Fto-be-or-not-to-be" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
                     <li class="list-item entry-item" data-link="https://www.ukrinform.jp/rubric-polytics/4094081-jin-rinonaivuna-ping-he-zhu-yiga-ming-rino-zhan-zhengwo-zhu-zhangsurumerutsu-du-shou-xiang.html" data-title="今日のナイーヴな平和主義が、明日の戦争を助長する＝メルツ独首相" data-summary="今日のナイーヴな平和主義が、明日の戦争を助長する＝メルツ独首相ドイツのメルツ連邦首相は、ロシアと戦っているウクライナを揺らぎなく、かつ無条件で支援することを再確認した上で、侵略国ロシアへの宥和的姿勢に対して警告するメッセージを発信した。 メルツ首相がシュトゥットガルトで開催されたキリスト教民主同盟（ＣＤＵ）の党大会で発言した。ターゲスシュピーゲルが報じた。 ...">
                         <div class="card-content">
                             <div class="entry-title">
@@ -1848,22 +1865,6 @@
                         </div>
                         
                         <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fwww.ukrinform.jp%2Frubric-polytics%2F4094081-jin-rinonaivuna-ping-he-zhu-yiga-ming-rino-zhan-zhengwo-zhu-zhangsurumerutsu-du-shou-xiang.html" class="entry-thumbnail" loading="lazy" alt="">
-                        
-                    </li>
-                    
-                    <li class="list-item entry-item" data-link="https://note.com/it_navi/n/ne26d4d078386" data-title="Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT navi" data-summary="Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT naviAIを使ったスライド作成は以前から可能でしたが、作った後に編集できないという課題がついて回りました。例えばNotebookLMでは、多彩なデザインのスライドをpptxファイルとして出力できるものの、各ページが1枚の画像として埋め込まれるため、文字や図表を後から修正するのが困難です。 その点、Claudeで作成したスライ...">
-                        <div class="card-content">
-                            <div class="entry-title">
-                                <span class="new-badge">NEW</span>
-                                <a href="https://note.com/it_navi/n/ne26d4d078386" target="_blank" rel="noopener noreferrer" class="entry-link">Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT navi</a>
-                            </div>
-                            <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">13時間前</span>
-                            </div>
-                            <div class="entry-summary">Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT naviAIを使ったスライド作成は以前から可能でしたが、作った後に編集できないという課題がついて回りました。例えばNotebookLMでは、多彩なデザインのスライドをpptxファイルとして出力できるものの、各ページが1枚の画像として埋め込まれるため、文字や図表を後から修正するのが困難です。 その点、Claudeで作成したスライ...</div>
-                        </div>
-                        
-                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fnote.com%2Fit_navi%2Fn%2Fne26d4d078386" class="entry-thumbnail" loading="lazy" alt="">
                         
                     </li>
                     
@@ -1891,7 +1892,7 @@
                                 <a href="https://news.web.nhk/newsweb/na/na-k10015059131000" target="_blank" rel="noopener noreferrer" class="entry-link">フィギュア “りくりゅう”ペア 単独インタビューで語ったこと</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">56分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
                             </div>
                             <div class="entry-summary">ミラノ・コルティナオリンピックのフィギュアスケートのペアで、大逆転でこの種目の日本勢として初めての金メダルを獲得した三浦璃来選手と木原龍一選手の“りくりゅう”ペアがNHKの単独インタビューに応じ当時の…</div>
                         </div>
@@ -1947,7 +1948,7 @@
                                 <a href="https://news.web.nhk/newsweb/na/na-k10015059191000" target="_blank" rel="noopener noreferrer" class="entry-link">日本と太平洋島しょ国 国防相らの国際会議 海洋安保など連携を</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">22分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">36分前</span>
                             </div>
                             <div class="entry-summary">日本と太平洋の島しょ国の国防相らによる国際会議が小泉防衛大臣も出席して開かれ、海洋安全保障などの分野で連携し、さまざまな課題に対処していく必要性を共有しました。</div>
                         </div>
@@ -2791,7 +2792,7 @@
                                 <a href="https://news.web.nhk/newsweb/na/na-k10015059191000" target="_blank" rel="noopener noreferrer" class="entry-link">日本と太平洋島しょ国 国防相らの国際会議 海洋安保など連携を</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">22分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">36分前</span>
                             </div>
                             <div class="entry-summary">日本と太平洋の島しょ国の国防相らによる国際会議が小泉防衛大臣も出席して開かれ、海洋安全保障などの分野で連携し、さまざまな課題に対処していく必要性を共有しました。</div>
                         </div>
@@ -2819,7 +2820,7 @@
                                 <a href="https://news.web.nhk/newsweb/na/na-k10015059031000" target="_blank" rel="noopener noreferrer" class="entry-link">ウクライナ駐日大使「公正かつ永続的な平和を望む」</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">4時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">5時間前</span>
                             </div>
                             <div class="entry-summary">ロシアによる軍事侵攻から24日で4年となるのを前に、ウクライナのルトビノフ駐日大使が23日、NHKのインタビューに応じ「われわれが望んでいるのは公正かつ永続的な平和だ」と述べ、ロシアが求める領土の割譲…</div>
                         </div>
@@ -2917,7 +2918,7 @@
                                 <a href="https://news.web.nhk/newsweb/na/na-k10015058901000" target="_blank" rel="noopener noreferrer" class="entry-link">メキシコ国防省“麻薬組織の幹部 軍事作戦で死亡”発表も混乱</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">11時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">12時間前</span>
                             </div>
                             <div class="entry-summary">アメリカのトランプ大統領がメキシコに対し麻薬対策を強化するよう圧力を強める中、メキシコ国防省は国内最大規模の麻薬組織の幹部が軍事作戦によって死亡したと発表しました。ただ、麻薬組織による報復とみられる幹…</div>
                         </div>
@@ -2948,7 +2949,7 @@
                                 <a href="https://news.web.nhk/newsweb/na/na-k10015059131000" target="_blank" rel="noopener noreferrer" class="entry-link">フィギュア “りくりゅう”ペア 単独インタビューで語ったこと</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">56分前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
                             </div>
                             <div class="entry-summary">ミラノ・コルティナオリンピックのフィギュアスケートのペアで、大逆転でこの種目の日本勢として初めての金メダルを獲得した三浦璃来選手と木原龍一選手の“りくりゅう”ペアがNHKの単独インタビューに応じ当時の…</div>
                         </div>
@@ -2962,7 +2963,7 @@
                                 <a href="https://news.web.nhk/newsweb/na/na-k10015059181000" target="_blank" rel="noopener noreferrer" class="entry-link">WBC日本代表 栗山前監督が大谷に期待「もっともっと打てる」</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">2時間前</span>
                             </div>
                             <div class="entry-summary">前回2023年のWBC＝ワールド・ベースボール・クラシックで日本代表を率いた栗山英樹さんが、大リーグ、ドジャースのキャンプ地でNHKのインタビューに応じ、大谷翔平選手の今シーズンやWBCへの期待を語り…</div>
                         </div>
@@ -3060,7 +3061,7 @@
                                 <a href="https://news.web.nhk/newsweb/na/na-k10015058821000" target="_blank" rel="noopener noreferrer" class="entry-link">ミラノ・コルティナオリンピックが閉幕 【詳しく】</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">15時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">16時間前</span>
                             </div>
                             <div class="entry-summary">イタリア北部を舞台に大きく4つのエリアに分かれる「広域開催」で行われたミラノ・コルティナオリンピックの閉会式が行われ、17日間にわたる冬のスポーツの祭典が幕を下ろしました。記事後半では閉会式の経過を詳…</div>
                         </div>
@@ -3091,7 +3092,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // タブ切り替えロジック
             const tabs = document.querySelectorAll('.view-tab');
             const contents = document.querySelectorAll('.view-content');
             tabs.forEach(tab => {
@@ -3103,7 +3103,6 @@
                 });
             });
 
-            // 既読管理
             const STORAGE_KEY = 'rss_read_items';
             let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
             const entryItems = document.querySelectorAll('.entry-item');
@@ -3116,7 +3115,6 @@
                 const anchor = item.querySelector('a.entry-link');
                 if(anchor) {
                     anchor.addEventListener('click', function() {
-                        // 両方のビューの同じ記事を同時に既読にする
                         document.querySelectorAll(`.entry-item[data-link="${link}"]`).forEach(el => {
                             el.classList.add('read');
                         });
@@ -3130,7 +3128,6 @@
                 }
             });
 
-            // 検索・絞り込み
             const searchToggle = document.getElementById('searchToggle');
             const searchInput = document.getElementById('searchInput');
             
@@ -3164,9 +3161,10 @@
                         if(summaryDiv && entry.dataset.originalSummaryHtml) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
                     });
                     
-                    // アコーディオンの表示もリセット
+                    // 修正箇所: 検索クリア時にアコーディオンを全て閉じた状態に戻す
                     document.querySelectorAll('details.feed-section').forEach(sec => {
                         sec.style.display = '';
+                        sec.open = false; 
                     });
                     return;
                 }
@@ -3183,14 +3181,13 @@
                     }
                 });
 
-                // アコーディオン内で表示できる記事がない場合は親要素ごと隠す
                 document.querySelectorAll('details.feed-section').forEach(section => {
                     const visibleItems = Array.from(section.querySelectorAll('.list-item')).filter(el => el.style.display !== 'none');
                     if(visibleItems.length === 0) {
                         section.style.display = 'none';
                     } else {
                         section.style.display = '';
-                        section.open = true; // ヒットしたら開いておく
+                        section.open = true; 
                     }
                 });
             });

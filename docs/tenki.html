@@ -45,7 +45,7 @@
         }
         .nav-links { 
             display: flex; 
-            flex-wrap: wrap; /* 修正箇所: PCで折り返し多段表示にするため wrap に変更 */
+            flex-wrap: wrap;
             gap: 8px; 
             flex-grow: 1;
         }
@@ -64,7 +64,6 @@
         .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
         .nav-link.active { opacity: 1; background-color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
-        /* スマホ向けナビゲーション（横スクロール） */
         @media (max-width: 600px) {
             .nav-links {
                 flex-wrap: nowrap;
@@ -94,7 +93,6 @@
         h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
         .last-updated { font-size: 12px; color: var(--text-sub); }
 
-        /* 修正箇所: トピックページ用の特別デザイン */
         .header-topic {
             background: linear-gradient(135deg, #f0f7ff 0%, #e0edff 100%);
             border-left: 5px solid #007bff;
@@ -104,7 +102,6 @@
             font-size: 12px; color: #0056b3; margin: 8px 0; font-weight: bold; line-height: 1.4;
         }
 
-        /* 修正箇所: タブ切り替えUI */
         .view-tabs {
             display: flex; gap: 10px; margin-bottom: 20px; justify-content: flex-end;
         }
@@ -130,7 +127,7 @@
         .card-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
         .entry-thumbnail { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee; }
 
-        /* アコーディオン型 (サイト別) UI */
+        /* アコーディオン型 (サイト別・トピック別) UI */
         details {
             background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
         }
@@ -263,14 +260,18 @@
         <header class="">
             <h1>天気</h1>
             
-            <div class="last-updated">最終更新: 02/23 23:43</div>
+            <div class="last-updated">最終更新: 02/23 23:56</div>
         </header>
 
         
         <div class="view-tabs">
+            
             <button class="view-tab active" data-target="view-timeline">🕒 タイムライン</button>
             <button class="view-tab" data-target="view-feed">📁 サイト別</button>
+            
         </div>
+        
+
         
 
         
@@ -378,7 +379,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">tenki.jp</span>
-                        <span class="entry-time">9時間前</span>
+                        <span class="entry-time">10時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -394,7 +395,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">tenki.jp</span>
-                        <span class="entry-time">10時間前</span>
+                        <span class="entry-time">11時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -458,7 +459,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">ウェザーマップ</span>
-                        <span class="entry-time">12時間前</span>
+                        <span class="entry-time">13時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -490,7 +491,7 @@
                     <div class="entry-meta">
                         <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
                         <span class="entry-source">tenki.jp</span>
-                        <span class="entry-time">13時間前</span>
+                        <span class="entry-time">14時間前</span>
                     </div>
                     <div class="entry-title">
                         <span class="new-badge">NEW</span>
@@ -824,7 +825,7 @@
                                 <a href="https://news.yahoo.co.jp/articles/1b2406dfa996ce38067aebcf96bc0c5c5dff904d?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">関東地方で【春一番】  2年ぶりの発表(ウェザーマップ)</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">12時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">13時間前</span>
                             </div>
                             <div class="entry-summary">気象庁は23日（月・祝）午前、関東地方で「春一番」が吹いたと発表した。関東地方における発表は2年ぶりとなる。</div>
                         </div>
@@ -1152,7 +1153,7 @@
                                 <a href="https://news.yahoo.co.jp/articles/cb4678f26ca8393333c41eb45edc60b50cd0b8ac?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【速報】本州で今年初の夏日　山梨県南部町で25℃(tenki.jp)</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">9時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">10時間前</span>
                             </div>
                             <div class="entry-summary">今日23日午後1時すぎ、南部町(山梨)で気温が25℃に達し、本州で今年初めての夏日となりました。</div>
                         </div>
@@ -1166,7 +1167,7 @@
                                 <a href="https://news.yahoo.co.jp/articles/0c4f9597e5261f0f82a801ad899f0c8af950914b?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">23日は北海道で台風並みの非常に強い風　暴風・高波に警戒　急速な雪解けにも注意(tenki.jp)</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">10時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">11時間前</span>
                             </div>
                             <div class="entry-summary">今日23日、北海道では、日本海側を中心に台風並みの暴風が吹き荒れています。30m/s超えの最大瞬間風速を観測している所もあり、夕方まで暴風と高波に警戒が必要です。なお、今日23日は雪解けが急速に進むお</div>
                         </div>
@@ -1222,7 +1223,7 @@
                                 <a href="https://news.yahoo.co.jp/articles/f6889a0f4590f8ff11571f52cefb40bab2f4878c?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">今日23日の関東　季節外れの暖かさ　東京都心は今年初20度超えか　花粉が大量飛散(tenki.jp)</a>
                             </div>
                             <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">13時間前</span>
+                                <span class="entry-time" style="border-left:none; padding-left:0;">14時間前</span>
                             </div>
                             <div class="entry-summary">今日23日(月・祝)の関東は、晴れて行楽日和でしょう。最高気温は20度以上の所が多く、ゴールデンウィーク頃の暖かさとなりそうです。日中は南よりの風が強く、春一番が吹くかもしれません。気温の上昇と強風で</div>
                         </div>
@@ -1239,7 +1240,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // タブ切り替えロジック
             const tabs = document.querySelectorAll('.view-tab');
             const contents = document.querySelectorAll('.view-content');
             tabs.forEach(tab => {
@@ -1251,7 +1251,6 @@
                 });
             });
 
-            // 既読管理
             const STORAGE_KEY = 'rss_read_items';
             let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
             const entryItems = document.querySelectorAll('.entry-item');
@@ -1264,7 +1263,6 @@
                 const anchor = item.querySelector('a.entry-link');
                 if(anchor) {
                     anchor.addEventListener('click', function() {
-                        // 両方のビューの同じ記事を同時に既読にする
                         document.querySelectorAll(`.entry-item[data-link="${link}"]`).forEach(el => {
                             el.classList.add('read');
                         });
@@ -1278,7 +1276,6 @@
                 }
             });
 
-            // 検索・絞り込み
             const searchToggle = document.getElementById('searchToggle');
             const searchInput = document.getElementById('searchInput');
             
@@ -1312,9 +1309,10 @@
                         if(summaryDiv && entry.dataset.originalSummaryHtml) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
                     });
                     
-                    // アコーディオンの表示もリセット
+                    // 修正箇所: 検索クリア時にアコーディオンを全て閉じた状態に戻す
                     document.querySelectorAll('details.feed-section').forEach(sec => {
                         sec.style.display = '';
+                        sec.open = false; 
                     });
                     return;
                 }
@@ -1331,14 +1329,13 @@
                     }
                 });
 
-                // アコーディオン内で表示できる記事がない場合は親要素ごと隠す
                 document.querySelectorAll('details.feed-section').forEach(section => {
                     const visibleItems = Array.from(section.querySelectorAll('.list-item')).filter(el => el.style.display !== 'none');
                     if(visibleItems.length === 0) {
                         section.style.display = 'none';
                     } else {
                         section.style.display = '';
-                        section.open = true; // ヒットしたら開いておく
+                        section.open = true; 
                     }
                 });
             });
