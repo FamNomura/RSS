@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>エンタメ・コラム</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-sub: #7f8c8d;
+            --accent: #007bff;
+            --accent-hover: #0056b3;
+            --new-badge: #e74c3c;
+            --border: #e9ecef;
+            --highlight: #fff3cd;
+            --read-color: #b0b0b0;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding-bottom: 80px;
+            line-height: 1.6;
+        }
+        
+        .navbar {
+            background-color: #343a40;
+            padding: 0.8rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .nav-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+        .nav-links { 
+            display: flex; 
+            flex-wrap: wrap;
+            gap: 8px; 
+            flex-grow: 1;
+        }
+        .nav-link {
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.85;
+            transition: all 0.2s;
+            background-color: rgba(255,255,255,0.1);
+            white-space: nowrap;
+        }
+        .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
+        .nav-link.active { opacity: 1; background-color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+
+        @media (max-width: 600px) {
+            .nav-links {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                padding-bottom: 2px;
+            }
+            .nav-links::-webkit-scrollbar { display: none; }
+        }
+
+        .search-container { position: relative; display: flex; align-items: center; }
+        .search-toggle-btn { 
+            background: none; border: none; font-size: 18px; cursor: pointer; color: #ecf0f1; padding: 5px; margin-right: 5px; 
+        }
+        .search-input {
+            width: 0; opacity: 0; padding: 0; border: none; border-radius: 20px; font-size: 14px; 
+            background-color: rgba(255,255,255,0.95); transition: all 0.3s ease; pointer-events: none;
+        }
+        .search-input.active { 
+            width: 180px; opacity: 1; padding: 6px 10px; box-shadow: 0 0 0 2px var(--accent); pointer-events: auto; 
+        }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        
+        header { margin-bottom: 20px; text-align: center; border-radius: 8px; padding: 10px; transition: all 0.3s; }
+        h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
+        .last-updated { font-size: 12px; color: var(--text-sub); }
+
+        .header-topic {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e0edff 100%);
+            border-left: 5px solid #007bff;
+            padding: 20px;
+        }
+        .topic-desc {
+            font-size: 12px; color: #0056b3; margin: 8px 0; font-weight: bold; line-height: 1.4;
+        }
+
+        /* 修正箇所: ジャンプボタンのスタイル */
+        .jump-nav {
+            display: flex; gap: 10px; margin-bottom: 25px; justify-content: flex-start; flex-wrap: wrap;
+            background: #fff; padding: 10px 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid var(--border);
+        }
+        .jump-btn {
+            padding: 6px 14px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 20px;
+            cursor: pointer; font-size: 13px; font-weight: bold; color: var(--text-main); transition: all 0.2s; text-decoration: none;
+        }
+        .jump-btn:hover { background: #e9ecef; border-color: #ccc; transform: translateY(-1px); }
+
+        /* 修正箇所: 各セクションの区切りスタイル */
+        .content-section {
+            margin-bottom: 40px;
+        }
+        .section-title {
+            font-size: 18px; color: var(--text-main); margin: 0 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid var(--accent);
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        /* アコーディオン・カード共通 UI */
+        details {
+            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
+        }
+        summary {
+            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff; transition: background 0.2s;
+        }
+        summary:hover { background-color: #f8f9fa; }
+        summary::-webkit-details-marker { display: none; }
+        .feed-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+        .feed-title-text { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .feed-meta-count { display: flex; align-items: center; gap: 8px; font-size: 12px; flex-shrink: 0; }
+        .count-badge { background-color: #eee; color: #555; padding: 2px 8px; border-radius: 12px; font-weight: normal; }
+        .count-badge.has-new { background-color: #fff0f0; color: var(--new-badge); border: 1px solid #ffcccc; }
+        
+        .entry-list, .timeline-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
+        .list-item {
+            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start;
+        }
+        .list-item:last-child { border-bottom: none; }
+        
+        /* タイムライン用カードUIの調整（アコーディオン内） */
+        .timeline-card-wrapper {
+            padding: 15px; background: var(--bg-color); border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px;
+        }
+        .card {
+            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid var(--border); overflow: hidden; display: flex; gap: 15px; padding: 15px;
+            transition: transform 0.2s;
+        }
+        .card:hover { transform: translateY(-2px); }
+        .card-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
+        .entry-thumbnail { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee; }
+
+        .read { background-color: #fafafa; opacity: 0.85; }
+        .read .entry-title a { color: var(--read-color); }
+        .read .entry-summary { color: #b5b5b5; }
+        .read .entry-thumbnail { filter: grayscale(100%); opacity: 0.5; }
+        .read .new-badge { background-color: #ccc; }
+
+        .entry-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-sub); margin-bottom: 8px; flex-wrap: wrap; }
+        .feed-favicon { width: 14px; height: 14px; border-radius: 2px; }
+        .entry-source { font-weight: 600; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+        .entry-time { border-left: 1px solid #ddd; padding-left: 8px; white-space: nowrap; }
+        
+        .entry-title { font-size: 16px; margin: 0 0 6px 0; line-height: 1.4; }
+        .entry-title a { text-decoration: none; color: var(--text-main); font-weight: bold; }
+        .entry-title a:hover { color: var(--accent); text-decoration: underline; }
+
+        .new-badge { display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold; transform: translateY(-1px); }
+
+        .entry-summary { font-size: 13px; color: #555; margin-top: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.9; line-height: 1.5; }
+        .entry-summary img { display: none; }
+
+        .empty-state { padding: 40px 20px; text-align: center; color: #999; font-size: 14px; background: #fff; border-radius: 8px; border: 1px dashed #ccc; }
+
+        #backToTop { position: fixed; bottom: 20px; right: 20px; background-color: var(--accent); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transition: all 0.3s; font-size: 20px; z-index: 2000; }
+        #backToTop.show { opacity: 1; visibility: visible; }
+        
+        mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px 10px; }
+            .card, .list-item { padding: 12px; gap: 10px; }
+            .entry-thumbnail { width: 90px; height: 70px; }
+            .entry-source { max-width: 130px; }
+            .search-input.active { width: 140px; }
+            .jump-nav { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+            .jump-nav::-webkit-scrollbar { display: none; }
+            .jump-btn { white-space: nowrap; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-links">
+                
+                <a href="index.html" 
+                   class="nav-link ">
+                    ★トピック★
+                </a>
+                
+                <a href="01_topics.html" 
+                   class="nav-link ">
+                    総合ニュース
+                </a>
+                
+                <a href="02_blog.html" 
+                   class="nav-link ">
+                    ブログ
+                </a>
+                
+                <a href="03_wether" 
+                   class="nav-link ">
+                    天気
+                </a>
+                
+                <a href="04_tech" 
+                   class="nav-link ">
+                    Tech情報
+                </a>
+                
+                <a href="05_gadget.html" 
+                   class="nav-link ">
+                    ガジェット
+                </a>
+                
+                <a href="06_design.html" 
+                   class="nav-link ">
+                    デザイン・Web制作
+                </a>
+                
+                <a href="07_game" 
+                   class="nav-link ">
+                    ゲーム
+                </a>
+                
+                <a href="11_fukushi.html" 
+                   class="nav-link ">
+                    福祉行政
+                </a>
+                
+                <a href="12_business.html" 
+                   class="nav-link ">
+                    ビジネス誌
+                </a>
+                
+                <a href="21_entertainment.html" 
+                   class="nav-link active">
+                    エンタメ・コラム
+                </a>
+                
+                <a href="31_yahoo.html" 
+                   class="nav-link ">
+                    ニュース記事
+                </a>
+                
+            </div>
+            <div class="search-container">
+                <button id="searchToggle" class="search-toggle-btn">🔍</button>
+                <input type="text" id="searchInput" class="search-input" placeholder="キーワード検索...">
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="">
+            <h1>エンタメ・コラム</h1>
+            
+            <div class="last-updated">最終更新: 02/24 08:21</div>
+        </header>
+
+        
+        <div class="jump-nav">
+            
+            <a href="#section-timeline" class="jump-btn">🕒 タイムライン</a>
+            <a href="#section-feed" class="jump-btn">📁 サイト別</a>
+        </div>
+        
+
+        
+
+        
+
+        
+        <div id="section-timeline" class="content-section">
+            <h2 class="section-title">🕒 タイムライン</h2>
+            <details class="feed-section">
+                <summary>
+                    <div class="feed-info">
+                        <span class="feed-title-text">すべての新着記事</span>
+                    </div>
+                    <div class="feed-meta-count">
+                        <span class="count-badge">20 件</span>
+                    </div>
+                </summary>
+                <div class="timeline-card-wrapper">
+                    
+                    <div class="card entry-item" data-link="https://rocketnews24.com/2026/02/24/2649175/" data-title="ヨーグルトに醬油を…!? 「カスピ海ヨーグルト まるごとSOY」が面白い / 新たなる大豆製品として" data-summary="植物性のヨーグルトってあるじゃないですか。最近はいろんなタイプがあるが、やはり代表的なのは大豆由来の豆乳ヨーグルトあたりだろう。あの類の商品を、皆様はどうお思いだろうか。 大豆とはいえヨーグルトと銘打っている以上、やっぱ […]">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=rocketnews24.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ロケットニュース24</span>
+                                <span class="entry-time">20分前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://rocketnews24.com/2026/02/24/2649175/" target="_blank" rel="noopener noreferrer" class="entry-link">ヨーグルトに醬油を…!? 「カスピ海ヨーグルト まるごとSOY」が面白い / 新たなる大豆製品として</a>
+                            </div>
+                            <div class="entry-summary">植物性のヨーグルトってあるじゃないですか。最近はいろんなタイプがあるが、やはり代表的なのは大豆由来の豆乳ヨーグルトあたりだろう。あの類の商品を、皆様はどうお思いだろうか。 大豆とはいえヨーグルトと銘打っている以上、やっぱ […]</div>
+                        </div>
+                        
+                        <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/02/IMG_2154.jpg" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://www.lifehacker.jp/article/2602-book_to_read-1892/" data-title="【毎日書評】「能力は60点でいい」松下幸之助が説く、完璧主義を捨てて成功をつかむための心得" data-summary="">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=www.lifehacker.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ライフハッカー・ジャパン</span>
+                                <span class="entry-time">20分前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.lifehacker.jp/article/2602-book_to_read-1892/" target="_blank" rel="noopener noreferrer" class="entry-link">【毎日書評】「能力は60点でいい」松下幸之助が説く、完璧主義を捨てて成功をつかむための心得</a>
+                            </div>
+                            <div class="entry-summary"></div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://rocketnews24.com/2026/02/24/2649547/" data-title="遅いっ！ 意識面に変化が訪れた社長！　四コマサボタージュBYD第307回「引退理由」" data-summary="社会人においてベテランとされるの何年目からなんだろうね。 漫画：ザックKT-4">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=rocketnews24.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ロケットニュース24</span>
+                                <span class="entry-time">1時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://rocketnews24.com/2026/02/24/2649547/" target="_blank" rel="noopener noreferrer" class="entry-link">遅いっ！ 意識面に変化が訪れた社長！　四コマサボタージュBYD第307回「引退理由」</a>
+                            </div>
+                            <div class="entry-summary">社会人においてベテランとされるの何年目からなんだろうね。 漫画：ザックKT-4</div>
+                        </div>
+                        
+                        <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/02/307-1koma.png" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://www.lifehacker.jp/article/2602-amazon-salonia-hairiron/" data-title="前髪ととのえ、スマホも満たす。「モバ充になるヘアアイロン」で荷物、最少化した" data-summary="">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=www.lifehacker.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ライフハッカー・ジャパン</span>
+                                <span class="entry-time">1時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.lifehacker.jp/article/2602-amazon-salonia-hairiron/" target="_blank" rel="noopener noreferrer" class="entry-link">前髪ととのえ、スマホも満たす。「モバ充になるヘアアイロン」で荷物、最少化した</a>
+                            </div>
+                            <div class="entry-summary"></div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://www.lifehacker.jp/article/2602-amazon-hario-coffeepot/" data-title="粉と水を入れて待つだけ。HARIOのコーヒーポットで朝からお店みたいな水出しコーヒーが楽しめるよ" data-summary="お家で手軽に水出しコーヒーを作るなら、やっぱり定番のコレが優秀だった。計量いらずで仕込みができるから、寝る前3分で準備完了。朝にはお店みたいな水出しコーヒーができてるよ。たったの1000円ちょっとで手に入れられるから、複数ゲットしておくのもおすすめだよ">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=www.lifehacker.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ライフハッカー・ジャパン</span>
+                                <span class="entry-time">2時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.lifehacker.jp/article/2602-amazon-hario-coffeepot/" target="_blank" rel="noopener noreferrer" class="entry-link">粉と水を入れて待つだけ。HARIOのコーヒーポットで朝からお店みたいな水出しコーヒーが楽しめるよ</a>
+                            </div>
+                            <div class="entry-summary">お家で手軽に水出しコーヒーを作るなら、やっぱり定番のコレが優秀だった。計量いらずで仕込みができるから、寝る前3分で準備完了。朝にはお店みたいな水出しコーヒーができてるよ。たったの1000円ちょっとで手に入れられるから、複数ゲットしておくのもおすすめだよ</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://www.lifehacker.jp/article/2602-lht-base-ramen/" data-title="ラーメン好きも納得の風味！たんぱく質17.1gがうれしい完全栄養カップ麺「BASE RAMEN」" data-summary="2025年10月に発売された「BASE RAMEN」シリーズ。「鶏ガラ醤油ラーメン」と「味噌ラーメン」の2種類を実際に食べてみた感想をお届けします。">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=www.lifehacker.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ライフハッカー・ジャパン</span>
+                                <span class="entry-time">10時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.lifehacker.jp/article/2602-lht-base-ramen/" target="_blank" rel="noopener noreferrer" class="entry-link">ラーメン好きも納得の風味！たんぱく質17.1gがうれしい完全栄養カップ麺「BASE RAMEN」</a>
+                            </div>
+                            <div class="entry-summary">2025年10月に発売された「BASE RAMEN」シリーズ。「鶏ガラ醤油ラーメン」と「味噌ラーメン」の2種類を実際に食べてみた感想をお届けします。</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://www.lifehacker.jp/article/2602-matome-feb-google/" data-title="GeminiもGoogleフォトも初期設定なら損してる【2月の人気記事4選】" data-summary="今月のライフハッカー・ジャパンでは、GoogleフォトやGoogle Keep、さらには脱Gmailという選択肢まで、Googleユーザーのヒントになる記事がよく読まれました。毎日使うツールだからこそ、ほんの少しの使い方を変えるだけで「最高の相棒」に変わるはずです。">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=www.lifehacker.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ライフハッカー・ジャパン</span>
+                                <span class="entry-time">11時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.lifehacker.jp/article/2602-matome-feb-google/" target="_blank" rel="noopener noreferrer" class="entry-link">GeminiもGoogleフォトも初期設定なら損してる【2月の人気記事4選】</a>
+                            </div>
+                            <div class="entry-summary">今月のライフハッカー・ジャパンでは、GoogleフォトやGoogle Keep、さらには脱Gmailという選択肢まで、Googleユーザーのヒントになる記事がよく読まれました。毎日使うツールだからこそ、ほんの少しの使い方を変えるだけで「最高の相棒」に変わるはずです。</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://www.lifehacker.jp/article/2602-5-hidden-things-chromebooks-do/" data-title="Chromebookを使い倒せ。超便利な活用法5選" data-summary="「ChromebookはWeb閲覧だけ」はもう古い！マルチモニター化からLinuxアプリの活用、便利な仮想デスク、標準の画面録画機能まで、生産性を劇的に高める5つの隠れた活用術を徹底解説。オフラインでの仕事術も紹介し、あなたのChromebookを最強の作業マシンに変えます。">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=www.lifehacker.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ライフハッカー・ジャパン</span>
+                                <span class="entry-time">11時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.lifehacker.jp/article/2602-5-hidden-things-chromebooks-do/" target="_blank" rel="noopener noreferrer" class="entry-link">Chromebookを使い倒せ。超便利な活用法5選</a>
+                            </div>
+                            <div class="entry-summary">「ChromebookはWeb閲覧だけ」はもう古い！マルチモニター化からLinuxアプリの活用、便利な仮想デスク、標準の画面録画機能まで、生産性を劇的に高める5つの隠れた活用術を徹底解説。オフラインでの仕事術も紹介し、あなたのChromebookを最強の作業マシンに変えます。</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://rocketnews24.com/2026/02/23/2652090/" data-title="日本唯一の人名が入っている空港『高知龍馬空港』の坂本龍馬の推しっぷりを調査したら → 唯一の後悔が残ってしまった理由" data-summary="日本には数多くの空港があるが、その中でも「人名」が正式に空港名になっているのは、高知県にある『高知龍馬空港』だけだということをご存じだろうか？ その名の由来は、言わずと知れた幕末の志士・坂本龍馬。高知県出身の英雄として、 […]">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=rocketnews24.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ロケットニュース24</span>
+                                <span class="entry-time">13時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://rocketnews24.com/2026/02/23/2652090/" target="_blank" rel="noopener noreferrer" class="entry-link">日本唯一の人名が入っている空港『高知龍馬空港』の坂本龍馬の推しっぷりを調査したら → 唯一の後悔が残ってしまった理由</a>
+                            </div>
+                            <div class="entry-summary">日本には数多くの空港があるが、その中でも「人名」が正式に空港名になっているのは、高知県にある『高知龍馬空港』だけだということをご存じだろうか？ その名の由来は、言わずと知れた幕末の志士・坂本龍馬。高知県出身の英雄として、 […]</div>
+                        </div>
+                        
+                        <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/02/17koのコピー.jpg" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://www.lifehacker.jp/article/2602-lht-brother-printer/" data-title="「データ管理」派の私がわかった──自宅プリンターがQOLを上げる理由" data-summary="ブラザー工業のカラーレーザープリンター『HL-L3240CDW』無線・有線LANに対応で、両面印刷もできます。仕事のプロジェクト、データ管理などの活用方法をお届けします。">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=www.lifehacker.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ライフハッカー・ジャパン</span>
+                                <span class="entry-time">13時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.lifehacker.jp/article/2602-lht-brother-printer/" target="_blank" rel="noopener noreferrer" class="entry-link">「データ管理」派の私がわかった──自宅プリンターがQOLを上げる理由</a>
+                            </div>
+                            <div class="entry-summary">ブラザー工業のカラーレーザープリンター『HL-L3240CDW』無線・有線LANに対応で、両面印刷もできます。仕事のプロジェクト、データ管理などの活用方法をお届けします。</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://rocketnews24.com/2026/02/23/2651127/" data-title="「お客さん、着色料、入れる？」「ゴキブリは前菜よ」豪快女将の衝撃ポテト屋レポート【カンバ通信：第443回】" data-summary="ジャンボ。チャオスだよ。今日はケニアの街角で見つけた、ちょっと驚きのレストラン体験について報告するね。 正直なところ、かなり「ワイルド」な内容になっているけれど、現地のリアルな空気感として読んでみてほしいな。 今回僕が行 […]">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=rocketnews24.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ロケットニュース24</span>
+                                <span class="entry-time">14時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://rocketnews24.com/2026/02/23/2651127/" target="_blank" rel="noopener noreferrer" class="entry-link">「お客さん、着色料、入れる？」「ゴキブリは前菜よ」豪快女将の衝撃ポテト屋レポート【カンバ通信：第443回】</a>
+                            </div>
+                            <div class="entry-summary">ジャンボ。チャオスだよ。今日はケニアの街角で見つけた、ちょっと驚きのレストラン体験について報告するね。 正直なところ、かなり「ワイルド」な内容になっているけれど、現地のリアルな空気感として読んでみてほしいな。 今回僕が行 […]</div>
+                        </div>
+                        
+                        <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/02/c7a30734-66ba-4b8f-a11b-3de787827540.jpeg" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://www.lifehacker.jp/article/2602_gizmodo_flowerdripper-vw5/" data-title="コーヒー屋のぼくが虜になった。店でも使う｢完成度が高すぎる｣ドリッパー" data-summary="｢フラワードリッパー DEEP27 ｣は、2023年9月初めに発売されて瞬く間に初回分が売り切れとなったドリッパー。私はたまたま初回分で購入できました。">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=www.lifehacker.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ライフハッカー・ジャパン</span>
+                                <span class="entry-time">14時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.lifehacker.jp/article/2602_gizmodo_flowerdripper-vw5/" target="_blank" rel="noopener noreferrer" class="entry-link">コーヒー屋のぼくが虜になった。店でも使う｢完成度が高すぎる｣ドリッパー</a>
+                            </div>
+                            <div class="entry-summary">｢フラワードリッパー DEEP27 ｣は、2023年9月初めに発売されて瞬く間に初回分が売り切れとなったドリッパー。私はたまたま初回分で購入できました。</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://rocketnews24.com/2026/02/23/2652339/" data-title="【検証】カフェチェーン3店のクラムチャウダーを飲み比べ！ 夕方のカフェイン問題にちょうどいい一杯を探してみた" data-summary="夕方、子どもの習い事を待つあいだの約2時間。距離的に家に帰るには微妙だし、できたら仕事もしたい。 近くの図書館は電波がちょっと悪いので、結局カフェを利用することが多い。ただ、コーヒーは夕方に飲むと眠れなくなるし、食事系は […]">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=rocketnews24.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ロケットニュース24</span>
+                                <span class="entry-time">15時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://rocketnews24.com/2026/02/23/2652339/" target="_blank" rel="noopener noreferrer" class="entry-link">【検証】カフェチェーン3店のクラムチャウダーを飲み比べ！ 夕方のカフェイン問題にちょうどいい一杯を探してみた</a>
+                            </div>
+                            <div class="entry-summary">夕方、子どもの習い事を待つあいだの約2時間。距離的に家に帰るには微妙だし、できたら仕事もしたい。 近くの図書館は電波がちょっと悪いので、結局カフェを利用することが多い。ただ、コーヒーは夕方に飲むと眠れなくなるし、食事系は […]</div>
+                        </div>
+                        
+                        <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/02/LINE_ALBUM_20260219-_2_260219_14.jpg" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://www.lifehacker.jp/article/machi-ya-tripleshot-end-873822/" data-title="1本3役のスキージーで洗車が時短＆効率的に。タオルの出番が減らせるよ" data-summary="約30cmの大型ヘッドでルーフもラクラク。シリコン製だから傷つけにくく、洗車・水切り・毛取りをこれ1本で。タオル何枚も使う洗車から解放されてみませんか？おトクなセールは終了間近。">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=www.lifehacker.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ライフハッカー・ジャパン</span>
+                                <span class="entry-time">15時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.lifehacker.jp/article/machi-ya-tripleshot-end-873822/" target="_blank" rel="noopener noreferrer" class="entry-link">1本3役のスキージーで洗車が時短＆効率的に。タオルの出番が減らせるよ</a>
+                            </div>
+                            <div class="entry-summary">約30cmの大型ヘッドでルーフもラクラク。シリコン製だから傷つけにくく、洗車・水切り・毛取りをこれ1本で。タオル何枚も使う洗車から解放されてみませんか？おトクなセールは終了間近。</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://www.lifehacker.jp/article/machi-ya-mirroringadapterm2-end-911119/" data-title="自宅や出先でPCやスマホからサッと画面共有。そんなとき、このアダプターが頼りになる" data-summary="長いケーブルもWi-Fiも不要。送受信機を挿すだけで接続設定もなく会議でも自宅でもサッと画面共有OK。最大1080p映像を0.1秒低遅延で。PC/スマホ/ゲーム機の画面をサクッと大画面で楽しもう。">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=www.lifehacker.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ライフハッカー・ジャパン</span>
+                                <span class="entry-time">16時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.lifehacker.jp/article/machi-ya-mirroringadapterm2-end-911119/" target="_blank" rel="noopener noreferrer" class="entry-link">自宅や出先でPCやスマホからサッと画面共有。そんなとき、このアダプターが頼りになる</a>
+                            </div>
+                            <div class="entry-summary">長いケーブルもWi-Fiも不要。送受信機を挿すだけで接続設定もなく会議でも自宅でもサッと画面共有OK。最大1080p映像を0.1秒低遅延で。PC/スマホ/ゲーム機の画面をサクッと大画面で楽しもう。</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://rocketnews24.com/2026/02/23/2650553/" data-title="【4コマ】魔王軍はホワイト企業 1909話目「病と変化⑲」" data-summary="漫画：スガラジカル">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=rocketnews24.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ロケットニュース24</span>
+                                <span class="entry-time">17時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://rocketnews24.com/2026/02/23/2650553/" target="_blank" rel="noopener noreferrer" class="entry-link">【4コマ】魔王軍はホワイト企業 1909話目「病と変化⑲」</a>
+                            </div>
+                            <div class="entry-summary">漫画：スガラジカル</div>
+                        </div>
+                        
+                        <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/02/1909a.jpg" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://rocketnews24.com/2026/02/23/2650826/" data-title="新宿地下街の死角で「総重量1kgのデカ盛り」に遭遇！ 焼肉丼専門店『たれ櫻』の2900円丼と死闘を繰り広げてきた" data-summary="ご承知の通り、新宿の地下街は途方もなく広い。駅でいうと新宿三丁目駅を起点に西新宿駅、あるいは都庁前駅まで繋がっており、広さに関しては世界有数ともいわれている。 さて、それだけ広い地下街だと意外な出会いも起こりやすいらしい […]">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=rocketnews24.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ロケットニュース24</span>
+                                <span class="entry-time">20時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://rocketnews24.com/2026/02/23/2650826/" target="_blank" rel="noopener noreferrer" class="entry-link">新宿地下街の死角で「総重量1kgのデカ盛り」に遭遇！ 焼肉丼専門店『たれ櫻』の2900円丼と死闘を繰り広げてきた</a>
+                            </div>
+                            <div class="entry-summary">ご承知の通り、新宿の地下街は途方もなく広い。駅でいうと新宿三丁目駅を起点に西新宿駅、あるいは都庁前駅まで繋がっており、広さに関しては世界有数ともいわれている。 さて、それだけ広い地下街だと意外な出会いも起こりやすいらしい […]</div>
+                        </div>
+                        
+                        <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/02/eye_bba347.jpg" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://rocketnews24.com/2026/02/23/2652621/" data-title="【ベストセラー1位】PUMAのスニーカーが半額の2685円！ Amazonで価格が一気に落ちた注目アイテム15選（2月23日）" data-summary="毎日お得なタイムセールを開催しているAmazon。家電・食品・ファッションなど、さまざまなカテゴリーのアイテムを特別価格でゲットできるチャンス。 天皇誕生日の本日2/23は、価格が一気に落ちた注目のアイテムを厳選ピックア […]">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=rocketnews24.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ロケットニュース24</span>
+                                <span class="entry-time">20時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://rocketnews24.com/2026/02/23/2652621/" target="_blank" rel="noopener noreferrer" class="entry-link">【ベストセラー1位】PUMAのスニーカーが半額の2685円！ Amazonで価格が一気に落ちた注目アイテム15選（2月23日）</a>
+                            </div>
+                            <div class="entry-summary">毎日お得なタイムセールを開催しているAmazon。家電・食品・ファッションなど、さまざまなカテゴリーのアイテムを特別価格でゲットできるチャンス。 天皇誕生日の本日2/23は、価格が一気に落ちた注目のアイテムを厳選ピックア […]</div>
+                        </div>
+                        
+                        <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/02/IMG_5964.jpg" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://rocketnews24.com/2026/02/23/2642779/" data-title="PB冷凍餃子は安い？ 味はどう？ 西友を買収した「トライアル」の餃子を食べてみた" data-summary="昨年、西友を買収した九州発祥のディスカウントストア「トライアル」。都内で勢力を伸ばしており、徐々にその名前が浸透してきている。 安さは当然として、注目したいのはプライベートブランド「おいしくなれ！」。先日冷凍炒飯をお伝え […]">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=rocketnews24.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ロケットニュース24</span>
+                                <span class="entry-time">21時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://rocketnews24.com/2026/02/23/2642779/" target="_blank" rel="noopener noreferrer" class="entry-link">PB冷凍餃子は安い？ 味はどう？ 西友を買収した「トライアル」の餃子を食べてみた</a>
+                            </div>
+                            <div class="entry-summary">昨年、西友を買収した九州発祥のディスカウントストア「トライアル」。都内で勢力を伸ばしており、徐々にその名前が浸透してきている。 安さは当然として、注目したいのはプライベートブランド「おいしくなれ！」。先日冷凍炒飯をお伝え […]</div>
+                        </div>
+                        
+                        <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/01/IMG_5741-1.jpg" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://rocketnews24.com/2026/02/23/2651738/" data-title="【WBC】どっちが大谷翔平に近づけるか選手権 / 44歳と46歳は予算5000円でどこまでやれるのか？" data-summary="ああぁぁ大谷翔平になりてぇぇぇええええ……！ ──テレビの前でそう叫んでいる人は、世界中に一体何人いるのだろう。今や数え切れないだろうし、これからWBCが始まったらさらに増えるに違いない。 ただ、「大谷選手みたいになりた […]">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=rocketnews24.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ロケットニュース24</span>
+                                <span class="entry-time">22時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://rocketnews24.com/2026/02/23/2651738/" target="_blank" rel="noopener noreferrer" class="entry-link">【WBC】どっちが大谷翔平に近づけるか選手権 / 44歳と46歳は予算5000円でどこまでやれるのか？</a>
+                            </div>
+                            <div class="entry-summary">ああぁぁ大谷翔平になりてぇぇぇええええ……！ ──テレビの前でそう叫んでいる人は、世界中に一体何人いるのだろう。今や数え切れないだろうし、これからWBCが始まったらさらに増えるに違いない。 ただ、「大谷選手みたいになりた […]</div>
+                        </div>
+                        
+                        <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/02/aaa_IMG_4321_01_noEXIF.jpg" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                </div>
+            </details>
+        </div>
+        
+
+        
+        <div id="section-feed" class="content-section">
+            <h2 class="section-title">📁 サイト別</h2>
+            
+            <details class="feed-section">
+                <summary>
+                    <div class="feed-info">
+                        <img src="https://www.google.com/s2/favicons?domain=rocketnews24.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="feed-title-text">ロケットニュース24</span>
+                    </div>
+                    <div class="feed-meta-count">
+                        
+                        <span class="count-badge has-new">新着 10 / 10</span>
+                        
+                    </div>
+                </summary>
+                <ul class="entry-list">
+                    
+                    <li class="list-item entry-item" data-link="https://rocketnews24.com/2026/02/24/2649175/" data-title="ヨーグルトに醬油を…!? 「カスピ海ヨーグルト まるごとSOY」が面白い / 新たなる大豆製品として" data-summary="植物性のヨーグルトってあるじゃないですか。最近はいろんなタイプがあるが、やはり代表的なのは大豆由来の豆乳ヨーグルトあたりだろう。あの類の商品を、皆様はどうお思いだろうか。 大豆とはいえヨーグルトと銘打っている以上、やっぱ […]">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://rocketnews24.com/2026/02/24/2649175/" target="_blank" rel="noopener noreferrer" class="entry-link">ヨーグルトに醬油を…!? 「カスピ海ヨーグルト まるごとSOY」が面白い / 新たなる大豆製品として</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">20分前</span>
+                            </div>
+                            <div class="entry-summary">植物性のヨーグルトってあるじゃないですか。最近はいろんなタイプがあるが、やはり代表的なのは大豆由来の豆乳ヨーグルトあたりだろう。あの類の商品を、皆様はどうお思いだろうか。 大豆とはいえヨーグルトと銘打っている以上、やっぱ […]</div>
+                        </div>
+                        
+                        <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/02/IMG_2154.jpg" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://rocketnews24.com/2026/02/24/2649547/" data-title="遅いっ！ 意識面に変化が訪れた社長！　四コマサボタージュBYD第307回「引退理由」" data-summary="社会人においてベテランとされるの何年目からなんだろうね。 漫画：ザックKT-4">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://rocketnews24.com/2026/02/24/2649547/" target="_blank" rel="noopener noreferrer" class="entry-link">遅いっ！ 意識面に変化が訪れた社長！　四コマサボタージュBYD第307回「引退理由」</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
+                            </div>
+                            <div class="entry-summary">社会人においてベテランとされるの何年目からなんだろうね。 漫画：ザックKT-4</div>
+                        </div>
+                        
+                        <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/02/307-1koma.png" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://rocketnews24.com/2026/02/23/2652090/" data-title="日本唯一の人名が入っている空港『高知龍馬空港』の坂本龍馬の推しっぷりを調査したら → 唯一の後悔が残ってしまった理由" data-summary="日本には数多くの空港があるが、その中でも「人名」が正式に空港名になっているのは、高知県にある『高知龍馬空港』だけだということをご存じだろうか？ その名の由来は、言わずと知れた幕末の志士・坂本龍馬。高知県出身の英雄として、 […]">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://rocketnews24.com/2026/02/23/2652090/" target="_blank" rel="noopener noreferrer" class="entry-link">日本唯一の人名が入っている空港『高知龍馬空港』の坂本龍馬の推しっぷりを調査したら → 唯一の後悔が残ってしまった理由</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">13時間前</span>
+                            </div>
+                            <div class="entry-summary">日本には数多くの空港があるが、その中でも「人名」が正式に空港名になっているのは、高知県にある『高知龍馬空港』だけだということをご存じだろうか？ その名の由来は、言わずと知れた幕末の志士・坂本龍馬。高知県出身の英雄として、 […]</div>
+                        </div>
+                        
+                        <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/02/17koのコピー.jpg" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://rocketnews24.com/2026/02/23/2651127/" data-title="「お客さん、着色料、入れる？」「ゴキブリは前菜よ」豪快女将の衝撃ポテト屋レポート【カンバ通信：第443回】" data-summary="ジャンボ。チャオスだよ。今日はケニアの街角で見つけた、ちょっと驚きのレストラン体験について報告するね。 正直なところ、かなり「ワイルド」な内容になっているけれど、現地のリアルな空気感として読んでみてほしいな。 今回僕が行 […]">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://rocketnews24.com/2026/02/23/2651127/" target="_blank" rel="noopener noreferrer" class="entry-link">「お客さん、着色料、入れる？」「ゴキブリは前菜よ」豪快女将の衝撃ポテト屋レポート【カンバ通信：第443回】</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">14時間前</span>
+                            </div>
+                            <div class="entry-summary">ジャンボ。チャオスだよ。今日はケニアの街角で見つけた、ちょっと驚きのレストラン体験について報告するね。 正直なところ、かなり「ワイルド」な内容になっているけれど、現地のリアルな空気感として読んでみてほしいな。 今回僕が行 […]</div>
+                        </div>
+                        
+                        <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/02/c7a30734-66ba-4b8f-a11b-3de787827540.jpeg" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://rocketnews24.com/2026/02/23/2652339/" data-title="【検証】カフェチェーン3店のクラムチャウダーを飲み比べ！ 夕方のカフェイン問題にちょうどいい一杯を探してみた" data-summary="夕方、子どもの習い事を待つあいだの約2時間。距離的に家に帰るには微妙だし、できたら仕事もしたい。 近くの図書館は電波がちょっと悪いので、結局カフェを利用することが多い。ただ、コーヒーは夕方に飲むと眠れなくなるし、食事系は […]">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://rocketnews24.com/2026/02/23/2652339/" target="_blank" rel="noopener noreferrer" class="entry-link">【検証】カフェチェーン3店のクラムチャウダーを飲み比べ！ 夕方のカフェイン問題にちょうどいい一杯を探してみた</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">15時間前</span>
+                            </div>
+                            <div class="entry-summary">夕方、子どもの習い事を待つあいだの約2時間。距離的に家に帰るには微妙だし、できたら仕事もしたい。 近くの図書館は電波がちょっと悪いので、結局カフェを利用することが多い。ただ、コーヒーは夕方に飲むと眠れなくなるし、食事系は […]</div>
+                        </div>
+                        
+                        <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/02/LINE_ALBUM_20260219-_2_260219_14.jpg" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://rocketnews24.com/2026/02/23/2650553/" data-title="【4コマ】魔王軍はホワイト企業 1909話目「病と変化⑲」" data-summary="漫画：スガラジカル">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://rocketnews24.com/2026/02/23/2650553/" target="_blank" rel="noopener noreferrer" class="entry-link">【4コマ】魔王軍はホワイト企業 1909話目「病と変化⑲」</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">17時間前</span>
+                            </div>
+                            <div class="entry-summary">漫画：スガラジカル</div>
+                        </div>
+                        
+                        <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/02/1909a.jpg" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://rocketnews24.com/2026/02/23/2650826/" data-title="新宿地下街の死角で「総重量1kgのデカ盛り」に遭遇！ 焼肉丼専門店『たれ櫻』の2900円丼と死闘を繰り広げてきた" data-summary="ご承知の通り、新宿の地下街は途方もなく広い。駅でいうと新宿三丁目駅を起点に西新宿駅、あるいは都庁前駅まで繋がっており、広さに関しては世界有数ともいわれている。 さて、それだけ広い地下街だと意外な出会いも起こりやすいらしい […]">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://rocketnews24.com/2026/02/23/2650826/" target="_blank" rel="noopener noreferrer" class="entry-link">新宿地下街の死角で「総重量1kgのデカ盛り」に遭遇！ 焼肉丼専門店『たれ櫻』の2900円丼と死闘を繰り広げてきた</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">20時間前</span>
+                            </div>
+                            <div class="entry-summary">ご承知の通り、新宿の地下街は途方もなく広い。駅でいうと新宿三丁目駅を起点に西新宿駅、あるいは都庁前駅まで繋がっており、広さに関しては世界有数ともいわれている。 さて、それだけ広い地下街だと意外な出会いも起こりやすいらしい […]</div>
+                        </div>
+                        
+                        <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/02/eye_bba347.jpg" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://rocketnews24.com/2026/02/23/2652621/" data-title="【ベストセラー1位】PUMAのスニーカーが半額の2685円！ Amazonで価格が一気に落ちた注目アイテム15選（2月23日）" data-summary="毎日お得なタイムセールを開催しているAmazon。家電・食品・ファッションなど、さまざまなカテゴリーのアイテムを特別価格でゲットできるチャンス。 天皇誕生日の本日2/23は、価格が一気に落ちた注目のアイテムを厳選ピックア […]">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://rocketnews24.com/2026/02/23/2652621/" target="_blank" rel="noopener noreferrer" class="entry-link">【ベストセラー1位】PUMAのスニーカーが半額の2685円！ Amazonで価格が一気に落ちた注目アイテム15選（2月23日）</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">20時間前</span>
+                            </div>
+                            <div class="entry-summary">毎日お得なタイムセールを開催しているAmazon。家電・食品・ファッションなど、さまざまなカテゴリーのアイテムを特別価格でゲットできるチャンス。 天皇誕生日の本日2/23は、価格が一気に落ちた注目のアイテムを厳選ピックア […]</div>
+                        </div>
+                        
+                        <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/02/IMG_5964.jpg" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://rocketnews24.com/2026/02/23/2642779/" data-title="PB冷凍餃子は安い？ 味はどう？ 西友を買収した「トライアル」の餃子を食べてみた" data-summary="昨年、西友を買収した九州発祥のディスカウントストア「トライアル」。都内で勢力を伸ばしており、徐々にその名前が浸透してきている。 安さは当然として、注目したいのはプライベートブランド「おいしくなれ！」。先日冷凍炒飯をお伝え […]">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://rocketnews24.com/2026/02/23/2642779/" target="_blank" rel="noopener noreferrer" class="entry-link">PB冷凍餃子は安い？ 味はどう？ 西友を買収した「トライアル」の餃子を食べてみた</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">21時間前</span>
+                            </div>
+                            <div class="entry-summary">昨年、西友を買収した九州発祥のディスカウントストア「トライアル」。都内で勢力を伸ばしており、徐々にその名前が浸透してきている。 安さは当然として、注目したいのはプライベートブランド「おいしくなれ！」。先日冷凍炒飯をお伝え […]</div>
+                        </div>
+                        
+                        <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/01/IMG_5741-1.jpg" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://rocketnews24.com/2026/02/23/2651738/" data-title="【WBC】どっちが大谷翔平に近づけるか選手権 / 44歳と46歳は予算5000円でどこまでやれるのか？" data-summary="ああぁぁ大谷翔平になりてぇぇぇええええ……！ ──テレビの前でそう叫んでいる人は、世界中に一体何人いるのだろう。今や数え切れないだろうし、これからWBCが始まったらさらに増えるに違いない。 ただ、「大谷選手みたいになりた […]">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://rocketnews24.com/2026/02/23/2651738/" target="_blank" rel="noopener noreferrer" class="entry-link">【WBC】どっちが大谷翔平に近づけるか選手権 / 44歳と46歳は予算5000円でどこまでやれるのか？</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">22時間前</span>
+                            </div>
+                            <div class="entry-summary">ああぁぁ大谷翔平になりてぇぇぇええええ……！ ──テレビの前でそう叫んでいる人は、世界中に一体何人いるのだろう。今や数え切れないだろうし、これからWBCが始まったらさらに増えるに違いない。 ただ、「大谷選手みたいになりた […]</div>
+                        </div>
+                        
+                        <img src="https://rocketnews24.com/wp-content/uploads/sites/2/2026/02/aaa_IMG_4321_01_noEXIF.jpg" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                </ul>
+            </details>
+            
+            <details class="feed-section">
+                <summary>
+                    <div class="feed-info">
+                        <img src="https://www.google.com/s2/favicons?domain=www.lifehacker.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="feed-title-text">ライフハッカー・ジャパン</span>
+                    </div>
+                    <div class="feed-meta-count">
+                        
+                        <span class="count-badge has-new">新着 10 / 10</span>
+                        
+                    </div>
+                </summary>
+                <ul class="entry-list">
+                    
+                    <li class="list-item entry-item" data-link="https://www.lifehacker.jp/article/2602-book_to_read-1892/" data-title="【毎日書評】「能力は60点でいい」松下幸之助が説く、完璧主義を捨てて成功をつかむための心得" data-summary="">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.lifehacker.jp/article/2602-book_to_read-1892/" target="_blank" rel="noopener noreferrer" class="entry-link">【毎日書評】「能力は60点でいい」松下幸之助が説く、完璧主義を捨てて成功をつかむための心得</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">20分前</span>
+                            </div>
+                            <div class="entry-summary"></div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.lifehacker.jp/article/2602-amazon-salonia-hairiron/" data-title="前髪ととのえ、スマホも満たす。「モバ充になるヘアアイロン」で荷物、最少化した" data-summary="">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.lifehacker.jp/article/2602-amazon-salonia-hairiron/" target="_blank" rel="noopener noreferrer" class="entry-link">前髪ととのえ、スマホも満たす。「モバ充になるヘアアイロン」で荷物、最少化した</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
+                            </div>
+                            <div class="entry-summary"></div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.lifehacker.jp/article/2602-amazon-hario-coffeepot/" data-title="粉と水を入れて待つだけ。HARIOのコーヒーポットで朝からお店みたいな水出しコーヒーが楽しめるよ" data-summary="お家で手軽に水出しコーヒーを作るなら、やっぱり定番のコレが優秀だった。計量いらずで仕込みができるから、寝る前3分で準備完了。朝にはお店みたいな水出しコーヒーができてるよ。たったの1000円ちょっとで手に入れられるから、複数ゲットしておくのもおすすめだよ">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.lifehacker.jp/article/2602-amazon-hario-coffeepot/" target="_blank" rel="noopener noreferrer" class="entry-link">粉と水を入れて待つだけ。HARIOのコーヒーポットで朝からお店みたいな水出しコーヒーが楽しめるよ</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">2時間前</span>
+                            </div>
+                            <div class="entry-summary">お家で手軽に水出しコーヒーを作るなら、やっぱり定番のコレが優秀だった。計量いらずで仕込みができるから、寝る前3分で準備完了。朝にはお店みたいな水出しコーヒーができてるよ。たったの1000円ちょっとで手に入れられるから、複数ゲットしておくのもおすすめだよ</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.lifehacker.jp/article/2602-lht-base-ramen/" data-title="ラーメン好きも納得の風味！たんぱく質17.1gがうれしい完全栄養カップ麺「BASE RAMEN」" data-summary="2025年10月に発売された「BASE RAMEN」シリーズ。「鶏ガラ醤油ラーメン」と「味噌ラーメン」の2種類を実際に食べてみた感想をお届けします。">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.lifehacker.jp/article/2602-lht-base-ramen/" target="_blank" rel="noopener noreferrer" class="entry-link">ラーメン好きも納得の風味！たんぱく質17.1gがうれしい完全栄養カップ麺「BASE RAMEN」</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">10時間前</span>
+                            </div>
+                            <div class="entry-summary">2025年10月に発売された「BASE RAMEN」シリーズ。「鶏ガラ醤油ラーメン」と「味噌ラーメン」の2種類を実際に食べてみた感想をお届けします。</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.lifehacker.jp/article/2602-matome-feb-google/" data-title="GeminiもGoogleフォトも初期設定なら損してる【2月の人気記事4選】" data-summary="今月のライフハッカー・ジャパンでは、GoogleフォトやGoogle Keep、さらには脱Gmailという選択肢まで、Googleユーザーのヒントになる記事がよく読まれました。毎日使うツールだからこそ、ほんの少しの使い方を変えるだけで「最高の相棒」に変わるはずです。">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.lifehacker.jp/article/2602-matome-feb-google/" target="_blank" rel="noopener noreferrer" class="entry-link">GeminiもGoogleフォトも初期設定なら損してる【2月の人気記事4選】</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">11時間前</span>
+                            </div>
+                            <div class="entry-summary">今月のライフハッカー・ジャパンでは、GoogleフォトやGoogle Keep、さらには脱Gmailという選択肢まで、Googleユーザーのヒントになる記事がよく読まれました。毎日使うツールだからこそ、ほんの少しの使い方を変えるだけで「最高の相棒」に変わるはずです。</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.lifehacker.jp/article/2602-5-hidden-things-chromebooks-do/" data-title="Chromebookを使い倒せ。超便利な活用法5選" data-summary="「ChromebookはWeb閲覧だけ」はもう古い！マルチモニター化からLinuxアプリの活用、便利な仮想デスク、標準の画面録画機能まで、生産性を劇的に高める5つの隠れた活用術を徹底解説。オフラインでの仕事術も紹介し、あなたのChromebookを最強の作業マシンに変えます。">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.lifehacker.jp/article/2602-5-hidden-things-chromebooks-do/" target="_blank" rel="noopener noreferrer" class="entry-link">Chromebookを使い倒せ。超便利な活用法5選</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">11時間前</span>
+                            </div>
+                            <div class="entry-summary">「ChromebookはWeb閲覧だけ」はもう古い！マルチモニター化からLinuxアプリの活用、便利な仮想デスク、標準の画面録画機能まで、生産性を劇的に高める5つの隠れた活用術を徹底解説。オフラインでの仕事術も紹介し、あなたのChromebookを最強の作業マシンに変えます。</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.lifehacker.jp/article/2602-lht-brother-printer/" data-title="「データ管理」派の私がわかった──自宅プリンターがQOLを上げる理由" data-summary="ブラザー工業のカラーレーザープリンター『HL-L3240CDW』無線・有線LANに対応で、両面印刷もできます。仕事のプロジェクト、データ管理などの活用方法をお届けします。">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.lifehacker.jp/article/2602-lht-brother-printer/" target="_blank" rel="noopener noreferrer" class="entry-link">「データ管理」派の私がわかった──自宅プリンターがQOLを上げる理由</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">13時間前</span>
+                            </div>
+                            <div class="entry-summary">ブラザー工業のカラーレーザープリンター『HL-L3240CDW』無線・有線LANに対応で、両面印刷もできます。仕事のプロジェクト、データ管理などの活用方法をお届けします。</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.lifehacker.jp/article/2602_gizmodo_flowerdripper-vw5/" data-title="コーヒー屋のぼくが虜になった。店でも使う｢完成度が高すぎる｣ドリッパー" data-summary="｢フラワードリッパー DEEP27 ｣は、2023年9月初めに発売されて瞬く間に初回分が売り切れとなったドリッパー。私はたまたま初回分で購入できました。">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.lifehacker.jp/article/2602_gizmodo_flowerdripper-vw5/" target="_blank" rel="noopener noreferrer" class="entry-link">コーヒー屋のぼくが虜になった。店でも使う｢完成度が高すぎる｣ドリッパー</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">14時間前</span>
+                            </div>
+                            <div class="entry-summary">｢フラワードリッパー DEEP27 ｣は、2023年9月初めに発売されて瞬く間に初回分が売り切れとなったドリッパー。私はたまたま初回分で購入できました。</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.lifehacker.jp/article/machi-ya-tripleshot-end-873822/" data-title="1本3役のスキージーで洗車が時短＆効率的に。タオルの出番が減らせるよ" data-summary="約30cmの大型ヘッドでルーフもラクラク。シリコン製だから傷つけにくく、洗車・水切り・毛取りをこれ1本で。タオル何枚も使う洗車から解放されてみませんか？おトクなセールは終了間近。">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.lifehacker.jp/article/machi-ya-tripleshot-end-873822/" target="_blank" rel="noopener noreferrer" class="entry-link">1本3役のスキージーで洗車が時短＆効率的に。タオルの出番が減らせるよ</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">15時間前</span>
+                            </div>
+                            <div class="entry-summary">約30cmの大型ヘッドでルーフもラクラク。シリコン製だから傷つけにくく、洗車・水切り・毛取りをこれ1本で。タオル何枚も使う洗車から解放されてみませんか？おトクなセールは終了間近。</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.lifehacker.jp/article/machi-ya-mirroringadapterm2-end-911119/" data-title="自宅や出先でPCやスマホからサッと画面共有。そんなとき、このアダプターが頼りになる" data-summary="長いケーブルもWi-Fiも不要。送受信機を挿すだけで接続設定もなく会議でも自宅でもサッと画面共有OK。最大1080p映像を0.1秒低遅延で。PC/スマホ/ゲーム機の画面をサクッと大画面で楽しもう。">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.lifehacker.jp/article/machi-ya-mirroringadapterm2-end-911119/" target="_blank" rel="noopener noreferrer" class="entry-link">自宅や出先でPCやスマホからサッと画面共有。そんなとき、このアダプターが頼りになる</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">16時間前</span>
+                            </div>
+                            <div class="entry-summary">長いケーブルもWi-Fiも不要。送受信機を挿すだけで接続設定もなく会議でも自宅でもサッと画面共有OK。最大1080p映像を0.1秒低遅延で。PC/スマホ/ゲーム機の画面をサクッと大画面で楽しもう。</div>
+                        </div>
+                        
+                    </li>
+                    
+                </ul>
+            </details>
+            
+        </div>
+        
+    </div>
+
+    <div id="backToTop" title="トップへ戻る">↑</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 修正箇所: ジャンプボタン連動のスクロール＆アコーディオン自動展開ロジック
+            document.querySelectorAll('.jump-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    
+                    if (targetSection) {
+                        // ジャンプ先のセクション内にあるアコーディオンをすべて開く
+                        targetSection.querySelectorAll('details').forEach(details => {
+                            details.open = true;
+                        });
+                        
+                        // ヘッダーの高さを考慮して少しずらしてスクロール
+                        const headerOffset = 70;
+                        const elementPosition = targetSection.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                        
+                        window.scrollTo({
+                             top: offsetPosition,
+                             behavior: "smooth"
+                        });
+                    }
+                });
+            });
+
+            // 既読管理
+            const STORAGE_KEY = 'rss_read_items';
+            let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+            const entryItems = document.querySelectorAll('.entry-item');
+            
+            entryItems.forEach(item => {
+                const link = item.dataset.link;
+                if (readItems.has(link)) {
+                    item.classList.add('read');
+                }
+                const anchor = item.querySelector('a.entry-link');
+                if(anchor) {
+                    anchor.addEventListener('click', function() {
+                        // 同じURLを持つすべての記事（タイムラインとサイト別の両方）を既読にする
+                        document.querySelectorAll(`.entry-item[data-link="${link}"]`).forEach(el => {
+                            el.classList.add('read');
+                        });
+                        readItems.add(link);
+                        if (readItems.size > 1000) {
+                            const array = Array.from(readItems);
+                            readItems = new Set(array.slice(array.length - 1000));
+                        }
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
+                    });
+                }
+            });
+
+            // 検索・絞り込み
+            const searchToggle = document.getElementById('searchToggle');
+            const searchInput = document.getElementById('searchInput');
+            
+            if (searchToggle && searchInput) {
+                searchToggle.addEventListener('click', () => {
+                    searchInput.classList.toggle('active');
+                    if(searchInput.classList.contains('active')) {
+                        searchInput.focus();
+                    }
+                });
+            }
+
+            entryItems.forEach(entry => {
+                const titleLink = entry.querySelector('.entry-title a');
+                const summaryDiv = entry.querySelector('.entry-summary');
+                if(titleLink && summaryDiv){
+                    entry.dataset.originalTitleHtml = titleLink.innerHTML;
+                    entry.dataset.originalSummaryHtml = summaryDiv.innerHTML;
+                }
+            });
+
+            searchInput.addEventListener('input', function(e) {
+                const term = e.target.value.trim().toLowerCase();
+
+                if (term === '') {
+                    entryItems.forEach(entry => {
+                        entry.style.display = '';
+                        const titleLink = entry.querySelector('.entry-title a');
+                        const summaryDiv = entry.querySelector('.entry-summary');
+                        if(titleLink && entry.dataset.originalTitleHtml) titleLink.innerHTML = entry.dataset.originalTitleHtml;
+                        if(summaryDiv && entry.dataset.originalSummaryHtml) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
+                    });
+                    
+                    // 検索クリア時は全アコーディオンを閉じて元の目次状態に戻す
+                    document.querySelectorAll('details.feed-section').forEach(sec => {
+                        sec.style.display = '';
+                        sec.open = false; 
+                    });
+                    return;
+                }
+
+                entryItems.forEach(entry => {
+                    const titleText = (entry.dataset.title || '').toLowerCase();
+                    const summaryText = (entry.dataset.summary || '').toLowerCase();
+
+                    if (titleText.includes(term) || summaryText.includes(term)) {
+                        entry.style.display = '';
+                        highlightText(entry, term);
+                    } else {
+                        entry.style.display = 'none';
+                    }
+                });
+
+                // 修正箇所: トピック・タイムライン・サイト別のすべてのアコーディオンを横断して制御
+                document.querySelectorAll('details.feed-section').forEach(section => {
+                    // クラスが .list-item (サイト別・トピック別) または .card (タイムライン) のものを探す
+                    const visibleItems = Array.from(section.querySelectorAll('.entry-item')).filter(el => el.style.display !== 'none');
+                    if(visibleItems.length === 0) {
+                        section.style.display = 'none';
+                    } else {
+                        section.style.display = '';
+                        section.open = true; // ヒットしたアコーディオンは自動で開く
+                    }
+                });
+            });
+
+            function highlightText(entry, term) {
+                try {
+                    const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
+                    const highlightMark = '<mark>$1</mark>';
+                    const titleLink = entry.querySelector('.entry-title a');
+                    const summaryDiv = entry.querySelector('.entry-summary');
+                    
+                    if(titleLink && entry.dataset.originalTitleHtml) {
+                        titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
+                    }
+                    if(summaryDiv && entry.dataset.originalSummaryHtml) {
+                        summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
+                    }
+                } catch(e) { console.error(e); }
+            }
+
+            function escapeRegExp(string) {
+                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+
+            const backToTopBtn = document.getElementById('backToTop');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

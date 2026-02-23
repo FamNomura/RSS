@@ -1,0 +1,2287 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech情報</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-sub: #7f8c8d;
+            --accent: #007bff;
+            --accent-hover: #0056b3;
+            --new-badge: #e74c3c;
+            --border: #e9ecef;
+            --highlight: #fff3cd;
+            --read-color: #b0b0b0;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding-bottom: 80px;
+            line-height: 1.6;
+        }
+        
+        .navbar {
+            background-color: #343a40;
+            padding: 0.8rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .nav-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+        .nav-links { 
+            display: flex; 
+            flex-wrap: wrap;
+            gap: 8px; 
+            flex-grow: 1;
+        }
+        .nav-link {
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.85;
+            transition: all 0.2s;
+            background-color: rgba(255,255,255,0.1);
+            white-space: nowrap;
+        }
+        .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
+        .nav-link.active { opacity: 1; background-color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+
+        @media (max-width: 600px) {
+            .nav-links {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                padding-bottom: 2px;
+            }
+            .nav-links::-webkit-scrollbar { display: none; }
+        }
+
+        .search-container { position: relative; display: flex; align-items: center; }
+        .search-toggle-btn { 
+            background: none; border: none; font-size: 18px; cursor: pointer; color: #ecf0f1; padding: 5px; margin-right: 5px; 
+        }
+        .search-input {
+            width: 0; opacity: 0; padding: 0; border: none; border-radius: 20px; font-size: 14px; 
+            background-color: rgba(255,255,255,0.95); transition: all 0.3s ease; pointer-events: none;
+        }
+        .search-input.active { 
+            width: 180px; opacity: 1; padding: 6px 10px; box-shadow: 0 0 0 2px var(--accent); pointer-events: auto; 
+        }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        
+        header { margin-bottom: 20px; text-align: center; border-radius: 8px; padding: 10px; transition: all 0.3s; }
+        h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
+        .last-updated { font-size: 12px; color: var(--text-sub); }
+
+        .header-topic {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e0edff 100%);
+            border-left: 5px solid #007bff;
+            padding: 20px;
+        }
+        .topic-desc {
+            font-size: 12px; color: #0056b3; margin: 8px 0; font-weight: bold; line-height: 1.4;
+        }
+
+        /* 修正箇所: ジャンプボタンのスタイル */
+        .jump-nav {
+            display: flex; gap: 10px; margin-bottom: 25px; justify-content: flex-start; flex-wrap: wrap;
+            background: #fff; padding: 10px 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid var(--border);
+        }
+        .jump-btn {
+            padding: 6px 14px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 20px;
+            cursor: pointer; font-size: 13px; font-weight: bold; color: var(--text-main); transition: all 0.2s; text-decoration: none;
+        }
+        .jump-btn:hover { background: #e9ecef; border-color: #ccc; transform: translateY(-1px); }
+
+        /* 修正箇所: 各セクションの区切りスタイル */
+        .content-section {
+            margin-bottom: 40px;
+        }
+        .section-title {
+            font-size: 18px; color: var(--text-main); margin: 0 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid var(--accent);
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        /* アコーディオン・カード共通 UI */
+        details {
+            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
+        }
+        summary {
+            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff; transition: background 0.2s;
+        }
+        summary:hover { background-color: #f8f9fa; }
+        summary::-webkit-details-marker { display: none; }
+        .feed-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+        .feed-title-text { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .feed-meta-count { display: flex; align-items: center; gap: 8px; font-size: 12px; flex-shrink: 0; }
+        .count-badge { background-color: #eee; color: #555; padding: 2px 8px; border-radius: 12px; font-weight: normal; }
+        .count-badge.has-new { background-color: #fff0f0; color: var(--new-badge); border: 1px solid #ffcccc; }
+        
+        .entry-list, .timeline-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
+        .list-item {
+            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start;
+        }
+        .list-item:last-child { border-bottom: none; }
+        
+        /* タイムライン用カードUIの調整（アコーディオン内） */
+        .timeline-card-wrapper {
+            padding: 15px; background: var(--bg-color); border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px;
+        }
+        .card {
+            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid var(--border); overflow: hidden; display: flex; gap: 15px; padding: 15px;
+            transition: transform 0.2s;
+        }
+        .card:hover { transform: translateY(-2px); }
+        .card-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
+        .entry-thumbnail { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee; }
+
+        .read { background-color: #fafafa; opacity: 0.85; }
+        .read .entry-title a { color: var(--read-color); }
+        .read .entry-summary { color: #b5b5b5; }
+        .read .entry-thumbnail { filter: grayscale(100%); opacity: 0.5; }
+        .read .new-badge { background-color: #ccc; }
+
+        .entry-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-sub); margin-bottom: 8px; flex-wrap: wrap; }
+        .feed-favicon { width: 14px; height: 14px; border-radius: 2px; }
+        .entry-source { font-weight: 600; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+        .entry-time { border-left: 1px solid #ddd; padding-left: 8px; white-space: nowrap; }
+        
+        .entry-title { font-size: 16px; margin: 0 0 6px 0; line-height: 1.4; }
+        .entry-title a { text-decoration: none; color: var(--text-main); font-weight: bold; }
+        .entry-title a:hover { color: var(--accent); text-decoration: underline; }
+
+        .new-badge { display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold; transform: translateY(-1px); }
+
+        .entry-summary { font-size: 13px; color: #555; margin-top: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.9; line-height: 1.5; }
+        .entry-summary img { display: none; }
+
+        .empty-state { padding: 40px 20px; text-align: center; color: #999; font-size: 14px; background: #fff; border-radius: 8px; border: 1px dashed #ccc; }
+
+        #backToTop { position: fixed; bottom: 20px; right: 20px; background-color: var(--accent); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transition: all 0.3s; font-size: 20px; z-index: 2000; }
+        #backToTop.show { opacity: 1; visibility: visible; }
+        
+        mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px 10px; }
+            .card, .list-item { padding: 12px; gap: 10px; }
+            .entry-thumbnail { width: 90px; height: 70px; }
+            .entry-source { max-width: 130px; }
+            .search-input.active { width: 140px; }
+            .jump-nav { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+            .jump-nav::-webkit-scrollbar { display: none; }
+            .jump-btn { white-space: nowrap; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-links">
+                
+                <a href="index.html" 
+                   class="nav-link ">
+                    ★トピック★
+                </a>
+                
+                <a href="01_topics.html" 
+                   class="nav-link ">
+                    総合ニュース
+                </a>
+                
+                <a href="02_blog.html" 
+                   class="nav-link ">
+                    ブログ
+                </a>
+                
+                <a href="03_wether" 
+                   class="nav-link ">
+                    天気
+                </a>
+                
+                <a href="04_tech" 
+                   class="nav-link active">
+                    Tech情報
+                </a>
+                
+                <a href="05_gadget.html" 
+                   class="nav-link ">
+                    ガジェット
+                </a>
+                
+                <a href="06_design.html" 
+                   class="nav-link ">
+                    デザイン・Web制作
+                </a>
+                
+                <a href="07_game" 
+                   class="nav-link ">
+                    ゲーム
+                </a>
+                
+                <a href="11_fukushi.html" 
+                   class="nav-link ">
+                    福祉行政
+                </a>
+                
+                <a href="12_business.html" 
+                   class="nav-link ">
+                    ビジネス誌
+                </a>
+                
+                <a href="21_entertainment.html" 
+                   class="nav-link ">
+                    エンタメ・コラム
+                </a>
+                
+                <a href="31_yahoo.html" 
+                   class="nav-link ">
+                    ニュース記事
+                </a>
+                
+            </div>
+            <div class="search-container">
+                <button id="searchToggle" class="search-toggle-btn">🔍</button>
+                <input type="text" id="searchInput" class="search-input" placeholder="キーワード検索...">
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="">
+            <h1>Tech情報</h1>
+            
+            <div class="last-updated">最終更新: 02/24 08:21</div>
+        </header>
+
+        
+        <div class="jump-nav">
+            
+            <a href="#section-timeline" class="jump-btn">🕒 タイムライン</a>
+            <a href="#section-feed" class="jump-btn">📁 サイト別</a>
+        </div>
+        
+
+        
+
+        
+
+        
+        <div id="section-timeline" class="content-section">
+            <h2 class="section-title">🕒 タイムライン</h2>
+            <details class="feed-section">
+                <summary>
+                    <div class="feed-info">
+                        <span class="feed-title-text">すべての新着記事</span>
+                    </div>
+                    <div class="feed-meta-count">
+                        <span class="count-badge">55 件</span>
+                    </div>
+                </summary>
+                <div class="timeline-card-wrapper">
+                    
+                    <div class="card entry-item" data-link="https://dev.classmethod.jp/articles/shuntaka-cloudfront-oac-lambda-function-urls-auth-site/" data-title="CloudFront OAC ×  AWS Lambda Function URLs で作る認証付き簡易サイト というタイトルでLTしました" data-summary="CloudFront OAC × AWS Lambda Function URLs で作る認証付き簡易サイト というタイトルでLTしました">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=dev.classmethod.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">DevelopersIO</span>
+                                <span class="entry-time">10分前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/shuntaka-cloudfront-oac-lambda-function-urls-auth-site/" target="_blank" rel="noopener noreferrer" class="entry-link">CloudFront OAC ×  AWS Lambda Function URLs で作る認証付き簡易サイト というタイトルでLTしました</a>
+                            </div>
+                            <div class="entry-summary">CloudFront OAC × AWS Lambda Function URLs で作る認証付き簡易サイト というタイトルでLTしました</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://dev.classmethod.jp/articles/shoma-notebooklm-new-features-edit-slides-with-prompts-and-pptx-export-support/" data-title="NotebookLM の新機能を試してみた：プロンプトでスライドを修正 ＆ PPTX エクスポート対応" data-summary="NotebookLM の新機能を試してみた：プロンプトでスライドを修正 ＆ PPTX エクスポート対応">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=dev.classmethod.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">DevelopersIO</span>
+                                <span class="entry-time">6時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/shoma-notebooklm-new-features-edit-slides-with-prompts-and-pptx-export-support/" target="_blank" rel="noopener noreferrer" class="entry-link">NotebookLM の新機能を試してみた：プロンプトでスライドを修正 ＆ PPTX エクスポート対応</a>
+                            </div>
+                            <div class="entry-summary">NotebookLM の新機能を試してみた：プロンプトでスライドを修正 ＆ PPTX エクスポート対応</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://www.publickey1.jp/blog/26/nistaiai_agent_standards_initiative.html" data-title="NIST（米国国立標準技術研究所）がAIエージェントの技術標準を作る取り組み「AI Agent Standards Initiative」発表。相互運用可能かつ安全なイノベーションのために" data-summary="米国商務省傘下のNIST（National Institute of Standards and Technology：米国国立標準技術研究所）は、AIエージェントの技術標準策定に取り組む「AI Agent Standards Initiative」を発表しました。 これはNIST内に設けられた組織「CAISI」（Center for AI Standards and Innovation：人工知能標準化イノベーションセンター）が行う取り組みです。 CAISIは商用AIシステ……">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=www.publickey1.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Publickey</span>
+                                <span class="entry-time">7時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.publickey1.jp/blog/26/nistaiai_agent_standards_initiative.html" target="_blank" rel="noopener noreferrer" class="entry-link">NIST（米国国立標準技術研究所）がAIエージェントの技術標準を作る取り組み「AI Agent Standards Initiative」発表。相互運用可能かつ安全なイノベーションのために</a>
+                            </div>
+                            <div class="entry-summary">米国商務省傘下のNIST（National Institute of Standards and Technology：米国国立標準技術研究所）は、AIエージェントの技術標準策定に取り組む「AI Agent Standards Initiative」を発表しました。 これはNIST内に設けられた組織「CAISI」（Center for AI Standards and Innovation：人工知能標準化イノベーションセンター）が行う取り組みです。 CAISIは商用AIシステ……</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://dev.classmethod.jp/articles/claude-code-bedrock-sudo-iam/" data-title="AIによるAWS操作を安全に。Claude Code × Bedrockで作るsudo的なIAM権限昇格" data-summary="Claude Code と Amazon Bedrock を組み合わせ、AWS 操作の権限分離を実現。最新モデル Sonnet 4.6 を使い、AWS_PROFILE の切り替えで「sudo 的」な ReadOnly / Elevated 運用を安全に行う仕組みを解説します。EC2 ロールの最小権限設計により、Docker 経由のリスクにも IAM レベルで備えます。">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=dev.classmethod.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">DevelopersIO</span>
+                                <span class="entry-time">7時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/claude-code-bedrock-sudo-iam/" target="_blank" rel="noopener noreferrer" class="entry-link">AIによるAWS操作を安全に。Claude Code × Bedrockで作るsudo的なIAM権限昇格</a>
+                            </div>
+                            <div class="entry-summary">Claude Code と Amazon Bedrock を組み合わせ、AWS 操作の権限分離を実現。最新モデル Sonnet 4.6 を使い、AWS_PROFILE の切り替えで「sudo 的」な ReadOnly / Elevated 運用を安全に行う仕組みを解説します。EC2 ロールの最小権限設計により、Docker 経由のリスクにも IAM レベルで備えます。</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://gigazine.net/news/20260223-glances/" data-title="オープンソースのクロスプラットフォーム監視ツール「Glances」、CPU・メモリ・ディスク・ネットワーク使用量などをターミナルだけでなくウェブサーバーモードで監視可能" data-summary="オープンソースのクロスプラットフォーム監視ツール「Glances」、CPU・メモリ・ディスク・ネットワーク使用量などをターミナルだけでなくウェブサーバーモードで監視可能サーバーやPCの状態をリアルタイムで把握したい場合にプロセスやCPUリソースだけでなく、ネットワークの送受信やディスクの読み書き、さらにはdockerのコンテナのリソース情報を一画面で確認できるオープンソースのシステム監視ツール「Glances」が公開されています。 nicolargo/glances: Glances an Eye on your system...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=b.hatena.ne.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">はてなブックマーク IT</span>
+                                <span class="entry-time">7時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://gigazine.net/news/20260223-glances/" target="_blank" rel="noopener noreferrer" class="entry-link">オープンソースのクロスプラットフォーム監視ツール「Glances」、CPU・メモリ・ディスク・ネットワーク使用量などをターミナルだけでなくウェブサーバーモードで監視可能</a>
+                            </div>
+                            <div class="entry-summary">オープンソースのクロスプラットフォーム監視ツール「Glances」、CPU・メモリ・ディスク・ネットワーク使用量などをターミナルだけでなくウェブサーバーモードで監視可能サーバーやPCの状態をリアルタイムで把握したい場合にプロセスやCPUリソースだけでなく、ネットワークの送受信やディスクの読み書き、さらにはdockerのコンテナのリソース情報を一画面で確認できるオープンソースのシステム監視ツール「Glances」が公開されています。 nicolargo/glances: Glances an Eye on your system...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fgigazine.net%2Fnews%2F20260223-glances%2F" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://www.publickey1.jp/blog/26/anthropicclaude_code_security.html" data-title="Anthropic、ルールベースではなく、コード分析により複雑な脆弱性も発見できる新機能「Claude Code Security」を提供開始" data-summary="AnthropicはClaude Codeの新機能として、複雑な脆弱性も発見できる「Claude Code Security」をリサーチプレビューとして提供開始したことを発表しました。 人間のセキュリティ専門家のようにコードを分析 Calude Code Securityはルールベースの静的解析ではなく、人間のセキュリティ研究者と同じようにコードを分析し、複雑な脆弱性も発見できると、次のように説明されています。 Rather than scanning for known……">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=www.publickey1.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Publickey</span>
+                                <span class="entry-time">8時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.publickey1.jp/blog/26/anthropicclaude_code_security.html" target="_blank" rel="noopener noreferrer" class="entry-link">Anthropic、ルールベースではなく、コード分析により複雑な脆弱性も発見できる新機能「Claude Code Security」を提供開始</a>
+                            </div>
+                            <div class="entry-summary">AnthropicはClaude Codeの新機能として、複雑な脆弱性も発見できる「Claude Code Security」をリサーチプレビューとして提供開始したことを発表しました。 人間のセキュリティ専門家のようにコードを分析 Calude Code Securityはルールベースの静的解析ではなく、人間のセキュリティ研究者と同じようにコードを分析し、複雑な脆弱性も発見できると、次のように説明されています。 Rather than scanning for known……</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://dev.classmethod.jp/articles/alert-investigation-automation-opsmethod-1/" data-title="【登壇資料】「アラート調査の自動化にむけて」というタイトルでopsmethod #1に登壇しました #opsmethod" data-summary="【登壇資料】「アラート調査の自動化にむけて」というタイトルでopsmethod #1に登壇しました #opsmethod">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=dev.classmethod.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">DevelopersIO</span>
+                                <span class="entry-time">8時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/alert-investigation-automation-opsmethod-1/" target="_blank" rel="noopener noreferrer" class="entry-link">【登壇資料】「アラート調査の自動化にむけて」というタイトルでopsmethod #1に登壇しました #opsmethod</a>
+                            </div>
+                            <div class="entry-summary">【登壇資料】「アラート調査の自動化にむけて」というタイトルでopsmethod #1に登壇しました #opsmethod</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://dev.classmethod.jp/articles/kiro-cli-custom-agent-sudo/" data-title="AIによるAWS操作を安全に。Kiro CLIで作るsudo的なIAM権限昇格" data-summary="AIエージェント（Kiro CLI）に安全にAWSを操作させるため、AWS CLIのネイティブAssumeRoleとカスタムエージェントを組み合わせた「sudo的」なIAM権限昇格の実装方法を解説します。すぐに試せるCFnテンプレート付きです。">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=dev.classmethod.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">DevelopersIO</span>
+                                <span class="entry-time">9時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/kiro-cli-custom-agent-sudo/" target="_blank" rel="noopener noreferrer" class="entry-link">AIによるAWS操作を安全に。Kiro CLIで作るsudo的なIAM権限昇格</a>
+                            </div>
+                            <div class="entry-summary">AIエージェント（Kiro CLI）に安全にAWSを操作させるため、AWS CLIのネイティブAssumeRoleとカスタムエージェントを組み合わせた「sudo的」なIAM権限昇格の実装方法を解説します。すぐに試せるCFnテンプレート付きです。</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://qiita.com/YushiYamamoto/items/0aea29339d073829cb26" data-title="【AI駆動開発】Cursorに設計から考えさせたら、コードの品質が別次元になった話（プロンプトテンプレートあり） - Qiita" data-summary="【AI駆動開発】Cursorに設計から考えさせたら、コードの品質が別次元になった話（プロンプトテンプレートあり） - Qiitaはじめに：AIエディタに「丸投げ」していませんか？ CursorやWindsurfなどのAIエディタの進化により、コードを書かずに自然言語だけで開発を進めるスタイルが普及してきました。 しかし、こんな経験はありませんか？ 「〇〇の機能を作って」と雑に頼んだら、既存のコードの別機能まで破壊された コンポーネントが肥大化...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=b.hatena.ne.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">はてなブックマーク IT</span>
+                                <span class="entry-time">11時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://qiita.com/YushiYamamoto/items/0aea29339d073829cb26" target="_blank" rel="noopener noreferrer" class="entry-link">【AI駆動開発】Cursorに設計から考えさせたら、コードの品質が別次元になった話（プロンプトテンプレートあり） - Qiita</a>
+                            </div>
+                            <div class="entry-summary">【AI駆動開発】Cursorに設計から考えさせたら、コードの品質が別次元になった話（プロンプトテンプレートあり） - Qiitaはじめに：AIエディタに「丸投げ」していませんか？ CursorやWindsurfなどのAIエディタの進化により、コードを書かずに自然言語だけで開発を進めるスタイルが普及してきました。 しかし、こんな経験はありませんか？ 「〇〇の機能を作って」と雑に頼んだら、既存のコードの別機能まで破壊された コンポーネントが肥大化...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fqiita.com%2FYushiYamamoto%2Fitems%2F0aea29339d073829cb26" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://dev.classmethod.jp/articles/nemotron-9b-constitutional-ai-simpo/" data-title="クラスメソッドのカルチャー CLP を Nemotron 9B-v2 に教え込んでみた" data-summary="クラスメソッドのカルチャー CLP を Nemotron 9B-v2 に教え込んでみた">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=dev.classmethod.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">DevelopersIO</span>
+                                <span class="entry-time">11時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/nemotron-9b-constitutional-ai-simpo/" target="_blank" rel="noopener noreferrer" class="entry-link">クラスメソッドのカルチャー CLP を Nemotron 9B-v2 に教え込んでみた</a>
+                            </div>
+                            <div class="entry-summary">クラスメソッドのカルチャー CLP を Nemotron 9B-v2 に教え込んでみた</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://gigazine.net/news/20260223-aws-ai-outage/" data-title="AmazonでAIツールが原因と見られるAWS障害が発生、2025年12月にはKiro AIが原因で13時間に及ぶサービス停止" data-summary="AmazonでAIツールが原因と見られるAWS障害が発生、2025年12月にはKiro AIが原因で13時間に及ぶサービス停止Amazonのクラウド事業であるAmazon Web Services(AWS)が、AmazonのAIコーディングツールを原因とした障害に数カ月で少なくとも2回見舞われていることが関係者の証言により判明しました。Amazonは障害とAIツールの関係を否定し、ユーザーによる操作ミスを指摘しています。 Amazon service was taken down by AI coding bo...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=b.hatena.ne.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">はてなブックマーク IT</span>
+                                <span class="entry-time">12時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://gigazine.net/news/20260223-aws-ai-outage/" target="_blank" rel="noopener noreferrer" class="entry-link">AmazonでAIツールが原因と見られるAWS障害が発生、2025年12月にはKiro AIが原因で13時間に及ぶサービス停止</a>
+                            </div>
+                            <div class="entry-summary">AmazonでAIツールが原因と見られるAWS障害が発生、2025年12月にはKiro AIが原因で13時間に及ぶサービス停止Amazonのクラウド事業であるAmazon Web Services(AWS)が、AmazonのAIコーディングツールを原因とした障害に数カ月で少なくとも2回見舞われていることが関係者の証言により判明しました。Amazonは障害とAIツールの関係を否定し、ユーザーによる操作ミスを指摘しています。 Amazon service was taken down by AI coding bo...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fgigazine.net%2Fnews%2F20260223-aws-ai-outage%2F" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://dev.classmethod.jp/articles/verify-waf-policy-with-cloud-armor-preview-mode/" data-title="Cloud Armor のプレビューモードの動作確認をする" data-summary="Cloud Armor のプレビューモードの動作確認をする">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=dev.classmethod.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">DevelopersIO</span>
+                                <span class="entry-time">12時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/verify-waf-policy-with-cloud-armor-preview-mode/" target="_blank" rel="noopener noreferrer" class="entry-link">Cloud Armor のプレビューモードの動作確認をする</a>
+                            </div>
+                            <div class="entry-summary">Cloud Armor のプレビューモードの動作確認をする</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://gigazine.net/news/20260223-seal/" data-title="無料でYouTubeなどから動画や音楽をダウンロード・保存できるオープンソースAndroidアプリ「Seal」" data-summary="無料でYouTubeなどから動画や音楽をダウンロード・保存できるオープンソースAndroidアプリ「Seal」YouTubeなどのサイトから動画をダウンロードする場合yt-dlpを利用するのが有力な手段の候補となります。ただしyt-dlpはCUIツールであるため高機能を活かすには膨大なコマンドラインオプションを把握する必要があり万人向けとはいいがたく、特にスマートフォンで気軽に使用するのには不向きである点は否めません。そんなy...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=b.hatena.ne.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">はてなブックマーク IT</span>
+                                <span class="entry-time">12時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://gigazine.net/news/20260223-seal/" target="_blank" rel="noopener noreferrer" class="entry-link">無料でYouTubeなどから動画や音楽をダウンロード・保存できるオープンソースAndroidアプリ「Seal」</a>
+                            </div>
+                            <div class="entry-summary">無料でYouTubeなどから動画や音楽をダウンロード・保存できるオープンソースAndroidアプリ「Seal」YouTubeなどのサイトから動画をダウンロードする場合yt-dlpを利用するのが有力な手段の候補となります。ただしyt-dlpはCUIツールであるため高機能を活かすには膨大なコマンドラインオプションを把握する必要があり万人向けとはいいがたく、特にスマートフォンで気軽に使用するのには不向きである点は否めません。そんなy...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fgigazine.net%2Fnews%2F20260223-seal%2F" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://qiita.com/IkuyaM/items/8ce2d6eea5413d690122?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="アンケートデータから目標指標の改善につながる打ち手を見つける方法" data-summary="例えば、購買意向や総合満足度、NPS（ネット・プロモーター・スコア）のような目標指標を高めるために、どのような領域に対するアクションを起こせばいいのかを知りたい。このような、「次に何を改善すべきか」のヒントを得るために顧客アンケートや満足度調査を実施することは少なくありませ...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=qiita.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Qiita トレンド</span>
+                                <span class="entry-time">12時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://qiita.com/IkuyaM/items/8ce2d6eea5413d690122?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">アンケートデータから目標指標の改善につながる打ち手を見つける方法</a>
+                            </div>
+                            <div class="entry-summary">例えば、購買意向や総合満足度、NPS（ネット・プロモーター・スコア）のような目標指標を高めるために、どのような領域に対するアクションを起こせばいいのかを知りたい。このような、「次に何を改善すべきか」のヒントを得るために顧客アンケートや満足度調査を実施することは少なくありませ...</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://dev.classmethod.jp/articles/claude-hashicorp-agent-skills/" data-title="Claude でhashicorp/agent-skillsを使って Terraform のモノリシック構成をモジュール化してみた" data-summary="Claude でhashicorp/agent-skillsを使って Terraform のモノリシック構成をモジュール化してみた">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=dev.classmethod.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">DevelopersIO</span>
+                                <span class="entry-time">13時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/claude-hashicorp-agent-skills/" target="_blank" rel="noopener noreferrer" class="entry-link">Claude でhashicorp/agent-skillsを使って Terraform のモノリシック構成をモジュール化してみた</a>
+                            </div>
+                            <div class="entry-summary">Claude でhashicorp/agent-skillsを使って Terraform のモノリシック構成をモジュール化してみた</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://dev.classmethod.jp/articles/ecs-built-in-bg-deploy-rollback/" data-title="Amazon ECS ブルー/グリーンデプロイメントのロールバックを試してみた" data-summary="Amazon ECS ブルー/グリーンデプロイメントのロールバックを試してみた">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=dev.classmethod.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">DevelopersIO</span>
+                                <span class="entry-time">14時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/ecs-built-in-bg-deploy-rollback/" target="_blank" rel="noopener noreferrer" class="entry-link">Amazon ECS ブルー/グリーンデプロイメントのロールバックを試してみた</a>
+                            </div>
+                            <div class="entry-summary">Amazon ECS ブルー/グリーンデプロイメントのロールバックを試してみた</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://azukiazusa.dev/blog/claude-code-worktree-worktreeinclude-gitignore/" data-title="Claude Code デスクトップで Worktree を作成するとき .worktreeinclude で .gitignore で除外されているファイルを含める" data-summary="Claude Code デスクトップで Worktree を作成するとき .worktreeinclude で .gitignore で除外されているファイルを含めるClaude Code デスクトップ Claude Code のデスクトップ版で新しいセッションを開始するとき Worktree を作成するのは簡単です。セッションの作成画面で「Worktree」チェックボックスをオンにするだけです。 Claude Code によって作成された Worktree は git worktree list コマンドで確認できます。 $ git worktree list...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=b.hatena.ne.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">はてなブックマーク IT</span>
+                                <span class="entry-time">14時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://azukiazusa.dev/blog/claude-code-worktree-worktreeinclude-gitignore/" target="_blank" rel="noopener noreferrer" class="entry-link">Claude Code デスクトップで Worktree を作成するとき .worktreeinclude で .gitignore で除外されているファイルを含める</a>
+                            </div>
+                            <div class="entry-summary">Claude Code デスクトップで Worktree を作成するとき .worktreeinclude で .gitignore で除外されているファイルを含めるClaude Code デスクトップ Claude Code のデスクトップ版で新しいセッションを開始するとき Worktree を作成するのは簡単です。セッションの作成画面で「Worktree」チェックボックスをオンにするだけです。 Claude Code によって作成された Worktree は git worktree list コマンドで確認できます。 $ git worktree list...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fazukiazusa.dev%2Fblog%2Fclaude-code-worktree-worktreeinclude-gitignore%2F" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://yuzutas0.hatenablog.com/entry/2026/02/23/100000" data-title="開業1年目に心がけた100箇条 - 下町柚子黄昏記 by @yuzutas0" data-summary="開業1年目に心がけた100箇条 - 下町柚子黄昏記 by @yuzutas02019年の下書きに眠っていた記事を、7年越しに公開します。 気づけば年商億超えの社長になっていましたが、読み返してみたら今でも大事にしているものだらけだったので、この機会に公開します。 （次の段落から当時の原稿です。） フリーランス Advent Calendar 2019 24日目の記事です。 去年のことですが、フリーランス...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=b.hatena.ne.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">はてなブックマーク IT</span>
+                                <span class="entry-time">14時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://yuzutas0.hatenablog.com/entry/2026/02/23/100000" target="_blank" rel="noopener noreferrer" class="entry-link">開業1年目に心がけた100箇条 - 下町柚子黄昏記 by @yuzutas0</a>
+                            </div>
+                            <div class="entry-summary">開業1年目に心がけた100箇条 - 下町柚子黄昏記 by @yuzutas02019年の下書きに眠っていた記事を、7年越しに公開します。 気づけば年商億超えの社長になっていましたが、読み返してみたら今でも大事にしているものだらけだったので、この機会に公開します。 （次の段落から当時の原稿です。） フリーランス Advent Calendar 2019 24日目の記事です。 去年のことですが、フリーランス...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fyuzutas0.hatenablog.com%2Fentry%2F2026%2F02%2F23%2F100000" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://dev.classmethod.jp/articles/ecs-native-blue-green-deployment-lifecycle-hooks-amazon-q-developer-slack/" data-title="ECS Native Blue/Green DeploymentのライフサイクルフックとAmazon Q Developer in chat applicationsでSlack通知およびカスタムアクションボタンによる本番トラフィックの再ルーティングとロールバックを制御してみた" data-summary="将来的にはユーザーが自作するのではなくサービスの機能として提供されて欲しい">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=dev.classmethod.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">DevelopersIO</span>
+                                <span class="entry-time">14時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/ecs-native-blue-green-deployment-lifecycle-hooks-amazon-q-developer-slack/" target="_blank" rel="noopener noreferrer" class="entry-link">ECS Native Blue/Green DeploymentのライフサイクルフックとAmazon Q Developer in chat applicationsでSlack通知およびカスタムアクションボタンによる本番トラフィックの再ルーティングとロールバックを制御してみた</a>
+                            </div>
+                            <div class="entry-summary">将来的にはユーザーが自作するのではなくサービスの機能として提供されて欲しい</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://qiita.com/akira_papa_AI/items/f3d52c314329127b3bba?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="OpenClaw チートシート｜これだけ覚えればOKなコマンド・設定・ワークフロー集" data-summary="OpenClawを使い始めた人・使いこなしたい人向けのチートシートです。この記事をブックマークしておけば、必要なときにさっと参照できます。 🚀 インストール # ワンライナーインストール（推奨） curl -fsSL https://openclaw.ai/install...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=qiita.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Qiita トレンド</span>
+                                <span class="entry-time">20時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://qiita.com/akira_papa_AI/items/f3d52c314329127b3bba?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">OpenClaw チートシート｜これだけ覚えればOKなコマンド・設定・ワークフロー集</a>
+                            </div>
+                            <div class="entry-summary">OpenClawを使い始めた人・使いこなしたい人向けのチートシートです。この記事をブックマークしておけば、必要なときにさっと参照できます。 🚀 インストール # ワンライナーインストール（推奨） curl -fsSL https://openclaw.ai/install...</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://note.com/junya_tsutsui/n/n601cdf7e72eb" data-title="最近15年ほどの世界的な出生率低下傾向について｜筒井淳也" data-summary="最近15年ほどの世界的な出生率低下傾向について｜筒井淳也▼OECD加盟国における出生率のトレンドデータ分析の世界は、統計的因果推論やデータサイエンス（機械学習など）の全盛期だが、シンプルな分析から得られることも多い。出生率に関して、以前から気になっていたことを少し調べてみた（片手間なのでその点ご承知おきを）。 以前から気になっていた点とは、こういうことだ。 ...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=b.hatena.ne.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">はてなブックマーク IT</span>
+                                <span class="entry-time">20時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://note.com/junya_tsutsui/n/n601cdf7e72eb" target="_blank" rel="noopener noreferrer" class="entry-link">最近15年ほどの世界的な出生率低下傾向について｜筒井淳也</a>
+                            </div>
+                            <div class="entry-summary">最近15年ほどの世界的な出生率低下傾向について｜筒井淳也▼OECD加盟国における出生率のトレンドデータ分析の世界は、統計的因果推論やデータサイエンス（機械学習など）の全盛期だが、シンプルな分析から得られることも多い。出生率に関して、以前から気になっていたことを少し調べてみた（片手間なのでその点ご承知おきを）。 以前から気になっていた点とは、こういうことだ。 ...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fnote.com%2Fjunya_tsutsui%2Fn%2Fn601cdf7e72eb" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://note.com/it_navi/n/ne26d4d078386" data-title="Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT navi" data-summary="Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT naviAIを使ったスライド作成は以前から可能でしたが、作った後に編集できないという課題がついて回りました。例えばNotebookLMでは、多彩なデザインのスライドをpptxファイルとして出力できるものの、各ページが1枚の画像として埋め込まれるため、文字や図表を後から修正するのが困難です。 その点、Claudeで作成したスライ...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=b.hatena.ne.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">はてなブックマーク IT</span>
+                                <span class="entry-time">22時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://note.com/it_navi/n/ne26d4d078386" target="_blank" rel="noopener noreferrer" class="entry-link">Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT navi</a>
+                            </div>
+                            <div class="entry-summary">Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT naviAIを使ったスライド作成は以前から可能でしたが、作った後に編集できないという課題がついて回りました。例えばNotebookLMでは、多彩なデザインのスライドをpptxファイルとして出力できるものの、各ページが1枚の画像として埋め込まれるため、文字や図表を後から修正するのが困難です。 その点、Claudeで作成したスライ...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fnote.com%2Fit_navi%2Fn%2Fne26d4d078386" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://iwashi.co/2026/02/23/how-to-stop-recurring-meetings" data-title="定例ミーティングのなくし方" data-summary="定例ミーティングのなくし方本記事は、1時間で読み終わるエンジニアリングマネジメント本を書き始めてみるで挙げたトピックの1つです。 はじめに この記事では、定例ミーティングが増える理由と、その定例ミーティングを減らす方法について書いていきます。 まず個人的な定例ミーティングの捉え方として、「定例ミーティングは必要悪」だと思ってい...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=b.hatena.ne.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">はてなブックマーク IT</span>
+                                <span class="entry-time">22時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://iwashi.co/2026/02/23/how-to-stop-recurring-meetings" target="_blank" rel="noopener noreferrer" class="entry-link">定例ミーティングのなくし方</a>
+                            </div>
+                            <div class="entry-summary">定例ミーティングのなくし方本記事は、1時間で読み終わるエンジニアリングマネジメント本を書き始めてみるで挙げたトピックの1つです。 はじめに この記事では、定例ミーティングが増える理由と、その定例ミーティングを減らす方法について書いていきます。 まず個人的な定例ミーティングの捉え方として、「定例ミーティングは必要悪」だと思ってい...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fiwashi.co%2F2026%2F02%2F23%2Fhow-to-stop-recurring-meetings" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://zenn.dev/tesla/articles/27e0834d429c66" data-title="AI、今そんな一生懸命キャッチアップしなくてもいいのよね" data-summary="きっかけ https://uiuret.hatenablog.com/entry/2026/02/22/024509 これがバズっていたり、色んな理由でAIが話題になって界隈がピリつき SNSを見ていると誰もがすべてのことをAIに結びつけて語ろうとしている。一歩引いて見ると、明らかにバランスを欠いた意見がほとんどになっている。 などと言われているので、バランスを欠いていない意見を投下しようと思っています。 お前今AIコーディングエージェント追わないとか正気か？ 正気です（ただし自分は今風邪を引いていて死にかけの状態で書いていますが、ちゃんと説明可能な形に落とそうと思っています...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=zenn.dev" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Zenn トレンド</span>
+                                <span class="entry-time">22時間前</span>
+                            </div>
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://zenn.dev/tesla/articles/27e0834d429c66" target="_blank" rel="noopener noreferrer" class="entry-link">AI、今そんな一生懸命キャッチアップしなくてもいいのよね</a>
+                            </div>
+                            <div class="entry-summary">きっかけ https://uiuret.hatenablog.com/entry/2026/02/22/024509 これがバズっていたり、色んな理由でAIが話題になって界隈がピリつき SNSを見ていると誰もがすべてのことをAIに結びつけて語ろうとしている。一歩引いて見ると、明らかにバランスを欠いた意見がほとんどになっている。 などと言われているので、バランスを欠いていない意見を投下しようと思っています。 お前今AIコーディングエージェント追わないとか正気か？ 正気です（ただし自分は今風邪を引いていて死にかけの状態で書いていますが、ちゃんと説明可能な形に落とそうと思っています...</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://qiita.com/Maki-Daisuke/items/1da25e18c1bcb68880a3?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="JavaScriptの async/await はどこから来たのか？ C#、F#、Haskell……源流を辿ったら1958年にたどり着いた件" data-summary="ということを書いた手前、async/awaitの歴史について書いておかないといけない気がした。 なお補足しておきますと、元ネタの記事はJavaScriptの async/await の歴史についていえば、間違ってないと思います。 ただ、 async/awaitは...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=qiita.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Qiita トレンド</span>
+                                <span class="entry-time">昨日</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://qiita.com/Maki-Daisuke/items/1da25e18c1bcb68880a3?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">JavaScriptの async/await はどこから来たのか？ C#、F#、Haskell……源流を辿ったら1958年にたどり着いた件</a>
+                            </div>
+                            <div class="entry-summary">ということを書いた手前、async/awaitの歴史について書いておかないといけない気がした。 なお補足しておきますと、元ネタの記事はJavaScriptの async/await の歴史についていえば、間違ってないと思います。 ただ、 async/awaitは...</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://zenn.dev/teba_eleven/articles/1765035114d00b" data-title="【ハッカソンでClean Architecture】4人対戦ババ抜きWebSocketサーバーの設計と7つのこだわり" data-summary="はじめに 2026年2月21-22日に AWS Startup Loft Tokyo で開催された Progateハッカソン powered by AWS に参加しました。学生エンジニア向けの2日間ハッカソンです。 チームで作ったのは 「ババ抜きに、革命を！」 — 4人オンライン対戦のババ抜きに、テーマルーレットとAI画像生成を組み合わせたゲームです。(ババ抜きに革命はないのがポイントです) https://topaz.dev/projects/19fa10d5d28e056cd0cf 私の担当は WebSocketサーバー（バックエンド全般） です。本記事では、2日間でどう設計し、...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=zenn.dev" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Zenn トレンド</span>
+                                <span class="entry-time">昨日</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/teba_eleven/articles/1765035114d00b" target="_blank" rel="noopener noreferrer" class="entry-link">【ハッカソンでClean Architecture】4人対戦ババ抜きWebSocketサーバーの設計と7つのこだわり</a>
+                            </div>
+                            <div class="entry-summary">はじめに 2026年2月21-22日に AWS Startup Loft Tokyo で開催された Progateハッカソン powered by AWS に参加しました。学生エンジニア向けの2日間ハッカソンです。 チームで作ったのは 「ババ抜きに、革命を！」 — 4人オンライン対戦のババ抜きに、テーマルーレットとAI画像生成を組み合わせたゲームです。(ババ抜きに革命はないのがポイントです) https://topaz.dev/projects/19fa10d5d28e056cd0cf 私の担当は WebSocketサーバー（バックエンド全般） です。本記事では、2日間でどう設計し、...</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://zenn.dev/kimmaru/articles/6c0f67f6003b94" data-title="Figma MCP × Claude Codeで1ページ8時間の作業が20分になった話" data-summary="Figma MCP × Claude Codeで1ページ8時間の作業が20分になった話はじめに 業務でWebサイトリニューアルをやっています。 テキスト量の多い静的ページを、Figmaデザインからモック（HTML/CSS）→ Laravel組み込み（3言語対応）まで実装する作業がありました。 最初は手作業で1ページ8時間かかっていました。 Figma MCP + Claude Codeを導入したら、1ページ20分になりました。 この記事は...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=b.hatena.ne.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">はてなブックマーク IT</span>
+                                <span class="entry-time">昨日</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/kimmaru/articles/6c0f67f6003b94" target="_blank" rel="noopener noreferrer" class="entry-link">Figma MCP × Claude Codeで1ページ8時間の作業が20分になった話</a>
+                            </div>
+                            <div class="entry-summary">Figma MCP × Claude Codeで1ページ8時間の作業が20分になった話はじめに 業務でWebサイトリニューアルをやっています。 テキスト量の多い静的ページを、Figmaデザインからモック（HTML/CSS）→ Laravel組み込み（3言語対応）まで実装する作業がありました。 最初は手作業で1ページ8時間かかっていました。 Figma MCP + Claude Codeを導入したら、1ページ20分になりました。 この記事は...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fzenn.dev%2Fkimmaru%2Farticles%2F6c0f67f6003b94" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://zenn.dev/haruyama480/articles/6315d4b50485f3" data-title="Goツールチェイン(golang/go)を快適に開くための設定" data-summary="github.com/golang/go は、Goのコンパイラや標準パッケージを含むツールチェインのレポジトリです。 Goは可読性が高く、生の実装を追いやすい言語です。そのため、ライブラリと同じ感覚でGo本体のコードを追いかけたい場面がありますが、そのままエディタで開くとLSPがうまく動作せず、コードジャンプも正常に動作しません。 この記事では、VSCodeを中心にGo本体のレポジトリを「正しく」開くための設定方法を解説します。macOSのVSCodeで動作確認していますが、他の環境でも同等な設定をすれば動くと思います。 ぜひ設定して、GoツールチェインにDeep Diveする準備をしよ...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=zenn.dev" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Zenn トレンド</span>
+                                <span class="entry-time">昨日</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/haruyama480/articles/6315d4b50485f3" target="_blank" rel="noopener noreferrer" class="entry-link">Goツールチェイン(golang/go)を快適に開くための設定</a>
+                            </div>
+                            <div class="entry-summary">github.com/golang/go は、Goのコンパイラや標準パッケージを含むツールチェインのレポジトリです。 Goは可読性が高く、生の実装を追いやすい言語です。そのため、ライブラリと同じ感覚でGo本体のコードを追いかけたい場面がありますが、そのままエディタで開くとLSPがうまく動作せず、コードジャンプも正常に動作しません。 この記事では、VSCodeを中心にGo本体のレポジトリを「正しく」開くための設定方法を解説します。macOSのVSCodeで動作確認していますが、他の環境でも同等な設定をすれば動くと思います。 ぜひ設定して、GoツールチェインにDeep Diveする準備をしよ...</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://zenn.dev/soramarjr/articles/7ea5b05c7ada4d" data-title="開発環境現状確認 2026 - 交換ブログvol.17" data-summary="初期からの知らねえ単語のリスナーなんですが、誰かとこんな感じのポットキャストやりたいなと思い始めてきました。 fujitani soraです。 交換ブログ今cycleのテーマが開発環境現状確認 2026なので書きます。 前回の二人の https://2323-code.hatenablog.com/entry/2026/01/21/180200 （最近字を追うのがしんどいときは新書とか中高生向けの本を読んでいるけどそれでもすくない） これがえらすぎる、僕は気分が乗らないと心が折れる https://topi-log.hatenablog.jp/entry/2026/02/15/211...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=zenn.dev" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Zenn トレンド</span>
+                                <span class="entry-time">昨日</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/soramarjr/articles/7ea5b05c7ada4d" target="_blank" rel="noopener noreferrer" class="entry-link">開発環境現状確認 2026 - 交換ブログvol.17</a>
+                            </div>
+                            <div class="entry-summary">初期からの知らねえ単語のリスナーなんですが、誰かとこんな感じのポットキャストやりたいなと思い始めてきました。 fujitani soraです。 交換ブログ今cycleのテーマが開発環境現状確認 2026なので書きます。 前回の二人の https://2323-code.hatenablog.com/entry/2026/01/21/180200 （最近字を追うのがしんどいときは新書とか中高生向けの本を読んでいるけどそれでもすくない） これがえらすぎる、僕は気分が乗らないと心が折れる https://topi-log.hatenablog.jp/entry/2026/02/15/211...</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://qiita.com/yakumo_09/items/dee0d94ba53fac725c7e?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="【AWS】Cognitoを利用したシンプルな認証機能付きのWebページの作成" data-summary="はじめに こんにちは、やくもです。 前回の記事では、CloudFront と S3 を使った静的ウェブサイトの配信環境を構築しました。 今回はその環境をベースに、Amazon Cognito を使ったシンプルな認証機能を追加してみます。 Amazon Cognito と...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=qiita.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Qiita トレンド</span>
+                                <span class="entry-time">昨日</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://qiita.com/yakumo_09/items/dee0d94ba53fac725c7e?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">【AWS】Cognitoを利用したシンプルな認証機能付きのWebページの作成</a>
+                            </div>
+                            <div class="entry-summary">はじめに こんにちは、やくもです。 前回の記事では、CloudFront と S3 を使った静的ウェブサイトの配信環境を構築しました。 今回はその環境をベースに、Amazon Cognito を使ったシンプルな認証機能を追加してみます。 Amazon Cognito と...</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://zenn.dev/tboy/articles/0c42696e56ceed" data-title="個人開発・電子工作で使えそうなクラウドサービスまとめ" data-summary="概要 ESP32やM5Stack、Arduino Uno R4の普及によって、個人レベルでもWi-FiやBluetoothを活用したアプリケーションに挑戦しやすくなっている。 一方で、電気系や組み込み系を専門としてきた人の中には、クラウドはハードルが高いと感じる人も多いのではないだろうか。私自身も組み込みエンジニアとして、クラウド連携を始めた当初はとっつきにくさを感じていた。 この記事では、趣味の個人開発や電子工作、小規模プロジェクトを想定し、主要なクラウドサービスの特徴を以下の観点で整理する。 Arduino Cloud https://cloud.arduino.cc/ Ar...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=zenn.dev" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Zenn トレンド</span>
+                                <span class="entry-time">昨日</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/tboy/articles/0c42696e56ceed" target="_blank" rel="noopener noreferrer" class="entry-link">個人開発・電子工作で使えそうなクラウドサービスまとめ</a>
+                            </div>
+                            <div class="entry-summary">概要 ESP32やM5Stack、Arduino Uno R4の普及によって、個人レベルでもWi-FiやBluetoothを活用したアプリケーションに挑戦しやすくなっている。 一方で、電気系や組み込み系を専門としてきた人の中には、クラウドはハードルが高いと感じる人も多いのではないだろうか。私自身も組み込みエンジニアとして、クラウド連携を始めた当初はとっつきにくさを感じていた。 この記事では、趣味の個人開発や電子工作、小規模プロジェクトを想定し、主要なクラウドサービスの特徴を以下の観点で整理する。 Arduino Cloud https://cloud.arduino.cc/ Ar...</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://zenn.dev/badmonster/articles/92338955317115" data-title="コードを理解する超軽量MCPを作った — トークン70%削減、1分でセットアップ" data-summary="はじめに コーディングエージェントのデモは魔法のように見えます。しかし、実際のコードベースに向けると： コンテキストウィンドウがすぐに埋まる 古いコードに対してハルシネーションが起きる 処理が遅すぎて、grepした方が早い 大規模なRust/Python/TSリポジトリでAIワークフローを構築する中でこの壁にぶつかったので、自分のスタックに本当に欲しかったものを作りました：ASTベースの超軽量な組み込みMCPです。 cocoindex-codeというツールで、トークン消費を約70%削減し、待ち時間も大幅に短縮できます。 Claude、Codex、Cursor、その他MCP対応のコ...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=zenn.dev" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Zenn トレンド</span>
+                                <span class="entry-time">昨日</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/badmonster/articles/92338955317115" target="_blank" rel="noopener noreferrer" class="entry-link">コードを理解する超軽量MCPを作った — トークン70%削減、1分でセットアップ</a>
+                            </div>
+                            <div class="entry-summary">はじめに コーディングエージェントのデモは魔法のように見えます。しかし、実際のコードベースに向けると： コンテキストウィンドウがすぐに埋まる 古いコードに対してハルシネーションが起きる 処理が遅すぎて、grepした方が早い 大規模なRust/Python/TSリポジトリでAIワークフローを構築する中でこの壁にぶつかったので、自分のスタックに本当に欲しかったものを作りました：ASTベースの超軽量な組み込みMCPです。 cocoindex-codeというツールで、トークン消費を約70%削減し、待ち時間も大幅に短縮できます。 Claude、Codex、Cursor、その他MCP対応のコ...</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://qiita.com/hatahatahata/items/b2cec428c1d3c7cced5d?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="[読書メモ]再考・ログ設計　障害に強いアプリケーションのログ出力・管理の極意（Software Design 2026年3月号）" data-summary="これは何 Software Design 2026年3月号の中の特集の一つである「再考・ログ設計 障害に強いアプリケーションのログ出力・管理の極意」に関する読書メモです 自分自身がちょうどログ分析基盤の構築に関わっていることもあり、改めてログ設計について学び直そうと...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=qiita.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Qiita トレンド</span>
+                                <span class="entry-time">昨日</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://qiita.com/hatahatahata/items/b2cec428c1d3c7cced5d?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">[読書メモ]再考・ログ設計　障害に強いアプリケーションのログ出力・管理の極意（Software Design 2026年3月号）</a>
+                            </div>
+                            <div class="entry-summary">これは何 Software Design 2026年3月号の中の特集の一つである「再考・ログ設計 障害に強いアプリケーションのログ出力・管理の極意」に関する読書メモです 自分自身がちょうどログ分析基盤の構築に関わっていることもあり、改めてログ設計について学び直そうと...</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://zenn.dev/neurostack_0001/articles/claude-code-qa-sprint-testcase-generation" data-title="支援先のQAチームにClaude Codeを導入してテストケース生成を自動化した話" data-summary="きっかけ：支援先のスプリント開発で見えた課題 技術顧問として入っている会社で、スプリント開発の現場を見ていてずっと気になっていたことがあった。 QAチームのテストケース作成がボトルネックになっている。 具体的にはこんな状況だった。 スプリント後半にQAの作業が溜まり、テストケース作成が間に合わない JIRAチケットの受け入れ条件からテストケースへの変換が完全に手作業 QAメンバーはコードを読めないので、エンジニアに「この変更、何に影響する？」と毎回聞く 新しいQAメンバーが入ると、テスト観点を覚えるまでに時間がかかる OpenObserveでも同じような課題があったらしく、Cla...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=zenn.dev" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Zenn トレンド</span>
+                                <span class="entry-time">昨日</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/neurostack_0001/articles/claude-code-qa-sprint-testcase-generation" target="_blank" rel="noopener noreferrer" class="entry-link">支援先のQAチームにClaude Codeを導入してテストケース生成を自動化した話</a>
+                            </div>
+                            <div class="entry-summary">きっかけ：支援先のスプリント開発で見えた課題 技術顧問として入っている会社で、スプリント開発の現場を見ていてずっと気になっていたことがあった。 QAチームのテストケース作成がボトルネックになっている。 具体的にはこんな状況だった。 スプリント後半にQAの作業が溜まり、テストケース作成が間に合わない JIRAチケットの受け入れ条件からテストケースへの変換が完全に手作業 QAメンバーはコードを読めないので、エンジニアに「この変更、何に影響する？」と毎回聞く 新しいQAメンバーが入ると、テスト観点を覚えるまでに時間がかかる OpenObserveでも同じような課題があったらしく、Cla...</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://zenn.dev/kimmaru/articles/6c0f67f6003b94" data-title="Figma MCP × Claude Codeで1ページ8時間の作業が20分になった話" data-summary="はじめに 業務でWebサイトリニューアルをやっています。 テキスト量の多い静的ページを、Figmaデザインからモック（HTML/CSS）→ Laravel組み込み（3言語対応）まで実装する作業がありました。 最初は手作業で1ページ8時間かかっていました。 Figma MCP + Claude Codeを導入したら、1ページ20分になりました。 この記事はその経験の所感です。 前提：必要なもの この方法を実現するには以下が必要です： Figma 有料プラン（Dev Modeが使えるプラン） Figma MCP は Dev Mode 経由でデザインデータにアクセスするため、開発...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=zenn.dev" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Zenn トレンド</span>
+                                <span class="entry-time">昨日</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/kimmaru/articles/6c0f67f6003b94" target="_blank" rel="noopener noreferrer" class="entry-link">Figma MCP × Claude Codeで1ページ8時間の作業が20分になった話</a>
+                            </div>
+                            <div class="entry-summary">はじめに 業務でWebサイトリニューアルをやっています。 テキスト量の多い静的ページを、Figmaデザインからモック（HTML/CSS）→ Laravel組み込み（3言語対応）まで実装する作業がありました。 最初は手作業で1ページ8時間かかっていました。 Figma MCP + Claude Codeを導入したら、1ページ20分になりました。 この記事はその経験の所感です。 前提：必要なもの この方法を実現するには以下が必要です： Figma 有料プラン（Dev Modeが使えるプラン） Figma MCP は Dev Mode 経由でデザインデータにアクセスするため、開発...</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://zenn.dev/kenfdev/articles/222fe622d42f0d" data-title="devcontainer + git worktree で並列開発するぞ！" data-summary="AI エージェントと git worktree を組み合わせた並列開発の話題を X でよく見かけるようになりました。ブランチごとにエージェントを走らせて、同時に複数の機能を開発する。魅力的なワークフローです。でも、devcontainer を使っている自分が気になっていたのが、「みんな、ポートのコンフリクトとかデータベースの管理ってどうしてるの？」 ということでした。 ! この記事では、devcontainer 環境で git worktree による並列開発を実現するために作ったテンプレートリポジトリ devcontainer-wt について紹介します。細かいセットアップ手順を解説する...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=zenn.dev" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Zenn トレンド</span>
+                                <span class="entry-time">昨日</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/kenfdev/articles/222fe622d42f0d" target="_blank" rel="noopener noreferrer" class="entry-link">devcontainer + git worktree で並列開発するぞ！</a>
+                            </div>
+                            <div class="entry-summary">AI エージェントと git worktree を組み合わせた並列開発の話題を X でよく見かけるようになりました。ブランチごとにエージェントを走らせて、同時に複数の機能を開発する。魅力的なワークフローです。でも、devcontainer を使っている自分が気になっていたのが、「みんな、ポートのコンフリクトとかデータベースの管理ってどうしてるの？」 ということでした。 ! この記事では、devcontainer 環境で git worktree による並列開発を実現するために作ったテンプレートリポジトリ devcontainer-wt について紹介します。細かいセットアップ手順を解説する...</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://zenn.dev/headwaters/articles/b6573a66d5749b" data-title="Pythonの__init__.pyはなぜ必要なのか？importの安定化・API設計・pytestとの関係" data-summary="概要 Pythonの開発をする中で、__init__.pyを何のためのファイルなのか、どこに配置すべきなのかが分からなかったので調べてみました。 結論は、 基本的に全てのパッケージディレクトリに__init__.pyを置くべき Webアプリ開発の場合、namespace packageが必要なケースはほぼ無い __init__.pyはアクセス制御ではなく、API設計 大規模開発・チーム開発では特に必須 __init__.pyとは？ __init__.pyは「このフォルダはPythonパッケージですよ」とPythonに教えるファイル。 __init__.pyを配置した結果、そ...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=zenn.dev" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Zenn トレンド</span>
+                                <span class="entry-time">昨日</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/headwaters/articles/b6573a66d5749b" target="_blank" rel="noopener noreferrer" class="entry-link">Pythonの__init__.pyはなぜ必要なのか？importの安定化・API設計・pytestとの関係</a>
+                            </div>
+                            <div class="entry-summary">概要 Pythonの開発をする中で、__init__.pyを何のためのファイルなのか、どこに配置すべきなのかが分からなかったので調べてみました。 結論は、 基本的に全てのパッケージディレクトリに__init__.pyを置くべき Webアプリ開発の場合、namespace packageが必要なケースはほぼ無い __init__.pyはアクセス制御ではなく、API設計 大規模開発・チーム開発では特に必須 __init__.pyとは？ __init__.pyは「このフォルダはPythonパッケージですよ」とPythonに教えるファイル。 __init__.pyを配置した結果、そ...</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://qiita.com/hetare001/items/1c992f5e2a2d661900e2?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="プログラミングを15年やって、一番大事なのはプログラミングじゃないと気づいた" data-summary="この記事は「プログラミングに興味があるけど自分には無理そう」と思っている人にも、 バイブコーディングを使い始めたエンジニアにも、読んでもらいたい内容です。 自己紹介のかわりに 私は45歳で、プログラミングを学校で習ったことは一度もありません。 30歳のとき「この繰り返...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=qiita.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Qiita トレンド</span>
+                                <span class="entry-time">昨日</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://qiita.com/hetare001/items/1c992f5e2a2d661900e2?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">プログラミングを15年やって、一番大事なのはプログラミングじゃないと気づいた</a>
+                            </div>
+                            <div class="entry-summary">この記事は「プログラミングに興味があるけど自分には無理そう」と思っている人にも、 バイブコーディングを使い始めたエンジニアにも、読んでもらいたい内容です。 自己紹介のかわりに 私は45歳で、プログラミングを学校で習ったことは一度もありません。 30歳のとき「この繰り返...</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://qiita.com/emi_ndk/items/fb529b2ede94661e5287?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="Claude Code Securityが発表され、セキュリティ株が暴落。AIが数十年見逃されたバグ500件を発見した" data-summary="何が起きたのか 2026年2月20日、AnthropicがClaude Code上で動作するセキュリティスキャン機能「Claude Code Security」を発表した。 その瞬間、サイバーセキュリティ株が軒並み暴落した。 📉 2026/02/20 サイバーセキュリティ...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=qiita.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Qiita トレンド</span>
+                                <span class="entry-time">2日前</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://qiita.com/emi_ndk/items/fb529b2ede94661e5287?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">Claude Code Securityが発表され、セキュリティ株が暴落。AIが数十年見逃されたバグ500件を発見した</a>
+                            </div>
+                            <div class="entry-summary">何が起きたのか 2026年2月20日、AnthropicがClaude Code上で動作するセキュリティスキャン機能「Claude Code Security」を発表した。 その瞬間、サイバーセキュリティ株が軒並み暴落した。 📉 2026/02/20 サイバーセキュリティ...</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://qiita.com/fsitlab/items/f917292498925c99fe8b?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="AWSネットワーク関連サービスの外部接続リスク分類：意図しない外部通信を防ぐための体系整理" data-summary="はじめに AWSのセキュリティインシデントの多くは、「このサービスがインターネットと繋がっているとは思っていなかった」 という認識の甘さから始まります。 SageMakerのトレーニングジョブが、知らないうちに外部サーバーにデータを送っていた CodeBuildがデフォ...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=qiita.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Qiita トレンド</span>
+                                <span class="entry-time">2日前</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://qiita.com/fsitlab/items/f917292498925c99fe8b?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">AWSネットワーク関連サービスの外部接続リスク分類：意図しない外部通信を防ぐための体系整理</a>
+                            </div>
+                            <div class="entry-summary">はじめに AWSのセキュリティインシデントの多くは、「このサービスがインターネットと繋がっているとは思っていなかった」 という認識の甘さから始まります。 SageMakerのトレーニングジョブが、知らないうちに外部サーバーにデータを送っていた CodeBuildがデフォ...</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://qiita.com/MoriP-K/items/c9590934c7e72638107b?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="async/awaitはなぜ生まれたのか ~ 非同期処理の歴史を辿る ~" data-summary="現在42Tokyoで最後のチーム課題（Webアプリ開発）に取り組んでいて、仕事でもなんとなくJSでasync/awaitで書いてるけど、なぜこの書き方なんだろう？、とふと疑問に思ったので、非同期処理の歴史を辿ってみました。 ※JS視点で書いています。お手柔らかに。。。 J...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=qiita.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Qiita トレンド</span>
+                                <span class="entry-time">2日前</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://qiita.com/MoriP-K/items/c9590934c7e72638107b?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">async/awaitはなぜ生まれたのか ~ 非同期処理の歴史を辿る ~</a>
+                            </div>
+                            <div class="entry-summary">現在42Tokyoで最後のチーム課題（Webアプリ開発）に取り組んでいて、仕事でもなんとなくJSでasync/awaitで書いてるけど、なぜこの書き方なんだろう？、とふと疑問に思ったので、非同期処理の歴史を辿ってみました。 ※JS視点で書いています。お手柔らかに。。。 J...</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://qiita.com/noobow/items/eaba05326aa795d9d7ea?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="ログインシェルをPowerShellにして .NET を消したら SSH が死んだ話（オワタ → 復活）" data-summary="この記事はAIで生成していますが、 その方が面白くわかりやすい文章になると判断したためです。 内容はすべて事実に基づいています。 今回の出来事自体、AIでトラブルシュートして解決しており 最後にその内容を記事にしてもらいました。 前提 対象のサーバーはOracl...">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=qiita.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Qiita トレンド</span>
+                                <span class="entry-time">2日前</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://qiita.com/noobow/items/eaba05326aa795d9d7ea?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">ログインシェルをPowerShellにして .NET を消したら SSH が死んだ話（オワタ → 復活）</a>
+                            </div>
+                            <div class="entry-summary">この記事はAIで生成していますが、 その方が面白くわかりやすい文章になると判断したためです。 内容はすべて事実に基づいています。 今回の出来事自体、AIでトラブルシュートして解決しており 最後にその内容を記事にしてもらいました。 前提 対象のサーバーはOracl...</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://www.publickey1.jp/blog/26/github_14.html" data-title="GitHub、リポジトリに対するプルリクエストをコラボレーターのみに制限する、あるいは完全に無効にする設定を可能に" data-summary="GitHubは、リポジトリの設定として新たな設定を2つ追加したことを発表しました。 1つはコラボレーターのみにプルリクエストを制限する設定、もう1つは完全にプルリクエストを無効する設定です。 コラボレーターのみにプルリクエストを制限すると、プルリクエストのタブは従来通りそのまま表示され、コメントなども可能ですが、新たにプルリクエストを作成できるのはコラボレーター、つまり書き込みアクセス権を持つユーザーのみに制限されます。 これは開発者を制限したい開発段階にあるコードや、特定の……">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=www.publickey1.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Publickey</span>
+                                <span class="entry-time">4日前</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/github_14.html" target="_blank" rel="noopener noreferrer" class="entry-link">GitHub、リポジトリに対するプルリクエストをコラボレーターのみに制限する、あるいは完全に無効にする設定を可能に</a>
+                            </div>
+                            <div class="entry-summary">GitHubは、リポジトリの設定として新たな設定を2つ追加したことを発表しました。 1つはコラボレーターのみにプルリクエストを制限する設定、もう1つは完全にプルリクエストを無効する設定です。 コラボレーターのみにプルリクエストを制限すると、プルリクエストのタブは従来通りそのまま表示され、コメントなども可能ですが、新たにプルリクエストを作成できるのはコラボレーター、つまり書き込みアクセス権を持つユーザーのみに制限されます。 これは開発者を制限したい開発段階にあるコードや、特定の……</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://www.publickey1.jp/blog/26/amazon_ec2nested_virtualizationkvmhyper-v.html" data-title="Amazon EC2が仮想化のネスト（Nested Virtualization）に対応。KVMやHyper-Vを用いた仮想マシンを設定可能に" data-summary="Amazon Web Services（AWS）は、Amazon EC2のベアメタルインスタンス以外のインスタンスでも仮想化のネスト（Nested Virtualization）が可能になったことを発表しました。 以前からAmazon EC2のベアメタルインスタンスでは、インスタンス上で仮想マシンを実行することが可能でしたが、ベアメタルインスタンス以外のAmazon EC2のインスタンスは仮想マシンによって実現されているため、その上でさらにハイパーバイザを載せて仮想マシンを実……">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=www.publickey1.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Publickey</span>
+                                <span class="entry-time">5日前</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/amazon_ec2nested_virtualizationkvmhyper-v.html" target="_blank" rel="noopener noreferrer" class="entry-link">Amazon EC2が仮想化のネスト（Nested Virtualization）に対応。KVMやHyper-Vを用いた仮想マシンを設定可能に</a>
+                            </div>
+                            <div class="entry-summary">Amazon Web Services（AWS）は、Amazon EC2のベアメタルインスタンス以外のインスタンスでも仮想化のネスト（Nested Virtualization）が可能になったことを発表しました。 以前からAmazon EC2のベアメタルインスタンスでは、インスタンス上で仮想マシンを実行することが可能でしたが、ベアメタルインスタンス以外のAmazon EC2のインスタンスは仮想マシンによって実現されているため、その上でさらにハイパーバイザを載せて仮想マシンを実……</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://www.publickey1.jp/blog/26/slackapislack_mcp_serveraislack.html" data-title="Slackが「リアルタイムサーチAPI」と「Slack MCP Server」を発表。生成AIがSlack上のやりとりを基にコンテキストを理解可能" data-summary="企業向けチャットサービスのSlackは、リアルタイムサーチAPIと、生成AIがSlackを操作できる「Slack MCP Server」の提供を発表しました。 For every type of problem and task, there's an AI agent that can help. And now, Slack is where every one of your agents can call home! Forget jumping betwee……">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=www.publickey1.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Publickey</span>
+                                <span class="entry-time">5日前</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/slackapislack_mcp_serveraislack.html" target="_blank" rel="noopener noreferrer" class="entry-link">Slackが「リアルタイムサーチAPI」と「Slack MCP Server」を発表。生成AIがSlack上のやりとりを基にコンテキストを理解可能</a>
+                            </div>
+                            <div class="entry-summary">企業向けチャットサービスのSlackは、リアルタイムサーチAPIと、生成AIがSlackを操作できる「Slack MCP Server」の提供を発表しました。 For every type of problem and task, there's an AI agent that can help. And now, Slack is where every one of your agents can call home! Forget jumping betwee……</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://www.publickey1.jp/blog/26/netwebassemblycoreclr.html" data-title="マイクロソフト、.NETランタイムでWebAssemblyの実行をサポートへ、CoreCLRに実装を開始" data-summary="マイクロソフトは2月10日付けで公開した.NET 11 Preview 1において、.NETランタイムでWebAssemblyの実行をサポートする作業を開始していることを明らかにしました。 完成は来年の.NET 12かそれ以後の予定 .NET 11は現在開発中の最新の.NETのバージョンで、今年（2026年）11月に正式リリースされる予定です。 今回リリースされた.NET 11 Preview 1のドキュメントでは、次のように、.NETのランタイムであるCoreCLRでWeb……">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=www.publickey1.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Publickey</span>
+                                <span class="entry-time">6日前</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/netwebassemblycoreclr.html" target="_blank" rel="noopener noreferrer" class="entry-link">マイクロソフト、.NETランタイムでWebAssemblyの実行をサポートへ、CoreCLRに実装を開始</a>
+                            </div>
+                            <div class="entry-summary">マイクロソフトは2月10日付けで公開した.NET 11 Preview 1において、.NETランタイムでWebAssemblyの実行をサポートする作業を開始していることを明らかにしました。 完成は来年の.NET 12かそれ以後の予定 .NET 11は現在開発中の最新の.NETのバージョンで、今年（2026年）11月に正式リリースされる予定です。 今回リリースされた.NET 11 Preview 1のドキュメントでは、次のように、.NETのランタイムであるCoreCLRでWeb……</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://www.publickey1.jp/blog/26/mysqlinnodbduckdbalisql_80.html" data-title="中国アリババ、MySQLのブランチとしてInnoDBエンジン、DuckDBカラムナエンジン、ベクトルサーチなどを統合した「AliSQL 8.0」オープンソースで公開" data-summary="中国のAlibaba Cloudデータベースチームは、MySQLのブランチとしてOLTP用のInnoDB、OLAP用のDuckDBカラムナエンジン、そしてベクトルサーチ機能を統合した「AliSQL 8.0」をオープンソースで公開しました。 AliSQLはMySQLブランチとしてOLTP用のデータベースエンジンにInnoDBを搭載。MySQL互換で既存のさまざまなMySQL対応ツールやユーティリティを利用可能。 その上で、高速なデータ分析を実現するOLAP用のデータベースエンジ……">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=www.publickey1.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Publickey</span>
+                                <span class="entry-time">6日前</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/mysqlinnodbduckdbalisql_80.html" target="_blank" rel="noopener noreferrer" class="entry-link">中国アリババ、MySQLのブランチとしてInnoDBエンジン、DuckDBカラムナエンジン、ベクトルサーチなどを統合した「AliSQL 8.0」オープンソースで公開</a>
+                            </div>
+                            <div class="entry-summary">中国のAlibaba Cloudデータベースチームは、MySQLのブランチとしてOLTP用のInnoDB、OLAP用のDuckDBカラムナエンジン、そしてベクトルサーチ機能を統合した「AliSQL 8.0」をオープンソースで公開しました。 AliSQLはMySQLブランチとしてOLTP用のデータベースエンジンにInnoDBを搭載。MySQL互換で既存のさまざまなMySQL対応ツールやユーティリティを利用可能。 その上で、高速なデータ分析を実現するOLAP用のデータベースエンジ……</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://www.publickey1.jp/blog/26/aigoogledeveloper_knowledge_api_mcp_servergoogle.html" data-title="生成AIがGoogleテクノロジーの公式ドキュメントを参照できる「Developer Knowledge API & MCP Server」、Googleが発表" data-summary="Googleは、Google Cloud、Android、FirebaseなどGoogleテクノロジーの公式ドキュメントの情報を取得し、生成AIから参照できるDeveloper Knowledge APIおよびそれに対応したMCP（Model Context Protocol）サーバのパブリックプレビューを発表しました。 Google公式ドキュメント群をAPI経由で取得 Developer Knowledge APIは、Googleの公式ドキュメントの内容を取得できるAPIで……">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=www.publickey1.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Publickey</span>
+                                <span class="entry-time">7日前</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/aigoogledeveloper_knowledge_api_mcp_servergoogle.html" target="_blank" rel="noopener noreferrer" class="entry-link">生成AIがGoogleテクノロジーの公式ドキュメントを参照できる「Developer Knowledge API & MCP Server」、Googleが発表</a>
+                            </div>
+                            <div class="entry-summary">Googleは、Google Cloud、Android、FirebaseなどGoogleテクノロジーの公式ドキュメントの情報を取得し、生成AIから参照できるDeveloper Knowledge APIおよびそれに対応したMCP（Model Context Protocol）サーバのパブリックプレビューを発表しました。 Google公式ドキュメント群をAPI経由で取得 Developer Knowledge APIは、Googleの公式ドキュメントの内容を取得できるAPIで……</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://www.publickey1.jp/blog/26/aws28azuregoogle_cloud20254synergy_research.html" data-title="クラウドインフラのシェア、AWSがトップを維持するも28％、AzureとGoogle Cloudが少しずつ差を詰めていく。2025年第4四半期、Synergy Researchの調査結果" data-summary="調査会社のSynergy Research Groupは、グローバルにおける2025年第4四半期のクラウドインフラの市場状況について調査結果を発表しました。 クラウドインフラとは、IaaS、PaaS、ホステッドプライベートクラウドを合わせたものを指します。 発表によると、2025年第4四半期のクラウドインフラ市場は1年前と比較して30％成長となり、AIブームの後押しを受けて再び急速な成長曲線へと回帰しています。 2025年第4四半期単体のクラウドインフラ全体の売り上げはグロー……">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=www.publickey1.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Publickey</span>
+                                <span class="entry-time">7日前</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/aws28azuregoogle_cloud20254synergy_research.html" target="_blank" rel="noopener noreferrer" class="entry-link">クラウドインフラのシェア、AWSがトップを維持するも28％、AzureとGoogle Cloudが少しずつ差を詰めていく。2025年第4四半期、Synergy Researchの調査結果</a>
+                            </div>
+                            <div class="entry-summary">調査会社のSynergy Research Groupは、グローバルにおける2025年第4四半期のクラウドインフラの市場状況について調査結果を発表しました。 クラウドインフラとは、IaaS、PaaS、ホステッドプライベートクラウドを合わせたものを指します。 発表によると、2025年第4四半期のクラウドインフラ市場は1年前と比較して30％成長となり、AIブームの後押しを受けて再び急速な成長曲線へと回帰しています。 2025年第4四半期単体のクラウドインフラ全体の売り上げはグロー……</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://www.publickey1.jp/blog/26/tuxcare_elspr.html" data-title="オープンソースの公式サポート終了後も、最小限のコストで安全に脆弱性対応を可能にする「TuxCare ELS」提供開始［PR］" data-summary="OSやプログラミング言語のランタイムのアップデートは、プログラマやシステム運用者にとって常に悩みのタネだといえます。 一般に、数年ごとに発生するOSや言語のランタイム、ライブラリなどのメジャーアップデートのサイクルと比べて、アプリケーションの寿命はそれよりも長いものになりがちです。 そうしたライフサイクルの差が特に問題となるのが、アプリケーションの実行環境としている特定のバージョンのプログラミング言語のランタイムやライブラリなどがサポートを終了してしまうケースでしょう。 一般……">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=www.publickey1.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">Publickey</span>
+                                <span class="entry-time">8日前</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/tuxcare_elspr.html" target="_blank" rel="noopener noreferrer" class="entry-link">オープンソースの公式サポート終了後も、最小限のコストで安全に脆弱性対応を可能にする「TuxCare ELS」提供開始［PR］</a>
+                            </div>
+                            <div class="entry-summary">OSやプログラミング言語のランタイムのアップデートは、プログラマやシステム運用者にとって常に悩みのタネだといえます。 一般に、数年ごとに発生するOSや言語のランタイム、ライブラリなどのメジャーアップデートのサイクルと比べて、アプリケーションの寿命はそれよりも長いものになりがちです。 そうしたライフサイクルの差が特に問題となるのが、アプリケーションの実行環境としている特定のバージョンのプログラミング言語のランタイムやライブラリなどがサポートを終了してしまうケースでしょう。 一般……</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://note.cloudnative.co.jp/n/ndee08b72db63" data-title="また病院がVPN経由でやられたわけだがVPNは悪だね" data-summary="シンジです。2026年2月9日の午前1時50分、日本医科大学武蔵小杉病院のナースコールシステムがランサムウェア攻撃を受けました。侵入経路は医療機器保守用VPN装置です。またVPNです。またです。人類は過去の経験から学ばない生き物でしたね。約1万人分の患者の個人情報（氏名、性別、住所、電話番号、生年月日、患者ID）が院外に持ち出されたことが確認されています。厚労省の初動対応チームが派遣される事態となりました。ナースコールですよ。入院患者さんが緊急時にナースを呼ぶためのあのボタンの裏側にあるシステムが、ランサムウェアにやられたわけです。続きをみる">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=note.cloudnative.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ロードバランスすだちくん</span>
+                                <span class="entry-time">8日前</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://note.cloudnative.co.jp/n/ndee08b72db63" target="_blank" rel="noopener noreferrer" class="entry-link">また病院がVPN経由でやられたわけだがVPNは悪だね</a>
+                            </div>
+                            <div class="entry-summary">シンジです。2026年2月9日の午前1時50分、日本医科大学武蔵小杉病院のナースコールシステムがランサムウェア攻撃を受けました。侵入経路は医療機器保守用VPN装置です。またVPNです。またです。人類は過去の経験から学ばない生き物でしたね。約1万人分の患者の個人情報（氏名、性別、住所、電話番号、生年月日、患者ID）が院外に持ち出されたことが確認されています。厚労省の初動対応チームが派遣される事態となりました。ナースコールですよ。入院患者さんが緊急時にナースを呼ぶためのあのボタンの裏側にあるシステムが、ランサムウェアにやられたわけです。続きをみる</div>
+                        </div>
+                        
+                        <img src="https://assets.st-note.com/production/uploads/images/251885028/rectangle_large_type_2_827626e6350f6fe1493ce126ac2a539f.jpeg?width=800" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://note.cloudnative.co.jp/n/nda20cf9d1051" data-title="従業員1日の活動履歴を全部AIに投げて働き方を指示してもらう" data-summary="シンジです。無料で遊べるワークフローツールn8nで遊んでいます。「会社ブログが公開されたらAIが要約してSNSに告知してくれるやつ」とか、「YouTube動画が公開されたら動画を要約してSNSに告知してくれるやつ」とか、そんな小ネタな自動ツールから作成し始めました。その次に作ったのは、「会社の代表電話に迷惑電話（営業電話含む）がかかってきたら、AIが判断して着信拒否してくれるやつ」とかも作りました。もちろん全て生成AIで。しかしなんとも小粒な自動化ばかりでn8nを活用している感じがあまりしなかったので、自身のSNSでn8nの活用方法を募集したところ、なかなか面白い実例を教えてもらいました。退勤時に日報を書くとプロジェクトの工数評価をするn8nワークフロー続きをみる">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=note.cloudnative.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ロードバランスすだちくん</span>
+                                <span class="entry-time">49日前</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://note.cloudnative.co.jp/n/nda20cf9d1051" target="_blank" rel="noopener noreferrer" class="entry-link">従業員1日の活動履歴を全部AIに投げて働き方を指示してもらう</a>
+                            </div>
+                            <div class="entry-summary">シンジです。無料で遊べるワークフローツールn8nで遊んでいます。「会社ブログが公開されたらAIが要約してSNSに告知してくれるやつ」とか、「YouTube動画が公開されたら動画を要約してSNSに告知してくれるやつ」とか、そんな小ネタな自動ツールから作成し始めました。その次に作ったのは、「会社の代表電話に迷惑電話（営業電話含む）がかかってきたら、AIが判断して着信拒否してくれるやつ」とかも作りました。もちろん全て生成AIで。しかしなんとも小粒な自動化ばかりでn8nを活用している感じがあまりしなかったので、自身のSNSでn8nの活用方法を募集したところ、なかなか面白い実例を教えてもらいました。退勤時に日報を書くとプロジェクトの工数評価をするn8nワークフロー続きをみる</div>
+                        </div>
+                        
+                        <img src="https://assets.st-note.com/production/uploads/images/241704892/rectangle_large_type_2_b418c1519a8c942e5c6b5f7dd876a4c4.jpeg?width=800" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://note.cloudnative.co.jp/n/n5b6e25ca0f6d" data-title="ガチのサイバー攻撃が来たら御社は確実に対処できますか" data-summary="シンジです。セキュリティを取り扱う上で「脅して不安を煽って対処させる」のは個人的にとても嫌いなのですが、組織として準備はしていても、マジでガチなのが来た時に、自分たちでそれらに確実に対処できるのかは実際問題として不安があります。事前のドキュメント整備、様々な対策、運用、そして訓練などを行っているとは思いますが、この漠然とした不安を払拭できない原因は、経験豊富なインデントレスポンス専門家や部隊が社内に揃ってない、存在していないことです。続きをみる">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=note.cloudnative.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ロードバランスすだちくん</span>
+                                <span class="entry-time">228日前</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://note.cloudnative.co.jp/n/n5b6e25ca0f6d" target="_blank" rel="noopener noreferrer" class="entry-link">ガチのサイバー攻撃が来たら御社は確実に対処できますか</a>
+                            </div>
+                            <div class="entry-summary">シンジです。セキュリティを取り扱う上で「脅して不安を煽って対処させる」のは個人的にとても嫌いなのですが、組織として準備はしていても、マジでガチなのが来た時に、自分たちでそれらに確実に対処できるのかは実際問題として不安があります。事前のドキュメント整備、様々な対策、運用、そして訓練などを行っているとは思いますが、この漠然とした不安を払拭できない原因は、経験豊富なインデントレスポンス専門家や部隊が社内に揃ってない、存在していないことです。続きをみる</div>
+                        </div>
+                        
+                        <img src="https://assets.st-note.com/production/uploads/images/201333980/rectangle_large_type_2_67d65bbb651dd2405a9ecc00f2fa55b0.jpeg?width=800" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://note.cloudnative.co.jp/n/n78bdf5408243" data-title="SaaSに搭載されたAIがまともかどうか評価する" data-summary="シンジです。AIって流行ってますよね。特にSaaSの一部機能として提供されるAIは、基本的に作りがブラックボックスで、その性質や特性を理解するには使い倒すしかない状況です。SaaSベンダーが公表するサマリーは置いといて、実際使ってみた感想、コスパ、注意点などを並べてみます。このAIはやめとけだとか、このAIは使うべきだとかを総評して遠回しに表現します。さすがに世の中の全部を評価するのは大変なので、何を評価したのかは目次を見てください。続きをみる">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=note.cloudnative.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ロードバランスすだちくん</span>
+                                <span class="entry-time">230日前</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://note.cloudnative.co.jp/n/n78bdf5408243" target="_blank" rel="noopener noreferrer" class="entry-link">SaaSに搭載されたAIがまともかどうか評価する</a>
+                            </div>
+                            <div class="entry-summary">シンジです。AIって流行ってますよね。特にSaaSの一部機能として提供されるAIは、基本的に作りがブラックボックスで、その性質や特性を理解するには使い倒すしかない状況です。SaaSベンダーが公表するサマリーは置いといて、実際使ってみた感想、コスパ、注意点などを並べてみます。このAIはやめとけだとか、このAIは使うべきだとかを総評して遠回しに表現します。さすがに世の中の全部を評価するのは大変なので、何を評価したのかは目次を見てください。続きをみる</div>
+                        </div>
+                        
+                        <img src="https://assets.st-note.com/production/uploads/images/201057282/rectangle_large_type_2_3a1dc3c2ab806ca968b34b6246d214c4.jpeg?width=800" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                    <div class="card entry-item" data-link="https://note.cloudnative.co.jp/n/nd4ec7cafcd16" data-title="SaaSの値上げによる経営圧迫と情シスの向き合い方" data-summary="シンジです。SaaSの値上げ、ムカつきますよね。一般的に情シスは製品導入をするとき、値下げ交渉をするケースがあるかと思います。そして導入が決まったら、その後は放置じゃないですか？今やDX＝SaaS導入とまで言われている昨今、何としてでも使いたいSaaSですが、その後の強烈な値上げによって経営資源が圧迫され、経営陣からは「どうにかならんか」と言われるわけです。続きをみる">
+                        <div class="card-content">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=note.cloudnative.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                                <span class="entry-source">ロードバランスすだちくん</span>
+                                <span class="entry-time">230日前</span>
+                            </div>
+                            <div class="entry-title">
+                                
+                                <a href="https://note.cloudnative.co.jp/n/nd4ec7cafcd16" target="_blank" rel="noopener noreferrer" class="entry-link">SaaSの値上げによる経営圧迫と情シスの向き合い方</a>
+                            </div>
+                            <div class="entry-summary">シンジです。SaaSの値上げ、ムカつきますよね。一般的に情シスは製品導入をするとき、値下げ交渉をするケースがあるかと思います。そして導入が決まったら、その後は放置じゃないですか？今やDX＝SaaS導入とまで言われている昨今、何としてでも使いたいSaaSですが、その後の強烈な値上げによって経営資源が圧迫され、経営陣からは「どうにかならんか」と言われるわけです。続きをみる</div>
+                        </div>
+                        
+                        <img src="https://assets.st-note.com/production/uploads/images/200929026/rectangle_large_type_2_261c9d9ab1961f94cefe0a5a85444c7a.jpeg?width=800" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </div>
+                    
+                </div>
+            </details>
+        </div>
+        
+
+        
+        <div id="section-feed" class="content-section">
+            <h2 class="section-title">📁 サイト別</h2>
+            
+            <details class="feed-section">
+                <summary>
+                    <div class="feed-info">
+                        <img src="https://www.google.com/s2/favicons?domain=www.publickey1.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="feed-title-text">Publickey</span>
+                    </div>
+                    <div class="feed-meta-count">
+                        
+                        <span class="count-badge has-new">新着 2 / 10</span>
+                        
+                    </div>
+                </summary>
+                <ul class="entry-list">
+                    
+                    <li class="list-item entry-item" data-link="https://www.publickey1.jp/blog/26/nistaiai_agent_standards_initiative.html" data-title="NIST（米国国立標準技術研究所）がAIエージェントの技術標準を作る取り組み「AI Agent Standards Initiative」発表。相互運用可能かつ安全なイノベーションのために" data-summary="米国商務省傘下のNIST（National Institute of Standards and Technology：米国国立標準技術研究所）は、AIエージェントの技術標準策定に取り組む「AI Agent Standards Initiative」を発表しました。 これはNIST内に設けられた組織「CAISI」（Center for AI Standards and Innovation：人工知能標準化イノベーションセンター）が行う取り組みです。 CAISIは商用AIシステ……">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.publickey1.jp/blog/26/nistaiai_agent_standards_initiative.html" target="_blank" rel="noopener noreferrer" class="entry-link">NIST（米国国立標準技術研究所）がAIエージェントの技術標準を作る取り組み「AI Agent Standards Initiative」発表。相互運用可能かつ安全なイノベーションのために</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">7時間前</span>
+                            </div>
+                            <div class="entry-summary">米国商務省傘下のNIST（National Institute of Standards and Technology：米国国立標準技術研究所）は、AIエージェントの技術標準策定に取り組む「AI Agent Standards Initiative」を発表しました。 これはNIST内に設けられた組織「CAISI」（Center for AI Standards and Innovation：人工知能標準化イノベーションセンター）が行う取り組みです。 CAISIは商用AIシステ……</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.publickey1.jp/blog/26/anthropicclaude_code_security.html" data-title="Anthropic、ルールベースではなく、コード分析により複雑な脆弱性も発見できる新機能「Claude Code Security」を提供開始" data-summary="AnthropicはClaude Codeの新機能として、複雑な脆弱性も発見できる「Claude Code Security」をリサーチプレビューとして提供開始したことを発表しました。 人間のセキュリティ専門家のようにコードを分析 Calude Code Securityはルールベースの静的解析ではなく、人間のセキュリティ研究者と同じようにコードを分析し、複雑な脆弱性も発見できると、次のように説明されています。 Rather than scanning for known……">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.publickey1.jp/blog/26/anthropicclaude_code_security.html" target="_blank" rel="noopener noreferrer" class="entry-link">Anthropic、ルールベースではなく、コード分析により複雑な脆弱性も発見できる新機能「Claude Code Security」を提供開始</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">8時間前</span>
+                            </div>
+                            <div class="entry-summary">AnthropicはClaude Codeの新機能として、複雑な脆弱性も発見できる「Claude Code Security」をリサーチプレビューとして提供開始したことを発表しました。 人間のセキュリティ専門家のようにコードを分析 Calude Code Securityはルールベースの静的解析ではなく、人間のセキュリティ研究者と同じようにコードを分析し、複雑な脆弱性も発見できると、次のように説明されています。 Rather than scanning for known……</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.publickey1.jp/blog/26/github_14.html" data-title="GitHub、リポジトリに対するプルリクエストをコラボレーターのみに制限する、あるいは完全に無効にする設定を可能に" data-summary="GitHubは、リポジトリの設定として新たな設定を2つ追加したことを発表しました。 1つはコラボレーターのみにプルリクエストを制限する設定、もう1つは完全にプルリクエストを無効する設定です。 コラボレーターのみにプルリクエストを制限すると、プルリクエストのタブは従来通りそのまま表示され、コメントなども可能ですが、新たにプルリクエストを作成できるのはコラボレーター、つまり書き込みアクセス権を持つユーザーのみに制限されます。 これは開発者を制限したい開発段階にあるコードや、特定の……">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/github_14.html" target="_blank" rel="noopener noreferrer" class="entry-link">GitHub、リポジトリに対するプルリクエストをコラボレーターのみに制限する、あるいは完全に無効にする設定を可能に</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">4日前</span>
+                            </div>
+                            <div class="entry-summary">GitHubは、リポジトリの設定として新たな設定を2つ追加したことを発表しました。 1つはコラボレーターのみにプルリクエストを制限する設定、もう1つは完全にプルリクエストを無効する設定です。 コラボレーターのみにプルリクエストを制限すると、プルリクエストのタブは従来通りそのまま表示され、コメントなども可能ですが、新たにプルリクエストを作成できるのはコラボレーター、つまり書き込みアクセス権を持つユーザーのみに制限されます。 これは開発者を制限したい開発段階にあるコードや、特定の……</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.publickey1.jp/blog/26/amazon_ec2nested_virtualizationkvmhyper-v.html" data-title="Amazon EC2が仮想化のネスト（Nested Virtualization）に対応。KVMやHyper-Vを用いた仮想マシンを設定可能に" data-summary="Amazon Web Services（AWS）は、Amazon EC2のベアメタルインスタンス以外のインスタンスでも仮想化のネスト（Nested Virtualization）が可能になったことを発表しました。 以前からAmazon EC2のベアメタルインスタンスでは、インスタンス上で仮想マシンを実行することが可能でしたが、ベアメタルインスタンス以外のAmazon EC2のインスタンスは仮想マシンによって実現されているため、その上でさらにハイパーバイザを載せて仮想マシンを実……">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/amazon_ec2nested_virtualizationkvmhyper-v.html" target="_blank" rel="noopener noreferrer" class="entry-link">Amazon EC2が仮想化のネスト（Nested Virtualization）に対応。KVMやHyper-Vを用いた仮想マシンを設定可能に</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">5日前</span>
+                            </div>
+                            <div class="entry-summary">Amazon Web Services（AWS）は、Amazon EC2のベアメタルインスタンス以外のインスタンスでも仮想化のネスト（Nested Virtualization）が可能になったことを発表しました。 以前からAmazon EC2のベアメタルインスタンスでは、インスタンス上で仮想マシンを実行することが可能でしたが、ベアメタルインスタンス以外のAmazon EC2のインスタンスは仮想マシンによって実現されているため、その上でさらにハイパーバイザを載せて仮想マシンを実……</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.publickey1.jp/blog/26/slackapislack_mcp_serveraislack.html" data-title="Slackが「リアルタイムサーチAPI」と「Slack MCP Server」を発表。生成AIがSlack上のやりとりを基にコンテキストを理解可能" data-summary="企業向けチャットサービスのSlackは、リアルタイムサーチAPIと、生成AIがSlackを操作できる「Slack MCP Server」の提供を発表しました。 For every type of problem and task, there's an AI agent that can help. And now, Slack is where every one of your agents can call home! Forget jumping betwee……">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/slackapislack_mcp_serveraislack.html" target="_blank" rel="noopener noreferrer" class="entry-link">Slackが「リアルタイムサーチAPI」と「Slack MCP Server」を発表。生成AIがSlack上のやりとりを基にコンテキストを理解可能</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">5日前</span>
+                            </div>
+                            <div class="entry-summary">企業向けチャットサービスのSlackは、リアルタイムサーチAPIと、生成AIがSlackを操作できる「Slack MCP Server」の提供を発表しました。 For every type of problem and task, there's an AI agent that can help. And now, Slack is where every one of your agents can call home! Forget jumping betwee……</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.publickey1.jp/blog/26/netwebassemblycoreclr.html" data-title="マイクロソフト、.NETランタイムでWebAssemblyの実行をサポートへ、CoreCLRに実装を開始" data-summary="マイクロソフトは2月10日付けで公開した.NET 11 Preview 1において、.NETランタイムでWebAssemblyの実行をサポートする作業を開始していることを明らかにしました。 完成は来年の.NET 12かそれ以後の予定 .NET 11は現在開発中の最新の.NETのバージョンで、今年（2026年）11月に正式リリースされる予定です。 今回リリースされた.NET 11 Preview 1のドキュメントでは、次のように、.NETのランタイムであるCoreCLRでWeb……">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/netwebassemblycoreclr.html" target="_blank" rel="noopener noreferrer" class="entry-link">マイクロソフト、.NETランタイムでWebAssemblyの実行をサポートへ、CoreCLRに実装を開始</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">6日前</span>
+                            </div>
+                            <div class="entry-summary">マイクロソフトは2月10日付けで公開した.NET 11 Preview 1において、.NETランタイムでWebAssemblyの実行をサポートする作業を開始していることを明らかにしました。 完成は来年の.NET 12かそれ以後の予定 .NET 11は現在開発中の最新の.NETのバージョンで、今年（2026年）11月に正式リリースされる予定です。 今回リリースされた.NET 11 Preview 1のドキュメントでは、次のように、.NETのランタイムであるCoreCLRでWeb……</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.publickey1.jp/blog/26/mysqlinnodbduckdbalisql_80.html" data-title="中国アリババ、MySQLのブランチとしてInnoDBエンジン、DuckDBカラムナエンジン、ベクトルサーチなどを統合した「AliSQL 8.0」オープンソースで公開" data-summary="中国のAlibaba Cloudデータベースチームは、MySQLのブランチとしてOLTP用のInnoDB、OLAP用のDuckDBカラムナエンジン、そしてベクトルサーチ機能を統合した「AliSQL 8.0」をオープンソースで公開しました。 AliSQLはMySQLブランチとしてOLTP用のデータベースエンジンにInnoDBを搭載。MySQL互換で既存のさまざまなMySQL対応ツールやユーティリティを利用可能。 その上で、高速なデータ分析を実現するOLAP用のデータベースエンジ……">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/mysqlinnodbduckdbalisql_80.html" target="_blank" rel="noopener noreferrer" class="entry-link">中国アリババ、MySQLのブランチとしてInnoDBエンジン、DuckDBカラムナエンジン、ベクトルサーチなどを統合した「AliSQL 8.0」オープンソースで公開</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">6日前</span>
+                            </div>
+                            <div class="entry-summary">中国のAlibaba Cloudデータベースチームは、MySQLのブランチとしてOLTP用のInnoDB、OLAP用のDuckDBカラムナエンジン、そしてベクトルサーチ機能を統合した「AliSQL 8.0」をオープンソースで公開しました。 AliSQLはMySQLブランチとしてOLTP用のデータベースエンジンにInnoDBを搭載。MySQL互換で既存のさまざまなMySQL対応ツールやユーティリティを利用可能。 その上で、高速なデータ分析を実現するOLAP用のデータベースエンジ……</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.publickey1.jp/blog/26/aigoogledeveloper_knowledge_api_mcp_servergoogle.html" data-title="生成AIがGoogleテクノロジーの公式ドキュメントを参照できる「Developer Knowledge API & MCP Server」、Googleが発表" data-summary="Googleは、Google Cloud、Android、FirebaseなどGoogleテクノロジーの公式ドキュメントの情報を取得し、生成AIから参照できるDeveloper Knowledge APIおよびそれに対応したMCP（Model Context Protocol）サーバのパブリックプレビューを発表しました。 Google公式ドキュメント群をAPI経由で取得 Developer Knowledge APIは、Googleの公式ドキュメントの内容を取得できるAPIで……">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/aigoogledeveloper_knowledge_api_mcp_servergoogle.html" target="_blank" rel="noopener noreferrer" class="entry-link">生成AIがGoogleテクノロジーの公式ドキュメントを参照できる「Developer Knowledge API & MCP Server」、Googleが発表</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">7日前</span>
+                            </div>
+                            <div class="entry-summary">Googleは、Google Cloud、Android、FirebaseなどGoogleテクノロジーの公式ドキュメントの情報を取得し、生成AIから参照できるDeveloper Knowledge APIおよびそれに対応したMCP（Model Context Protocol）サーバのパブリックプレビューを発表しました。 Google公式ドキュメント群をAPI経由で取得 Developer Knowledge APIは、Googleの公式ドキュメントの内容を取得できるAPIで……</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.publickey1.jp/blog/26/aws28azuregoogle_cloud20254synergy_research.html" data-title="クラウドインフラのシェア、AWSがトップを維持するも28％、AzureとGoogle Cloudが少しずつ差を詰めていく。2025年第4四半期、Synergy Researchの調査結果" data-summary="調査会社のSynergy Research Groupは、グローバルにおける2025年第4四半期のクラウドインフラの市場状況について調査結果を発表しました。 クラウドインフラとは、IaaS、PaaS、ホステッドプライベートクラウドを合わせたものを指します。 発表によると、2025年第4四半期のクラウドインフラ市場は1年前と比較して30％成長となり、AIブームの後押しを受けて再び急速な成長曲線へと回帰しています。 2025年第4四半期単体のクラウドインフラ全体の売り上げはグロー……">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/aws28azuregoogle_cloud20254synergy_research.html" target="_blank" rel="noopener noreferrer" class="entry-link">クラウドインフラのシェア、AWSがトップを維持するも28％、AzureとGoogle Cloudが少しずつ差を詰めていく。2025年第4四半期、Synergy Researchの調査結果</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">7日前</span>
+                            </div>
+                            <div class="entry-summary">調査会社のSynergy Research Groupは、グローバルにおける2025年第4四半期のクラウドインフラの市場状況について調査結果を発表しました。 クラウドインフラとは、IaaS、PaaS、ホステッドプライベートクラウドを合わせたものを指します。 発表によると、2025年第4四半期のクラウドインフラ市場は1年前と比較して30％成長となり、AIブームの後押しを受けて再び急速な成長曲線へと回帰しています。 2025年第4四半期単体のクラウドインフラ全体の売り上げはグロー……</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.publickey1.jp/blog/26/tuxcare_elspr.html" data-title="オープンソースの公式サポート終了後も、最小限のコストで安全に脆弱性対応を可能にする「TuxCare ELS」提供開始［PR］" data-summary="OSやプログラミング言語のランタイムのアップデートは、プログラマやシステム運用者にとって常に悩みのタネだといえます。 一般に、数年ごとに発生するOSや言語のランタイム、ライブラリなどのメジャーアップデートのサイクルと比べて、アプリケーションの寿命はそれよりも長いものになりがちです。 そうしたライフサイクルの差が特に問題となるのが、アプリケーションの実行環境としている特定のバージョンのプログラミング言語のランタイムやライブラリなどがサポートを終了してしまうケースでしょう。 一般……">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/tuxcare_elspr.html" target="_blank" rel="noopener noreferrer" class="entry-link">オープンソースの公式サポート終了後も、最小限のコストで安全に脆弱性対応を可能にする「TuxCare ELS」提供開始［PR］</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">8日前</span>
+                            </div>
+                            <div class="entry-summary">OSやプログラミング言語のランタイムのアップデートは、プログラマやシステム運用者にとって常に悩みのタネだといえます。 一般に、数年ごとに発生するOSや言語のランタイム、ライブラリなどのメジャーアップデートのサイクルと比べて、アプリケーションの寿命はそれよりも長いものになりがちです。 そうしたライフサイクルの差が特に問題となるのが、アプリケーションの実行環境としている特定のバージョンのプログラミング言語のランタイムやライブラリなどがサポートを終了してしまうケースでしょう。 一般……</div>
+                        </div>
+                        
+                    </li>
+                    
+                </ul>
+            </details>
+            
+            <details class="feed-section">
+                <summary>
+                    <div class="feed-info">
+                        <img src="https://www.google.com/s2/favicons?domain=dev.classmethod.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="feed-title-text">DevelopersIO</span>
+                    </div>
+                    <div class="feed-meta-count">
+                        
+                        <span class="count-badge has-new">新着 10 / 10</span>
+                        
+                    </div>
+                </summary>
+                <ul class="entry-list">
+                    
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/shuntaka-cloudfront-oac-lambda-function-urls-auth-site/" data-title="CloudFront OAC ×  AWS Lambda Function URLs で作る認証付き簡易サイト というタイトルでLTしました" data-summary="CloudFront OAC × AWS Lambda Function URLs で作る認証付き簡易サイト というタイトルでLTしました">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/shuntaka-cloudfront-oac-lambda-function-urls-auth-site/" target="_blank" rel="noopener noreferrer" class="entry-link">CloudFront OAC ×  AWS Lambda Function URLs で作る認証付き簡易サイト というタイトルでLTしました</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">10分前</span>
+                            </div>
+                            <div class="entry-summary">CloudFront OAC × AWS Lambda Function URLs で作る認証付き簡易サイト というタイトルでLTしました</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/shoma-notebooklm-new-features-edit-slides-with-prompts-and-pptx-export-support/" data-title="NotebookLM の新機能を試してみた：プロンプトでスライドを修正 ＆ PPTX エクスポート対応" data-summary="NotebookLM の新機能を試してみた：プロンプトでスライドを修正 ＆ PPTX エクスポート対応">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/shoma-notebooklm-new-features-edit-slides-with-prompts-and-pptx-export-support/" target="_blank" rel="noopener noreferrer" class="entry-link">NotebookLM の新機能を試してみた：プロンプトでスライドを修正 ＆ PPTX エクスポート対応</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">6時間前</span>
+                            </div>
+                            <div class="entry-summary">NotebookLM の新機能を試してみた：プロンプトでスライドを修正 ＆ PPTX エクスポート対応</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/claude-code-bedrock-sudo-iam/" data-title="AIによるAWS操作を安全に。Claude Code × Bedrockで作るsudo的なIAM権限昇格" data-summary="Claude Code と Amazon Bedrock を組み合わせ、AWS 操作の権限分離を実現。最新モデル Sonnet 4.6 を使い、AWS_PROFILE の切り替えで「sudo 的」な ReadOnly / Elevated 運用を安全に行う仕組みを解説します。EC2 ロールの最小権限設計により、Docker 経由のリスクにも IAM レベルで備えます。">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/claude-code-bedrock-sudo-iam/" target="_blank" rel="noopener noreferrer" class="entry-link">AIによるAWS操作を安全に。Claude Code × Bedrockで作るsudo的なIAM権限昇格</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">7時間前</span>
+                            </div>
+                            <div class="entry-summary">Claude Code と Amazon Bedrock を組み合わせ、AWS 操作の権限分離を実現。最新モデル Sonnet 4.6 を使い、AWS_PROFILE の切り替えで「sudo 的」な ReadOnly / Elevated 運用を安全に行う仕組みを解説します。EC2 ロールの最小権限設計により、Docker 経由のリスクにも IAM レベルで備えます。</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/alert-investigation-automation-opsmethod-1/" data-title="【登壇資料】「アラート調査の自動化にむけて」というタイトルでopsmethod #1に登壇しました #opsmethod" data-summary="【登壇資料】「アラート調査の自動化にむけて」というタイトルでopsmethod #1に登壇しました #opsmethod">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/alert-investigation-automation-opsmethod-1/" target="_blank" rel="noopener noreferrer" class="entry-link">【登壇資料】「アラート調査の自動化にむけて」というタイトルでopsmethod #1に登壇しました #opsmethod</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">8時間前</span>
+                            </div>
+                            <div class="entry-summary">【登壇資料】「アラート調査の自動化にむけて」というタイトルでopsmethod #1に登壇しました #opsmethod</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/kiro-cli-custom-agent-sudo/" data-title="AIによるAWS操作を安全に。Kiro CLIで作るsudo的なIAM権限昇格" data-summary="AIエージェント（Kiro CLI）に安全にAWSを操作させるため、AWS CLIのネイティブAssumeRoleとカスタムエージェントを組み合わせた「sudo的」なIAM権限昇格の実装方法を解説します。すぐに試せるCFnテンプレート付きです。">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/kiro-cli-custom-agent-sudo/" target="_blank" rel="noopener noreferrer" class="entry-link">AIによるAWS操作を安全に。Kiro CLIで作るsudo的なIAM権限昇格</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">9時間前</span>
+                            </div>
+                            <div class="entry-summary">AIエージェント（Kiro CLI）に安全にAWSを操作させるため、AWS CLIのネイティブAssumeRoleとカスタムエージェントを組み合わせた「sudo的」なIAM権限昇格の実装方法を解説します。すぐに試せるCFnテンプレート付きです。</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/nemotron-9b-constitutional-ai-simpo/" data-title="クラスメソッドのカルチャー CLP を Nemotron 9B-v2 に教え込んでみた" data-summary="クラスメソッドのカルチャー CLP を Nemotron 9B-v2 に教え込んでみた">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/nemotron-9b-constitutional-ai-simpo/" target="_blank" rel="noopener noreferrer" class="entry-link">クラスメソッドのカルチャー CLP を Nemotron 9B-v2 に教え込んでみた</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">11時間前</span>
+                            </div>
+                            <div class="entry-summary">クラスメソッドのカルチャー CLP を Nemotron 9B-v2 に教え込んでみた</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/verify-waf-policy-with-cloud-armor-preview-mode/" data-title="Cloud Armor のプレビューモードの動作確認をする" data-summary="Cloud Armor のプレビューモードの動作確認をする">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/verify-waf-policy-with-cloud-armor-preview-mode/" target="_blank" rel="noopener noreferrer" class="entry-link">Cloud Armor のプレビューモードの動作確認をする</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">12時間前</span>
+                            </div>
+                            <div class="entry-summary">Cloud Armor のプレビューモードの動作確認をする</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/claude-hashicorp-agent-skills/" data-title="Claude でhashicorp/agent-skillsを使って Terraform のモノリシック構成をモジュール化してみた" data-summary="Claude でhashicorp/agent-skillsを使って Terraform のモノリシック構成をモジュール化してみた">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/claude-hashicorp-agent-skills/" target="_blank" rel="noopener noreferrer" class="entry-link">Claude でhashicorp/agent-skillsを使って Terraform のモノリシック構成をモジュール化してみた</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">13時間前</span>
+                            </div>
+                            <div class="entry-summary">Claude でhashicorp/agent-skillsを使って Terraform のモノリシック構成をモジュール化してみた</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/ecs-built-in-bg-deploy-rollback/" data-title="Amazon ECS ブルー/グリーンデプロイメントのロールバックを試してみた" data-summary="Amazon ECS ブルー/グリーンデプロイメントのロールバックを試してみた">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/ecs-built-in-bg-deploy-rollback/" target="_blank" rel="noopener noreferrer" class="entry-link">Amazon ECS ブルー/グリーンデプロイメントのロールバックを試してみた</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">14時間前</span>
+                            </div>
+                            <div class="entry-summary">Amazon ECS ブルー/グリーンデプロイメントのロールバックを試してみた</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/ecs-native-blue-green-deployment-lifecycle-hooks-amazon-q-developer-slack/" data-title="ECS Native Blue/Green DeploymentのライフサイクルフックとAmazon Q Developer in chat applicationsでSlack通知およびカスタムアクションボタンによる本番トラフィックの再ルーティングとロールバックを制御してみた" data-summary="将来的にはユーザーが自作するのではなくサービスの機能として提供されて欲しい">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/ecs-native-blue-green-deployment-lifecycle-hooks-amazon-q-developer-slack/" target="_blank" rel="noopener noreferrer" class="entry-link">ECS Native Blue/Green DeploymentのライフサイクルフックとAmazon Q Developer in chat applicationsでSlack通知およびカスタムアクションボタンによる本番トラフィックの再ルーティングとロールバックを制御してみた</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">14時間前</span>
+                            </div>
+                            <div class="entry-summary">将来的にはユーザーが自作するのではなくサービスの機能として提供されて欲しい</div>
+                        </div>
+                        
+                    </li>
+                    
+                </ul>
+            </details>
+            
+            <details class="feed-section">
+                <summary>
+                    <div class="feed-info">
+                        <img src="https://www.google.com/s2/favicons?domain=qiita.com" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="feed-title-text">Qiita トレンド</span>
+                    </div>
+                    <div class="feed-meta-count">
+                        
+                        <span class="count-badge has-new">新着 2 / 10</span>
+                        
+                    </div>
+                </summary>
+                <ul class="entry-list">
+                    
+                    <li class="list-item entry-item" data-link="https://qiita.com/hetare001/items/1c992f5e2a2d661900e2?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="プログラミングを15年やって、一番大事なのはプログラミングじゃないと気づいた" data-summary="この記事は「プログラミングに興味があるけど自分には無理そう」と思っている人にも、 バイブコーディングを使い始めたエンジニアにも、読んでもらいたい内容です。 自己紹介のかわりに 私は45歳で、プログラミングを学校で習ったことは一度もありません。 30歳のとき「この繰り返...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://qiita.com/hetare001/items/1c992f5e2a2d661900e2?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">プログラミングを15年やって、一番大事なのはプログラミングじゃないと気づいた</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">昨日</span>
+                            </div>
+                            <div class="entry-summary">この記事は「プログラミングに興味があるけど自分には無理そう」と思っている人にも、 バイブコーディングを使い始めたエンジニアにも、読んでもらいたい内容です。 自己紹介のかわりに 私は45歳で、プログラミングを学校で習ったことは一度もありません。 30歳のとき「この繰り返...</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://qiita.com/emi_ndk/items/fb529b2ede94661e5287?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="Claude Code Securityが発表され、セキュリティ株が暴落。AIが数十年見逃されたバグ500件を発見した" data-summary="何が起きたのか 2026年2月20日、AnthropicがClaude Code上で動作するセキュリティスキャン機能「Claude Code Security」を発表した。 その瞬間、サイバーセキュリティ株が軒並み暴落した。 📉 2026/02/20 サイバーセキュリティ...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://qiita.com/emi_ndk/items/fb529b2ede94661e5287?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">Claude Code Securityが発表され、セキュリティ株が暴落。AIが数十年見逃されたバグ500件を発見した</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">2日前</span>
+                            </div>
+                            <div class="entry-summary">何が起きたのか 2026年2月20日、AnthropicがClaude Code上で動作するセキュリティスキャン機能「Claude Code Security」を発表した。 その瞬間、サイバーセキュリティ株が軒並み暴落した。 📉 2026/02/20 サイバーセキュリティ...</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://qiita.com/MoriP-K/items/c9590934c7e72638107b?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="async/awaitはなぜ生まれたのか ~ 非同期処理の歴史を辿る ~" data-summary="現在42Tokyoで最後のチーム課題（Webアプリ開発）に取り組んでいて、仕事でもなんとなくJSでasync/awaitで書いてるけど、なぜこの書き方なんだろう？、とふと疑問に思ったので、非同期処理の歴史を辿ってみました。 ※JS視点で書いています。お手柔らかに。。。 J...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://qiita.com/MoriP-K/items/c9590934c7e72638107b?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">async/awaitはなぜ生まれたのか ~ 非同期処理の歴史を辿る ~</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">2日前</span>
+                            </div>
+                            <div class="entry-summary">現在42Tokyoで最後のチーム課題（Webアプリ開発）に取り組んでいて、仕事でもなんとなくJSでasync/awaitで書いてるけど、なぜこの書き方なんだろう？、とふと疑問に思ったので、非同期処理の歴史を辿ってみました。 ※JS視点で書いています。お手柔らかに。。。 J...</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://qiita.com/noobow/items/eaba05326aa795d9d7ea?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="ログインシェルをPowerShellにして .NET を消したら SSH が死んだ話（オワタ → 復活）" data-summary="この記事はAIで生成していますが、 その方が面白くわかりやすい文章になると判断したためです。 内容はすべて事実に基づいています。 今回の出来事自体、AIでトラブルシュートして解決しており 最後にその内容を記事にしてもらいました。 前提 対象のサーバーはOracl...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://qiita.com/noobow/items/eaba05326aa795d9d7ea?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">ログインシェルをPowerShellにして .NET を消したら SSH が死んだ話（オワタ → 復活）</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">2日前</span>
+                            </div>
+                            <div class="entry-summary">この記事はAIで生成していますが、 その方が面白くわかりやすい文章になると判断したためです。 内容はすべて事実に基づいています。 今回の出来事自体、AIでトラブルシュートして解決しており 最後にその内容を記事にしてもらいました。 前提 対象のサーバーはOracl...</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://qiita.com/IkuyaM/items/8ce2d6eea5413d690122?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="アンケートデータから目標指標の改善につながる打ち手を見つける方法" data-summary="例えば、購買意向や総合満足度、NPS（ネット・プロモーター・スコア）のような目標指標を高めるために、どのような領域に対するアクションを起こせばいいのかを知りたい。このような、「次に何を改善すべきか」のヒントを得るために顧客アンケートや満足度調査を実施することは少なくありませ...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://qiita.com/IkuyaM/items/8ce2d6eea5413d690122?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">アンケートデータから目標指標の改善につながる打ち手を見つける方法</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">12時間前</span>
+                            </div>
+                            <div class="entry-summary">例えば、購買意向や総合満足度、NPS（ネット・プロモーター・スコア）のような目標指標を高めるために、どのような領域に対するアクションを起こせばいいのかを知りたい。このような、「次に何を改善すべきか」のヒントを得るために顧客アンケートや満足度調査を実施することは少なくありませ...</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://qiita.com/hatahatahata/items/b2cec428c1d3c7cced5d?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="[読書メモ]再考・ログ設計　障害に強いアプリケーションのログ出力・管理の極意（Software Design 2026年3月号）" data-summary="これは何 Software Design 2026年3月号の中の特集の一つである「再考・ログ設計 障害に強いアプリケーションのログ出力・管理の極意」に関する読書メモです 自分自身がちょうどログ分析基盤の構築に関わっていることもあり、改めてログ設計について学び直そうと...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://qiita.com/hatahatahata/items/b2cec428c1d3c7cced5d?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">[読書メモ]再考・ログ設計　障害に強いアプリケーションのログ出力・管理の極意（Software Design 2026年3月号）</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">昨日</span>
+                            </div>
+                            <div class="entry-summary">これは何 Software Design 2026年3月号の中の特集の一つである「再考・ログ設計 障害に強いアプリケーションのログ出力・管理の極意」に関する読書メモです 自分自身がちょうどログ分析基盤の構築に関わっていることもあり、改めてログ設計について学び直そうと...</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://qiita.com/akira_papa_AI/items/f3d52c314329127b3bba?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="OpenClaw チートシート｜これだけ覚えればOKなコマンド・設定・ワークフロー集" data-summary="OpenClawを使い始めた人・使いこなしたい人向けのチートシートです。この記事をブックマークしておけば、必要なときにさっと参照できます。 🚀 インストール # ワンライナーインストール（推奨） curl -fsSL https://openclaw.ai/install...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://qiita.com/akira_papa_AI/items/f3d52c314329127b3bba?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">OpenClaw チートシート｜これだけ覚えればOKなコマンド・設定・ワークフロー集</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">20時間前</span>
+                            </div>
+                            <div class="entry-summary">OpenClawを使い始めた人・使いこなしたい人向けのチートシートです。この記事をブックマークしておけば、必要なときにさっと参照できます。 🚀 インストール # ワンライナーインストール（推奨） curl -fsSL https://openclaw.ai/install...</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://qiita.com/fsitlab/items/f917292498925c99fe8b?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="AWSネットワーク関連サービスの外部接続リスク分類：意図しない外部通信を防ぐための体系整理" data-summary="はじめに AWSのセキュリティインシデントの多くは、「このサービスがインターネットと繋がっているとは思っていなかった」 という認識の甘さから始まります。 SageMakerのトレーニングジョブが、知らないうちに外部サーバーにデータを送っていた CodeBuildがデフォ...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://qiita.com/fsitlab/items/f917292498925c99fe8b?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">AWSネットワーク関連サービスの外部接続リスク分類：意図しない外部通信を防ぐための体系整理</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">2日前</span>
+                            </div>
+                            <div class="entry-summary">はじめに AWSのセキュリティインシデントの多くは、「このサービスがインターネットと繋がっているとは思っていなかった」 という認識の甘さから始まります。 SageMakerのトレーニングジョブが、知らないうちに外部サーバーにデータを送っていた CodeBuildがデフォ...</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://qiita.com/Maki-Daisuke/items/1da25e18c1bcb68880a3?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="JavaScriptの async/await はどこから来たのか？ C#、F#、Haskell……源流を辿ったら1958年にたどり着いた件" data-summary="ということを書いた手前、async/awaitの歴史について書いておかないといけない気がした。 なお補足しておきますと、元ネタの記事はJavaScriptの async/await の歴史についていえば、間違ってないと思います。 ただ、 async/awaitは...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://qiita.com/Maki-Daisuke/items/1da25e18c1bcb68880a3?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">JavaScriptの async/await はどこから来たのか？ C#、F#、Haskell……源流を辿ったら1958年にたどり着いた件</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">昨日</span>
+                            </div>
+                            <div class="entry-summary">ということを書いた手前、async/awaitの歴史について書いておかないといけない気がした。 なお補足しておきますと、元ネタの記事はJavaScriptの async/await の歴史についていえば、間違ってないと思います。 ただ、 async/awaitは...</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://qiita.com/yakumo_09/items/dee0d94ba53fac725c7e?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" data-title="【AWS】Cognitoを利用したシンプルな認証機能付きのWebページの作成" data-summary="はじめに こんにちは、やくもです。 前回の記事では、CloudFront と S3 を使った静的ウェブサイトの配信環境を構築しました。 今回はその環境をベースに、Amazon Cognito を使ったシンプルな認証機能を追加してみます。 Amazon Cognito と...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://qiita.com/yakumo_09/items/dee0d94ba53fac725c7e?utm_campaign=popular_items&utm_medium=feed&utm_source=popular_items" target="_blank" rel="noopener noreferrer" class="entry-link">【AWS】Cognitoを利用したシンプルな認証機能付きのWebページの作成</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">昨日</span>
+                            </div>
+                            <div class="entry-summary">はじめに こんにちは、やくもです。 前回の記事では、CloudFront と S3 を使った静的ウェブサイトの配信環境を構築しました。 今回はその環境をベースに、Amazon Cognito を使ったシンプルな認証機能を追加してみます。 Amazon Cognito と...</div>
+                        </div>
+                        
+                    </li>
+                    
+                </ul>
+            </details>
+            
+            <details class="feed-section">
+                <summary>
+                    <div class="feed-info">
+                        <img src="https://www.google.com/s2/favicons?domain=b.hatena.ne.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="feed-title-text">はてなブックマーク IT</span>
+                    </div>
+                    <div class="feed-meta-count">
+                        
+                        <span class="count-badge has-new">新着 9 / 10</span>
+                        
+                    </div>
+                </summary>
+                <ul class="entry-list">
+                    
+                    <li class="list-item entry-item" data-link="https://note.com/it_navi/n/ne26d4d078386" data-title="Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT navi" data-summary="Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT naviAIを使ったスライド作成は以前から可能でしたが、作った後に編集できないという課題がついて回りました。例えばNotebookLMでは、多彩なデザインのスライドをpptxファイルとして出力できるものの、各ページが1枚の画像として埋め込まれるため、文字や図表を後から修正するのが困難です。 その点、Claudeで作成したスライ...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://note.com/it_navi/n/ne26d4d078386" target="_blank" rel="noopener noreferrer" class="entry-link">Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT navi</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">22時間前</span>
+                            </div>
+                            <div class="entry-summary">Claude Opus 4.6で作る、PowerPointでそのまま編集できる高品質スライド｜IT naviAIを使ったスライド作成は以前から可能でしたが、作った後に編集できないという課題がついて回りました。例えばNotebookLMでは、多彩なデザインのスライドをpptxファイルとして出力できるものの、各ページが1枚の画像として埋め込まれるため、文字や図表を後から修正するのが困難です。 その点、Claudeで作成したスライ...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fnote.com%2Fit_navi%2Fn%2Fne26d4d078386" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://zenn.dev/kimmaru/articles/6c0f67f6003b94" data-title="Figma MCP × Claude Codeで1ページ8時間の作業が20分になった話" data-summary="Figma MCP × Claude Codeで1ページ8時間の作業が20分になった話はじめに 業務でWebサイトリニューアルをやっています。 テキスト量の多い静的ページを、Figmaデザインからモック（HTML/CSS）→ Laravel組み込み（3言語対応）まで実装する作業がありました。 最初は手作業で1ページ8時間かかっていました。 Figma MCP + Claude Codeを導入したら、1ページ20分になりました。 この記事は...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/kimmaru/articles/6c0f67f6003b94" target="_blank" rel="noopener noreferrer" class="entry-link">Figma MCP × Claude Codeで1ページ8時間の作業が20分になった話</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">昨日</span>
+                            </div>
+                            <div class="entry-summary">Figma MCP × Claude Codeで1ページ8時間の作業が20分になった話はじめに 業務でWebサイトリニューアルをやっています。 テキスト量の多い静的ページを、Figmaデザインからモック（HTML/CSS）→ Laravel組み込み（3言語対応）まで実装する作業がありました。 最初は手作業で1ページ8時間かかっていました。 Figma MCP + Claude Codeを導入したら、1ページ20分になりました。 この記事は...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fzenn.dev%2Fkimmaru%2Farticles%2F6c0f67f6003b94" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://note.com/junya_tsutsui/n/n601cdf7e72eb" data-title="最近15年ほどの世界的な出生率低下傾向について｜筒井淳也" data-summary="最近15年ほどの世界的な出生率低下傾向について｜筒井淳也▼OECD加盟国における出生率のトレンドデータ分析の世界は、統計的因果推論やデータサイエンス（機械学習など）の全盛期だが、シンプルな分析から得られることも多い。出生率に関して、以前から気になっていたことを少し調べてみた（片手間なのでその点ご承知おきを）。 以前から気になっていた点とは、こういうことだ。 ...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://note.com/junya_tsutsui/n/n601cdf7e72eb" target="_blank" rel="noopener noreferrer" class="entry-link">最近15年ほどの世界的な出生率低下傾向について｜筒井淳也</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">20時間前</span>
+                            </div>
+                            <div class="entry-summary">最近15年ほどの世界的な出生率低下傾向について｜筒井淳也▼OECD加盟国における出生率のトレンドデータ分析の世界は、統計的因果推論やデータサイエンス（機械学習など）の全盛期だが、シンプルな分析から得られることも多い。出生率に関して、以前から気になっていたことを少し調べてみた（片手間なのでその点ご承知おきを）。 以前から気になっていた点とは、こういうことだ。 ...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fnote.com%2Fjunya_tsutsui%2Fn%2Fn601cdf7e72eb" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://iwashi.co/2026/02/23/how-to-stop-recurring-meetings" data-title="定例ミーティングのなくし方" data-summary="定例ミーティングのなくし方本記事は、1時間で読み終わるエンジニアリングマネジメント本を書き始めてみるで挙げたトピックの1つです。 はじめに この記事では、定例ミーティングが増える理由と、その定例ミーティングを減らす方法について書いていきます。 まず個人的な定例ミーティングの捉え方として、「定例ミーティングは必要悪」だと思ってい...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://iwashi.co/2026/02/23/how-to-stop-recurring-meetings" target="_blank" rel="noopener noreferrer" class="entry-link">定例ミーティングのなくし方</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">22時間前</span>
+                            </div>
+                            <div class="entry-summary">定例ミーティングのなくし方本記事は、1時間で読み終わるエンジニアリングマネジメント本を書き始めてみるで挙げたトピックの1つです。 はじめに この記事では、定例ミーティングが増える理由と、その定例ミーティングを減らす方法について書いていきます。 まず個人的な定例ミーティングの捉え方として、「定例ミーティングは必要悪」だと思ってい...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fiwashi.co%2F2026%2F02%2F23%2Fhow-to-stop-recurring-meetings" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://yuzutas0.hatenablog.com/entry/2026/02/23/100000" data-title="開業1年目に心がけた100箇条 - 下町柚子黄昏記 by @yuzutas0" data-summary="開業1年目に心がけた100箇条 - 下町柚子黄昏記 by @yuzutas02019年の下書きに眠っていた記事を、7年越しに公開します。 気づけば年商億超えの社長になっていましたが、読み返してみたら今でも大事にしているものだらけだったので、この機会に公開します。 （次の段落から当時の原稿です。） フリーランス Advent Calendar 2019 24日目の記事です。 去年のことですが、フリーランス...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://yuzutas0.hatenablog.com/entry/2026/02/23/100000" target="_blank" rel="noopener noreferrer" class="entry-link">開業1年目に心がけた100箇条 - 下町柚子黄昏記 by @yuzutas0</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">14時間前</span>
+                            </div>
+                            <div class="entry-summary">開業1年目に心がけた100箇条 - 下町柚子黄昏記 by @yuzutas02019年の下書きに眠っていた記事を、7年越しに公開します。 気づけば年商億超えの社長になっていましたが、読み返してみたら今でも大事にしているものだらけだったので、この機会に公開します。 （次の段落から当時の原稿です。） フリーランス Advent Calendar 2019 24日目の記事です。 去年のことですが、フリーランス...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fyuzutas0.hatenablog.com%2Fentry%2F2026%2F02%2F23%2F100000" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://qiita.com/YushiYamamoto/items/0aea29339d073829cb26" data-title="【AI駆動開発】Cursorに設計から考えさせたら、コードの品質が別次元になった話（プロンプトテンプレートあり） - Qiita" data-summary="【AI駆動開発】Cursorに設計から考えさせたら、コードの品質が別次元になった話（プロンプトテンプレートあり） - Qiitaはじめに：AIエディタに「丸投げ」していませんか？ CursorやWindsurfなどのAIエディタの進化により、コードを書かずに自然言語だけで開発を進めるスタイルが普及してきました。 しかし、こんな経験はありませんか？ 「〇〇の機能を作って」と雑に頼んだら、既存のコードの別機能まで破壊された コンポーネントが肥大化...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://qiita.com/YushiYamamoto/items/0aea29339d073829cb26" target="_blank" rel="noopener noreferrer" class="entry-link">【AI駆動開発】Cursorに設計から考えさせたら、コードの品質が別次元になった話（プロンプトテンプレートあり） - Qiita</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">11時間前</span>
+                            </div>
+                            <div class="entry-summary">【AI駆動開発】Cursorに設計から考えさせたら、コードの品質が別次元になった話（プロンプトテンプレートあり） - Qiitaはじめに：AIエディタに「丸投げ」していませんか？ CursorやWindsurfなどのAIエディタの進化により、コードを書かずに自然言語だけで開発を進めるスタイルが普及してきました。 しかし、こんな経験はありませんか？ 「〇〇の機能を作って」と雑に頼んだら、既存のコードの別機能まで破壊された コンポーネントが肥大化...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fqiita.com%2FYushiYamamoto%2Fitems%2F0aea29339d073829cb26" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://azukiazusa.dev/blog/claude-code-worktree-worktreeinclude-gitignore/" data-title="Claude Code デスクトップで Worktree を作成するとき .worktreeinclude で .gitignore で除外されているファイルを含める" data-summary="Claude Code デスクトップで Worktree を作成するとき .worktreeinclude で .gitignore で除外されているファイルを含めるClaude Code デスクトップ Claude Code のデスクトップ版で新しいセッションを開始するとき Worktree を作成するのは簡単です。セッションの作成画面で「Worktree」チェックボックスをオンにするだけです。 Claude Code によって作成された Worktree は git worktree list コマンドで確認できます。 $ git worktree list...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://azukiazusa.dev/blog/claude-code-worktree-worktreeinclude-gitignore/" target="_blank" rel="noopener noreferrer" class="entry-link">Claude Code デスクトップで Worktree を作成するとき .worktreeinclude で .gitignore で除外されているファイルを含める</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">14時間前</span>
+                            </div>
+                            <div class="entry-summary">Claude Code デスクトップで Worktree を作成するとき .worktreeinclude で .gitignore で除外されているファイルを含めるClaude Code デスクトップ Claude Code のデスクトップ版で新しいセッションを開始するとき Worktree を作成するのは簡単です。セッションの作成画面で「Worktree」チェックボックスをオンにするだけです。 Claude Code によって作成された Worktree は git worktree list コマンドで確認できます。 $ git worktree list...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fazukiazusa.dev%2Fblog%2Fclaude-code-worktree-worktreeinclude-gitignore%2F" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://gigazine.net/news/20260223-glances/" data-title="オープンソースのクロスプラットフォーム監視ツール「Glances」、CPU・メモリ・ディスク・ネットワーク使用量などをターミナルだけでなくウェブサーバーモードで監視可能" data-summary="オープンソースのクロスプラットフォーム監視ツール「Glances」、CPU・メモリ・ディスク・ネットワーク使用量などをターミナルだけでなくウェブサーバーモードで監視可能サーバーやPCの状態をリアルタイムで把握したい場合にプロセスやCPUリソースだけでなく、ネットワークの送受信やディスクの読み書き、さらにはdockerのコンテナのリソース情報を一画面で確認できるオープンソースのシステム監視ツール「Glances」が公開されています。 nicolargo/glances: Glances an Eye on your system...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://gigazine.net/news/20260223-glances/" target="_blank" rel="noopener noreferrer" class="entry-link">オープンソースのクロスプラットフォーム監視ツール「Glances」、CPU・メモリ・ディスク・ネットワーク使用量などをターミナルだけでなくウェブサーバーモードで監視可能</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">7時間前</span>
+                            </div>
+                            <div class="entry-summary">オープンソースのクロスプラットフォーム監視ツール「Glances」、CPU・メモリ・ディスク・ネットワーク使用量などをターミナルだけでなくウェブサーバーモードで監視可能サーバーやPCの状態をリアルタイムで把握したい場合にプロセスやCPUリソースだけでなく、ネットワークの送受信やディスクの読み書き、さらにはdockerのコンテナのリソース情報を一画面で確認できるオープンソースのシステム監視ツール「Glances」が公開されています。 nicolargo/glances: Glances an Eye on your system...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fgigazine.net%2Fnews%2F20260223-glances%2F" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://gigazine.net/news/20260223-aws-ai-outage/" data-title="AmazonでAIツールが原因と見られるAWS障害が発生、2025年12月にはKiro AIが原因で13時間に及ぶサービス停止" data-summary="AmazonでAIツールが原因と見られるAWS障害が発生、2025年12月にはKiro AIが原因で13時間に及ぶサービス停止Amazonのクラウド事業であるAmazon Web Services(AWS)が、AmazonのAIコーディングツールを原因とした障害に数カ月で少なくとも2回見舞われていることが関係者の証言により判明しました。Amazonは障害とAIツールの関係を否定し、ユーザーによる操作ミスを指摘しています。 Amazon service was taken down by AI coding bo...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://gigazine.net/news/20260223-aws-ai-outage/" target="_blank" rel="noopener noreferrer" class="entry-link">AmazonでAIツールが原因と見られるAWS障害が発生、2025年12月にはKiro AIが原因で13時間に及ぶサービス停止</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">12時間前</span>
+                            </div>
+                            <div class="entry-summary">AmazonでAIツールが原因と見られるAWS障害が発生、2025年12月にはKiro AIが原因で13時間に及ぶサービス停止Amazonのクラウド事業であるAmazon Web Services(AWS)が、AmazonのAIコーディングツールを原因とした障害に数カ月で少なくとも2回見舞われていることが関係者の証言により判明しました。Amazonは障害とAIツールの関係を否定し、ユーザーによる操作ミスを指摘しています。 Amazon service was taken down by AI coding bo...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fgigazine.net%2Fnews%2F20260223-aws-ai-outage%2F" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://gigazine.net/news/20260223-seal/" data-title="無料でYouTubeなどから動画や音楽をダウンロード・保存できるオープンソースAndroidアプリ「Seal」" data-summary="無料でYouTubeなどから動画や音楽をダウンロード・保存できるオープンソースAndroidアプリ「Seal」YouTubeなどのサイトから動画をダウンロードする場合yt-dlpを利用するのが有力な手段の候補となります。ただしyt-dlpはCUIツールであるため高機能を活かすには膨大なコマンドラインオプションを把握する必要があり万人向けとはいいがたく、特にスマートフォンで気軽に使用するのには不向きである点は否めません。そんなy...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://gigazine.net/news/20260223-seal/" target="_blank" rel="noopener noreferrer" class="entry-link">無料でYouTubeなどから動画や音楽をダウンロード・保存できるオープンソースAndroidアプリ「Seal」</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">12時間前</span>
+                            </div>
+                            <div class="entry-summary">無料でYouTubeなどから動画や音楽をダウンロード・保存できるオープンソースAndroidアプリ「Seal」YouTubeなどのサイトから動画をダウンロードする場合yt-dlpを利用するのが有力な手段の候補となります。ただしyt-dlpはCUIツールであるため高機能を活かすには膨大なコマンドラインオプションを把握する必要があり万人向けとはいいがたく、特にスマートフォンで気軽に使用するのには不向きである点は否めません。そんなy...</div>
+                        </div>
+                        
+                        <img src="https://cdn-ak2.favicon.st-hatena.com/64?url=https%3A%2F%2Fgigazine.net%2Fnews%2F20260223-seal%2F" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                </ul>
+            </details>
+            
+            <details class="feed-section">
+                <summary>
+                    <div class="feed-info">
+                        <img src="https://www.google.com/s2/favicons?domain=zenn.dev" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="feed-title-text">Zenn トレンド</span>
+                    </div>
+                    <div class="feed-meta-count">
+                        
+                        <span class="count-badge has-new">新着 1 / 10</span>
+                        
+                    </div>
+                </summary>
+                <ul class="entry-list">
+                    
+                    <li class="list-item entry-item" data-link="https://zenn.dev/tesla/articles/27e0834d429c66" data-title="AI、今そんな一生懸命キャッチアップしなくてもいいのよね" data-summary="きっかけ https://uiuret.hatenablog.com/entry/2026/02/22/024509 これがバズっていたり、色んな理由でAIが話題になって界隈がピリつき SNSを見ていると誰もがすべてのことをAIに結びつけて語ろうとしている。一歩引いて見ると、明らかにバランスを欠いた意見がほとんどになっている。 などと言われているので、バランスを欠いていない意見を投下しようと思っています。 お前今AIコーディングエージェント追わないとか正気か？ 正気です（ただし自分は今風邪を引いていて死にかけの状態で書いていますが、ちゃんと説明可能な形に落とそうと思っています...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://zenn.dev/tesla/articles/27e0834d429c66" target="_blank" rel="noopener noreferrer" class="entry-link">AI、今そんな一生懸命キャッチアップしなくてもいいのよね</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">22時間前</span>
+                            </div>
+                            <div class="entry-summary">きっかけ https://uiuret.hatenablog.com/entry/2026/02/22/024509 これがバズっていたり、色んな理由でAIが話題になって界隈がピリつき SNSを見ていると誰もがすべてのことをAIに結びつけて語ろうとしている。一歩引いて見ると、明らかにバランスを欠いた意見がほとんどになっている。 などと言われているので、バランスを欠いていない意見を投下しようと思っています。 お前今AIコーディングエージェント追わないとか正気か？ 正気です（ただし自分は今風邪を引いていて死にかけの状態で書いていますが、ちゃんと説明可能な形に落とそうと思っています...</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://zenn.dev/teba_eleven/articles/1765035114d00b" data-title="【ハッカソンでClean Architecture】4人対戦ババ抜きWebSocketサーバーの設計と7つのこだわり" data-summary="はじめに 2026年2月21-22日に AWS Startup Loft Tokyo で開催された Progateハッカソン powered by AWS に参加しました。学生エンジニア向けの2日間ハッカソンです。 チームで作ったのは 「ババ抜きに、革命を！」 — 4人オンライン対戦のババ抜きに、テーマルーレットとAI画像生成を組み合わせたゲームです。(ババ抜きに革命はないのがポイントです) https://topaz.dev/projects/19fa10d5d28e056cd0cf 私の担当は WebSocketサーバー（バックエンド全般） です。本記事では、2日間でどう設計し、...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/teba_eleven/articles/1765035114d00b" target="_blank" rel="noopener noreferrer" class="entry-link">【ハッカソンでClean Architecture】4人対戦ババ抜きWebSocketサーバーの設計と7つのこだわり</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">昨日</span>
+                            </div>
+                            <div class="entry-summary">はじめに 2026年2月21-22日に AWS Startup Loft Tokyo で開催された Progateハッカソン powered by AWS に参加しました。学生エンジニア向けの2日間ハッカソンです。 チームで作ったのは 「ババ抜きに、革命を！」 — 4人オンライン対戦のババ抜きに、テーマルーレットとAI画像生成を組み合わせたゲームです。(ババ抜きに革命はないのがポイントです) https://topaz.dev/projects/19fa10d5d28e056cd0cf 私の担当は WebSocketサーバー（バックエンド全般） です。本記事では、2日間でどう設計し、...</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://zenn.dev/haruyama480/articles/6315d4b50485f3" data-title="Goツールチェイン(golang/go)を快適に開くための設定" data-summary="github.com/golang/go は、Goのコンパイラや標準パッケージを含むツールチェインのレポジトリです。 Goは可読性が高く、生の実装を追いやすい言語です。そのため、ライブラリと同じ感覚でGo本体のコードを追いかけたい場面がありますが、そのままエディタで開くとLSPがうまく動作せず、コードジャンプも正常に動作しません。 この記事では、VSCodeを中心にGo本体のレポジトリを「正しく」開くための設定方法を解説します。macOSのVSCodeで動作確認していますが、他の環境でも同等な設定をすれば動くと思います。 ぜひ設定して、GoツールチェインにDeep Diveする準備をしよ...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/haruyama480/articles/6315d4b50485f3" target="_blank" rel="noopener noreferrer" class="entry-link">Goツールチェイン(golang/go)を快適に開くための設定</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">昨日</span>
+                            </div>
+                            <div class="entry-summary">github.com/golang/go は、Goのコンパイラや標準パッケージを含むツールチェインのレポジトリです。 Goは可読性が高く、生の実装を追いやすい言語です。そのため、ライブラリと同じ感覚でGo本体のコードを追いかけたい場面がありますが、そのままエディタで開くとLSPがうまく動作せず、コードジャンプも正常に動作しません。 この記事では、VSCodeを中心にGo本体のレポジトリを「正しく」開くための設定方法を解説します。macOSのVSCodeで動作確認していますが、他の環境でも同等な設定をすれば動くと思います。 ぜひ設定して、GoツールチェインにDeep Diveする準備をしよ...</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://zenn.dev/soramarjr/articles/7ea5b05c7ada4d" data-title="開発環境現状確認 2026 - 交換ブログvol.17" data-summary="初期からの知らねえ単語のリスナーなんですが、誰かとこんな感じのポットキャストやりたいなと思い始めてきました。 fujitani soraです。 交換ブログ今cycleのテーマが開発環境現状確認 2026なので書きます。 前回の二人の https://2323-code.hatenablog.com/entry/2026/01/21/180200 （最近字を追うのがしんどいときは新書とか中高生向けの本を読んでいるけどそれでもすくない） これがえらすぎる、僕は気分が乗らないと心が折れる https://topi-log.hatenablog.jp/entry/2026/02/15/211...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/soramarjr/articles/7ea5b05c7ada4d" target="_blank" rel="noopener noreferrer" class="entry-link">開発環境現状確認 2026 - 交換ブログvol.17</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">昨日</span>
+                            </div>
+                            <div class="entry-summary">初期からの知らねえ単語のリスナーなんですが、誰かとこんな感じのポットキャストやりたいなと思い始めてきました。 fujitani soraです。 交換ブログ今cycleのテーマが開発環境現状確認 2026なので書きます。 前回の二人の https://2323-code.hatenablog.com/entry/2026/01/21/180200 （最近字を追うのがしんどいときは新書とか中高生向けの本を読んでいるけどそれでもすくない） これがえらすぎる、僕は気分が乗らないと心が折れる https://topi-log.hatenablog.jp/entry/2026/02/15/211...</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://zenn.dev/tboy/articles/0c42696e56ceed" data-title="個人開発・電子工作で使えそうなクラウドサービスまとめ" data-summary="概要 ESP32やM5Stack、Arduino Uno R4の普及によって、個人レベルでもWi-FiやBluetoothを活用したアプリケーションに挑戦しやすくなっている。 一方で、電気系や組み込み系を専門としてきた人の中には、クラウドはハードルが高いと感じる人も多いのではないだろうか。私自身も組み込みエンジニアとして、クラウド連携を始めた当初はとっつきにくさを感じていた。 この記事では、趣味の個人開発や電子工作、小規模プロジェクトを想定し、主要なクラウドサービスの特徴を以下の観点で整理する。 Arduino Cloud https://cloud.arduino.cc/ Ar...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/tboy/articles/0c42696e56ceed" target="_blank" rel="noopener noreferrer" class="entry-link">個人開発・電子工作で使えそうなクラウドサービスまとめ</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">昨日</span>
+                            </div>
+                            <div class="entry-summary">概要 ESP32やM5Stack、Arduino Uno R4の普及によって、個人レベルでもWi-FiやBluetoothを活用したアプリケーションに挑戦しやすくなっている。 一方で、電気系や組み込み系を専門としてきた人の中には、クラウドはハードルが高いと感じる人も多いのではないだろうか。私自身も組み込みエンジニアとして、クラウド連携を始めた当初はとっつきにくさを感じていた。 この記事では、趣味の個人開発や電子工作、小規模プロジェクトを想定し、主要なクラウドサービスの特徴を以下の観点で整理する。 Arduino Cloud https://cloud.arduino.cc/ Ar...</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://zenn.dev/badmonster/articles/92338955317115" data-title="コードを理解する超軽量MCPを作った — トークン70%削減、1分でセットアップ" data-summary="はじめに コーディングエージェントのデモは魔法のように見えます。しかし、実際のコードベースに向けると： コンテキストウィンドウがすぐに埋まる 古いコードに対してハルシネーションが起きる 処理が遅すぎて、grepした方が早い 大規模なRust/Python/TSリポジトリでAIワークフローを構築する中でこの壁にぶつかったので、自分のスタックに本当に欲しかったものを作りました：ASTベースの超軽量な組み込みMCPです。 cocoindex-codeというツールで、トークン消費を約70%削減し、待ち時間も大幅に短縮できます。 Claude、Codex、Cursor、その他MCP対応のコ...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/badmonster/articles/92338955317115" target="_blank" rel="noopener noreferrer" class="entry-link">コードを理解する超軽量MCPを作った — トークン70%削減、1分でセットアップ</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">昨日</span>
+                            </div>
+                            <div class="entry-summary">はじめに コーディングエージェントのデモは魔法のように見えます。しかし、実際のコードベースに向けると： コンテキストウィンドウがすぐに埋まる 古いコードに対してハルシネーションが起きる 処理が遅すぎて、grepした方が早い 大規模なRust/Python/TSリポジトリでAIワークフローを構築する中でこの壁にぶつかったので、自分のスタックに本当に欲しかったものを作りました：ASTベースの超軽量な組み込みMCPです。 cocoindex-codeというツールで、トークン消費を約70%削減し、待ち時間も大幅に短縮できます。 Claude、Codex、Cursor、その他MCP対応のコ...</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://zenn.dev/neurostack_0001/articles/claude-code-qa-sprint-testcase-generation" data-title="支援先のQAチームにClaude Codeを導入してテストケース生成を自動化した話" data-summary="きっかけ：支援先のスプリント開発で見えた課題 技術顧問として入っている会社で、スプリント開発の現場を見ていてずっと気になっていたことがあった。 QAチームのテストケース作成がボトルネックになっている。 具体的にはこんな状況だった。 スプリント後半にQAの作業が溜まり、テストケース作成が間に合わない JIRAチケットの受け入れ条件からテストケースへの変換が完全に手作業 QAメンバーはコードを読めないので、エンジニアに「この変更、何に影響する？」と毎回聞く 新しいQAメンバーが入ると、テスト観点を覚えるまでに時間がかかる OpenObserveでも同じような課題があったらしく、Cla...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/neurostack_0001/articles/claude-code-qa-sprint-testcase-generation" target="_blank" rel="noopener noreferrer" class="entry-link">支援先のQAチームにClaude Codeを導入してテストケース生成を自動化した話</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">昨日</span>
+                            </div>
+                            <div class="entry-summary">きっかけ：支援先のスプリント開発で見えた課題 技術顧問として入っている会社で、スプリント開発の現場を見ていてずっと気になっていたことがあった。 QAチームのテストケース作成がボトルネックになっている。 具体的にはこんな状況だった。 スプリント後半にQAの作業が溜まり、テストケース作成が間に合わない JIRAチケットの受け入れ条件からテストケースへの変換が完全に手作業 QAメンバーはコードを読めないので、エンジニアに「この変更、何に影響する？」と毎回聞く 新しいQAメンバーが入ると、テスト観点を覚えるまでに時間がかかる OpenObserveでも同じような課題があったらしく、Cla...</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://zenn.dev/kimmaru/articles/6c0f67f6003b94" data-title="Figma MCP × Claude Codeで1ページ8時間の作業が20分になった話" data-summary="はじめに 業務でWebサイトリニューアルをやっています。 テキスト量の多い静的ページを、Figmaデザインからモック（HTML/CSS）→ Laravel組み込み（3言語対応）まで実装する作業がありました。 最初は手作業で1ページ8時間かかっていました。 Figma MCP + Claude Codeを導入したら、1ページ20分になりました。 この記事はその経験の所感です。 前提：必要なもの この方法を実現するには以下が必要です： Figma 有料プラン（Dev Modeが使えるプラン） Figma MCP は Dev Mode 経由でデザインデータにアクセスするため、開発...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/kimmaru/articles/6c0f67f6003b94" target="_blank" rel="noopener noreferrer" class="entry-link">Figma MCP × Claude Codeで1ページ8時間の作業が20分になった話</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">昨日</span>
+                            </div>
+                            <div class="entry-summary">はじめに 業務でWebサイトリニューアルをやっています。 テキスト量の多い静的ページを、Figmaデザインからモック（HTML/CSS）→ Laravel組み込み（3言語対応）まで実装する作業がありました。 最初は手作業で1ページ8時間かかっていました。 Figma MCP + Claude Codeを導入したら、1ページ20分になりました。 この記事はその経験の所感です。 前提：必要なもの この方法を実現するには以下が必要です： Figma 有料プラン（Dev Modeが使えるプラン） Figma MCP は Dev Mode 経由でデザインデータにアクセスするため、開発...</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://zenn.dev/kenfdev/articles/222fe622d42f0d" data-title="devcontainer + git worktree で並列開発するぞ！" data-summary="AI エージェントと git worktree を組み合わせた並列開発の話題を X でよく見かけるようになりました。ブランチごとにエージェントを走らせて、同時に複数の機能を開発する。魅力的なワークフローです。でも、devcontainer を使っている自分が気になっていたのが、「みんな、ポートのコンフリクトとかデータベースの管理ってどうしてるの？」 ということでした。 ! この記事では、devcontainer 環境で git worktree による並列開発を実現するために作ったテンプレートリポジトリ devcontainer-wt について紹介します。細かいセットアップ手順を解説する...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/kenfdev/articles/222fe622d42f0d" target="_blank" rel="noopener noreferrer" class="entry-link">devcontainer + git worktree で並列開発するぞ！</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">昨日</span>
+                            </div>
+                            <div class="entry-summary">AI エージェントと git worktree を組み合わせた並列開発の話題を X でよく見かけるようになりました。ブランチごとにエージェントを走らせて、同時に複数の機能を開発する。魅力的なワークフローです。でも、devcontainer を使っている自分が気になっていたのが、「みんな、ポートのコンフリクトとかデータベースの管理ってどうしてるの？」 ということでした。 ! この記事では、devcontainer 環境で git worktree による並列開発を実現するために作ったテンプレートリポジトリ devcontainer-wt について紹介します。細かいセットアップ手順を解説する...</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://zenn.dev/headwaters/articles/b6573a66d5749b" data-title="Pythonの__init__.pyはなぜ必要なのか？importの安定化・API設計・pytestとの関係" data-summary="概要 Pythonの開発をする中で、__init__.pyを何のためのファイルなのか、どこに配置すべきなのかが分からなかったので調べてみました。 結論は、 基本的に全てのパッケージディレクトリに__init__.pyを置くべき Webアプリ開発の場合、namespace packageが必要なケースはほぼ無い __init__.pyはアクセス制御ではなく、API設計 大規模開発・チーム開発では特に必須 __init__.pyとは？ __init__.pyは「このフォルダはPythonパッケージですよ」とPythonに教えるファイル。 __init__.pyを配置した結果、そ...">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://zenn.dev/headwaters/articles/b6573a66d5749b" target="_blank" rel="noopener noreferrer" class="entry-link">Pythonの__init__.pyはなぜ必要なのか？importの安定化・API設計・pytestとの関係</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">昨日</span>
+                            </div>
+                            <div class="entry-summary">概要 Pythonの開発をする中で、__init__.pyを何のためのファイルなのか、どこに配置すべきなのかが分からなかったので調べてみました。 結論は、 基本的に全てのパッケージディレクトリに__init__.pyを置くべき Webアプリ開発の場合、namespace packageが必要なケースはほぼ無い __init__.pyはアクセス制御ではなく、API設計 大規模開発・チーム開発では特に必須 __init__.pyとは？ __init__.pyは「このフォルダはPythonパッケージですよ」とPythonに教えるファイル。 __init__.pyを配置した結果、そ...</div>
+                        </div>
+                        
+                    </li>
+                    
+                </ul>
+            </details>
+            
+            <details class="feed-section">
+                <summary>
+                    <div class="feed-info">
+                        <img src="https://www.google.com/s2/favicons?domain=note.cloudnative.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="feed-title-text">ロードバランスすだちくん</span>
+                    </div>
+                    <div class="feed-meta-count">
+                        
+                        <span class="count-badge">5 件</span>
+                        
+                    </div>
+                </summary>
+                <ul class="entry-list">
+                    
+                    <li class="list-item entry-item" data-link="https://note.cloudnative.co.jp/n/ndee08b72db63" data-title="また病院がVPN経由でやられたわけだがVPNは悪だね" data-summary="シンジです。2026年2月9日の午前1時50分、日本医科大学武蔵小杉病院のナースコールシステムがランサムウェア攻撃を受けました。侵入経路は医療機器保守用VPN装置です。またVPNです。またです。人類は過去の経験から学ばない生き物でしたね。約1万人分の患者の個人情報（氏名、性別、住所、電話番号、生年月日、患者ID）が院外に持ち出されたことが確認されています。厚労省の初動対応チームが派遣される事態となりました。ナースコールですよ。入院患者さんが緊急時にナースを呼ぶためのあのボタンの裏側にあるシステムが、ランサムウェアにやられたわけです。続きをみる">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://note.cloudnative.co.jp/n/ndee08b72db63" target="_blank" rel="noopener noreferrer" class="entry-link">また病院がVPN経由でやられたわけだがVPNは悪だね</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">8日前</span>
+                            </div>
+                            <div class="entry-summary">シンジです。2026年2月9日の午前1時50分、日本医科大学武蔵小杉病院のナースコールシステムがランサムウェア攻撃を受けました。侵入経路は医療機器保守用VPN装置です。またVPNです。またです。人類は過去の経験から学ばない生き物でしたね。約1万人分の患者の個人情報（氏名、性別、住所、電話番号、生年月日、患者ID）が院外に持ち出されたことが確認されています。厚労省の初動対応チームが派遣される事態となりました。ナースコールですよ。入院患者さんが緊急時にナースを呼ぶためのあのボタンの裏側にあるシステムが、ランサムウェアにやられたわけです。続きをみる</div>
+                        </div>
+                        
+                        <img src="https://assets.st-note.com/production/uploads/images/251885028/rectangle_large_type_2_827626e6350f6fe1493ce126ac2a539f.jpeg?width=800" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://note.cloudnative.co.jp/n/nda20cf9d1051" data-title="従業員1日の活動履歴を全部AIに投げて働き方を指示してもらう" data-summary="シンジです。無料で遊べるワークフローツールn8nで遊んでいます。「会社ブログが公開されたらAIが要約してSNSに告知してくれるやつ」とか、「YouTube動画が公開されたら動画を要約してSNSに告知してくれるやつ」とか、そんな小ネタな自動ツールから作成し始めました。その次に作ったのは、「会社の代表電話に迷惑電話（営業電話含む）がかかってきたら、AIが判断して着信拒否してくれるやつ」とかも作りました。もちろん全て生成AIで。しかしなんとも小粒な自動化ばかりでn8nを活用している感じがあまりしなかったので、自身のSNSでn8nの活用方法を募集したところ、なかなか面白い実例を教えてもらいました。退勤時に日報を書くとプロジェクトの工数評価をするn8nワークフロー続きをみる">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://note.cloudnative.co.jp/n/nda20cf9d1051" target="_blank" rel="noopener noreferrer" class="entry-link">従業員1日の活動履歴を全部AIに投げて働き方を指示してもらう</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">49日前</span>
+                            </div>
+                            <div class="entry-summary">シンジです。無料で遊べるワークフローツールn8nで遊んでいます。「会社ブログが公開されたらAIが要約してSNSに告知してくれるやつ」とか、「YouTube動画が公開されたら動画を要約してSNSに告知してくれるやつ」とか、そんな小ネタな自動ツールから作成し始めました。その次に作ったのは、「会社の代表電話に迷惑電話（営業電話含む）がかかってきたら、AIが判断して着信拒否してくれるやつ」とかも作りました。もちろん全て生成AIで。しかしなんとも小粒な自動化ばかりでn8nを活用している感じがあまりしなかったので、自身のSNSでn8nの活用方法を募集したところ、なかなか面白い実例を教えてもらいました。退勤時に日報を書くとプロジェクトの工数評価をするn8nワークフロー続きをみる</div>
+                        </div>
+                        
+                        <img src="https://assets.st-note.com/production/uploads/images/241704892/rectangle_large_type_2_b418c1519a8c942e5c6b5f7dd876a4c4.jpeg?width=800" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://note.cloudnative.co.jp/n/n5b6e25ca0f6d" data-title="ガチのサイバー攻撃が来たら御社は確実に対処できますか" data-summary="シンジです。セキュリティを取り扱う上で「脅して不安を煽って対処させる」のは個人的にとても嫌いなのですが、組織として準備はしていても、マジでガチなのが来た時に、自分たちでそれらに確実に対処できるのかは実際問題として不安があります。事前のドキュメント整備、様々な対策、運用、そして訓練などを行っているとは思いますが、この漠然とした不安を払拭できない原因は、経験豊富なインデントレスポンス専門家や部隊が社内に揃ってない、存在していないことです。続きをみる">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://note.cloudnative.co.jp/n/n5b6e25ca0f6d" target="_blank" rel="noopener noreferrer" class="entry-link">ガチのサイバー攻撃が来たら御社は確実に対処できますか</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">228日前</span>
+                            </div>
+                            <div class="entry-summary">シンジです。セキュリティを取り扱う上で「脅して不安を煽って対処させる」のは個人的にとても嫌いなのですが、組織として準備はしていても、マジでガチなのが来た時に、自分たちでそれらに確実に対処できるのかは実際問題として不安があります。事前のドキュメント整備、様々な対策、運用、そして訓練などを行っているとは思いますが、この漠然とした不安を払拭できない原因は、経験豊富なインデントレスポンス専門家や部隊が社内に揃ってない、存在していないことです。続きをみる</div>
+                        </div>
+                        
+                        <img src="https://assets.st-note.com/production/uploads/images/201333980/rectangle_large_type_2_67d65bbb651dd2405a9ecc00f2fa55b0.jpeg?width=800" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://note.cloudnative.co.jp/n/n78bdf5408243" data-title="SaaSに搭載されたAIがまともかどうか評価する" data-summary="シンジです。AIって流行ってますよね。特にSaaSの一部機能として提供されるAIは、基本的に作りがブラックボックスで、その性質や特性を理解するには使い倒すしかない状況です。SaaSベンダーが公表するサマリーは置いといて、実際使ってみた感想、コスパ、注意点などを並べてみます。このAIはやめとけだとか、このAIは使うべきだとかを総評して遠回しに表現します。さすがに世の中の全部を評価するのは大変なので、何を評価したのかは目次を見てください。続きをみる">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://note.cloudnative.co.jp/n/n78bdf5408243" target="_blank" rel="noopener noreferrer" class="entry-link">SaaSに搭載されたAIがまともかどうか評価する</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">230日前</span>
+                            </div>
+                            <div class="entry-summary">シンジです。AIって流行ってますよね。特にSaaSの一部機能として提供されるAIは、基本的に作りがブラックボックスで、その性質や特性を理解するには使い倒すしかない状況です。SaaSベンダーが公表するサマリーは置いといて、実際使ってみた感想、コスパ、注意点などを並べてみます。このAIはやめとけだとか、このAIは使うべきだとかを総評して遠回しに表現します。さすがに世の中の全部を評価するのは大変なので、何を評価したのかは目次を見てください。続きをみる</div>
+                        </div>
+                        
+                        <img src="https://assets.st-note.com/production/uploads/images/201057282/rectangle_large_type_2_3a1dc3c2ab806ca968b34b6246d214c4.jpeg?width=800" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://note.cloudnative.co.jp/n/nd4ec7cafcd16" data-title="SaaSの値上げによる経営圧迫と情シスの向き合い方" data-summary="シンジです。SaaSの値上げ、ムカつきますよね。一般的に情シスは製品導入をするとき、値下げ交渉をするケースがあるかと思います。そして導入が決まったら、その後は放置じゃないですか？今やDX＝SaaS導入とまで言われている昨今、何としてでも使いたいSaaSですが、その後の強烈な値上げによって経営資源が圧迫され、経営陣からは「どうにかならんか」と言われるわけです。続きをみる">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://note.cloudnative.co.jp/n/nd4ec7cafcd16" target="_blank" rel="noopener noreferrer" class="entry-link">SaaSの値上げによる経営圧迫と情シスの向き合い方</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">230日前</span>
+                            </div>
+                            <div class="entry-summary">シンジです。SaaSの値上げ、ムカつきますよね。一般的に情シスは製品導入をするとき、値下げ交渉をするケースがあるかと思います。そして導入が決まったら、その後は放置じゃないですか？今やDX＝SaaS導入とまで言われている昨今、何としてでも使いたいSaaSですが、その後の強烈な値上げによって経営資源が圧迫され、経営陣からは「どうにかならんか」と言われるわけです。続きをみる</div>
+                        </div>
+                        
+                        <img src="https://assets.st-note.com/production/uploads/images/200929026/rectangle_large_type_2_261c9d9ab1961f94cefe0a5a85444c7a.jpeg?width=800" class="entry-thumbnail" loading="lazy" alt="">
+                        
+                    </li>
+                    
+                </ul>
+            </details>
+            
+        </div>
+        
+    </div>
+
+    <div id="backToTop" title="トップへ戻る">↑</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 修正箇所: ジャンプボタン連動のスクロール＆アコーディオン自動展開ロジック
+            document.querySelectorAll('.jump-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    
+                    if (targetSection) {
+                        // ジャンプ先のセクション内にあるアコーディオンをすべて開く
+                        targetSection.querySelectorAll('details').forEach(details => {
+                            details.open = true;
+                        });
+                        
+                        // ヘッダーの高さを考慮して少しずらしてスクロール
+                        const headerOffset = 70;
+                        const elementPosition = targetSection.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                        
+                        window.scrollTo({
+                             top: offsetPosition,
+                             behavior: "smooth"
+                        });
+                    }
+                });
+            });
+
+            // 既読管理
+            const STORAGE_KEY = 'rss_read_items';
+            let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+            const entryItems = document.querySelectorAll('.entry-item');
+            
+            entryItems.forEach(item => {
+                const link = item.dataset.link;
+                if (readItems.has(link)) {
+                    item.classList.add('read');
+                }
+                const anchor = item.querySelector('a.entry-link');
+                if(anchor) {
+                    anchor.addEventListener('click', function() {
+                        // 同じURLを持つすべての記事（タイムラインとサイト別の両方）を既読にする
+                        document.querySelectorAll(`.entry-item[data-link="${link}"]`).forEach(el => {
+                            el.classList.add('read');
+                        });
+                        readItems.add(link);
+                        if (readItems.size > 1000) {
+                            const array = Array.from(readItems);
+                            readItems = new Set(array.slice(array.length - 1000));
+                        }
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
+                    });
+                }
+            });
+
+            // 検索・絞り込み
+            const searchToggle = document.getElementById('searchToggle');
+            const searchInput = document.getElementById('searchInput');
+            
+            if (searchToggle && searchInput) {
+                searchToggle.addEventListener('click', () => {
+                    searchInput.classList.toggle('active');
+                    if(searchInput.classList.contains('active')) {
+                        searchInput.focus();
+                    }
+                });
+            }
+
+            entryItems.forEach(entry => {
+                const titleLink = entry.querySelector('.entry-title a');
+                const summaryDiv = entry.querySelector('.entry-summary');
+                if(titleLink && summaryDiv){
+                    entry.dataset.originalTitleHtml = titleLink.innerHTML;
+                    entry.dataset.originalSummaryHtml = summaryDiv.innerHTML;
+                }
+            });
+
+            searchInput.addEventListener('input', function(e) {
+                const term = e.target.value.trim().toLowerCase();
+
+                if (term === '') {
+                    entryItems.forEach(entry => {
+                        entry.style.display = '';
+                        const titleLink = entry.querySelector('.entry-title a');
+                        const summaryDiv = entry.querySelector('.entry-summary');
+                        if(titleLink && entry.dataset.originalTitleHtml) titleLink.innerHTML = entry.dataset.originalTitleHtml;
+                        if(summaryDiv && entry.dataset.originalSummaryHtml) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
+                    });
+                    
+                    // 検索クリア時は全アコーディオンを閉じて元の目次状態に戻す
+                    document.querySelectorAll('details.feed-section').forEach(sec => {
+                        sec.style.display = '';
+                        sec.open = false; 
+                    });
+                    return;
+                }
+
+                entryItems.forEach(entry => {
+                    const titleText = (entry.dataset.title || '').toLowerCase();
+                    const summaryText = (entry.dataset.summary || '').toLowerCase();
+
+                    if (titleText.includes(term) || summaryText.includes(term)) {
+                        entry.style.display = '';
+                        highlightText(entry, term);
+                    } else {
+                        entry.style.display = 'none';
+                    }
+                });
+
+                // 修正箇所: トピック・タイムライン・サイト別のすべてのアコーディオンを横断して制御
+                document.querySelectorAll('details.feed-section').forEach(section => {
+                    // クラスが .list-item (サイト別・トピック別) または .card (タイムライン) のものを探す
+                    const visibleItems = Array.from(section.querySelectorAll('.entry-item')).filter(el => el.style.display !== 'none');
+                    if(visibleItems.length === 0) {
+                        section.style.display = 'none';
+                    } else {
+                        section.style.display = '';
+                        section.open = true; // ヒットしたアコーディオンは自動で開く
+                    }
+                });
+            });
+
+            function highlightText(entry, term) {
+                try {
+                    const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
+                    const highlightMark = '<mark>$1</mark>';
+                    const titleLink = entry.querySelector('.entry-title a');
+                    const summaryDiv = entry.querySelector('.entry-summary');
+                    
+                    if(titleLink && entry.dataset.originalTitleHtml) {
+                        titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
+                    }
+                    if(summaryDiv && entry.dataset.originalSummaryHtml) {
+                        summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
+                    }
+                } catch(e) { console.error(e); }
+            }
+
+            function escapeRegExp(string) {
+                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+
+            const backToTopBtn = document.getElementById('backToTop');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
