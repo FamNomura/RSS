@@ -1,5 +1,3 @@
-# パス: famnomura/rss/RSS-c13b0806bf5095367d0824d5f30d3dcd6854c59a/build.py
-
 # 修正箇所: yamlモジュールを削除し、CSVとURL通信に必要なモジュールを追加
 import csv
 import urllib.request
@@ -363,3 +361,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
