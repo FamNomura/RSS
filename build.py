@@ -1,3 +1,5 @@
+# パス: famnomura/rss/RSS-c13b0806bf5095367d0824d5f30d3dcd6854c59a/build.py
+
 import json
 import feedparser
 import datetime
@@ -18,7 +20,7 @@ max_entries = 10
 new_threshold_hours = 24
 timeout_seconds = 15 # タイムアウト設定(秒)
 
-# タイムアウトを強制設定（これで無限フリーズを防ぎます）
+# タイムアウトを強制設定
 socket.setdefaulttimeout(timeout_seconds)
 
 def load_config(path):
@@ -117,27 +119,19 @@ def fetch_all_feeds(config):
     
     for page in config.get('pages', []):
         for feed in page.get('feeds', []):
-            # URLの改行コードなどを除去 (.strip())
             clean_url = feed['url'].strip()
             all_urls.add((clean_url, feed.get('title')))
     
     print(f"Fetching {len(all_urls)} unique feeds...")
-    
     now_utc = datetime.datetime.now(pytz.utc)
     results = {}
-    
-    # User-Agentを設定（ブロック回避のため）
     user_agent = 'Mozilla/5.0 (compatible; MyRSSReader/1.0)'
 
     for url, title_override in all_urls:
         print(f"  Fetching: {url}...")
         try:
-            # agentパラメータを追加
             d = feedparser.parse(url, agent=user_agent)
-            
-            # パースエラー（bozo）があっても、中身が取れていれば続行する
             if d.bozo:
-                # 接続エラーなどの致命的な例外のみキャッチ
                 if isinstance(d.bozo_exception, (socket.timeout, socket.error)):
                      raise d.bozo_exception
 
@@ -162,16 +156,12 @@ def fetch_all_feeds(config):
     return results
 
 def main():
-    # 出力ディレクトリの作成
     os.makedirs(output_dir, exist_ok=True)
-
     config = load_config(feeds_file)
     
     navigation = []
-    # ウォッチページ
     for watch in config.get('watches', []):
         navigation.append({'page_title': watch['page_title'], 'filename': watch['filename']})
-    # 通常ページ
     for page in config.get('pages', []):
         navigation.append({'page_title': page['page_title'], 'filename': page['filename']})
     
@@ -189,36 +179,33 @@ def main():
         print(f"Building Page: {target_filename}")
         
         page_config['is_topic'] = False 
-        
         ng_keywords = page_config.get('ng_keywords', [])
-        page_feeds_display = []
+        
+        # 修正箇所: アコーディオン廃止に伴い、記事をページ単位でフラットにまとめる
+        page_entries = []
         
         for feed_conf in page_config['feeds']:
-            url = feed_conf['url'].strip() # ここでもstrip
+            url = feed_conf['url'].strip()
             source_data = all_feeds_data.get(url)
             
             if source_data:
                 valid_entries = [e for e in source_data['entries'] if not is_ng_content(e, ng_keywords)]
-                
-                total_count = len(valid_entries)
-                new_count = sum(1 for e in valid_entries if e['is_new'])
-                has_new = new_count > 0
-                
-                page_feeds_display.append({
-                    'title': source_data['title'],
-                    'favicon': source_data['favicon'],
-                    'has_new': has_new,
-                    'total_count': total_count,
-                    'new_count': new_count,
-                    'entries': valid_entries
-                })
+                # 修正箇所: タイムライン表示時に配信元がわかるよう情報を各記事に付与
+                for e in valid_entries:
+                    e_copy = e.copy()
+                    e_copy['favicon'] = source_data['favicon']
+                    e_copy['source_title'] = source_data['title']
+                    page_entries.append(e_copy)
+        
+        # 修正箇所: 真のタイムラインを実現するため、全フィードの記事を日時の降順でソート
+        page_entries.sort(key=lambda x: x['timestamp'], reverse=True)
         
         output_path = os.path.join(output_dir, target_filename)
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write(template.render(
                 navigation=navigation,
                 current_page=page_config,
-                feeds_data=page_feeds_display,
+                entries=page_entries, # 修正箇所: 階層構造の feeds_data から entries に変更
                 last_updated=now_str
             ))
 
@@ -228,15 +215,14 @@ def main():
         print(f"Building Watch Page: {target_filename}")
         
         watch_config['is_topic'] = True
-        
         keywords = watch_config.get('keywords', [])
         ng_keywords = watch_config.get('ng_keywords', [])
         
-        watch_feeds_display = []
+        # 修正箇所: ウォッチページもキーワードごとの階層を廃止しフラット化
+        watch_entries = []
+        seen_links = set()
         
         for kw in keywords:
-            matched_entries = []
-            
             for url, source_data in all_feeds_data.items():
                 if not source_data: continue
                 
@@ -245,30 +231,23 @@ def main():
                         continue
                     text_to_search = (entry['title'] + entry['summary']).lower()
                     if kw.lower() in text_to_search:
-                        matched_entries.append(entry)
+                        # 修正箇所: 複数キーワードにヒットした記事の重複を除外
+                        if entry['link'] not in seen_links:
+                            seen_links.add(entry['link'])
+                            e_copy = entry.copy()
+                            e_copy['favicon'] = source_data['favicon']
+                            e_copy['source_title'] = source_data['title']
+                            watch_entries.append(e_copy)
             
-            matched_entries.sort(key=lambda x: x['timestamp'], reverse=True)
-            
-            if matched_entries:
-                total_count = len(matched_entries)
-                new_count = sum(1 for e in matched_entries if e['is_new'])
-                has_new = new_count > 0
-                
-                watch_feeds_display.append({
-                    'title': f"Keyword: {kw}",
-                    'favicon': '', 
-                    'has_new': has_new,
-                    'total_count': total_count,
-                    'new_count': new_count,
-                    'entries': matched_entries
-                })
+        # 修正箇所: 日時の降順でソート
+        watch_entries.sort(key=lambda x: x['timestamp'], reverse=True)
 
         output_path = os.path.join(output_dir, target_filename)
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write(template.render(
                 navigation=navigation,
                 current_page=watch_config,
-                feeds_data=watch_feeds_display,
+                entries=watch_entries, # 修正箇所: entries に変更
                 last_updated=now_str
             ))
 
