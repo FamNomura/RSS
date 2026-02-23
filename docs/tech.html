@@ -35,7 +35,6 @@
             z-index: 1000;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        /* 修正箇所: ナビゲーションの折り返しを禁止し、横スクロールに対応 */
         .nav-container {
             max-width: 900px;
             margin: 0 auto;
@@ -46,17 +45,10 @@
         }
         .nav-links { 
             display: flex; 
-            flex-wrap: nowrap; 
-            overflow-x: auto; 
-            white-space: nowrap; 
+            flex-wrap: wrap; /* 修正箇所: PCで折り返し多段表示にするため wrap に変更 */
             gap: 8px; 
             flex-grow: 1;
-            -webkit-overflow-scrolling: touch; 
-            scrollbar-width: none;
-            padding-bottom: 2px;
         }
-        .nav-links::-webkit-scrollbar { display: none; }
-
         .nav-link {
             color: #ecf0f1;
             text-decoration: none;
@@ -67,11 +59,23 @@
             opacity: 0.85;
             transition: all 0.2s;
             background-color: rgba(255,255,255,0.1);
+            white-space: nowrap;
         }
         .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
         .nav-link.active { opacity: 1; background-color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
-        /* 修正箇所: 検索ボックスをアイコンタップ展開式に変更 */
+        /* スマホ向けナビゲーション（横スクロール） */
+        @media (max-width: 600px) {
+            .nav-links {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                padding-bottom: 2px;
+            }
+            .nav-links::-webkit-scrollbar { display: none; }
+        }
+
         .search-container { position: relative; display: flex; align-items: center; }
         .search-toggle-btn { 
             background: none; border: none; font-size: 18px; cursor: pointer; color: #ecf0f1; padding: 5px; margin-right: 5px; 
@@ -86,61 +90,96 @@
 
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         
-        header { margin-bottom: 25px; text-align: center; }
+        header { margin-bottom: 20px; text-align: center; border-radius: 8px; padding: 10px; transition: all 0.3s; }
         h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
         .last-updated { font-size: 12px; color: var(--text-sub); }
 
-        /* 修正箇所: タイムライン型カードUIのスタイルを追加 */
-        .timeline-container { display: flex; flex-direction: column; gap: 15px; }
+        /* 修正箇所: トピックページ用の特別デザイン */
+        .header-topic {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e0edff 100%);
+            border-left: 5px solid #007bff;
+            padding: 20px;
+        }
+        .topic-desc {
+            font-size: 12px; color: #0056b3; margin: 8px 0; font-weight: bold; line-height: 1.4;
+        }
+
+        /* 修正箇所: タブ切り替えUI */
+        .view-tabs {
+            display: flex; gap: 10px; margin-bottom: 20px; justify-content: flex-end;
+        }
+        .view-tab {
+            padding: 8px 16px; background: #fff; border: 1px solid var(--border); border-radius: 20px;
+            cursor: pointer; font-size: 13px; font-weight: bold; color: var(--text-sub); transition: all 0.2s;
+        }
+        .view-tab:hover { background: #f0f0f0; }
+        .view-tab.active { background: var(--text-main); color: #fff; border-color: var(--text-main); }
         
+        .view-content { display: none; }
+        .view-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* タイムライン型 UI */
+        .timeline-container { display: flex; flex-direction: column; gap: 15px; }
         .card {
             background: var(--card-bg); border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             border: 1px solid var(--border); overflow: hidden; display: flex; gap: 15px; padding: 15px;
             transition: transform 0.2s, box-shadow 0.2s;
         }
         .card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        
-        .card.read { background-color: #fafafa; opacity: 0.85; }
-        .card.read .entry-title a { color: var(--read-color); }
-        .card.read .entry-summary { color: #b5b5b5; }
-        .card.read .entry-thumbnail { filter: grayscale(100%); opacity: 0.5; }
-        .card.read .new-badge { background-color: #ccc; }
-
         .card-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
-        
+        .entry-thumbnail { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee; }
+
+        /* アコーディオン型 (サイト別) UI */
+        details {
+            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
+        }
+        summary {
+            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff;
+        }
+        summary::-webkit-details-marker { display: none; }
+        .feed-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+        .feed-title-text { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .feed-meta-count { display: flex; align-items: center; gap: 8px; font-size: 12px; flex-shrink: 0; }
+        .count-badge { background-color: #eee; color: #555; padding: 2px 8px; border-radius: 12px; font-weight: normal; }
+        .count-badge.has-new { background-color: #fff0f0; color: var(--new-badge); border: 1px solid #ffcccc; }
+        .entry-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
+        .list-item {
+            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start;
+        }
+        .list-item:last-child { border-bottom: none; }
+
+        /* 共通エントリスタイル */
+        .read { background-color: #fafafa; opacity: 0.85; }
+        .read .entry-title a { color: var(--read-color); }
+        .read .entry-summary { color: #b5b5b5; }
+        .read .entry-thumbnail { filter: grayscale(100%); opacity: 0.5; }
+        .read .new-badge { background-color: #ccc; }
+
         .entry-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-sub); margin-bottom: 8px; flex-wrap: wrap; }
         .feed-favicon { width: 14px; height: 14px; border-radius: 2px; }
         .entry-source { font-weight: 600; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
         .entry-time { border-left: 1px solid #ddd; padding-left: 8px; white-space: nowrap; }
-
-        .entry-thumbnail { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee; }
-
+        
         .entry-title { font-size: 16px; margin: 0 0 6px 0; line-height: 1.4; }
         .entry-title a { text-decoration: none; color: var(--text-main); font-weight: bold; }
         .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
-        .new-badge {
-            display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold; transform: translateY(-1px);
-        }
+        .new-badge { display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold; transform: translateY(-1px); }
 
-        .entry-summary {
-            font-size: 13px; color: #555; margin-top: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.9; line-height: 1.5;
-        }
+        .entry-summary { font-size: 13px; color: #555; margin-top: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.9; line-height: 1.5; }
         .entry-summary img { display: none; }
 
         .empty-state { padding: 40px 20px; text-align: center; color: #999; font-size: 14px; background: #fff; border-radius: 8px; border: 1px dashed #ccc; }
 
-        #backToTop {
-            position: fixed; bottom: 20px; right: 20px; background-color: var(--accent); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transition: all 0.3s; font-size: 20px; z-index: 2000;
-        }
+        #backToTop { position: fixed; bottom: 20px; right: 20px; background-color: var(--accent); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transition: all 0.3s; font-size: 20px; z-index: 2000; }
         #backToTop.show { opacity: 1; visibility: visible; }
-        #backToTop:hover { background-color: var(--accent-hover); transform: translateY(-3px); }
-
+        
         mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
 
         @media (max-width: 600px) {
             .container { padding: 15px 10px; }
-            .card { padding: 12px; gap: 10px; }
+            .card, .list-item { padding: 12px; gap: 10px; }
             .entry-thumbnail { width: 90px; height: 70px; }
             .entry-source { max-width: 130px; }
             .search-input.active { width: 140px; }
@@ -186,14 +225,22 @@
     </nav>
 
     <div class="container">
-        <header>
+        <header class="">
             <h1>Tech情報</h1>
+            
             <div class="last-updated">最終更新: 02/23 23:34</div>
         </header>
 
-        <div class="timeline-container">
-            
+        
+        <div class="view-tabs">
+            <button class="view-tab active" data-target="view-timeline">🕒 タイムライン</button>
+            <button class="view-tab" data-target="view-feed">📁 サイト別</button>
+        </div>
+        
 
+        
+
+        <div id="view-timeline" class="view-content active timeline-container">
             
             <div class="card entry-item" data-link="https://www.publickey1.jp/blog/26/nistaiai_agent_standards_initiative.html" data-title="NIST（米国国立標準技術研究所）がAIエージェントの技術標準を作る取り組み「AI Agent Standards Initiative」発表。相互運用可能かつ安全なイノベーションのために" data-summary="米国商務省傘下のNIST（National Institute of Standards and Technology：米国国立標準技術研究所）は、AIエージェントの技術標準策定に取り組む「AI Agent Standards Initiative」を発表しました。 これはNIST内に設けられた組織「CAISI」（Center for AI Standards and Innovation：人工知能標準化イノベーションセンター）が行う取り組みです。 CAISIは商用AIシステ……">
                 <div class="card-content">
@@ -202,19 +249,12 @@
                         <span class="entry-source">Publickey</span>
                         <span class="entry-time">-101分前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://www.publickey1.jp/blog/26/nistaiai_agent_standards_initiative.html" target="_blank" rel="noopener noreferrer" class="entry-link">NIST（米国国立標準技術研究所）がAIエージェントの技術標準を作る取り組み「AI Agent Standards Initiative」発表。相互運用可能かつ安全なイノベーションのために</a>
                     </div>
-
-                    <div class="entry-summary">
-                        米国商務省傘下のNIST（National Institute of Standards and Technology：米国国立標準技術研究所）は、AIエージェントの技術標準策定に取り組む「AI Agent Standards Initiative」を発表しました。 これはNIST内に設けられた組織「CAISI」（Center for AI Standards and Innovation：人工知能標準化イノベーションセンター）が行う取り組みです。 CAISIは商用AIシステ……
-                    </div>
+                    <div class="entry-summary">米国商務省傘下のNIST（National Institute of Standards and Technology：米国国立標準技術研究所）は、AIエージェントの技術標準策定に取り組む「AI Agent Standards Initiative」を発表しました。 これはNIST内に設けられた組織「CAISI」（Center for AI Standards and Innovation：人工知能標準化イノベーションセンター）が行う取り組みです。 CAISIは商用AIシステ……</div>
                 </div>
-
                 
             </div>
             
@@ -225,19 +265,12 @@
                         <span class="entry-source">Publickey</span>
                         <span class="entry-time">-38分前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://www.publickey1.jp/blog/26/anthropicclaude_code_security.html" target="_blank" rel="noopener noreferrer" class="entry-link">Anthropic、ルールベースではなく、コード分析により複雑な脆弱性も発見できる新機能「Claude Code Security」を提供開始</a>
                     </div>
-
-                    <div class="entry-summary">
-                        AnthropicはClaude Codeの新機能として、複雑な脆弱性も発見できる「Claude Code Security」をリサーチプレビューとして提供開始したことを発表しました。 人間のセキュリティ専門家のようにコードを分析 Calude Code Securityはルールベースの静的解析ではなく、人間のセキュリティ研究者と同じようにコードを分析し、複雑な脆弱性も発見できると、次のように説明されています。 Rather than scanning for known……
-                    </div>
+                    <div class="entry-summary">AnthropicはClaude Codeの新機能として、複雑な脆弱性も発見できる「Claude Code Security」をリサーチプレビューとして提供開始したことを発表しました。 人間のセキュリティ専門家のようにコードを分析 Calude Code Securityはルールベースの静的解析ではなく、人間のセキュリティ研究者と同じようにコードを分析し、複雑な脆弱性も発見できると、次のように説明されています。 Rather than scanning for known……</div>
                 </div>
-
                 
             </div>
             
@@ -248,19 +281,12 @@
                         <span class="entry-source">DevelopersIO</span>
                         <span class="entry-time">1時間前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://dev.classmethod.jp/articles/kiro-cli-custom-agent-sudo/" target="_blank" rel="noopener noreferrer" class="entry-link">AIによるAWS操作を安全に。Kiro CLIで作るsudo的なIAM権限昇格</a>
                     </div>
-
-                    <div class="entry-summary">
-                        AIエージェント（Kiro CLI）に安全にAWSを操作させるため、AWS CLIのネイティブAssumeRoleとカスタムエージェントを組み合わせた「sudo的」なIAM権限昇格の実装方法を解説します。すぐに試せるCFnテンプレート付きです。
-                    </div>
+                    <div class="entry-summary">AIエージェント（Kiro CLI）に安全にAWSを操作させるため、AWS CLIのネイティブAssumeRoleとカスタムエージェントを組み合わせた「sudo的」なIAM権限昇格の実装方法を解説します。すぐに試せるCFnテンプレート付きです。</div>
                 </div>
-
                 
             </div>
             
@@ -271,19 +297,12 @@
                         <span class="entry-source">DevelopersIO</span>
                         <span class="entry-time">3時間前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://dev.classmethod.jp/articles/nemotron-9b-constitutional-ai-simpo/" target="_blank" rel="noopener noreferrer" class="entry-link">クラスメソッドのカルチャー CLP を Nemotron 9B-v2 に教え込んでみた</a>
                     </div>
-
-                    <div class="entry-summary">
-                        クラスメソッドのカルチャー CLP を Nemotron 9B-v2 に教え込んでみた
-                    </div>
+                    <div class="entry-summary">クラスメソッドのカルチャー CLP を Nemotron 9B-v2 に教え込んでみた</div>
                 </div>
-
                 
             </div>
             
@@ -294,19 +313,12 @@
                         <span class="entry-source">DevelopersIO</span>
                         <span class="entry-time">4時間前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://dev.classmethod.jp/articles/verify-waf-policy-with-cloud-armor-preview-mode/" target="_blank" rel="noopener noreferrer" class="entry-link">Cloud Armor のプレビューモードの動作確認をする</a>
                     </div>
-
-                    <div class="entry-summary">
-                        Cloud Armor のプレビューモードの動作確認をする
-                    </div>
+                    <div class="entry-summary">Cloud Armor のプレビューモードの動作確認をする</div>
                 </div>
-
                 
             </div>
             
@@ -317,19 +329,12 @@
                         <span class="entry-source">DevelopersIO</span>
                         <span class="entry-time">4時間前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://dev.classmethod.jp/articles/claude-hashicorp-agent-skills/" target="_blank" rel="noopener noreferrer" class="entry-link">Claude でhashicorp/agent-skillsを使って Terraform のモノリシック構成をモジュール化してみた</a>
                     </div>
-
-                    <div class="entry-summary">
-                        Claude でhashicorp/agent-skillsを使って Terraform のモノリシック構成をモジュール化してみた
-                    </div>
+                    <div class="entry-summary">Claude でhashicorp/agent-skillsを使って Terraform のモノリシック構成をモジュール化してみた</div>
                 </div>
-
                 
             </div>
             
@@ -340,19 +345,12 @@
                         <span class="entry-source">DevelopersIO</span>
                         <span class="entry-time">5時間前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://dev.classmethod.jp/articles/ecs-built-in-bg-deploy-rollback/" target="_blank" rel="noopener noreferrer" class="entry-link">Amazon ECS ブルー/グリーンデプロイメントのロールバックを試してみた</a>
                     </div>
-
-                    <div class="entry-summary">
-                        Amazon ECS ブルー/グリーンデプロイメントのロールバックを試してみた
-                    </div>
+                    <div class="entry-summary">Amazon ECS ブルー/グリーンデプロイメントのロールバックを試してみた</div>
                 </div>
-
                 
             </div>
             
@@ -363,19 +361,12 @@
                         <span class="entry-source">DevelopersIO</span>
                         <span class="entry-time">5時間前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://dev.classmethod.jp/articles/ecs-native-blue-green-deployment-lifecycle-hooks-amazon-q-developer-slack/" target="_blank" rel="noopener noreferrer" class="entry-link">ECS Native Blue/Green DeploymentのライフサイクルフックとAmazon Q Developer in chat applicationsでSlack通知およびカスタムアクションボタンによる本番トラフィックの再ルーティングとロールバックを制御してみた</a>
                     </div>
-
-                    <div class="entry-summary">
-                        将来的にはユーザーが自作するのではなくサービスの機能として提供されて欲しい
-                    </div>
+                    <div class="entry-summary">将来的にはユーザーが自作するのではなくサービスの機能として提供されて欲しい</div>
                 </div>
-
                 
             </div>
             
@@ -386,19 +377,12 @@
                         <span class="entry-source">DevelopersIO</span>
                         <span class="entry-time">6時間前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://dev.classmethod.jp/articles/databricks-google-sheets/" target="_blank" rel="noopener noreferrer" class="entry-link">[新機能]Databricksのデータをコネクタを使用してGoogleスプレッドシートで確認できるようになったので試してみた</a>
                     </div>
-
-                    <div class="entry-summary">
-                        [新機能]Databricksのデータをコネクタを使用してGoogleスプレッドシートで確認できるようになったので試してみた
-                    </div>
+                    <div class="entry-summary">[新機能]Databricksのデータをコネクタを使用してGoogleスプレッドシートで確認できるようになったので試してみた</div>
                 </div>
-
                 
             </div>
             
@@ -409,19 +393,12 @@
                         <span class="entry-source">DevelopersIO</span>
                         <span class="entry-time">6時間前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://dev.classmethod.jp/articles/shuntaka-tauri-macos-codesign-notarization-updater-github-releases/" target="_blank" rel="noopener noreferrer" class="entry-link">Tauri製macOSアプリのコード署名・公証・自動アップデート署名を自動化し、GitHub Releasesで配信する</a>
                     </div>
-
-                    <div class="entry-summary">
-                        Tauri製macOSアプリのコード署名・公証・自動アップデート署名を自動化し、GitHub Releasesで配信する
-                    </div>
+                    <div class="entry-summary">Tauri製macOSアプリのコード署名・公証・自動アップデート署名を自動化し、GitHub Releasesで配信する</div>
                 </div>
-
                 
             </div>
             
@@ -432,19 +409,12 @@
                         <span class="entry-source">DevelopersIO</span>
                         <span class="entry-time">7時間前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://dev.classmethod.jp/articles/2026-02-23-fsx-multiaz-vs-efs-az-benchmark/" target="_blank" rel="noopener noreferrer" class="entry-link">AZを跨いだFSx for OpenZFSとEFSの速度比較を行ってみた</a>
                     </div>
-
-                    <div class="entry-summary">
-                        AZを跨いだFSx for OpenZFSとEFSの速度比較を行ってみた
-                    </div>
+                    <div class="entry-summary">AZを跨いだFSx for OpenZFSとEFSの速度比較を行ってみた</div>
                 </div>
-
                 
             </div>
             
@@ -455,19 +425,12 @@
                         <span class="entry-source">DevelopersIO</span>
                         <span class="entry-time">9時間前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://dev.classmethod.jp/articles/github-pull-request-files-changed-ui-improvement/" target="_blank" rel="noopener noreferrer" class="entry-link">[パブリックプレビュー] GitHub でプルリクエストの「Files changed」の UI が大幅に改善されました</a>
                     </div>
-
-                    <div class="entry-summary">
-                        説明やコメントをタブを切り替えずに表示可能となり、またページ表示速度も向上しました。
-                    </div>
+                    <div class="entry-summary">説明やコメントをタブを切り替えずに表示可能となり、またページ表示速度も向上しました。</div>
                 </div>
-
                 
             </div>
             
@@ -478,17 +441,12 @@
                         <span class="entry-source">Publickey</span>
                         <span class="entry-time">3日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://www.publickey1.jp/blog/26/github_14.html" target="_blank" rel="noopener noreferrer" class="entry-link">GitHub、リポジトリに対するプルリクエストをコラボレーターのみに制限する、あるいは完全に無効にする設定を可能に</a>
                     </div>
-
-                    <div class="entry-summary">
-                        GitHubは、リポジトリの設定として新たな設定を2つ追加したことを発表しました。 1つはコラボレーターのみにプルリクエストを制限する設定、もう1つは完全にプルリクエストを無効する設定です。 コラボレーターのみにプルリクエストを制限すると、プルリクエストのタブは従来通りそのまま表示され、コメントなども可能ですが、新たにプルリクエストを作成できるのはコラボレーター、つまり書き込みアクセス権を持つユーザーのみに制限されます。 これは開発者を制限したい開発段階にあるコードや、特定の……
-                    </div>
+                    <div class="entry-summary">GitHubは、リポジトリの設定として新たな設定を2つ追加したことを発表しました。 1つはコラボレーターのみにプルリクエストを制限する設定、もう1つは完全にプルリクエストを無効する設定です。 コラボレーターのみにプルリクエストを制限すると、プルリクエストのタブは従来通りそのまま表示され、コメントなども可能ですが、新たにプルリクエストを作成できるのはコラボレーター、つまり書き込みアクセス権を持つユーザーのみに制限されます。 これは開発者を制限したい開発段階にあるコードや、特定の……</div>
                 </div>
-
                 
             </div>
             
@@ -499,17 +457,12 @@
                         <span class="entry-source">Publickey</span>
                         <span class="entry-time">4日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://www.publickey1.jp/blog/26/amazon_ec2nested_virtualizationkvmhyper-v.html" target="_blank" rel="noopener noreferrer" class="entry-link">Amazon EC2が仮想化のネスト（Nested Virtualization）に対応。KVMやHyper-Vを用いた仮想マシンを設定可能に</a>
                     </div>
-
-                    <div class="entry-summary">
-                        Amazon Web Services（AWS）は、Amazon EC2のベアメタルインスタンス以外のインスタンスでも仮想化のネスト（Nested Virtualization）が可能になったことを発表しました。 以前からAmazon EC2のベアメタルインスタンスでは、インスタンス上で仮想マシンを実行することが可能でしたが、ベアメタルインスタンス以外のAmazon EC2のインスタンスは仮想マシンによって実現されているため、その上でさらにハイパーバイザを載せて仮想マシンを実……
-                    </div>
+                    <div class="entry-summary">Amazon Web Services（AWS）は、Amazon EC2のベアメタルインスタンス以外のインスタンスでも仮想化のネスト（Nested Virtualization）が可能になったことを発表しました。 以前からAmazon EC2のベアメタルインスタンスでは、インスタンス上で仮想マシンを実行することが可能でしたが、ベアメタルインスタンス以外のAmazon EC2のインスタンスは仮想マシンによって実現されているため、その上でさらにハイパーバイザを載せて仮想マシンを実……</div>
                 </div>
-
                 
             </div>
             
@@ -520,17 +473,12 @@
                         <span class="entry-source">Publickey</span>
                         <span class="entry-time">4日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://www.publickey1.jp/blog/26/slackapislack_mcp_serveraislack.html" target="_blank" rel="noopener noreferrer" class="entry-link">Slackが「リアルタイムサーチAPI」と「Slack MCP Server」を発表。生成AIがSlack上のやりとりを基にコンテキストを理解可能</a>
                     </div>
-
-                    <div class="entry-summary">
-                        企業向けチャットサービスのSlackは、リアルタイムサーチAPIと、生成AIがSlackを操作できる「Slack MCP Server」の提供を発表しました。 For every type of problem and task, there's an AI agent that can help. And now, Slack is where every one of your agents can call home! Forget jumping betwee……
-                    </div>
+                    <div class="entry-summary">企業向けチャットサービスのSlackは、リアルタイムサーチAPIと、生成AIがSlackを操作できる「Slack MCP Server」の提供を発表しました。 For every type of problem and task, there's an AI agent that can help. And now, Slack is where every one of your agents can call home! Forget jumping betwee……</div>
                 </div>
-
                 
             </div>
             
@@ -541,17 +489,12 @@
                         <span class="entry-source">Publickey</span>
                         <span class="entry-time">5日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://www.publickey1.jp/blog/26/netwebassemblycoreclr.html" target="_blank" rel="noopener noreferrer" class="entry-link">マイクロソフト、.NETランタイムでWebAssemblyの実行をサポートへ、CoreCLRに実装を開始</a>
                     </div>
-
-                    <div class="entry-summary">
-                        マイクロソフトは2月10日付けで公開した.NET 11 Preview 1において、.NETランタイムでWebAssemblyの実行をサポートする作業を開始していることを明らかにしました。 完成は来年の.NET 12かそれ以後の予定 .NET 11は現在開発中の最新の.NETのバージョンで、今年（2026年）11月に正式リリースされる予定です。 今回リリースされた.NET 11 Preview 1のドキュメントでは、次のように、.NETのランタイムであるCoreCLRでWeb……
-                    </div>
+                    <div class="entry-summary">マイクロソフトは2月10日付けで公開した.NET 11 Preview 1において、.NETランタイムでWebAssemblyの実行をサポートする作業を開始していることを明らかにしました。 完成は来年の.NET 12かそれ以後の予定 .NET 11は現在開発中の最新の.NETのバージョンで、今年（2026年）11月に正式リリースされる予定です。 今回リリースされた.NET 11 Preview 1のドキュメントでは、次のように、.NETのランタイムであるCoreCLRでWeb……</div>
                 </div>
-
                 
             </div>
             
@@ -562,17 +505,12 @@
                         <span class="entry-source">Publickey</span>
                         <span class="entry-time">5日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://www.publickey1.jp/blog/26/mysqlinnodbduckdbalisql_80.html" target="_blank" rel="noopener noreferrer" class="entry-link">中国アリババ、MySQLのブランチとしてInnoDBエンジン、DuckDBカラムナエンジン、ベクトルサーチなどを統合した「AliSQL 8.0」オープンソースで公開</a>
                     </div>
-
-                    <div class="entry-summary">
-                        中国のAlibaba Cloudデータベースチームは、MySQLのブランチとしてOLTP用のInnoDB、OLAP用のDuckDBカラムナエンジン、そしてベクトルサーチ機能を統合した「AliSQL 8.0」をオープンソースで公開しました。 AliSQLはMySQLブランチとしてOLTP用のデータベースエンジンにInnoDBを搭載。MySQL互換で既存のさまざまなMySQL対応ツールやユーティリティを利用可能。 その上で、高速なデータ分析を実現するOLAP用のデータベースエンジ……
-                    </div>
+                    <div class="entry-summary">中国のAlibaba Cloudデータベースチームは、MySQLのブランチとしてOLTP用のInnoDB、OLAP用のDuckDBカラムナエンジン、そしてベクトルサーチ機能を統合した「AliSQL 8.0」をオープンソースで公開しました。 AliSQLはMySQLブランチとしてOLTP用のデータベースエンジンにInnoDBを搭載。MySQL互換で既存のさまざまなMySQL対応ツールやユーティリティを利用可能。 その上で、高速なデータ分析を実現するOLAP用のデータベースエンジ……</div>
                 </div>
-
                 
             </div>
             
@@ -583,17 +521,12 @@
                         <span class="entry-source">Publickey</span>
                         <span class="entry-time">6日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://www.publickey1.jp/blog/26/aigoogledeveloper_knowledge_api_mcp_servergoogle.html" target="_blank" rel="noopener noreferrer" class="entry-link">生成AIがGoogleテクノロジーの公式ドキュメントを参照できる「Developer Knowledge API & MCP Server」、Googleが発表</a>
                     </div>
-
-                    <div class="entry-summary">
-                        Googleは、Google Cloud、Android、FirebaseなどGoogleテクノロジーの公式ドキュメントの情報を取得し、生成AIから参照できるDeveloper Knowledge APIおよびそれに対応したMCP（Model Context Protocol）サーバのパブリックプレビューを発表しました。 Google公式ドキュメント群をAPI経由で取得 Developer Knowledge APIは、Googleの公式ドキュメントの内容を取得できるAPIで……
-                    </div>
+                    <div class="entry-summary">Googleは、Google Cloud、Android、FirebaseなどGoogleテクノロジーの公式ドキュメントの情報を取得し、生成AIから参照できるDeveloper Knowledge APIおよびそれに対応したMCP（Model Context Protocol）サーバのパブリックプレビューを発表しました。 Google公式ドキュメント群をAPI経由で取得 Developer Knowledge APIは、Googleの公式ドキュメントの内容を取得できるAPIで……</div>
                 </div>
-
                 
             </div>
             
@@ -604,17 +537,12 @@
                         <span class="entry-source">Publickey</span>
                         <span class="entry-time">6日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://www.publickey1.jp/blog/26/aws28azuregoogle_cloud20254synergy_research.html" target="_blank" rel="noopener noreferrer" class="entry-link">クラウドインフラのシェア、AWSがトップを維持するも28％、AzureとGoogle Cloudが少しずつ差を詰めていく。2025年第4四半期、Synergy Researchの調査結果</a>
                     </div>
-
-                    <div class="entry-summary">
-                        調査会社のSynergy Research Groupは、グローバルにおける2025年第4四半期のクラウドインフラの市場状況について調査結果を発表しました。 クラウドインフラとは、IaaS、PaaS、ホステッドプライベートクラウドを合わせたものを指します。 発表によると、2025年第4四半期のクラウドインフラ市場は1年前と比較して30％成長となり、AIブームの後押しを受けて再び急速な成長曲線へと回帰しています。 2025年第4四半期単体のクラウドインフラ全体の売り上げはグロー……
-                    </div>
+                    <div class="entry-summary">調査会社のSynergy Research Groupは、グローバルにおける2025年第4四半期のクラウドインフラの市場状況について調査結果を発表しました。 クラウドインフラとは、IaaS、PaaS、ホステッドプライベートクラウドを合わせたものを指します。 発表によると、2025年第4四半期のクラウドインフラ市場は1年前と比較して30％成長となり、AIブームの後押しを受けて再び急速な成長曲線へと回帰しています。 2025年第4四半期単体のクラウドインフラ全体の売り上げはグロー……</div>
                 </div>
-
                 
             </div>
             
@@ -625,19 +553,332 @@
                         <span class="entry-source">Publickey</span>
                         <span class="entry-time">7日前</span>
                     </div>
-                    
                     <div class="entry-title">
                         
                         <a href="https://www.publickey1.jp/blog/26/tuxcare_elspr.html" target="_blank" rel="noopener noreferrer" class="entry-link">オープンソースの公式サポート終了後も、最小限のコストで安全に脆弱性対応を可能にする「TuxCare ELS」提供開始［PR］</a>
                     </div>
-
-                    <div class="entry-summary">
-                        OSやプログラミング言語のランタイムのアップデートは、プログラマやシステム運用者にとって常に悩みのタネだといえます。 一般に、数年ごとに発生するOSや言語のランタイム、ライブラリなどのメジャーアップデートのサイクルと比べて、アプリケーションの寿命はそれよりも長いものになりがちです。 そうしたライフサイクルの差が特に問題となるのが、アプリケーションの実行環境としている特定のバージョンのプログラミング言語のランタイムやライブラリなどがサポートを終了してしまうケースでしょう。 一般……
-                    </div>
+                    <div class="entry-summary">OSやプログラミング言語のランタイムのアップデートは、プログラマやシステム運用者にとって常に悩みのタネだといえます。 一般に、数年ごとに発生するOSや言語のランタイム、ライブラリなどのメジャーアップデートのサイクルと比べて、アプリケーションの寿命はそれよりも長いものになりがちです。 そうしたライフサイクルの差が特に問題となるのが、アプリケーションの実行環境としている特定のバージョンのプログラミング言語のランタイムやライブラリなどがサポートを終了してしまうケースでしょう。 一般……</div>
                 </div>
-
                 
             </div>
+            
+        </div>
+
+        <div id="view-feed" class="view-content">
+            
+            <details class="feed-section">
+                <summary>
+                    <div class="feed-info">
+                        <img src="https://www.google.com/s2/favicons?domain=www.publickey1.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="feed-title-text">Publickey</span>
+                    </div>
+                    <div class="feed-meta-count">
+                        
+                        <span class="count-badge has-new">新着 2 / 10</span>
+                        
+                    </div>
+                </summary>
+                <ul class="entry-list">
+                    
+                    <li class="list-item entry-item" data-link="https://www.publickey1.jp/blog/26/nistaiai_agent_standards_initiative.html" data-title="NIST（米国国立標準技術研究所）がAIエージェントの技術標準を作る取り組み「AI Agent Standards Initiative」発表。相互運用可能かつ安全なイノベーションのために" data-summary="米国商務省傘下のNIST（National Institute of Standards and Technology：米国国立標準技術研究所）は、AIエージェントの技術標準策定に取り組む「AI Agent Standards Initiative」を発表しました。 これはNIST内に設けられた組織「CAISI」（Center for AI Standards and Innovation：人工知能標準化イノベーションセンター）が行う取り組みです。 CAISIは商用AIシステ……">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.publickey1.jp/blog/26/nistaiai_agent_standards_initiative.html" target="_blank" rel="noopener noreferrer" class="entry-link">NIST（米国国立標準技術研究所）がAIエージェントの技術標準を作る取り組み「AI Agent Standards Initiative」発表。相互運用可能かつ安全なイノベーションのために</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">-101分前</span>
+                            </div>
+                            <div class="entry-summary">米国商務省傘下のNIST（National Institute of Standards and Technology：米国国立標準技術研究所）は、AIエージェントの技術標準策定に取り組む「AI Agent Standards Initiative」を発表しました。 これはNIST内に設けられた組織「CAISI」（Center for AI Standards and Innovation：人工知能標準化イノベーションセンター）が行う取り組みです。 CAISIは商用AIシステ……</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.publickey1.jp/blog/26/anthropicclaude_code_security.html" data-title="Anthropic、ルールベースではなく、コード分析により複雑な脆弱性も発見できる新機能「Claude Code Security」を提供開始" data-summary="AnthropicはClaude Codeの新機能として、複雑な脆弱性も発見できる「Claude Code Security」をリサーチプレビューとして提供開始したことを発表しました。 人間のセキュリティ専門家のようにコードを分析 Calude Code Securityはルールベースの静的解析ではなく、人間のセキュリティ研究者と同じようにコードを分析し、複雑な脆弱性も発見できると、次のように説明されています。 Rather than scanning for known……">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://www.publickey1.jp/blog/26/anthropicclaude_code_security.html" target="_blank" rel="noopener noreferrer" class="entry-link">Anthropic、ルールベースではなく、コード分析により複雑な脆弱性も発見できる新機能「Claude Code Security」を提供開始</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">-38分前</span>
+                            </div>
+                            <div class="entry-summary">AnthropicはClaude Codeの新機能として、複雑な脆弱性も発見できる「Claude Code Security」をリサーチプレビューとして提供開始したことを発表しました。 人間のセキュリティ専門家のようにコードを分析 Calude Code Securityはルールベースの静的解析ではなく、人間のセキュリティ研究者と同じようにコードを分析し、複雑な脆弱性も発見できると、次のように説明されています。 Rather than scanning for known……</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.publickey1.jp/blog/26/github_14.html" data-title="GitHub、リポジトリに対するプルリクエストをコラボレーターのみに制限する、あるいは完全に無効にする設定を可能に" data-summary="GitHubは、リポジトリの設定として新たな設定を2つ追加したことを発表しました。 1つはコラボレーターのみにプルリクエストを制限する設定、もう1つは完全にプルリクエストを無効する設定です。 コラボレーターのみにプルリクエストを制限すると、プルリクエストのタブは従来通りそのまま表示され、コメントなども可能ですが、新たにプルリクエストを作成できるのはコラボレーター、つまり書き込みアクセス権を持つユーザーのみに制限されます。 これは開発者を制限したい開発段階にあるコードや、特定の……">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/github_14.html" target="_blank" rel="noopener noreferrer" class="entry-link">GitHub、リポジトリに対するプルリクエストをコラボレーターのみに制限する、あるいは完全に無効にする設定を可能に</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">3日前</span>
+                            </div>
+                            <div class="entry-summary">GitHubは、リポジトリの設定として新たな設定を2つ追加したことを発表しました。 1つはコラボレーターのみにプルリクエストを制限する設定、もう1つは完全にプルリクエストを無効する設定です。 コラボレーターのみにプルリクエストを制限すると、プルリクエストのタブは従来通りそのまま表示され、コメントなども可能ですが、新たにプルリクエストを作成できるのはコラボレーター、つまり書き込みアクセス権を持つユーザーのみに制限されます。 これは開発者を制限したい開発段階にあるコードや、特定の……</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.publickey1.jp/blog/26/amazon_ec2nested_virtualizationkvmhyper-v.html" data-title="Amazon EC2が仮想化のネスト（Nested Virtualization）に対応。KVMやHyper-Vを用いた仮想マシンを設定可能に" data-summary="Amazon Web Services（AWS）は、Amazon EC2のベアメタルインスタンス以外のインスタンスでも仮想化のネスト（Nested Virtualization）が可能になったことを発表しました。 以前からAmazon EC2のベアメタルインスタンスでは、インスタンス上で仮想マシンを実行することが可能でしたが、ベアメタルインスタンス以外のAmazon EC2のインスタンスは仮想マシンによって実現されているため、その上でさらにハイパーバイザを載せて仮想マシンを実……">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/amazon_ec2nested_virtualizationkvmhyper-v.html" target="_blank" rel="noopener noreferrer" class="entry-link">Amazon EC2が仮想化のネスト（Nested Virtualization）に対応。KVMやHyper-Vを用いた仮想マシンを設定可能に</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">4日前</span>
+                            </div>
+                            <div class="entry-summary">Amazon Web Services（AWS）は、Amazon EC2のベアメタルインスタンス以外のインスタンスでも仮想化のネスト（Nested Virtualization）が可能になったことを発表しました。 以前からAmazon EC2のベアメタルインスタンスでは、インスタンス上で仮想マシンを実行することが可能でしたが、ベアメタルインスタンス以外のAmazon EC2のインスタンスは仮想マシンによって実現されているため、その上でさらにハイパーバイザを載せて仮想マシンを実……</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.publickey1.jp/blog/26/slackapislack_mcp_serveraislack.html" data-title="Slackが「リアルタイムサーチAPI」と「Slack MCP Server」を発表。生成AIがSlack上のやりとりを基にコンテキストを理解可能" data-summary="企業向けチャットサービスのSlackは、リアルタイムサーチAPIと、生成AIがSlackを操作できる「Slack MCP Server」の提供を発表しました。 For every type of problem and task, there's an AI agent that can help. And now, Slack is where every one of your agents can call home! Forget jumping betwee……">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/slackapislack_mcp_serveraislack.html" target="_blank" rel="noopener noreferrer" class="entry-link">Slackが「リアルタイムサーチAPI」と「Slack MCP Server」を発表。生成AIがSlack上のやりとりを基にコンテキストを理解可能</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">4日前</span>
+                            </div>
+                            <div class="entry-summary">企業向けチャットサービスのSlackは、リアルタイムサーチAPIと、生成AIがSlackを操作できる「Slack MCP Server」の提供を発表しました。 For every type of problem and task, there's an AI agent that can help. And now, Slack is where every one of your agents can call home! Forget jumping betwee……</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.publickey1.jp/blog/26/netwebassemblycoreclr.html" data-title="マイクロソフト、.NETランタイムでWebAssemblyの実行をサポートへ、CoreCLRに実装を開始" data-summary="マイクロソフトは2月10日付けで公開した.NET 11 Preview 1において、.NETランタイムでWebAssemblyの実行をサポートする作業を開始していることを明らかにしました。 完成は来年の.NET 12かそれ以後の予定 .NET 11は現在開発中の最新の.NETのバージョンで、今年（2026年）11月に正式リリースされる予定です。 今回リリースされた.NET 11 Preview 1のドキュメントでは、次のように、.NETのランタイムであるCoreCLRでWeb……">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/netwebassemblycoreclr.html" target="_blank" rel="noopener noreferrer" class="entry-link">マイクロソフト、.NETランタイムでWebAssemblyの実行をサポートへ、CoreCLRに実装を開始</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">5日前</span>
+                            </div>
+                            <div class="entry-summary">マイクロソフトは2月10日付けで公開した.NET 11 Preview 1において、.NETランタイムでWebAssemblyの実行をサポートする作業を開始していることを明らかにしました。 完成は来年の.NET 12かそれ以後の予定 .NET 11は現在開発中の最新の.NETのバージョンで、今年（2026年）11月に正式リリースされる予定です。 今回リリースされた.NET 11 Preview 1のドキュメントでは、次のように、.NETのランタイムであるCoreCLRでWeb……</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.publickey1.jp/blog/26/mysqlinnodbduckdbalisql_80.html" data-title="中国アリババ、MySQLのブランチとしてInnoDBエンジン、DuckDBカラムナエンジン、ベクトルサーチなどを統合した「AliSQL 8.0」オープンソースで公開" data-summary="中国のAlibaba Cloudデータベースチームは、MySQLのブランチとしてOLTP用のInnoDB、OLAP用のDuckDBカラムナエンジン、そしてベクトルサーチ機能を統合した「AliSQL 8.0」をオープンソースで公開しました。 AliSQLはMySQLブランチとしてOLTP用のデータベースエンジンにInnoDBを搭載。MySQL互換で既存のさまざまなMySQL対応ツールやユーティリティを利用可能。 その上で、高速なデータ分析を実現するOLAP用のデータベースエンジ……">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/mysqlinnodbduckdbalisql_80.html" target="_blank" rel="noopener noreferrer" class="entry-link">中国アリババ、MySQLのブランチとしてInnoDBエンジン、DuckDBカラムナエンジン、ベクトルサーチなどを統合した「AliSQL 8.0」オープンソースで公開</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">5日前</span>
+                            </div>
+                            <div class="entry-summary">中国のAlibaba Cloudデータベースチームは、MySQLのブランチとしてOLTP用のInnoDB、OLAP用のDuckDBカラムナエンジン、そしてベクトルサーチ機能を統合した「AliSQL 8.0」をオープンソースで公開しました。 AliSQLはMySQLブランチとしてOLTP用のデータベースエンジンにInnoDBを搭載。MySQL互換で既存のさまざまなMySQL対応ツールやユーティリティを利用可能。 その上で、高速なデータ分析を実現するOLAP用のデータベースエンジ……</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.publickey1.jp/blog/26/aigoogledeveloper_knowledge_api_mcp_servergoogle.html" data-title="生成AIがGoogleテクノロジーの公式ドキュメントを参照できる「Developer Knowledge API & MCP Server」、Googleが発表" data-summary="Googleは、Google Cloud、Android、FirebaseなどGoogleテクノロジーの公式ドキュメントの情報を取得し、生成AIから参照できるDeveloper Knowledge APIおよびそれに対応したMCP（Model Context Protocol）サーバのパブリックプレビューを発表しました。 Google公式ドキュメント群をAPI経由で取得 Developer Knowledge APIは、Googleの公式ドキュメントの内容を取得できるAPIで……">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/aigoogledeveloper_knowledge_api_mcp_servergoogle.html" target="_blank" rel="noopener noreferrer" class="entry-link">生成AIがGoogleテクノロジーの公式ドキュメントを参照できる「Developer Knowledge API & MCP Server」、Googleが発表</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">6日前</span>
+                            </div>
+                            <div class="entry-summary">Googleは、Google Cloud、Android、FirebaseなどGoogleテクノロジーの公式ドキュメントの情報を取得し、生成AIから参照できるDeveloper Knowledge APIおよびそれに対応したMCP（Model Context Protocol）サーバのパブリックプレビューを発表しました。 Google公式ドキュメント群をAPI経由で取得 Developer Knowledge APIは、Googleの公式ドキュメントの内容を取得できるAPIで……</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.publickey1.jp/blog/26/aws28azuregoogle_cloud20254synergy_research.html" data-title="クラウドインフラのシェア、AWSがトップを維持するも28％、AzureとGoogle Cloudが少しずつ差を詰めていく。2025年第4四半期、Synergy Researchの調査結果" data-summary="調査会社のSynergy Research Groupは、グローバルにおける2025年第4四半期のクラウドインフラの市場状況について調査結果を発表しました。 クラウドインフラとは、IaaS、PaaS、ホステッドプライベートクラウドを合わせたものを指します。 発表によると、2025年第4四半期のクラウドインフラ市場は1年前と比較して30％成長となり、AIブームの後押しを受けて再び急速な成長曲線へと回帰しています。 2025年第4四半期単体のクラウドインフラ全体の売り上げはグロー……">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/aws28azuregoogle_cloud20254synergy_research.html" target="_blank" rel="noopener noreferrer" class="entry-link">クラウドインフラのシェア、AWSがトップを維持するも28％、AzureとGoogle Cloudが少しずつ差を詰めていく。2025年第4四半期、Synergy Researchの調査結果</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">6日前</span>
+                            </div>
+                            <div class="entry-summary">調査会社のSynergy Research Groupは、グローバルにおける2025年第4四半期のクラウドインフラの市場状況について調査結果を発表しました。 クラウドインフラとは、IaaS、PaaS、ホステッドプライベートクラウドを合わせたものを指します。 発表によると、2025年第4四半期のクラウドインフラ市場は1年前と比較して30％成長となり、AIブームの後押しを受けて再び急速な成長曲線へと回帰しています。 2025年第4四半期単体のクラウドインフラ全体の売り上げはグロー……</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://www.publickey1.jp/blog/26/tuxcare_elspr.html" data-title="オープンソースの公式サポート終了後も、最小限のコストで安全に脆弱性対応を可能にする「TuxCare ELS」提供開始［PR］" data-summary="OSやプログラミング言語のランタイムのアップデートは、プログラマやシステム運用者にとって常に悩みのタネだといえます。 一般に、数年ごとに発生するOSや言語のランタイム、ライブラリなどのメジャーアップデートのサイクルと比べて、アプリケーションの寿命はそれよりも長いものになりがちです。 そうしたライフサイクルの差が特に問題となるのが、アプリケーションの実行環境としている特定のバージョンのプログラミング言語のランタイムやライブラリなどがサポートを終了してしまうケースでしょう。 一般……">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                
+                                <a href="https://www.publickey1.jp/blog/26/tuxcare_elspr.html" target="_blank" rel="noopener noreferrer" class="entry-link">オープンソースの公式サポート終了後も、最小限のコストで安全に脆弱性対応を可能にする「TuxCare ELS」提供開始［PR］</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">7日前</span>
+                            </div>
+                            <div class="entry-summary">OSやプログラミング言語のランタイムのアップデートは、プログラマやシステム運用者にとって常に悩みのタネだといえます。 一般に、数年ごとに発生するOSや言語のランタイム、ライブラリなどのメジャーアップデートのサイクルと比べて、アプリケーションの寿命はそれよりも長いものになりがちです。 そうしたライフサイクルの差が特に問題となるのが、アプリケーションの実行環境としている特定のバージョンのプログラミング言語のランタイムやライブラリなどがサポートを終了してしまうケースでしょう。 一般……</div>
+                        </div>
+                        
+                    </li>
+                    
+                </ul>
+            </details>
+            
+            <details class="feed-section">
+                <summary>
+                    <div class="feed-info">
+                        <img src="https://www.google.com/s2/favicons?domain=dev.classmethod.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="feed-title-text">DevelopersIO</span>
+                    </div>
+                    <div class="feed-meta-count">
+                        
+                        <span class="count-badge has-new">新着 10 / 10</span>
+                        
+                    </div>
+                </summary>
+                <ul class="entry-list">
+                    
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/kiro-cli-custom-agent-sudo/" data-title="AIによるAWS操作を安全に。Kiro CLIで作るsudo的なIAM権限昇格" data-summary="AIエージェント（Kiro CLI）に安全にAWSを操作させるため、AWS CLIのネイティブAssumeRoleとカスタムエージェントを組み合わせた「sudo的」なIAM権限昇格の実装方法を解説します。すぐに試せるCFnテンプレート付きです。">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/kiro-cli-custom-agent-sudo/" target="_blank" rel="noopener noreferrer" class="entry-link">AIによるAWS操作を安全に。Kiro CLIで作るsudo的なIAM権限昇格</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
+                            </div>
+                            <div class="entry-summary">AIエージェント（Kiro CLI）に安全にAWSを操作させるため、AWS CLIのネイティブAssumeRoleとカスタムエージェントを組み合わせた「sudo的」なIAM権限昇格の実装方法を解説します。すぐに試せるCFnテンプレート付きです。</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/nemotron-9b-constitutional-ai-simpo/" data-title="クラスメソッドのカルチャー CLP を Nemotron 9B-v2 に教え込んでみた" data-summary="クラスメソッドのカルチャー CLP を Nemotron 9B-v2 に教え込んでみた">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/nemotron-9b-constitutional-ai-simpo/" target="_blank" rel="noopener noreferrer" class="entry-link">クラスメソッドのカルチャー CLP を Nemotron 9B-v2 に教え込んでみた</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">3時間前</span>
+                            </div>
+                            <div class="entry-summary">クラスメソッドのカルチャー CLP を Nemotron 9B-v2 に教え込んでみた</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/verify-waf-policy-with-cloud-armor-preview-mode/" data-title="Cloud Armor のプレビューモードの動作確認をする" data-summary="Cloud Armor のプレビューモードの動作確認をする">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/verify-waf-policy-with-cloud-armor-preview-mode/" target="_blank" rel="noopener noreferrer" class="entry-link">Cloud Armor のプレビューモードの動作確認をする</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">4時間前</span>
+                            </div>
+                            <div class="entry-summary">Cloud Armor のプレビューモードの動作確認をする</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/claude-hashicorp-agent-skills/" data-title="Claude でhashicorp/agent-skillsを使って Terraform のモノリシック構成をモジュール化してみた" data-summary="Claude でhashicorp/agent-skillsを使って Terraform のモノリシック構成をモジュール化してみた">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/claude-hashicorp-agent-skills/" target="_blank" rel="noopener noreferrer" class="entry-link">Claude でhashicorp/agent-skillsを使って Terraform のモノリシック構成をモジュール化してみた</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">4時間前</span>
+                            </div>
+                            <div class="entry-summary">Claude でhashicorp/agent-skillsを使って Terraform のモノリシック構成をモジュール化してみた</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/ecs-built-in-bg-deploy-rollback/" data-title="Amazon ECS ブルー/グリーンデプロイメントのロールバックを試してみた" data-summary="Amazon ECS ブルー/グリーンデプロイメントのロールバックを試してみた">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/ecs-built-in-bg-deploy-rollback/" target="_blank" rel="noopener noreferrer" class="entry-link">Amazon ECS ブルー/グリーンデプロイメントのロールバックを試してみた</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">5時間前</span>
+                            </div>
+                            <div class="entry-summary">Amazon ECS ブルー/グリーンデプロイメントのロールバックを試してみた</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/ecs-native-blue-green-deployment-lifecycle-hooks-amazon-q-developer-slack/" data-title="ECS Native Blue/Green DeploymentのライフサイクルフックとAmazon Q Developer in chat applicationsでSlack通知およびカスタムアクションボタンによる本番トラフィックの再ルーティングとロールバックを制御してみた" data-summary="将来的にはユーザーが自作するのではなくサービスの機能として提供されて欲しい">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/ecs-native-blue-green-deployment-lifecycle-hooks-amazon-q-developer-slack/" target="_blank" rel="noopener noreferrer" class="entry-link">ECS Native Blue/Green DeploymentのライフサイクルフックとAmazon Q Developer in chat applicationsでSlack通知およびカスタムアクションボタンによる本番トラフィックの再ルーティングとロールバックを制御してみた</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">5時間前</span>
+                            </div>
+                            <div class="entry-summary">将来的にはユーザーが自作するのではなくサービスの機能として提供されて欲しい</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/databricks-google-sheets/" data-title="[新機能]Databricksのデータをコネクタを使用してGoogleスプレッドシートで確認できるようになったので試してみた" data-summary="[新機能]Databricksのデータをコネクタを使用してGoogleスプレッドシートで確認できるようになったので試してみた">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/databricks-google-sheets/" target="_blank" rel="noopener noreferrer" class="entry-link">[新機能]Databricksのデータをコネクタを使用してGoogleスプレッドシートで確認できるようになったので試してみた</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">6時間前</span>
+                            </div>
+                            <div class="entry-summary">[新機能]Databricksのデータをコネクタを使用してGoogleスプレッドシートで確認できるようになったので試してみた</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/shuntaka-tauri-macos-codesign-notarization-updater-github-releases/" data-title="Tauri製macOSアプリのコード署名・公証・自動アップデート署名を自動化し、GitHub Releasesで配信する" data-summary="Tauri製macOSアプリのコード署名・公証・自動アップデート署名を自動化し、GitHub Releasesで配信する">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/shuntaka-tauri-macos-codesign-notarization-updater-github-releases/" target="_blank" rel="noopener noreferrer" class="entry-link">Tauri製macOSアプリのコード署名・公証・自動アップデート署名を自動化し、GitHub Releasesで配信する</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">6時間前</span>
+                            </div>
+                            <div class="entry-summary">Tauri製macOSアプリのコード署名・公証・自動アップデート署名を自動化し、GitHub Releasesで配信する</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/2026-02-23-fsx-multiaz-vs-efs-az-benchmark/" data-title="AZを跨いだFSx for OpenZFSとEFSの速度比較を行ってみた" data-summary="AZを跨いだFSx for OpenZFSとEFSの速度比較を行ってみた">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/2026-02-23-fsx-multiaz-vs-efs-az-benchmark/" target="_blank" rel="noopener noreferrer" class="entry-link">AZを跨いだFSx for OpenZFSとEFSの速度比較を行ってみた</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">7時間前</span>
+                            </div>
+                            <div class="entry-summary">AZを跨いだFSx for OpenZFSとEFSの速度比較を行ってみた</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://dev.classmethod.jp/articles/github-pull-request-files-changed-ui-improvement/" data-title="[パブリックプレビュー] GitHub でプルリクエストの「Files changed」の UI が大幅に改善されました" data-summary="説明やコメントをタブを切り替えずに表示可能となり、またページ表示速度も向上しました。">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://dev.classmethod.jp/articles/github-pull-request-files-changed-ui-improvement/" target="_blank" rel="noopener noreferrer" class="entry-link">[パブリックプレビュー] GitHub でプルリクエストの「Files changed」の UI が大幅に改善されました</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">9時間前</span>
+                            </div>
+                            <div class="entry-summary">説明やコメントをタブを切り替えずに表示可能となり、またページ表示速度も向上しました。</div>
+                        </div>
+                        
+                    </li>
+                    
+                </ul>
+            </details>
             
         </div>
     </div>
@@ -646,8 +887,19 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 修正箇所: アコーディオン開閉ロジックの削除
+            // タブ切り替えロジック
+            const tabs = document.querySelectorAll('.view-tab');
+            const contents = document.querySelectorAll('.view-content');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    contents.forEach(c => c.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.target).classList.add('active');
+                });
+            });
 
+            // 既読管理
             const STORAGE_KEY = 'rss_read_items';
             let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
             const entryItems = document.querySelectorAll('.entry-item');
@@ -660,22 +912,21 @@
                 const anchor = item.querySelector('a.entry-link');
                 if(anchor) {
                     anchor.addEventListener('click', function() {
-                        markAsRead(link, item);
+                        // 両方のビューの同じ記事を同時に既読にする
+                        document.querySelectorAll(`.entry-item[data-link="${link}"]`).forEach(el => {
+                            el.classList.add('read');
+                        });
+                        readItems.add(link);
+                        if (readItems.size > 1000) {
+                            const array = Array.from(readItems);
+                            readItems = new Set(array.slice(array.length - 1000));
+                        }
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
                     });
                 }
             });
 
-            function markAsRead(link, itemElement) {
-                itemElement.classList.add('read');
-                readItems.add(link);
-                if (readItems.size > 1000) {
-                    const array = Array.from(readItems);
-                    readItems = new Set(array.slice(array.length - 1000));
-                }
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
-            }
-
-            // 修正箇所: 検索窓アイコンのトグル動作を追加
+            // 検索・絞り込み
             const searchToggle = document.getElementById('searchToggle');
             const searchInput = document.getElementById('searchInput');
             
@@ -697,7 +948,6 @@
                 }
             });
 
-            // 修正箇所: 階層構造廃止に伴い、検索処理をシンプルにカード単位の非表示化へ変更
             searchInput.addEventListener('input', function(e) {
                 const term = e.target.value.trim().toLowerCase();
 
@@ -708,6 +958,11 @@
                         const summaryDiv = entry.querySelector('.entry-summary');
                         if(titleLink && entry.dataset.originalTitleHtml) titleLink.innerHTML = entry.dataset.originalTitleHtml;
                         if(summaryDiv && entry.dataset.originalSummaryHtml) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
+                    });
+                    
+                    // アコーディオンの表示もリセット
+                    document.querySelectorAll('details.feed-section').forEach(sec => {
+                        sec.style.display = '';
                     });
                     return;
                 }
@@ -721,6 +976,17 @@
                         highlightText(entry, term);
                     } else {
                         entry.style.display = 'none';
+                    }
+                });
+
+                // アコーディオン内で表示できる記事がない場合は親要素ごと隠す
+                document.querySelectorAll('details.feed-section').forEach(section => {
+                    const visibleItems = Array.from(section.querySelectorAll('.list-item')).filter(el => el.style.display !== 'none');
+                    if(visibleItems.length === 0) {
+                        section.style.display = 'none';
+                    } else {
+                        section.style.display = '';
+                        section.open = true; // ヒットしたら開いておく
                     }
                 });
             });

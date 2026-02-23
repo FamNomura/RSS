@@ -35,7 +35,6 @@
             z-index: 1000;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        /* 修正箇所: ナビゲーションの折り返しを禁止し、横スクロールに対応 */
         .nav-container {
             max-width: 900px;
             margin: 0 auto;
@@ -46,17 +45,10 @@
         }
         .nav-links { 
             display: flex; 
-            flex-wrap: nowrap; 
-            overflow-x: auto; 
-            white-space: nowrap; 
+            flex-wrap: wrap; /* 修正箇所: PCで折り返し多段表示にするため wrap に変更 */
             gap: 8px; 
             flex-grow: 1;
-            -webkit-overflow-scrolling: touch; 
-            scrollbar-width: none;
-            padding-bottom: 2px;
         }
-        .nav-links::-webkit-scrollbar { display: none; }
-
         .nav-link {
             color: #ecf0f1;
             text-decoration: none;
@@ -67,11 +59,23 @@
             opacity: 0.85;
             transition: all 0.2s;
             background-color: rgba(255,255,255,0.1);
+            white-space: nowrap;
         }
         .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
         .nav-link.active { opacity: 1; background-color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
-        /* 修正箇所: 検索ボックスをアイコンタップ展開式に変更 */
+        /* スマホ向けナビゲーション（横スクロール） */
+        @media (max-width: 600px) {
+            .nav-links {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                padding-bottom: 2px;
+            }
+            .nav-links::-webkit-scrollbar { display: none; }
+        }
+
         .search-container { position: relative; display: flex; align-items: center; }
         .search-toggle-btn { 
             background: none; border: none; font-size: 18px; cursor: pointer; color: #ecf0f1; padding: 5px; margin-right: 5px; 
@@ -86,61 +90,96 @@
 
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         
-        header { margin-bottom: 25px; text-align: center; }
+        header { margin-bottom: 20px; text-align: center; border-radius: 8px; padding: 10px; transition: all 0.3s; }
         h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
         .last-updated { font-size: 12px; color: var(--text-sub); }
 
-        /* 修正箇所: タイムライン型カードUIのスタイルを追加 */
-        .timeline-container { display: flex; flex-direction: column; gap: 15px; }
+        /* 修正箇所: トピックページ用の特別デザイン */
+        .header-topic {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e0edff 100%);
+            border-left: 5px solid #007bff;
+            padding: 20px;
+        }
+        .topic-desc {
+            font-size: 12px; color: #0056b3; margin: 8px 0; font-weight: bold; line-height: 1.4;
+        }
+
+        /* 修正箇所: タブ切り替えUI */
+        .view-tabs {
+            display: flex; gap: 10px; margin-bottom: 20px; justify-content: flex-end;
+        }
+        .view-tab {
+            padding: 8px 16px; background: #fff; border: 1px solid var(--border); border-radius: 20px;
+            cursor: pointer; font-size: 13px; font-weight: bold; color: var(--text-sub); transition: all 0.2s;
+        }
+        .view-tab:hover { background: #f0f0f0; }
+        .view-tab.active { background: var(--text-main); color: #fff; border-color: var(--text-main); }
         
+        .view-content { display: none; }
+        .view-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* タイムライン型 UI */
+        .timeline-container { display: flex; flex-direction: column; gap: 15px; }
         .card {
             background: var(--card-bg); border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             border: 1px solid var(--border); overflow: hidden; display: flex; gap: 15px; padding: 15px;
             transition: transform 0.2s, box-shadow 0.2s;
         }
         .card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        
-        .card.read { background-color: #fafafa; opacity: 0.85; }
-        .card.read .entry-title a { color: var(--read-color); }
-        .card.read .entry-summary { color: #b5b5b5; }
-        .card.read .entry-thumbnail { filter: grayscale(100%); opacity: 0.5; }
-        .card.read .new-badge { background-color: #ccc; }
-
         .card-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
-        
+        .entry-thumbnail { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee; }
+
+        /* アコーディオン型 (サイト別) UI */
+        details {
+            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
+        }
+        summary {
+            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff;
+        }
+        summary::-webkit-details-marker { display: none; }
+        .feed-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+        .feed-title-text { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .feed-meta-count { display: flex; align-items: center; gap: 8px; font-size: 12px; flex-shrink: 0; }
+        .count-badge { background-color: #eee; color: #555; padding: 2px 8px; border-radius: 12px; font-weight: normal; }
+        .count-badge.has-new { background-color: #fff0f0; color: var(--new-badge); border: 1px solid #ffcccc; }
+        .entry-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
+        .list-item {
+            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start;
+        }
+        .list-item:last-child { border-bottom: none; }
+
+        /* 共通エントリスタイル */
+        .read { background-color: #fafafa; opacity: 0.85; }
+        .read .entry-title a { color: var(--read-color); }
+        .read .entry-summary { color: #b5b5b5; }
+        .read .entry-thumbnail { filter: grayscale(100%); opacity: 0.5; }
+        .read .new-badge { background-color: #ccc; }
+
         .entry-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-sub); margin-bottom: 8px; flex-wrap: wrap; }
         .feed-favicon { width: 14px; height: 14px; border-radius: 2px; }
         .entry-source { font-weight: 600; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
         .entry-time { border-left: 1px solid #ddd; padding-left: 8px; white-space: nowrap; }
-
-        .entry-thumbnail { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee; }
-
+        
         .entry-title { font-size: 16px; margin: 0 0 6px 0; line-height: 1.4; }
         .entry-title a { text-decoration: none; color: var(--text-main); font-weight: bold; }
         .entry-title a:hover { color: var(--accent); text-decoration: underline; }
 
-        .new-badge {
-            display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold; transform: translateY(-1px);
-        }
+        .new-badge { display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold; transform: translateY(-1px); }
 
-        .entry-summary {
-            font-size: 13px; color: #555; margin-top: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.9; line-height: 1.5;
-        }
+        .entry-summary { font-size: 13px; color: #555; margin-top: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.9; line-height: 1.5; }
         .entry-summary img { display: none; }
 
         .empty-state { padding: 40px 20px; text-align: center; color: #999; font-size: 14px; background: #fff; border-radius: 8px; border: 1px dashed #ccc; }
 
-        #backToTop {
-            position: fixed; bottom: 20px; right: 20px; background-color: var(--accent); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transition: all 0.3s; font-size: 20px; z-index: 2000;
-        }
+        #backToTop { position: fixed; bottom: 20px; right: 20px; background-color: var(--accent); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transition: all 0.3s; font-size: 20px; z-index: 2000; }
         #backToTop.show { opacity: 1; visibility: visible; }
-        #backToTop:hover { background-color: var(--accent-hover); transform: translateY(-3px); }
-
+        
         mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
 
         @media (max-width: 600px) {
             .container { padding: 15px 10px; }
-            .card { padding: 12px; gap: 10px; }
+            .card, .list-item { padding: 12px; gap: 10px; }
             .entry-thumbnail { width: 90px; height: 70px; }
             .entry-source { max-width: 130px; }
             .search-input.active { width: 140px; }
@@ -186,14 +225,22 @@
     </nav>
 
     <div class="container">
-        <header>
+        <header class="">
             <h1>Yukako専用ニュース</h1>
+            
             <div class="last-updated">最終更新: 02/23 23:34</div>
         </header>
 
-        <div class="timeline-container">
-            
+        
+        <div class="view-tabs">
+            <button class="view-tab active" data-target="view-timeline">🕒 タイムライン</button>
+            <button class="view-tab" data-target="view-feed">📁 サイト別</button>
+        </div>
+        
 
+        
+
+        <div id="view-timeline" class="view-content active timeline-container">
             
             <div class="card entry-item" data-link="https://news.yahoo.co.jp/articles/1c76ac76ae480681f887de4b90fc2df9e2f9943a?source=rss" data-title="【100均DIY】ダイソーの〈棚板と棚受け〉→洗濯機上が〈ホテルのような収納空間〉に大変身！(LIMO)" data-summary="DIYテクニックを発信しているInstagramerが、洗濯機上の使いづらいラックを、ダイソーグッズでホテルライクな壁面収納へと大変身させて、話題になっています。 動画を投稿したのは、「@asune">
                 <div class="card-content">
@@ -202,19 +249,12 @@
                         <span class="entry-source">ライフ</span>
                         <span class="entry-time">3分前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://news.yahoo.co.jp/articles/1c76ac76ae480681f887de4b90fc2df9e2f9943a?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【100均DIY】ダイソーの〈棚板と棚受け〉→洗濯機上が〈ホテルのような収納空間〉に大変身！(LIMO)</a>
                     </div>
-
-                    <div class="entry-summary">
-                        DIYテクニックを発信しているInstagramerが、洗濯機上の使いづらいラックを、ダイソーグッズでホテルライクな壁面収納へと大変身させて、話題になっています。 動画を投稿したのは、「@asune
-                    </div>
+                    <div class="entry-summary">DIYテクニックを発信しているInstagramerが、洗濯機上の使いづらいラックを、ダイソーグッズでホテルライクな壁面収納へと大変身させて、話題になっています。 動画を投稿したのは、「@asune</div>
                 </div>
-
                 
             </div>
             
@@ -225,19 +265,12 @@
                         <span class="entry-source">主要</span>
                         <span class="entry-time">33分前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://news.yahoo.co.jp/pickup/6570995?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">元受刑者語る 社会の風当たり強さ</a>
                     </div>
-
-                    <div class="entry-summary">
-                        
-                    </div>
+                    <div class="entry-summary"></div>
                 </div>
-
                 
             </div>
             
@@ -248,19 +281,12 @@
                         <span class="entry-source">ライフ</span>
                         <span class="entry-time">34分前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://news.yahoo.co.jp/articles/7eca4a5a2b5bbfecb92141ad833f1d65036b10c4?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【衝撃】「炭水化物を食べて」お腹痩せ？ 内臓脂肪を撃退する“最強の食材3選”。米管理栄養士が教える新常識【米】(ウィメンズヘルス)</a>
                     </div>
-
-                    <div class="entry-summary">
-                        「お腹まわりの脂肪は、健康に良くない」といわれているとおり、近年の研究では、過剰な内臓脂肪が「心臓の老化」を早める可能性があることがわかっている。皮膚のすぐ下にある“つまめる”脂肪（皮下脂肪）とは異な
-                    </div>
+                    <div class="entry-summary">「お腹まわりの脂肪は、健康に良くない」といわれているとおり、近年の研究では、過剰な内臓脂肪が「心臓の老化」を早める可能性があることがわかっている。皮膚のすぐ下にある“つまめる”脂肪（皮下脂肪）とは異な</div>
                 </div>
-
                 
             </div>
             
@@ -271,19 +297,12 @@
                         <span class="entry-source">主要</span>
                         <span class="entry-time">35分前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://news.yahoo.co.jp/pickup/6570994?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">メキシコ全土で暴動 軍の作戦受け</a>
                     </div>
-
-                    <div class="entry-summary">
-                        
-                    </div>
+                    <div class="entry-summary"></div>
                 </div>
-
                 
             </div>
             
@@ -294,19 +313,12 @@
                         <span class="entry-source">ライフ</span>
                         <span class="entry-time">44分前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://news.yahoo.co.jp/articles/249f81e08ece37bb96df7961e9af61e55225dae7?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【アスレティア、アッカカッパほか】買ってよかった！編集部員の私物フレグランス3選(＠BAILA)</a>
                     </div>
-
-                    <div class="entry-summary">
-                        編集部員が「買って正解だった」と愛用中の香水を、実際にまとってみた感想とともにご紹介！ 日常にそっと彩りを添えてくれるフレグランス。ふとした瞬間に自分だけにふわりと香るたび、気分が切り替わり、仕事への
-                    </div>
+                    <div class="entry-summary">編集部員が「買って正解だった」と愛用中の香水を、実際にまとってみた感想とともにご紹介！ 日常にそっと彩りを添えてくれるフレグランス。ふとした瞬間に自分だけにふわりと香るたび、気分が切り替わり、仕事への</div>
                 </div>
-
                 
             </div>
             
@@ -317,19 +329,12 @@
                         <span class="entry-source">ライフ</span>
                         <span class="entry-time">44分前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://news.yahoo.co.jp/articles/dde98adbd4990c1ded8cd6ca419117f43a0dfa11?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">Netflix『脱出おひとり島』ロケ地も！ラグジュアリーな体験ができる韓国ホテル 3選(ELLE DIGITAL)</a>
                     </div>
-
-                    <div class="entry-summary">
-                        きらびやかな色彩や大理石やレザーといった高級感あふれる素材、インテリアの随所から非日常感があふれる"コリアンラグジュアリー"なホテルがいま気になる！ステイすれば、まるで自分がドラマやリアリティーショー
-                    </div>
+                    <div class="entry-summary">きらびやかな色彩や大理石やレザーといった高級感あふれる素材、インテリアの随所から非日常感があふれる"コリアンラグジュアリー"なホテルがいま気になる！ステイすれば、まるで自分がドラマやリアリティーショー</div>
                 </div>
-
                 
             </div>
             
@@ -340,19 +345,12 @@
                         <span class="entry-source">主要</span>
                         <span class="entry-time">46分前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://news.yahoo.co.jp/pickup/6570993?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">核ごみ巡り 安全と恩恵に揺れる村</a>
                     </div>
-
-                    <div class="entry-summary">
-                        
-                    </div>
+                    <div class="entry-summary"></div>
                 </div>
-
                 
             </div>
             
@@ -363,19 +361,12 @@
                         <span class="entry-source">ライフ</span>
                         <span class="entry-time">54分前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://news.yahoo.co.jp/articles/adc68512304f3bfbe0cf48cfaf6abfa86df24ce2?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【女性に聞いた】「最高にうまいと思うヤマザキの食パン」ランキング！　2位は「ダブルソフト」、1位は？(ねとらぼ)</a>
                     </div>
-
-                    <div class="entry-summary">
-                        朝は食パンを食べているという人も多いのではないでしょうか。製パンの大手・ヤマザキからは、幅広い世代に人気の食パンが数多く発売されています。 ねとらぼでは、アンケートサイト「ボイスノート」の協力の
-                    </div>
+                    <div class="entry-summary">朝は食パンを食べているという人も多いのではないでしょうか。製パンの大手・ヤマザキからは、幅広い世代に人気の食パンが数多く発売されています。 ねとらぼでは、アンケートサイト「ボイスノート」の協力の</div>
                 </div>
-
                 
             </div>
             
@@ -386,19 +377,12 @@
                         <span class="entry-source">ライフ</span>
                         <span class="entry-time">1時間前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://news.yahoo.co.jp/articles/b628952c4a6bddf49a66c508c6091929a23965fa?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「リュック」ときどき「トート」、「ショルダー」にも！？ワークマン〈3WAYバッグ〉サコッシュも付いて3500円！通勤にも春旅にもいい！(LIMO)</a>
                     </div>
-
-                    <div class="entry-summary">
-                        機能と価格両方のバランスに優れたアイテムを多数展開する「ワークマン」。今回ご紹介するのは、新作の「しごできカバン 撥水防汚3WAYリュック」です。 これ一つで3つのバッグを持っているかのように、使い
-                    </div>
+                    <div class="entry-summary">機能と価格両方のバランスに優れたアイテムを多数展開する「ワークマン」。今回ご紹介するのは、新作の「しごできカバン 撥水防汚3WAYリュック」です。 これ一つで3つのバッグを持っているかのように、使い</div>
                 </div>
-
                 
             </div>
             
@@ -409,19 +393,12 @@
                         <span class="entry-source">ライフ</span>
                         <span class="entry-time">1時間前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://news.yahoo.co.jp/articles/7b6803ce0a22361c7cd59fa6424eb17a00948a2c?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">ラーメン好きも納得の風味！たんぱく質17.1gがうれしい完全栄養カップ麺「BASE RAMEN」(ライフハッカー・ジャパン)</a>
                     </div>
-
-                    <div class="entry-summary">
-                        1食で、人が必要とする栄養素がすべて摂れる「完全栄養食」。 いまや多くの食品メーカーが参入していますが、先駆的存在がベースフードです。「BASE FOOD」ブランドのもと、「BASE YAKISOB
-                    </div>
+                    <div class="entry-summary">1食で、人が必要とする栄養素がすべて摂れる「完全栄養食」。 いまや多くの食品メーカーが参入していますが、先駆的存在がベースフードです。「BASE FOOD」ブランドのもと、「BASE YAKISOB</div>
                 </div>
-
                 
             </div>
             
@@ -432,19 +409,12 @@
                         <span class="entry-source">ライフ</span>
                         <span class="entry-time">1時間前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://news.yahoo.co.jp/articles/ec3cc162fac7232ff84c153c4daf135076a6c9e3?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">花粉、季節の変わり目の肌荒れに！【最新・ゆらぎ肌を救うおすすめスキンケア6選】(MAQUIA)</a>
                     </div>
-
-                    <div class="entry-summary">
-                        季節や環境でゆらぎやすいこの時季、数あるコスメの中で本当に自分を救ってくれるジャストな一品はどれ？ 今回は、ゆらぎ肌の未来を変える今、注目のスキンケア6選をご紹介します！
-                    </div>
+                    <div class="entry-summary">季節や環境でゆらぎやすいこの時季、数あるコスメの中で本当に自分を救ってくれるジャストな一品はどれ？ 今回は、ゆらぎ肌の未来を変える今、注目のスキンケア6選をご紹介します！</div>
                 </div>
-
                 
             </div>
             
@@ -455,19 +425,12 @@
                         <span class="entry-source">主要</span>
                         <span class="entry-time">1時間前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://news.yahoo.co.jp/pickup/6570992?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">相互関税無効も 対米投資変更なし</a>
                     </div>
-
-                    <div class="entry-summary">
-                        
-                    </div>
+                    <div class="entry-summary"></div>
                 </div>
-
                 
             </div>
             
@@ -478,19 +441,12 @@
                         <span class="entry-source">主要</span>
                         <span class="entry-time">1時間前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://news.yahoo.co.jp/pickup/6570991?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">アボカド値下がり メキシコで豊作</a>
                     </div>
-
-                    <div class="entry-summary">
-                        
-                    </div>
+                    <div class="entry-summary"></div>
                 </div>
-
                 
             </div>
             
@@ -501,19 +457,12 @@
                         <span class="entry-source">主要</span>
                         <span class="entry-time">1時間前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://news.yahoo.co.jp/pickup/6570990?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">侍J 投打でピッチクロック違反</a>
                     </div>
-
-                    <div class="entry-summary">
-                        
-                    </div>
+                    <div class="entry-summary"></div>
                 </div>
-
                 
             </div>
             
@@ -524,19 +473,12 @@
                         <span class="entry-source">ライフ</span>
                         <span class="entry-time">1時間前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://news.yahoo.co.jp/articles/81767a19177f2c228605955e7b4a8eab7cfd1700?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【100均DIY】パチッと簡単！セリアの「樹脂ホック」を使って抱っこ紐の「よだれカバー」を簡単DIY(LIMO)</a>
                     </div>
-
-                    <div class="entry-summary">
-                        DIYテクニックを発信しているInstagramerが、セリアの「樹脂ホック」を使って、ハンカチを抱っこ紐の「よだれカバー」へと大変身させて、Instagramで注目を集めています。 動画を投稿した
-                    </div>
+                    <div class="entry-summary">DIYテクニックを発信しているInstagramerが、セリアの「樹脂ホック」を使って、ハンカチを抱っこ紐の「よだれカバー」へと大変身させて、Instagramで注目を集めています。 動画を投稿した</div>
                 </div>
-
                 
             </div>
             
@@ -547,19 +489,12 @@
                         <span class="entry-source">ライフ</span>
                         <span class="entry-time">1時間前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://news.yahoo.co.jp/articles/13d80106011b332ddde22d2b2c9b8cc4a6dad96e?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「潔さが好きです」　“カッコいいと思う京王線の駅名”って？　ランキング上位の駅は「落ち着いた感じのいい駅です」「高級感が溢れてました」(ねとらぼ)</a>
                     </div>
-
-                    <div class="entry-summary">
-                        東京都の都心部と多摩地域を東西に結ぶ京王線。歴史や所在地にちなんだ駅名も多く、文字の見た目はもちろん、由来などを知っていることでカッコいいと思う駅名もあるのではないでしょうか。 ねとらぼでは、2
-                    </div>
+                    <div class="entry-summary">東京都の都心部と多摩地域を東西に結ぶ京王線。歴史や所在地にちなんだ駅名も多く、文字の見た目はもちろん、由来などを知っていることでカッコいいと思う駅名もあるのではないでしょうか。 ねとらぼでは、2</div>
                 </div>
-
                 
             </div>
             
@@ -570,19 +505,12 @@
                         <span class="entry-source">主要</span>
                         <span class="entry-time">1時間前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://news.yahoo.co.jp/pickup/6570989?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">公道走行不可フェラーリ 3.7億円</a>
                     </div>
-
-                    <div class="entry-summary">
-                        
-                    </div>
+                    <div class="entry-summary"></div>
                 </div>
-
                 
             </div>
             
@@ -593,21 +521,304 @@
                         <span class="entry-source">主要</span>
                         <span class="entry-time">2時間前</span>
                     </div>
-                    
                     <div class="entry-title">
-                        
                         <span class="new-badge">NEW</span>
-                        
                         <a href="https://news.yahoo.co.jp/pickup/6570981?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">自転車の小2はねられ 意識不明</a>
                     </div>
-
-                    <div class="entry-summary">
-                        
-                    </div>
+                    <div class="entry-summary"></div>
                 </div>
-
                 
             </div>
+            
+        </div>
+
+        <div id="view-feed" class="view-content">
+            
+            <details class="feed-section">
+                <summary>
+                    <div class="feed-info">
+                        <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="feed-title-text">主要</span>
+                    </div>
+                    <div class="feed-meta-count">
+                        
+                        <span class="count-badge has-new">新着 8 / 8</span>
+                        
+                    </div>
+                </summary>
+                <ul class="entry-list">
+                    
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/pickup/6570992?source=rss" data-title="相互関税無効も 対米投資変更なし" data-summary="">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://news.yahoo.co.jp/pickup/6570992?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">相互関税無効も 対米投資変更なし</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
+                            </div>
+                            <div class="entry-summary"></div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/pickup/6570993?source=rss" data-title="核ごみ巡り 安全と恩恵に揺れる村" data-summary="">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://news.yahoo.co.jp/pickup/6570993?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">核ごみ巡り 安全と恩恵に揺れる村</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">46分前</span>
+                            </div>
+                            <div class="entry-summary"></div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/pickup/6570994?source=rss" data-title="メキシコ全土で暴動 軍の作戦受け" data-summary="">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://news.yahoo.co.jp/pickup/6570994?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">メキシコ全土で暴動 軍の作戦受け</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">35分前</span>
+                            </div>
+                            <div class="entry-summary"></div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/pickup/6570981?source=rss" data-title="自転車の小2はねられ 意識不明" data-summary="">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://news.yahoo.co.jp/pickup/6570981?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">自転車の小2はねられ 意識不明</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">2時間前</span>
+                            </div>
+                            <div class="entry-summary"></div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/pickup/6570995?source=rss" data-title="元受刑者語る 社会の風当たり強さ" data-summary="">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://news.yahoo.co.jp/pickup/6570995?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">元受刑者語る 社会の風当たり強さ</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">33分前</span>
+                            </div>
+                            <div class="entry-summary"></div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/pickup/6570989?source=rss" data-title="公道走行不可フェラーリ 3.7億円" data-summary="">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://news.yahoo.co.jp/pickup/6570989?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">公道走行不可フェラーリ 3.7億円</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
+                            </div>
+                            <div class="entry-summary"></div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/pickup/6570991?source=rss" data-title="アボカド値下がり メキシコで豊作" data-summary="">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://news.yahoo.co.jp/pickup/6570991?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">アボカド値下がり メキシコで豊作</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
+                            </div>
+                            <div class="entry-summary"></div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/pickup/6570990?source=rss" data-title="侍J 投打でピッチクロック違反" data-summary="">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://news.yahoo.co.jp/pickup/6570990?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">侍J 投打でピッチクロック違反</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
+                            </div>
+                            <div class="entry-summary"></div>
+                        </div>
+                        
+                    </li>
+                    
+                </ul>
+            </details>
+            
+            <details class="feed-section">
+                <summary>
+                    <div class="feed-info">
+                        <img src="https://www.google.com/s2/favicons?domain=news.yahoo.co.jp" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="feed-title-text">ライフ</span>
+                    </div>
+                    <div class="feed-meta-count">
+                        
+                        <span class="count-badge has-new">新着 10 / 10</span>
+                        
+                    </div>
+                </summary>
+                <ul class="entry-list">
+                    
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/articles/1c76ac76ae480681f887de4b90fc2df9e2f9943a?source=rss" data-title="【100均DIY】ダイソーの〈棚板と棚受け〉→洗濯機上が〈ホテルのような収納空間〉に大変身！(LIMO)" data-summary="DIYテクニックを発信しているInstagramerが、洗濯機上の使いづらいラックを、ダイソーグッズでホテルライクな壁面収納へと大変身させて、話題になっています。 動画を投稿したのは、「@asune">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://news.yahoo.co.jp/articles/1c76ac76ae480681f887de4b90fc2df9e2f9943a?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【100均DIY】ダイソーの〈棚板と棚受け〉→洗濯機上が〈ホテルのような収納空間〉に大変身！(LIMO)</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">3分前</span>
+                            </div>
+                            <div class="entry-summary">DIYテクニックを発信しているInstagramerが、洗濯機上の使いづらいラックを、ダイソーグッズでホテルライクな壁面収納へと大変身させて、話題になっています。 動画を投稿したのは、「@asune</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/articles/7eca4a5a2b5bbfecb92141ad833f1d65036b10c4?source=rss" data-title="【衝撃】「炭水化物を食べて」お腹痩せ？ 内臓脂肪を撃退する“最強の食材3選”。米管理栄養士が教える新常識【米】(ウィメンズヘルス)" data-summary="「お腹まわりの脂肪は、健康に良くない」といわれているとおり、近年の研究では、過剰な内臓脂肪が「心臓の老化」を早める可能性があることがわかっている。皮膚のすぐ下にある“つまめる”脂肪（皮下脂肪）とは異な">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://news.yahoo.co.jp/articles/7eca4a5a2b5bbfecb92141ad833f1d65036b10c4?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【衝撃】「炭水化物を食べて」お腹痩せ？ 内臓脂肪を撃退する“最強の食材3選”。米管理栄養士が教える新常識【米】(ウィメンズヘルス)</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">34分前</span>
+                            </div>
+                            <div class="entry-summary">「お腹まわりの脂肪は、健康に良くない」といわれているとおり、近年の研究では、過剰な内臓脂肪が「心臓の老化」を早める可能性があることがわかっている。皮膚のすぐ下にある“つまめる”脂肪（皮下脂肪）とは異な</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/articles/249f81e08ece37bb96df7961e9af61e55225dae7?source=rss" data-title="【アスレティア、アッカカッパほか】買ってよかった！編集部員の私物フレグランス3選(＠BAILA)" data-summary="編集部員が「買って正解だった」と愛用中の香水を、実際にまとってみた感想とともにご紹介！ 日常にそっと彩りを添えてくれるフレグランス。ふとした瞬間に自分だけにふわりと香るたび、気分が切り替わり、仕事への">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://news.yahoo.co.jp/articles/249f81e08ece37bb96df7961e9af61e55225dae7?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【アスレティア、アッカカッパほか】買ってよかった！編集部員の私物フレグランス3選(＠BAILA)</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">44分前</span>
+                            </div>
+                            <div class="entry-summary">編集部員が「買って正解だった」と愛用中の香水を、実際にまとってみた感想とともにご紹介！ 日常にそっと彩りを添えてくれるフレグランス。ふとした瞬間に自分だけにふわりと香るたび、気分が切り替わり、仕事への</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/articles/dde98adbd4990c1ded8cd6ca419117f43a0dfa11?source=rss" data-title="Netflix『脱出おひとり島』ロケ地も！ラグジュアリーな体験ができる韓国ホテル 3選(ELLE DIGITAL)" data-summary="きらびやかな色彩や大理石やレザーといった高級感あふれる素材、インテリアの随所から非日常感があふれる"コリアンラグジュアリー"なホテルがいま気になる！ステイすれば、まるで自分がドラマやリアリティーショー">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://news.yahoo.co.jp/articles/dde98adbd4990c1ded8cd6ca419117f43a0dfa11?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">Netflix『脱出おひとり島』ロケ地も！ラグジュアリーな体験ができる韓国ホテル 3選(ELLE DIGITAL)</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">44分前</span>
+                            </div>
+                            <div class="entry-summary">きらびやかな色彩や大理石やレザーといった高級感あふれる素材、インテリアの随所から非日常感があふれる"コリアンラグジュアリー"なホテルがいま気になる！ステイすれば、まるで自分がドラマやリアリティーショー</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/articles/adc68512304f3bfbe0cf48cfaf6abfa86df24ce2?source=rss" data-title="【女性に聞いた】「最高にうまいと思うヤマザキの食パン」ランキング！　2位は「ダブルソフト」、1位は？(ねとらぼ)" data-summary="朝は食パンを食べているという人も多いのではないでしょうか。製パンの大手・ヤマザキからは、幅広い世代に人気の食パンが数多く発売されています。 ねとらぼでは、アンケートサイト「ボイスノート」の協力の">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://news.yahoo.co.jp/articles/adc68512304f3bfbe0cf48cfaf6abfa86df24ce2?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【女性に聞いた】「最高にうまいと思うヤマザキの食パン」ランキング！　2位は「ダブルソフト」、1位は？(ねとらぼ)</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">54分前</span>
+                            </div>
+                            <div class="entry-summary">朝は食パンを食べているという人も多いのではないでしょうか。製パンの大手・ヤマザキからは、幅広い世代に人気の食パンが数多く発売されています。 ねとらぼでは、アンケートサイト「ボイスノート」の協力の</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/articles/b628952c4a6bddf49a66c508c6091929a23965fa?source=rss" data-title="「リュック」ときどき「トート」、「ショルダー」にも！？ワークマン〈3WAYバッグ〉サコッシュも付いて3500円！通勤にも春旅にもいい！(LIMO)" data-summary="機能と価格両方のバランスに優れたアイテムを多数展開する「ワークマン」。今回ご紹介するのは、新作の「しごできカバン 撥水防汚3WAYリュック」です。 これ一つで3つのバッグを持っているかのように、使い">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://news.yahoo.co.jp/articles/b628952c4a6bddf49a66c508c6091929a23965fa?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「リュック」ときどき「トート」、「ショルダー」にも！？ワークマン〈3WAYバッグ〉サコッシュも付いて3500円！通勤にも春旅にもいい！(LIMO)</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
+                            </div>
+                            <div class="entry-summary">機能と価格両方のバランスに優れたアイテムを多数展開する「ワークマン」。今回ご紹介するのは、新作の「しごできカバン 撥水防汚3WAYリュック」です。 これ一つで3つのバッグを持っているかのように、使い</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/articles/7b6803ce0a22361c7cd59fa6424eb17a00948a2c?source=rss" data-title="ラーメン好きも納得の風味！たんぱく質17.1gがうれしい完全栄養カップ麺「BASE RAMEN」(ライフハッカー・ジャパン)" data-summary="1食で、人が必要とする栄養素がすべて摂れる「完全栄養食」。 いまや多くの食品メーカーが参入していますが、先駆的存在がベースフードです。「BASE FOOD」ブランドのもと、「BASE YAKISOB">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://news.yahoo.co.jp/articles/7b6803ce0a22361c7cd59fa6424eb17a00948a2c?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">ラーメン好きも納得の風味！たんぱく質17.1gがうれしい完全栄養カップ麺「BASE RAMEN」(ライフハッカー・ジャパン)</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
+                            </div>
+                            <div class="entry-summary">1食で、人が必要とする栄養素がすべて摂れる「完全栄養食」。 いまや多くの食品メーカーが参入していますが、先駆的存在がベースフードです。「BASE FOOD」ブランドのもと、「BASE YAKISOB</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/articles/ec3cc162fac7232ff84c153c4daf135076a6c9e3?source=rss" data-title="花粉、季節の変わり目の肌荒れに！【最新・ゆらぎ肌を救うおすすめスキンケア6選】(MAQUIA)" data-summary="季節や環境でゆらぎやすいこの時季、数あるコスメの中で本当に自分を救ってくれるジャストな一品はどれ？ 今回は、ゆらぎ肌の未来を変える今、注目のスキンケア6選をご紹介します！">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://news.yahoo.co.jp/articles/ec3cc162fac7232ff84c153c4daf135076a6c9e3?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">花粉、季節の変わり目の肌荒れに！【最新・ゆらぎ肌を救うおすすめスキンケア6選】(MAQUIA)</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
+                            </div>
+                            <div class="entry-summary">季節や環境でゆらぎやすいこの時季、数あるコスメの中で本当に自分を救ってくれるジャストな一品はどれ？ 今回は、ゆらぎ肌の未来を変える今、注目のスキンケア6選をご紹介します！</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/articles/81767a19177f2c228605955e7b4a8eab7cfd1700?source=rss" data-title="【100均DIY】パチッと簡単！セリアの「樹脂ホック」を使って抱っこ紐の「よだれカバー」を簡単DIY(LIMO)" data-summary="DIYテクニックを発信しているInstagramerが、セリアの「樹脂ホック」を使って、ハンカチを抱っこ紐の「よだれカバー」へと大変身させて、Instagramで注目を集めています。 動画を投稿した">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://news.yahoo.co.jp/articles/81767a19177f2c228605955e7b4a8eab7cfd1700?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">【100均DIY】パチッと簡単！セリアの「樹脂ホック」を使って抱っこ紐の「よだれカバー」を簡単DIY(LIMO)</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
+                            </div>
+                            <div class="entry-summary">DIYテクニックを発信しているInstagramerが、セリアの「樹脂ホック」を使って、ハンカチを抱っこ紐の「よだれカバー」へと大変身させて、Instagramで注目を集めています。 動画を投稿した</div>
+                        </div>
+                        
+                    </li>
+                    
+                    <li class="list-item entry-item" data-link="https://news.yahoo.co.jp/articles/13d80106011b332ddde22d2b2c9b8cc4a6dad96e?source=rss" data-title="「潔さが好きです」　“カッコいいと思う京王線の駅名”って？　ランキング上位の駅は「落ち着いた感じのいい駅です」「高級感が溢れてました」(ねとらぼ)" data-summary="東京都の都心部と多摩地域を東西に結ぶ京王線。歴史や所在地にちなんだ駅名も多く、文字の見た目はもちろん、由来などを知っていることでカッコいいと思う駅名もあるのではないでしょうか。 ねとらぼでは、2">
+                        <div class="card-content">
+                            <div class="entry-title">
+                                <span class="new-badge">NEW</span>
+                                <a href="https://news.yahoo.co.jp/articles/13d80106011b332ddde22d2b2c9b8cc4a6dad96e?source=rss" target="_blank" rel="noopener noreferrer" class="entry-link">「潔さが好きです」　“カッコいいと思う京王線の駅名”って？　ランキング上位の駅は「落ち着いた感じのいい駅です」「高級感が溢れてました」(ねとらぼ)</a>
+                            </div>
+                            <div class="entry-meta">
+                                <span class="entry-time" style="border-left:none; padding-left:0;">1時間前</span>
+                            </div>
+                            <div class="entry-summary">東京都の都心部と多摩地域を東西に結ぶ京王線。歴史や所在地にちなんだ駅名も多く、文字の見た目はもちろん、由来などを知っていることでカッコいいと思う駅名もあるのではないでしょうか。 ねとらぼでは、2</div>
+                        </div>
+                        
+                    </li>
+                    
+                </ul>
+            </details>
             
         </div>
     </div>
@@ -616,8 +827,19 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 修正箇所: アコーディオン開閉ロジックの削除
+            // タブ切り替えロジック
+            const tabs = document.querySelectorAll('.view-tab');
+            const contents = document.querySelectorAll('.view-content');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    contents.forEach(c => c.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.target).classList.add('active');
+                });
+            });
 
+            // 既読管理
             const STORAGE_KEY = 'rss_read_items';
             let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
             const entryItems = document.querySelectorAll('.entry-item');
@@ -630,22 +852,21 @@
                 const anchor = item.querySelector('a.entry-link');
                 if(anchor) {
                     anchor.addEventListener('click', function() {
-                        markAsRead(link, item);
+                        // 両方のビューの同じ記事を同時に既読にする
+                        document.querySelectorAll(`.entry-item[data-link="${link}"]`).forEach(el => {
+                            el.classList.add('read');
+                        });
+                        readItems.add(link);
+                        if (readItems.size > 1000) {
+                            const array = Array.from(readItems);
+                            readItems = new Set(array.slice(array.length - 1000));
+                        }
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
                     });
                 }
             });
 
-            function markAsRead(link, itemElement) {
-                itemElement.classList.add('read');
-                readItems.add(link);
-                if (readItems.size > 1000) {
-                    const array = Array.from(readItems);
-                    readItems = new Set(array.slice(array.length - 1000));
-                }
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
-            }
-
-            // 修正箇所: 検索窓アイコンのトグル動作を追加
+            // 検索・絞り込み
             const searchToggle = document.getElementById('searchToggle');
             const searchInput = document.getElementById('searchInput');
             
@@ -667,7 +888,6 @@
                 }
             });
 
-            // 修正箇所: 階層構造廃止に伴い、検索処理をシンプルにカード単位の非表示化へ変更
             searchInput.addEventListener('input', function(e) {
                 const term = e.target.value.trim().toLowerCase();
 
@@ -678,6 +898,11 @@
                         const summaryDiv = entry.querySelector('.entry-summary');
                         if(titleLink && entry.dataset.originalTitleHtml) titleLink.innerHTML = entry.dataset.originalTitleHtml;
                         if(summaryDiv && entry.dataset.originalSummaryHtml) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
+                    });
+                    
+                    // アコーディオンの表示もリセット
+                    document.querySelectorAll('details.feed-section').forEach(sec => {
+                        sec.style.display = '';
                     });
                     return;
                 }
@@ -691,6 +916,17 @@
                         highlightText(entry, term);
                     } else {
                         entry.style.display = 'none';
+                    }
+                });
+
+                // アコーディオン内で表示できる記事がない場合は親要素ごと隠す
+                document.querySelectorAll('details.feed-section').forEach(section => {
+                    const visibleItems = Array.from(section.querySelectorAll('.list-item')).filter(el => el.style.display !== 'none');
+                    if(visibleItems.length === 0) {
+                        section.style.display = 'none';
+                    } else {
+                        section.style.display = '';
+                        section.open = true; // ヒットしたら開いておく
                     }
                 });
             });
