@@ -35,16 +35,28 @@
             z-index: 1000;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+        /* 修正箇所: ナビゲーションの折り返しを禁止し、横スクロールに対応 */
         .nav-container {
             max-width: 900px;
             margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap; 
             gap: 15px;
         }
-        .nav-links { display: flex; flex-wrap: wrap; gap: 8px; }
+        .nav-links { 
+            display: flex; 
+            flex-wrap: nowrap; 
+            overflow-x: auto; 
+            white-space: nowrap; 
+            gap: 8px; 
+            flex-grow: 1;
+            -webkit-overflow-scrolling: touch; 
+            scrollbar-width: none;
+            padding-bottom: 2px;
+        }
+        .nav-links::-webkit-scrollbar { display: none; }
+
         .nav-link {
             color: #ecf0f1;
             text-decoration: none;
@@ -59,70 +71,49 @@
         .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
         .nav-link.active { opacity: 1; background-color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
-        .search-box { position: relative; flex-grow: 1; max-width: 250px; }
-        .search-input {
-            width: 100%; padding: 6px 10px; border-radius: 20px; border: none; font-size: 14px; 
-            background-color: rgba(255,255,255,0.95); box-sizing: border-box; transition: box-shadow 0.2s;
+        /* 修正箇所: 検索ボックスをアイコンタップ展開式に変更 */
+        .search-container { position: relative; display: flex; align-items: center; }
+        .search-toggle-btn { 
+            background: none; border: none; font-size: 18px; cursor: pointer; color: #ecf0f1; padding: 5px; margin-right: 5px; 
         }
-        .search-input:focus { outline: none; box-shadow: 0 0 0 2px var(--accent); }
+        .search-input {
+            width: 0; opacity: 0; padding: 0; border: none; border-radius: 20px; font-size: 14px; 
+            background-color: rgba(255,255,255,0.95); transition: all 0.3s ease; pointer-events: none;
+        }
+        .search-input.active { 
+            width: 180px; opacity: 1; padding: 6px 10px; box-shadow: 0 0 0 2px var(--accent); pointer-events: auto; 
+        }
 
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         
-        header { margin-bottom: 15px; text-align: center; }
+        header { margin-bottom: 25px; text-align: center; }
         h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
         .last-updated { font-size: 12px; color: var(--text-sub); }
 
-        .control-panel {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .control-btn {
-            background: none;
-            border: 1px solid #ccc;
-            border-radius: 20px;
-            padding: 4px 12px;
-            font-size: 12px;
-            color: #666;
-            cursor: pointer;
-            transition: all 0.2s;
-            background-color: #fff;
-        }
-        .control-btn:hover { background-color: #f0f0f0; border-color: #aaa; color: #333; }
-
-        details {
-            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden; transition: box-shadow 0.2s;
-        }
-        details:hover { box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
-        summary {
-            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff; transition: background 0.2s;
-        }
-        summary:hover { background-color: #f8f9fa; }
-        summary::-webkit-details-marker { display: none; }
+        /* 修正箇所: タイムライン型カードUIのスタイルを追加 */
+        .timeline-container { display: flex; flex-direction: column; gap: 15px; }
         
-        .feed-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
-        .feed-favicon { width: 16px; height: 16px; border-radius: 2px; flex-shrink: 0; }
-        .feed-title-text { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        .feed-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; flex-shrink: 0; }
-        .count-badge { background-color: #eee; color: #555; padding: 2px 8px; border-radius: 12px; font-weight: normal; }
-        .count-badge.has-new { background-color: #fff0f0; color: var(--new-badge); border: 1px solid #ffcccc; }
-
-        .entry-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
-        .entry-item {
-            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start; transition: background-color 0.2s;
+        .card {
+            background: var(--card-bg); border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border); overflow: hidden; display: flex; gap: 15px; padding: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .entry-item:last-child { border-bottom: none; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         
-        .entry-item.read { background-color: #fafafa; }
-        .entry-item.read .entry-title a { color: var(--read-color); }
-        .entry-item.read .entry-summary { color: #d0d0d0; }
-        .entry-item.read .entry-thumbnail { opacity: 0.4; filter: grayscale(100%); }
-        .entry-item.read .new-badge { background-color: #ccc; }
+        .card.read { background-color: #fafafa; opacity: 0.85; }
+        .card.read .entry-title a { color: var(--read-color); }
+        .card.read .entry-summary { color: #b5b5b5; }
+        .card.read .entry-thumbnail { filter: grayscale(100%); opacity: 0.5; }
+        .card.read .new-badge { background-color: #ccc; }
 
-        .entry-content-wrapper { flex: 1; min-width: 0; }
-        .entry-thumbnail { width: 100px; height: 75px; object-fit: cover; border-radius: 6px; flex-shrink: 0; border: 1px solid #eee; }
+        .card-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
+        
+        .entry-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-sub); margin-bottom: 8px; flex-wrap: wrap; }
+        .feed-favicon { width: 14px; height: 14px; border-radius: 2px; }
+        .entry-source { font-weight: 600; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+        .entry-time { border-left: 1px solid #ddd; padding-left: 8px; white-space: nowrap; }
+
+        .entry-thumbnail { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee; }
 
         .entry-title { font-size: 16px; margin: 0 0 6px 0; line-height: 1.4; }
         .entry-title a { text-decoration: none; color: var(--text-main); font-weight: bold; }
@@ -132,15 +123,12 @@
             display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold; transform: translateY(-1px);
         }
 
-        .entry-meta { font-size: 12px; color: var(--text-sub); display: flex; gap: 10px; align-items: center; margin-bottom: 4px; flex-wrap: wrap; }
-        .entry-source { color: #888; border-left: 1px solid #ddd; padding-left: 10px; font-weight: 500; }
-
         .entry-summary {
             font-size: 13px; color: #555; margin-top: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.9; line-height: 1.5;
         }
         .entry-summary img { display: none; }
 
-        .empty-state { padding: 20px; text-align: center; color: #999; font-size: 13px; }
+        .empty-state { padding: 40px 20px; text-align: center; color: #999; font-size: 14px; background: #fff; border-radius: 8px; border: 1px dashed #ccc; }
 
         #backToTop {
             position: fixed; bottom: 20px; right: 20px; background-color: var(--accent); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transition: all 0.3s; font-size: 20px; z-index: 2000;
@@ -152,12 +140,10 @@
 
         @media (max-width: 600px) {
             .container { padding: 15px 10px; }
-            summary { padding: 12px; }
-            .entry-thumbnail { width: 80px; height: 60px; }
-            .nav-container { flex-direction: column; align-items: stretch; gap: 10px; }
-            .search-box { max-width: 100%; }
-            .feed-title-text { font-size: 14px; }
-            .count-badge { font-size: 11px; padding: 1px 6px; }
+            .card { padding: 12px; gap: 10px; }
+            .entry-thumbnail { width: 90px; height: 70px; }
+            .entry-source { max-width: 130px; }
+            .search-input.active { width: 140px; }
         }
     </style>
 </head>
@@ -172,7 +158,8 @@
                 </a>
                 {% endfor %}
             </div>
-            <div class="search-box">
+            <div class="search-container">
+                <button id="searchToggle" class="search-toggle-btn">🔍</button>
                 <input type="text" id="searchInput" class="search-input" placeholder="キーワード検索...">
             </div>
         </div>
@@ -184,87 +171,45 @@
             <div class="last-updated">最終更新: {{ last_updated }}</div>
         </header>
 
-        {% if feeds_data|length > 0 %}
-        <div class="control-panel">
-            <button class="control-btn" id="btnExpandAll">＋ 全て開く</button>
-            <button class="control-btn" id="btnCollapseAll">－ 全て閉じる</button>
-        </div>
-        {% endif %}
+        <div class="timeline-container">
+            {% if entries|length == 0 %}
+            <div class="empty-state">表示する記事がありません</div>
+            {% endif %}
 
-        {% if feeds_data|length == 0 %}
-        <div class="empty-state">表示するフィードがありません</div>
-        {% endif %}
-
-        {% for feed in feeds_data %}
-        <details class="feed-section">
-            <summary>
-                <div class="feed-info">
-                    <img src="{{ feed.favicon }}" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                    <span class="feed-title-text">{{ feed.title }}</span>
-                </div>
-                
-                <div class="feed-meta">
-                    {% if feed.has_new %}
-                    <span class="count-badge has-new">新着 {{ feed.new_count }} / {{ feed.total_count }}</span>
-                    {% else %}
-                    <span class="count-badge">{{ feed.total_count }} 件</span>
-                    {% endif %}
-                </div>
-            </summary>
-            
-            <ul class="entry-list">
-                {% if feed.entries|length == 0 %}
-                <li class="empty-state">記事がありません</li>
-                {% endif %}
-
-                {% for entry in feed.entries %}
-                <li class="entry-item" data-link="{{ entry.link }}" data-title="{{ entry.title }}" data-summary="{{ entry.summary | striptags }}">
-                    <div class="entry-content-wrapper">
-                        <div class="entry-title">
-                            {% if entry.is_new %}
-                            <span class="new-badge">NEW</span>
-                            {% endif %}
-                            <a href="{{ entry.link }}" target="_blank" rel="noopener noreferrer" class="entry-link">{{ entry.title }}</a>
-                        </div>
-                        
-                        <div class="entry-meta">
-                            <span>{{ entry.relative_time }}</span>
-                            {% if current_page.is_topic %}
-                            <span class="entry-source">{{ entry.source_title }}</span>
-                            {% endif %}
-                        </div>
-
-                        <div class="entry-summary">
-                            {{ entry.summary | striptags }}
-                        </div>
+            {% for entry in entries %}
+            <div class="card entry-item" data-link="{{ entry.link }}" data-title="{{ entry.title }}" data-summary="{{ entry.summary | striptags }}">
+                <div class="card-content">
+                    <div class="entry-meta">
+                        <img src="{{ entry.favicon }}" class="feed-favicon" alt="" onerror="this.style.display='none'">
+                        <span class="entry-source">{{ entry.source_title }}</span>
+                        <span class="entry-time">{{ entry.relative_time }}</span>
+                    </div>
+                    
+                    <div class="entry-title">
+                        {% if entry.is_new %}
+                        <span class="new-badge">NEW</span>
+                        {% endif %}
+                        <a href="{{ entry.link }}" target="_blank" rel="noopener noreferrer" class="entry-link">{{ entry.title }}</a>
                     </div>
 
-                    {% if entry.image %}
-                    <img src="{{ entry.image }}" class="entry-thumbnail" loading="lazy" alt="">
-                    {% endif %}
-                </li>
-                {% endfor %}
-            </ul>
-        </details>
-        {% endfor %}
+                    <div class="entry-summary">
+                        {{ entry.summary | striptags }}
+                    </div>
+                </div>
+
+                {% if entry.image %}
+                <img src="{{ entry.image }}" class="entry-thumbnail" loading="lazy" alt="">
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
     </div>
 
     <div id="backToTop" title="トップへ戻る">↑</div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const detailsElements = document.querySelectorAll('details.feed-section');
-            const btnExpandAll = document.getElementById('btnExpandAll');
-            const btnCollapseAll = document.getElementById('btnCollapseAll');
-
-            if(btnExpandAll && btnCollapseAll) {
-                btnExpandAll.addEventListener('click', () => {
-                    detailsElements.forEach(el => el.open = true);
-                });
-                btnCollapseAll.addEventListener('click', () => {
-                    detailsElements.forEach(el => el.open = false);
-                });
-            }
+            // 修正箇所: アコーディオン開閉ロジックの削除
 
             const STORAGE_KEY = 'rss_read_items';
             let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
@@ -293,7 +238,18 @@
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
             }
 
+            // 修正箇所: 検索窓アイコンのトグル動作を追加
+            const searchToggle = document.getElementById('searchToggle');
             const searchInput = document.getElementById('searchInput');
+            
+            if (searchToggle && searchInput) {
+                searchToggle.addEventListener('click', () => {
+                    searchInput.classList.toggle('active');
+                    if(searchInput.classList.contains('active')) {
+                        searchInput.focus();
+                    }
+                });
+            }
 
             entryItems.forEach(entry => {
                 const titleLink = entry.querySelector('.entry-title a');
@@ -304,46 +260,30 @@
                 }
             });
 
+            // 修正箇所: 階層構造廃止に伴い、検索処理をシンプルにカード単位の非表示化へ変更
             searchInput.addEventListener('input', function(e) {
                 const term = e.target.value.trim().toLowerCase();
 
                 if (term === '') {
-                    detailsElements.forEach(sec => {
-                        sec.style.display = '';
-                        sec.open = false; 
-                    });
                     entryItems.forEach(entry => {
                         entry.style.display = '';
                         const titleLink = entry.querySelector('.entry-title a');
                         const summaryDiv = entry.querySelector('.entry-summary');
-                        if(titleLink) titleLink.innerHTML = entry.dataset.originalTitleHtml;
-                        if(summaryDiv) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
+                        if(titleLink && entry.dataset.originalTitleHtml) titleLink.innerHTML = entry.dataset.originalTitleHtml;
+                        if(summaryDiv && entry.dataset.originalSummaryHtml) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
                     });
                     return;
                 }
 
-                detailsElements.forEach(section => {
-                    let hasVisibleEntry = false;
-                    const sectionEntries = section.querySelectorAll('.entry-item');
+                entryItems.forEach(entry => {
+                    const titleText = (entry.dataset.title || '').toLowerCase();
+                    const summaryText = (entry.dataset.summary || '').toLowerCase();
 
-                    sectionEntries.forEach(entry => {
-                        const titleText = (entry.dataset.title || '').toLowerCase();
-                        const summaryText = (entry.dataset.summary || '').toLowerCase();
-
-                        if (titleText.includes(term) || summaryText.includes(term)) {
-                            entry.style.display = '';
-                            hasVisibleEntry = true;
-                            highlightText(entry, term);
-                        } else {
-                            entry.style.display = 'none';
-                        }
-                    });
-
-                    if (hasVisibleEntry) {
-                        section.style.display = '';
-                        section.open = true;
+                    if (titleText.includes(term) || summaryText.includes(term)) {
+                        entry.style.display = '';
+                        highlightText(entry, term);
                     } else {
-                        section.style.display = 'none';
+                        entry.style.display = 'none';
                     }
                 });
             });
