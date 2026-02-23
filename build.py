@@ -1,5 +1,9 @@
+# パス: famnomura/rss/RSS-c13b0806bf5095367d0824d5f30d3dcd6854c59a/build.py
 
-import yaml
+# 修正箇所: yamlモジュールを削除し、CSVとURL通信に必要なモジュールを追加
+import csv
+import urllib.request
+import io
 import feedparser
 import datetime
 import pytz
@@ -12,7 +16,8 @@ from urllib.parse import urlparse
 from jinja2 import Environment, FileSystemLoader
 
 # 設定
-feeds_file = 'feeds.yml'
+# 修正箇所: ローカルファイルの指定から、公開されたスプレッドシート(CSV)のURLに変更
+csv_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS5huh__ac1cwXjz2iTeYJqvKrVQ8RJmO2wI9d83Ac4bLroG-nKOetsbhCLzIjdr94OqGCq1_lY_9oW/pub?gid=0&single=true&output=csv'
 template_file = 'template.html'
 output_dir = 'docs'
 max_entries = 10 
@@ -21,13 +26,71 @@ timeout_seconds = 15
 
 socket.setdefaulttimeout(timeout_seconds)
 
-def load_config(path):
+# 修正箇所: YAMLファイル読み込み関数を廃止し、CSVをURLから直接読み込む関数を新設
+def load_config_from_csv(url):
+    print("Loading config from Google Sheets CSV...")
+    config = {'pages': [], 'watches': []}
+    
     try:
-        with open(path, 'r', encoding='utf-8-sig') as f:
-            return yaml.safe_load(f)
+        # スプレッドシートからデータを取得
+        req = urllib.request.Request(url)
+        with urllib.request.urlopen(req, timeout=timeout_seconds) as response:
+            # BOM付きUTF-8に対応するため 'utf-8-sig' でデコード
+            csv_data = response.read().decode('utf-8-sig')
     except Exception as e:
-        print(f"Error loading config: {e}")
+        print(f"Error fetching CSV: {e}")
         sys.exit(1)
+        
+    reader = csv.reader(io.StringIO(csv_data))
+    header = next(reader, None) # 1行目のヘッダー行を読み飛ばす
+    
+    pages_dict = {}
+    
+    for row in reader:
+        # 空行やデータが足りない行はスキップ
+        if not row or len(row) < 4:
+            continue
+            
+        row_type = row[0].strip()
+        page_title = row[1].strip()
+        filename = row[2].strip()
+        title_or_kw = row[3].strip()
+        # 列が存在しない場合のエラー回避
+        rss_url = row[4].strip() if len(row) > 4 else ""
+        hidden_str = row[5].strip().upper() if len(row) > 5 else ""
+        
+        is_hidden = (hidden_str == 'TRUE')
+        
+        if row_type == 'Page':
+            # 同じページのデータ（カテゴリ）をまとめる処理
+            if page_title not in pages_dict:
+                pages_dict[page_title] = {
+                    'page_title': page_title,
+                    'filename': filename,
+                    'hidden': is_hidden,
+                    'feeds': [],
+                    'ng_keywords': []
+                }
+            if rss_url:
+                pages_dict[page_title]['feeds'].append({
+                    'title': title_or_kw,
+                    'url': rss_url
+                })
+                
+        elif row_type == 'Watch':
+            # キーワードをカンマで分割してリスト化
+            keywords = [k.strip() for k in title_or_kw.split(',') if k.strip()]
+            config['watches'].append({
+                'page_title': page_title,
+                'filename': filename,
+                'hidden': is_hidden,
+                'keywords': keywords,
+                'ng_keywords': []
+            })
+            
+    # 辞書にまとめたPageデータをリストに変換して格納
+    config['pages'] = list(pages_dict.values())
+    return config
 
 def get_domain(url):
     try:
@@ -153,7 +216,8 @@ def fetch_all_feeds(config):
 
 def main():
     os.makedirs(output_dir, exist_ok=True)
-    config = load_config(feeds_file)
+    # 修正箇所: 新設したCSV読み込み関数を呼び出す
+    config = load_config_from_csv(csv_url)
     
     navigation = []
     for watch in config.get('watches', []):
@@ -299,4 +363,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
