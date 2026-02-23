@@ -1,5 +1,6 @@
+# パス: famnomura/rss/RSS-c13b0806bf5095367d0824d5f30d3dcd6854c59a/build.py
 
-import yaml # 修正箇所: JSONからYAMLに変更
+import yaml
 import feedparser
 import datetime
 import pytz
@@ -12,7 +13,7 @@ from urllib.parse import urlparse
 from jinja2 import Environment, FileSystemLoader
 
 # 設定
-feeds_file = 'feeds.yml' # 修正箇所: 読み込みファイルを yml に変更
+feeds_file = 'feeds.yml'
 template_file = 'template.html'
 output_dir = 'docs'
 max_entries = 10 
@@ -24,7 +25,7 @@ socket.setdefaulttimeout(timeout_seconds)
 def load_config(path):
     try:
         with open(path, 'r', encoding='utf-8-sig') as f:
-            return yaml.safe_load(f) # 修正箇所: YAMLの読み込み処理
+            return yaml.safe_load(f)
     except Exception as e:
         print(f"Error loading config: {e}")
         sys.exit(1)
@@ -156,7 +157,6 @@ def main():
     config = load_config(feeds_file)
     
     navigation = []
-    # 修正箇所: hiddenフラグがTrueのものはナビゲーションから除外（裏メニュー化）
     for watch in config.get('watches', []):
         if not watch.get('hidden', False):
             navigation.append({'page_title': watch['page_title'], 'filename': watch['filename']})
@@ -180,8 +180,8 @@ def main():
         page_config['is_topic'] = False 
         ng_keywords = page_config.get('ng_keywords', [])
         
-        page_entries = [] # タイムライン用
-        page_feeds = []   # サイト別アコーディオン用
+        page_entries = [] 
+        page_feeds = []   
         
         for feed_conf in page_config.get('feeds', []):
             url = feed_conf['url'].strip()
@@ -190,14 +190,12 @@ def main():
             if source_data:
                 valid_entries = [e for e in source_data['entries'] if not is_ng_content(e, ng_keywords)]
                 if valid_entries:
-                    # タイムライン用にデータを複製して平坦化
                     for e in valid_entries:
                         e_copy = e.copy()
                         e_copy['favicon'] = source_data['favicon']
                         e_copy['source_title'] = source_data['title']
                         page_entries.append(e_copy)
                     
-                    # サイト別用にグループ化して保持
                     page_feeds.append({
                         'title': source_data['title'],
                         'favicon': source_data['favicon'],
@@ -214,8 +212,9 @@ def main():
             f.write(template.render(
                 navigation=navigation,
                 current_page=page_config,
-                entries=page_entries,  # タイムライン用
-                feeds=page_feeds,      # サイト別用
+                entries=page_entries,
+                feeds=page_feeds,
+                topics=[], # 修正箇所: 通常ページはトピックデータを空で渡す
                 last_updated=now_str
             ))
 
@@ -229,7 +228,8 @@ def main():
         ng_keywords = watch_config.get('ng_keywords', [])
         
         watch_entries = []
-        watch_feeds = []
+        watch_topics = [] # 修正箇所: トピック（キーワード）別のデータを分離
+        site_data_dict = {} # 修正箇所: サイト別にまとめるための辞書
         seen_links = set()
         
         for kw in keywords:
@@ -242,18 +242,28 @@ def main():
                         continue
                     text_to_search = (entry['title'] + entry['summary']).lower()
                     if kw.lower() in text_to_search:
+                        e_copy = entry.copy()
+                        e_copy['favicon'] = source_data['favicon']
+                        e_copy['source_title'] = source_data['title']
+                        
+                        kw_entries.append(e_copy)
+                        
                         if entry['link'] not in seen_links:
                             seen_links.add(entry['link'])
-                            e_copy = entry.copy()
-                            e_copy['favicon'] = source_data['favicon']
-                            e_copy['source_title'] = source_data['title']
                             watch_entries.append(e_copy)
-                            kw_entries.append(e_copy)
+                            
+                            if url not in site_data_dict:
+                                site_data_dict[url] = {
+                                    'title': source_data['title'],
+                                    'favicon': source_data['favicon'],
+                                    'entries': []
+                                }
+                            site_data_dict[url]['entries'].append(e_copy)
                             
             if kw_entries:
                 kw_entries.sort(key=lambda x: x['timestamp'], reverse=True)
-                watch_feeds.append({
-                    'title': f"検索: {kw}",
+                watch_topics.append({
+                    'title': f"キーワード: {kw}",
                     'favicon': '',
                     'entries': kw_entries,
                     'total_count': len(kw_entries),
@@ -262,6 +272,18 @@ def main():
                 })
             
         watch_entries.sort(key=lambda x: x['timestamp'], reverse=True)
+        
+        watch_feeds = []
+        for url, data in site_data_dict.items():
+            data['entries'].sort(key=lambda x: x['timestamp'], reverse=True)
+            watch_feeds.append({
+                'title': data['title'],
+                'favicon': data['favicon'],
+                'entries': data['entries'],
+                'total_count': len(data['entries']),
+                'new_count': sum(1 for e in data['entries'] if e['is_new']),
+                'has_new': any(e['is_new'] for e in data['entries'])
+            })
 
         output_path = os.path.join(output_dir, target_filename)
         with open(output_path, 'w', encoding='utf-8') as f:
@@ -270,6 +292,7 @@ def main():
                 current_page=watch_config,
                 entries=watch_entries,
                 feeds=watch_feeds,
+                topics=watch_topics, # 修正箇所: トピック別データを渡す
                 last_updated=now_str
             ))
 
@@ -277,4 +300,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
