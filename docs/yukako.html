@@ -102,51 +102,60 @@
             font-size: 12px; color: #0056b3; margin: 8px 0; font-weight: bold; line-height: 1.4;
         }
 
-        .view-tabs {
-            display: flex; gap: 10px; margin-bottom: 20px; justify-content: flex-end;
+        /* 修正箇所: ジャンプボタンのスタイル */
+        .jump-nav {
+            display: flex; gap: 10px; margin-bottom: 25px; justify-content: flex-start; flex-wrap: wrap;
+            background: #fff; padding: 10px 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid var(--border);
         }
-        .view-tab {
-            padding: 8px 16px; background: #fff; border: 1px solid var(--border); border-radius: 20px;
-            cursor: pointer; font-size: 13px; font-weight: bold; color: var(--text-sub); transition: all 0.2s;
+        .jump-btn {
+            padding: 6px 14px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 20px;
+            cursor: pointer; font-size: 13px; font-weight: bold; color: var(--text-main); transition: all 0.2s; text-decoration: none;
         }
-        .view-tab:hover { background: #f0f0f0; }
-        .view-tab.active { background: var(--text-main); color: #fff; border-color: var(--text-main); }
-        
-        .view-content { display: none; }
-        .view-content.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .jump-btn:hover { background: #e9ecef; border-color: #ccc; transform: translateY(-1px); }
 
-        /* タイムライン型 UI */
-        .timeline-container { display: flex; flex-direction: column; gap: 15px; }
-        .card {
-            background: var(--card-bg); border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            border: 1px solid var(--border); overflow: hidden; display: flex; gap: 15px; padding: 15px;
-            transition: transform 0.2s, box-shadow 0.2s;
+        /* 修正箇所: 各セクションの区切りスタイル */
+        .content-section {
+            margin-bottom: 40px;
         }
-        .card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .card-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
-        .entry-thumbnail { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee; }
+        .section-title {
+            font-size: 18px; color: var(--text-main); margin: 0 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid var(--accent);
+            display: flex; align-items: center; gap: 8px;
+        }
 
-        /* アコーディオン型 (サイト別・トピック別) UI */
+        /* アコーディオン・カード共通 UI */
         details {
             background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
         }
         summary {
-            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff;
+            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff; transition: background 0.2s;
         }
+        summary:hover { background-color: #f8f9fa; }
         summary::-webkit-details-marker { display: none; }
         .feed-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
         .feed-title-text { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .feed-meta-count { display: flex; align-items: center; gap: 8px; font-size: 12px; flex-shrink: 0; }
         .count-badge { background-color: #eee; color: #555; padding: 2px 8px; border-radius: 12px; font-weight: normal; }
         .count-badge.has-new { background-color: #fff0f0; color: var(--new-badge); border: 1px solid #ffcccc; }
-        .entry-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
+        
+        .entry-list, .timeline-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
         .list-item {
             padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start;
         }
         .list-item:last-child { border-bottom: none; }
+        
+        /* タイムライン用カードUIの調整（アコーディオン内） */
+        .timeline-card-wrapper {
+            padding: 15px; background: var(--bg-color); border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px;
+        }
+        .card {
+            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid var(--border); overflow: hidden; display: flex; gap: 15px; padding: 15px;
+            transition: transform 0.2s;
+        }
+        .card:hover { transform: translateY(-2px); }
+        .card-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
+        .entry-thumbnail { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee; }
 
-        /* 共通エントリスタイル */
         .read { background-color: #fafafa; opacity: 0.85; }
         .read .entry-title a { color: var(--read-color); }
         .read .entry-summary { color: #b5b5b5; }
@@ -180,6 +189,9 @@
             .entry-thumbnail { width: 90px; height: 70px; }
             .entry-source { max-width: 130px; }
             .search-input.active { width: 140px; }
+            .jump-nav { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+            .jump-nav::-webkit-scrollbar { display: none; }
+            .jump-btn { white-space: nowrap; }
         }
     </style>
 </head>
@@ -264,7 +276,7 @@
                 ※設定したキーワード（起業, 訪問看護, ピタットナース, 助成金）に合致する記事を抽出しています
             </div>
             
-            <div class="last-updated">最終更新: 02/24 00:18</div>
+            <div class="last-updated">最終更新: 02/24 00:19</div>
         </header>
 
         
@@ -274,35 +286,43 @@
         
 
         
-        <div id="view-topic" class="view-content active">
-            
-        </div>
+
         
 
-        <div id="view-timeline" class="view-content  timeline-container">
-            
-        </div>
-
-        <div id="view-feed" class="view-content">
-            
-        </div>
+        
     </div>
 
     <div id="backToTop" title="トップへ戻る">↑</div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const tabs = document.querySelectorAll('.view-tab');
-            const contents = document.querySelectorAll('.view-content');
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    contents.forEach(c => c.classList.remove('active'));
-                    tab.classList.add('active');
-                    document.getElementById(tab.dataset.target).classList.add('active');
+            // 修正箇所: ジャンプボタン連動のスクロール＆アコーディオン自動展開ロジック
+            document.querySelectorAll('.jump-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    
+                    if (targetSection) {
+                        // ジャンプ先のセクション内にあるアコーディオンをすべて開く
+                        targetSection.querySelectorAll('details').forEach(details => {
+                            details.open = true;
+                        });
+                        
+                        // ヘッダーの高さを考慮して少しずらしてスクロール
+                        const headerOffset = 70;
+                        const elementPosition = targetSection.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                        
+                        window.scrollTo({
+                             top: offsetPosition,
+                             behavior: "smooth"
+                        });
+                    }
                 });
             });
 
+            // 既読管理
             const STORAGE_KEY = 'rss_read_items';
             let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
             const entryItems = document.querySelectorAll('.entry-item');
@@ -315,6 +335,7 @@
                 const anchor = item.querySelector('a.entry-link');
                 if(anchor) {
                     anchor.addEventListener('click', function() {
+                        // 同じURLを持つすべての記事（タイムラインとサイト別の両方）を既読にする
                         document.querySelectorAll(`.entry-item[data-link="${link}"]`).forEach(el => {
                             el.classList.add('read');
                         });
@@ -328,6 +349,7 @@
                 }
             });
 
+            // 検索・絞り込み
             const searchToggle = document.getElementById('searchToggle');
             const searchInput = document.getElementById('searchInput');
             
@@ -361,7 +383,7 @@
                         if(summaryDiv && entry.dataset.originalSummaryHtml) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
                     });
                     
-                    // 修正箇所: 検索クリア時にアコーディオンを全て閉じた状態に戻す
+                    // 検索クリア時は全アコーディオンを閉じて元の目次状態に戻す
                     document.querySelectorAll('details.feed-section').forEach(sec => {
                         sec.style.display = '';
                         sec.open = false; 
@@ -381,13 +403,15 @@
                     }
                 });
 
+                // 修正箇所: トピック・タイムライン・サイト別のすべてのアコーディオンを横断して制御
                 document.querySelectorAll('details.feed-section').forEach(section => {
-                    const visibleItems = Array.from(section.querySelectorAll('.list-item')).filter(el => el.style.display !== 'none');
+                    // クラスが .list-item (サイト別・トピック別) または .card (タイムライン) のものを探す
+                    const visibleItems = Array.from(section.querySelectorAll('.entry-item')).filter(el => el.style.display !== 'none');
                     if(visibleItems.length === 0) {
                         section.style.display = 'none';
                     } else {
                         section.style.display = '';
-                        section.open = true; 
+                        section.open = true; // ヒットしたアコーディオンは自動で開く
                     }
                 });
             });
