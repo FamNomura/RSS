@@ -1,3 +1,4 @@
+
 import yaml # 修正箇所: JSONからYAMLに変更
 import feedparser
 import datetime
@@ -276,3 +277,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
