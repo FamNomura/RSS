@@ -1,0 +1,62 @@
+# パス: famnomura/rss/RSS-c13b0806bf5095367d0824d5f30d3dcd6854c59a/feeds.yml
+
+pages:
+  - page_title: "総合ニュース"
+    filename: "topics.html"
+    feeds:
+      - title: "はてなブックマーク 人気エントリー"
+        url: "https://b.hatena.ne.jp/hotentry.rss"
+      - title: "NHK主要ニュース"
+        url: "https://news.web.nhk/n-data/conf/na/rss/cat0.xml"
+
+  - page_title: "福祉行政"
+    filename: "new.html"
+    feeds:
+      - title: "厚生労働省"
+        url: "https://www.mhlw.go.jp/stf/news.rdf"
+      - title: "WAMNET行政情報"
+        url: "https://www.wam.go.jp/gyoseiShiryou/new_rss"
+
+  - page_title: "天気"
+    filename: "tenki.html"
+    feeds:
+      - title: "ウェザーマップ"
+        url: "https://news.yahoo.co.jp/rss/media/wmap/all.xml"
+      - title: "ウェザーニュース"
+        url: "https://news.yahoo.co.jp/rss/media/weather/all.xml"
+
+  - page_title: "Tech情報"
+    filename: "tech.html"
+    feeds:
+      - title: "Publickey"
+        url: "https://www.publickey1.jp/atom.xml"
+      - title: "DevelopersIO"
+        url: "https://dev.classmethod.jp/feed/"
+
+  # 修正箇所: 家族専用の裏メニュー（ナビゲーションから隠す設定）
+  - page_title: "Yukako専用ニュース"
+    filename: "yukako.html"
+    hidden: true
+    feeds:
+      - title: "主要"
+        url: "https://news.yahoo.co.jp/rss/topics/top-picks.xml"
+      - title: "ライフ"
+        url: "https://news.yahoo.co.jp/rss/categories/life.xml"
+
+watches:
+  - page_title: "★トピック★"
+    filename: "index.html"
+    keywords:
+      - "医療扶助"
+      - "生活保護"
+      - "Python"
+      - "旭川"
+      - "北海道"
+      
+  # ウォッチページも裏メニュー化可能
+  - page_title: "ゲーム情報"
+    filename: "kids.html"
+    hidden: true
+    keywords:
+      - "Switch"
+      - "任天堂"
