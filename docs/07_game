@@ -215,12 +215,12 @@
                     ブログ
                 </a>
                 
-                <a href="03_wether" 
+                <a href="03_wether.html" 
                    class="nav-link ">
                     天気
                 </a>
                 
-                <a href="04_tech" 
+                <a href="04_tech.html" 
                    class="nav-link ">
                     Tech情報
                 </a>
@@ -272,7 +272,7 @@
         <header class="">
             <h1>ゲーム</h1>
             
-            <div class="last-updated">最終更新: 02/24 08:33</div>
+            <div class="last-updated">最終更新: 02/24 09:14</div>
         </header>
 
         
