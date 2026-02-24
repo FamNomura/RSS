@@ -1,4 +1,4 @@
-# 修正箇所: yamlモジュールを削除し、CSVとURL通信に必要なモジュールを追加
+
 import csv
 import urllib.request
 import io
@@ -361,4 +361,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
