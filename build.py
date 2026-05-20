@@ -16,7 +16,7 @@ from jinja2 import Environment, FileSystemLoader
 
 # 設定
 # 修正箇所: ローカルファイルの指定から、公開されたスプレッドシート(CSV)のURLに変更
-csv_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS5huh__ac1cwXjz2iTeYJqvKrVQ8RJmO2wI9d83Ac4bLroG-nKOetsbhCLzIjdr94OqGCq1_lY_9oW/pub?gid=0&single=true&output=csv'
+csv_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTKtl6lGptpOhDEoIbU-C9RkQttsBxbzeILCnxya-do6uPaRIW1xyHBtwH6HsU4ZDpYIhDc05D52mt4/pub?gid=0&single=true&output=csv'
 template_file = 'template.html'
 output_dir = 'docs'
 max_entries = 10 
