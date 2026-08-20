@@ -1,5 +1,3 @@
-
-
 import csv
 import urllib.request
 import io
@@ -11,11 +9,11 @@ import time
 import re
 import os
 import socket
+import traceback
 from urllib.parse import urlparse
 from jinja2 import Environment, FileSystemLoader
 
 # 設定
-# 修正箇所: ローカルファイルの指定から、公開されたスプレッドシート(CSV)のURLに変更
 csv_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTKtl6lGptpOhDEoIbU-C9RkQttsBxbzeILCnxya-do6uPaRIW1xyHBtwH6HsU4ZDpYIhDc05D52mt4/pub?gid=0&single=true&output=csv'
 template_file = 'template.html'
 output_dir = 'docs'
@@ -25,43 +23,52 @@ timeout_seconds = 15
 
 socket.setdefaulttimeout(timeout_seconds)
 
-# 修正箇所: YAMLファイル読み込み関数を廃止し、CSVをURLから直接読み込む関数を新設
+def write_debug_log(message, error_detail=""):
+    try:
+        os.makedirs('log', exist_ok=True)
+        now_str = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        log_path = os.path.join('log', f'debug_log_{now_str}.txt')
+        with open(log_path, 'a', encoding='utf-8') as f:
+            f.write(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] {message}\n")
+            if error_detail:
+                f.write(f"Details:\n{error_detail}\n")
+    except Exception as log_err:
+        print(f"Failed to write debug log: {log_err}")
+
 def load_config_from_csv(url):
     print("Loading config from Google Sheets CSV...")
     config = {'pages': [], 'watches': []}
     
     try:
-        # スプレッドシートからデータを取得
         req = urllib.request.Request(url)
         with urllib.request.urlopen(req, timeout=timeout_seconds) as response:
-            # BOM付きUTF-8に対応するため 'utf-8-sig' でデコード
             csv_data = response.read().decode('utf-8-sig')
     except Exception as e:
-        print(f"Error fetching CSV: {e}")
+        err_msg = f"Error fetching CSV: {e}"
+        print(err_msg)
+        write_debug_log(err_msg, traceback.format_exc())
         sys.exit(1)
         
     reader = csv.reader(io.StringIO(csv_data))
-    header = next(reader, None) # 1行目のヘッダー行を読み飛ばす
+    header = next(reader, None)
     
     pages_dict = {}
+    watches_dict = {}
     
     for row in reader:
-        # 空行やデータが足りない行はスキップ
-        if not row or len(row) < 4:
+        if not row or len(row) < 3:
             continue
             
         row_type = row[0].strip()
-        page_title = row[1].strip()
-        filename = row[2].strip()
-        title_or_kw = row[3].strip()
-        # 列が存在しない場合のエラー回避
+        page_title = row[1].strip() if len(row) > 1 else ""
+        filename = row[2].strip() if len(row) > 2 else ""
+        title_or_kw = row[3].strip() if len(row) > 3 else ""
         rss_url = row[4].strip() if len(row) > 4 else ""
         hidden_str = row[5].strip().upper() if len(row) > 5 else ""
         
         is_hidden = (hidden_str == 'TRUE')
         
         if row_type == 'Page':
-            # 同じページのデータ（カテゴリ）をまとめる処理
             if page_title not in pages_dict:
                 pages_dict[page_title] = {
                     'page_title': page_title,
@@ -77,18 +84,40 @@ def load_config_from_csv(url):
                 })
                 
         elif row_type == 'Watch':
-            # キーワードをカンマで分割してリスト化
             keywords = [k.strip() for k in title_or_kw.split(',') if k.strip()]
-            config['watches'].append({
-                'page_title': page_title,
-                'filename': filename,
-                'hidden': is_hidden,
-                'keywords': keywords,
-                'ng_keywords': []
-            })
+            if filename not in watches_dict:
+                watches_dict[filename] = {
+                    'page_title': page_title,
+                    'filename': filename,
+                    'hidden': is_hidden,
+                    'keywords': keywords,
+                    'always_feeds': [],
+                    'ng_keywords': []
+                }
+            else:
+                watches_dict[filename]['page_title'] = page_title
+                watches_dict[filename]['hidden'] = is_hidden
+                watches_dict[filename]['keywords'] = keywords
+                
+        elif row_type.lower() in ['watch-feed', 'watchfeed', 'watch_feed', 'watch feed']:
+            # Watch専用の常時表示フィード
+            if filename not in watches_dict:
+                watches_dict[filename] = {
+                    'page_title': page_title,
+                    'filename': filename,
+                    'hidden': is_hidden,
+                    'keywords': [],
+                    'always_feeds': [],
+                    'ng_keywords': []
+                }
+            if rss_url:
+                watches_dict[filename]['always_feeds'].append({
+                    'title': title_or_kw,
+                    'url': rss_url
+                })
             
-    # 辞書にまとめたPageデータをリストに変換して格納
     config['pages'] = list(pages_dict.values())
+    config['watches'] = list(watches_dict.values())
     return config
 
 def get_domain(url):
@@ -179,6 +208,11 @@ def fetch_all_feeds(config):
         for feed in page.get('feeds', []):
             clean_url = feed['url'].strip()
             all_urls.add((clean_url, feed.get('title')))
+            
+    for watch in config.get('watches', []):
+        for feed in watch.get('always_feeds', []):
+            clean_url = feed['url'].strip()
+            all_urls.add((clean_url, feed.get('title')))
     
     print(f"Fetching {len(all_urls)} unique feeds...")
     now_utc = datetime.datetime.now(pytz.utc)
@@ -208,160 +242,208 @@ def fetch_all_feeds(config):
                 'entries': entries
             }
         except Exception as e:
-            print(f"  Error fetching {url}: {e}")
+            err_msg = f"Error fetching {url}: {e}"
+            print(f"  {err_msg}")
+            write_debug_log(err_msg, traceback.format_exc())
             results[url] = None
             
     return results
 
 def main():
-    os.makedirs(output_dir, exist_ok=True)
-    # 修正箇所: 新設したCSV読み込み関数を呼び出す
-    config = load_config_from_csv(csv_url)
-    
-    navigation = []
-    for watch in config.get('watches', []):
-        if not watch.get('hidden', False):
-            navigation.append({'page_title': watch['page_title'], 'filename': watch['filename']})
-    for page in config.get('pages', []):
-        if not page.get('hidden', False):
-            navigation.append({'page_title': page['page_title'], 'filename': page['filename']})
-    
-    all_feeds_data = fetch_all_feeds(config)
-    
-    jst = pytz.timezone('Asia/Tokyo')
-    now_str = datetime.datetime.now(jst).strftime('%m/%d %H:%M')
-    
-    env = Environment(loader=FileSystemLoader('.', encoding='utf-8'))
-    template = env.get_template(template_file)
-    
-    # 3. 通常ページの生成
-    for page_config in config.get('pages', []):
-        target_filename = page_config['filename']
-        print(f"Building Page: {target_filename}")
+    try:
+        os.makedirs(output_dir, exist_ok=True)
+        config = load_config_from_csv(csv_url)
         
-        page_config['is_topic'] = False 
-        ng_keywords = page_config.get('ng_keywords', [])
+        navigation = []
+        for watch in config.get('watches', []):
+            if not watch.get('hidden', False):
+                navigation.append({'page_title': watch['page_title'], 'filename': watch['filename']})
+        for page in config.get('pages', []):
+            if not page.get('hidden', False):
+                navigation.append({'page_title': page['page_title'], 'filename': page['filename']})
         
-        page_entries = [] 
-        page_feeds = []   
+        all_feeds_data = fetch_all_feeds(config)
         
-        for feed_conf in page_config.get('feeds', []):
-            url = feed_conf['url'].strip()
-            source_data = all_feeds_data.get(url)
+        jst = pytz.timezone('Asia/Tokyo')
+        now_str = datetime.datetime.now(jst).strftime('%m/%d %H:%M')
+        
+        env = Environment(loader=FileSystemLoader('.', encoding='utf-8'))
+        template = env.get_template(template_file)
+        
+        # 3. 通常ページの生成
+        for page_config in config.get('pages', []):
+            target_filename = page_config['filename']
+            print(f"Building Page: {target_filename}")
             
-            if source_data:
-                valid_entries = [e for e in source_data['entries'] if not is_ng_content(e, ng_keywords)]
-                if valid_entries:
-                    for e in valid_entries:
-                        e_copy = e.copy()
-                        e_copy['favicon'] = source_data['favicon']
-                        e_copy['source_title'] = source_data['title']
-                        page_entries.append(e_copy)
-                    
-                    page_feeds.append({
-                        'title': source_data['title'],
-                        'favicon': source_data['favicon'],
-                        'entries': valid_entries,
-                        'total_count': len(valid_entries),
-                        'new_count': sum(1 for e in valid_entries if e['is_new']),
-                        'has_new': any(e['is_new'] for e in valid_entries)
-                    })
-        
-        page_entries.sort(key=lambda x: x['timestamp'], reverse=True)
-        
-        output_path = os.path.join(output_dir, target_filename)
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write(template.render(
-                navigation=navigation,
-                current_page=page_config,
-                entries=page_entries,
-                feeds=page_feeds,
-                topics=[], 
-                last_updated=now_str
-            ))
-
-    # 4. ウォッチページの生成
-    for watch_config in config.get('watches', []):
-        target_filename = watch_config['filename']
-        print(f"Building Watch Page: {target_filename}")
-        
-        watch_config['is_topic'] = True
-        keywords = watch_config.get('keywords', [])
-        ng_keywords = watch_config.get('ng_keywords', [])
-        
-        watch_entries = []
-        watch_topics = [] 
-        site_data_dict = {} 
-        seen_links = set()
-        
-        for kw in keywords:
-            kw_entries = []
-            for url, source_data in all_feeds_data.items():
-                if not source_data: continue
+            page_config['is_topic'] = False 
+            ng_keywords = page_config.get('ng_keywords', [])
+            
+            page_entries = [] 
+            page_feeds = []   
+            
+            for feed_conf in page_config.get('feeds', []):
+                url = feed_conf['url'].strip()
+                source_data = all_feeds_data.get(url)
                 
+                if source_data:
+                    valid_entries = [e for e in source_data['entries'] if not is_ng_content(e, ng_keywords)]
+                    if valid_entries:
+                        for e in valid_entries:
+                            e_copy = e.copy()
+                            e_copy['favicon'] = source_data['favicon']
+                            e_copy['source_title'] = source_data['title']
+                            page_entries.append(e_copy)
+                        
+                        page_feeds.append({
+                            'title': source_data['title'],
+                            'favicon': source_data['favicon'],
+                            'entries': valid_entries,
+                            'total_count': len(valid_entries),
+                            'new_count': sum(1 for e in valid_entries if e['is_new']),
+                            'has_new': any(e['is_new'] for e in valid_entries)
+                        })
+            
+            page_entries.sort(key=lambda x: x['timestamp'], reverse=True)
+            
+            output_path = os.path.join(output_dir, target_filename)
+            with open(output_path, 'w', encoding='utf-8') as f:
+                f.write(template.render(
+                    navigation=navigation,
+                    current_page=page_config,
+                    entries=page_entries,
+                    feeds=page_feeds,
+                    topics=[], 
+                    last_updated=now_str
+                ))
+
+        # 4. ウォッチページの生成
+        for watch_config in config.get('watches', []):
+            target_filename = watch_config['filename']
+            print(f"Building Watch Page: {target_filename}")
+            
+            watch_config['is_topic'] = True
+            keywords = watch_config.get('keywords', [])
+            always_feeds = watch_config.get('always_feeds', [])
+            ng_keywords = watch_config.get('ng_keywords', [])
+            
+            watch_entries = []
+            watch_topics = [] 
+            site_data_dict = {} 
+            seen_links = set()
+            
+            # (1) キーワードによる抽出
+            for kw in keywords:
+                kw_entries = []
+                for url, source_data in all_feeds_data.items():
+                    if not source_data: continue
+                    
+                    for entry in source_data['entries']:
+                        if is_ng_content(entry, ng_keywords):
+                            continue
+                        text_to_search = (entry['title'] + entry['summary']).lower()
+                        if kw.lower() in text_to_search:
+                            e_copy = entry.copy()
+                            e_copy['favicon'] = source_data['favicon']
+                            e_copy['source_title'] = source_data['title']
+                            
+                            kw_entries.append(e_copy)
+                            
+                            # タイムライン・サイト別への追加（重複排除）
+                            if entry['link'] not in seen_links:
+                                seen_links.add(entry['link'])
+                                watch_entries.append(e_copy)
+                                
+                                if url not in site_data_dict:
+                                    site_data_dict[url] = {
+                                        'title': source_data['title'],
+                                        'favicon': source_data['favicon'],
+                                        'entries': []
+                                    }
+                                site_data_dict[url]['entries'].append(e_copy)
+                                
+                if kw_entries:
+                    kw_entries.sort(key=lambda x: x['timestamp'], reverse=True)
+                    watch_topics.append({
+                        'title': f"キーワード: {kw}",
+                        'favicon': '',
+                        'entries': kw_entries,
+                        'total_count': len(kw_entries),
+                        'new_count': sum(1 for e in kw_entries if e['is_new']),
+                        'has_new': any(e['is_new'] for e in kw_entries)
+                    })
+            
+            # (2) 常時表示フィード（Watch-Feed）の全記事を追加（重複排除）
+            for feed_conf in always_feeds:
+                url = feed_conf['url'].strip()
+                source_data = all_feeds_data.get(url)
+                if not source_data:
+                    continue
+                
+                feed_entries = []
                 for entry in source_data['entries']:
                     if is_ng_content(entry, ng_keywords):
                         continue
-                    text_to_search = (entry['title'] + entry['summary']).lower()
-                    if kw.lower() in text_to_search:
-                        e_copy = entry.copy()
-                        e_copy['favicon'] = source_data['favicon']
-                        e_copy['source_title'] = source_data['title']
+                    e_copy = entry.copy()
+                    e_copy['favicon'] = source_data['favicon']
+                    e_copy['source_title'] = source_data['title']
+                    feed_entries.append(e_copy)
+                    
+                    # タイムライン・サイト別への追加（キーワードと重複した場合はスキップ）
+                    if entry['link'] not in seen_links:
+                        seen_links.add(entry['link'])
+                        watch_entries.append(e_copy)
                         
-                        kw_entries.append(e_copy)
+                        if url not in site_data_dict:
+                            site_data_dict[url] = {
+                                'title': source_data['title'],
+                                'favicon': source_data['favicon'],
+                                'entries': []
+                            }
+                        site_data_dict[url]['entries'].append(e_copy)
                         
-                        if entry['link'] not in seen_links:
-                            seen_links.add(entry['link'])
-                            watch_entries.append(e_copy)
-                            
-                            if url not in site_data_dict:
-                                site_data_dict[url] = {
-                                    'title': source_data['title'],
-                                    'favicon': source_data['favicon'],
-                                    'entries': []
-                                }
-                            site_data_dict[url]['entries'].append(e_copy)
-                            
-            if kw_entries:
-                kw_entries.sort(key=lambda x: x['timestamp'], reverse=True)
-                watch_topics.append({
-                    'title': f"キーワード: {kw}",
-                    'favicon': '',
-                    'entries': kw_entries,
-                    'total_count': len(kw_entries),
-                    'new_count': sum(1 for e in kw_entries if e['is_new']),
-                    'has_new': any(e['is_new'] for e in kw_entries)
-                })
+                if feed_entries:
+                    feed_entries.sort(key=lambda x: x['timestamp'], reverse=True)
+                    display_title = feed_conf.get('title') or source_data['title']
+                    watch_topics.append({
+                        'title': f"📌 固定: {display_title}",
+                        'favicon': source_data['favicon'],
+                        'entries': feed_entries,
+                        'total_count': len(feed_entries),
+                        'new_count': sum(1 for e in feed_entries if e['is_new']),
+                        'has_new': any(e['is_new'] for e in feed_entries)
+                    })
+                
+            watch_entries.sort(key=lambda x: x['timestamp'], reverse=True)
             
-        watch_entries.sort(key=lambda x: x['timestamp'], reverse=True)
-        
-        watch_feeds = []
-        for url, data in site_data_dict.items():
-            data['entries'].sort(key=lambda x: x['timestamp'], reverse=True)
-            watch_feeds.append({
-                'title': data['title'],
-                'favicon': data['favicon'],
-                'entries': data['entries'],
-                'total_count': len(data['entries']),
-                'new_count': sum(1 for e in data['entries'] if e['is_new']),
-                'has_new': any(e['is_new'] for e in data['entries'])
-            })
+            watch_feeds = []
+            for url, data in site_data_dict.items():
+                data['entries'].sort(key=lambda x: x['timestamp'], reverse=True)
+                watch_feeds.append({
+                    'title': data['title'],
+                    'favicon': data['favicon'],
+                    'entries': data['entries'],
+                    'total_count': len(data['entries']),
+                    'new_count': sum(1 for e in data['entries'] if e['is_new']),
+                    'has_new': any(e['is_new'] for e in data['entries'])
+                })
 
-        output_path = os.path.join(output_dir, target_filename)
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write(template.render(
-                navigation=navigation,
-                current_page=watch_config,
-                entries=watch_entries,
-                feeds=watch_feeds,
-                topics=watch_topics, 
-                last_updated=now_str
-            ))
+            output_path = os.path.join(output_dir, target_filename)
+            with open(output_path, 'w', encoding='utf-8') as f:
+                f.write(template.render(
+                    navigation=navigation,
+                    current_page=watch_config,
+                    entries=watch_entries,
+                    feeds=watch_feeds,
+                    topics=watch_topics, 
+                    last_updated=now_str
+                ))
 
-    print("All pages generated successfully.")
+        print("All pages generated successfully.")
+    except Exception as e:
+        err_msg = f"Unexpected error in main: {e}"
+        print(err_msg)
+        write_debug_log(err_msg, traceback.format_exc())
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
-
-
-
