@@ -2,762 +2,1359 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>エンタメ・コラム</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>エンタメ・コラム | RSS News</title>
+
+    <!-- PWA対応 -->
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" href="./icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="./icon.svg">
+    <meta name="theme-color" content="#1e293b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Webフォント: BIZ UDPGothic (Regular / Bold のみ) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- 初期描画時のダークモードちらつき防止 -->
+    <script>
+        (function() {
+            const saved = localStorage.getItem('rss_theme');
+            if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
+
     <style>
         :root {
-            --bg-color: #f4f6f8;
-            --card-bg: #ffffff;
-            --text-main: #2c3e50;
-            --text-sub: #7f8c8d;
-            --accent: #007bff;
-            --accent-hover: #0056b3;
-            --new-badge: #e74c3c;
-            --border: #e9ecef;
-            --highlight: #fff3cd;
-            --read-color: #b0b0b0;
+            --bg-color: #f3f5f8;
+            --surface: #ffffff;
+            --surface-sub: #f8fafc;
+            --nav-bg: #1e293b;
+            --nav-text: #f1f5f9;
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+            --text-read: #94a3b8;
+            --accent: #2563eb;
+            --accent-soft: #eff6ff;
+            --accent-text: #1d4ed8;
+            --new-badge: #ef4444;
+            --star-active: #f59e0b;
+            --border: #e2e8f0;
+            --highlight: #fef08a;
+            --shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
         }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --surface: #1e293b;
+            --surface-sub: #172033;
+            --nav-bg: #0b1120;
+            --nav-text: #f8fafc;
+            --text-main: #f1f5f9;
+            --text-sub: #94a3b8;
+            --text-read: #64748b;
+            --accent: #3b82f6;
+            --accent-soft: #1e3a8a;
+            --accent-text: #93c5fd;
+            --new-badge: #f87171;
+            --star-active: #fbbf24;
+            --border: #334155;
+            --highlight: #854d0e;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html { scroll-behavior: smooth; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: "BIZ UDPGothic", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding-bottom: 80px;
-            line-height: 1.6;
+            padding-bottom: 84px;
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
         }
-        
+
+        /* 上部ナビゲーション */
         .navbar {
-            background-color: #343a40;
-            padding: 0.8rem 1rem;
+            background-color: var(--nav-bg);
             position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
-        .nav-container {
-            max-width: 900px;
+        .nav-inner {
+            max-width: 820px;
             margin: 0 auto;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+        .nav-links {
+            display: flex;
+            gap: 6px;
+            flex: 1;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding: 2px 0;
+        }
+        .nav-links::-webkit-scrollbar { display: none; }
+        .nav-link {
+            color: var(--nav-text);
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+            opacity: 0.8;
+            background: rgba(255, 255, 255, 0.08);
+            white-space: nowrap;
+            transition: background 0.2s, opacity 0.2s;
+        }
+        .nav-link:hover { opacity: 1; background: rgba(255, 255, 255, 0.16); }
+        .nav-link.active {
+            opacity: 1;
+            background: var(--accent);
+            color: #ffffff;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .icon-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--nav-text);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .icon-btn:hover { background: rgba(255, 255, 255, 0.2); }
+
+        /* 展開式フル幅検索バー */
+        .search-overlay {
+            position: absolute;
+            inset: 0;
+            background-color: var(--nav-bg);
+            padding: 8px 12px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            z-index: 1010;
+        }
+        .search-overlay.active { display: flex; }
+        .search-input-wrap {
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+        .search-input {
+            width: 100%;
+            padding: 8px 34px 8px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: var(--surface);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 15px;
+            outline: none;
+        }
+        .search-input:focus { border-color: var(--accent); }
+        .search-clear-btn {
+            position: absolute;
+            right: 8px;
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            font-size: 18px;
+            cursor: pointer;
+            display: none;
+            padding: 4px;
+            line-height: 1;
+        }
+        .search-clear-btn.visible { display: block; }
+        .search-close-btn {
+            background: none;
+            border: none;
+            color: var(--nav-text);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 6px 8px;
+            white-space: nowrap;
+        }
+
+        /* メインコンテナ */
+        .container {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 12px;
+        }
+
+        /* コンパクトヘッダー */
+        .page-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 6px 12px;
+            margin-bottom: 10px;
+            padding: 4px 2px;
+        }
+        .page-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 0.02em;
+        }
+        .last-updated {
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+        .topic-banner {
+            background: var(--accent-soft);
+            color: var(--accent-text);
+            border-left: 4px solid var(--accent);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 12px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        /* タブバー（タイムライン / サイト別 / トピック別） */
+        .tab-bar {
+            display: flex;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 4px;
+            gap: 4px;
+            margin-bottom: 10px;
+            box-shadow: var(--shadow);
+        }
+        .tab-btn {
+            flex: 1;
+            border: none;
+            background: transparent;
+            color: var(--text-sub);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 8px 6px;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .tab-btn.active {
+            background: var(--accent);
+            color: #ffffff;
+        }
+
+        /* フィルタ・操作バー */
+        .filter-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 15px;
+            gap: 8px;
+            margin-bottom: 12px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding-bottom: 2px;
         }
-        .nav-links { 
-            display: flex; 
-            flex-wrap: wrap;
-            gap: 8px; 
-            flex-grow: 1;
+        .filter-bar::-webkit-scrollbar { display: none; }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        .nav-link {
-            color: #ecf0f1;
+        .chip-btn {
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 11px;
+            border-radius: 999px;
+            cursor: pointer;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.15s;
+        }
+        .chip-btn.active {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            color: var(--accent-text);
+        }
+        .chip-btn.star-active {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: var(--star-active);
+            color: var(--star-active);
+        }
+        .chip-btn.subtle {
+            color: var(--text-sub);
+            background: transparent;
+        }
+
+        /* タブパネル */
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* 記事カード（全体タップ対応） */
+        .card-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .entry-item {
+            position: relative;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 13px 14px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            box-shadow: var(--shadow);
+            transition: opacity 0.2s, background-color 0.2s;
+        }
+        .entry-item:active {
+            transform: scale(0.995);
+        }
+        .entry-body {
+            flex: 1;
+            min-width: 0;
+        }
+        .entry-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+        .entry-meta {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-sub);
+            min-width: 0;
+            flex: 1;
+        }
+        .feed-favicon {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+        .entry-source {
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .entry-time {
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .entry-time::before {
+            content: "・";
+            margin-right: 4px;
+        }
+        .entry-time.no-dot::before {
+            content: "";
+            margin-right: 0;
+        }
+
+        .entry-title {
+            font-size: 15.5px;
+            font-weight: 700;
+            line-height: 1.48;
+            margin: 0 0 6px 0;
+        }
+        .entry-link {
+            color: var(--text-main);
             text-decoration: none;
-            padding: 5px 10px;
+        }
+        /* カード全体をタップ領域にする */
+        .entry-link::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+        .new-badge {
+            display: inline-block;
+            background: var(--new-badge);
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 1px 5px;
             border-radius: 4px;
+            margin-right: 5px;
+            vertical-align: 1px;
+        }
+        .entry-summary {
             font-size: 13px;
-            font-weight: 600;
-            opacity: 0.85;
-            transition: all 0.2s;
-            background-color: rgba(255,255,255,0.1);
+            color: var(--text-sub);
+            line-height: 1.6;
+            margin: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .entry-side {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .entry-thumbnail {
+            width: 88px;
+            height: 68px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--surface-sub);
+        }
+
+        /* あとで読む（★）ボタン：カードリンクより前面に配置 */
+        .bookmark-btn {
+            position: relative;
+            z-index: 2;
+            background: transparent;
+            border: none;
+            color: var(--text-sub);
+            font-size: 19px;
+            line-height: 1;
+            padding: 4px 6px;
+            margin: -4px -6px -4px 0;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: transform 0.15s, color 0.15s;
+        }
+        .bookmark-btn:active { transform: scale(1.2); }
+        .bookmark-btn.bookmarked { color: var(--star-active); }
+
+        /* 既読スタイル */
+        .entry-item.read {
+            background: var(--surface-sub);
+            opacity: 0.72;
+        }
+        .entry-item.read .entry-link { color: var(--text-read); }
+        .entry-item.read .entry-thumbnail { filter: grayscale(85%); opacity: 0.55; }
+        .entry-item.read .new-badge { background: var(--text-read); }
+
+        /* サイト別・トピック別アコーディオン */
+        details.feed-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        details.feed-section summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 13px 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        details.feed-section summary::-webkit-details-marker { display: none; }
+        .feed-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+            flex: 1;
+        }
+        .feed-title-text {
+            font-size: 14.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .count-badge {
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: var(--surface-sub);
+            color: var(--text-sub);
+            border: 1px solid var(--border);
             white-space: nowrap;
         }
-        .nav-link:hover { opacity: 1; background-color: rgba(255,255,255,0.2); }
-        .nav-link.active { opacity: 1; background-color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-
-        @media (max-width: 600px) {
-            .nav-links {
-                flex-wrap: nowrap;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-                padding-bottom: 2px;
-            }
-            .nav-links::-webkit-scrollbar { display: none; }
+        .count-badge.has-new {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--new-badge);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+        .accordion-body {
+            border-top: 1px solid var(--border);
+            padding: 10px;
+            background: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .search-container { position: relative; display: flex; align-items: center; }
-        .search-toggle-btn { 
-            background: none; border: none; font-size: 18px; cursor: pointer; color: #ecf0f1; padding: 5px; margin-right: 5px; 
+        /* 空状態・ハイライト・トップへ戻る */
+        .empty-state {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-sub);
+            font-size: 14px;
+            background: var(--surface);
+            border-radius: 12px;
+            border: 1px dashed var(--border);
         }
-        .search-input {
-            width: 0; opacity: 0; padding: 0; border: none; border-radius: 20px; font-size: 14px; 
-            background-color: rgba(255,255,255,0.95); transition: all 0.3s ease; pointer-events: none;
+        mark {
+            background: var(--highlight);
+            color: inherit;
+            padding: 0 2px;
+            border-radius: 3px;
         }
-        .search-input.active { 
-            width: 180px; opacity: 1; padding: 6px 10px; box-shadow: 0 0 0 2px var(--accent); pointer-events: auto; 
+        #backToTop {
+            position: fixed;
+            bottom: 20px;
+            right: 16px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: var(--accent);
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s, visibility 0.25s;
+            z-index: 900;
         }
-
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        
-        header { margin-bottom: 20px; text-align: center; border-radius: 8px; padding: 10px; transition: all 0.3s; }
-        h1 { font-size: 24px; margin: 0 0 5px 0; color: #333; letter-spacing: 0.05em; }
-        .last-updated { font-size: 12px; color: var(--text-sub); }
-
-        .header-topic {
-            background: linear-gradient(135deg, #f0f7ff 0%, #e0edff 100%);
-            border-left: 5px solid #007bff;
-            padding: 20px;
-        }
-        .topic-desc {
-            font-size: 12px; color: #0056b3; margin: 8px 0; font-weight: bold; line-height: 1.4;
-        }
-
-        /* 修正箇所: ジャンプボタンのスタイル */
-        .jump-nav {
-            display: flex; gap: 10px; margin-bottom: 25px; justify-content: flex-start; flex-wrap: wrap;
-            background: #fff; padding: 10px 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid var(--border);
-        }
-        .jump-btn {
-            padding: 6px 14px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 20px;
-            cursor: pointer; font-size: 13px; font-weight: bold; color: var(--text-main); transition: all 0.2s; text-decoration: none;
-        }
-        .jump-btn:hover { background: #e9ecef; border-color: #ccc; transform: translateY(-1px); }
-
-        /* 修正箇所: 各セクションの区切りスタイル */
-        .content-section {
-            margin-bottom: 40px;
-        }
-        .section-title {
-            font-size: 18px; color: var(--text-main); margin: 0 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid var(--accent);
-            display: flex; align-items: center; gap: 8px;
-        }
-
-        /* アコーディオン・カード共通 UI */
-        details {
-            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden;
-        }
-        summary {
-            list-style: none; cursor: pointer; padding: 15px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; background-color: #fff; transition: background 0.2s;
-        }
-        summary:hover { background-color: #f8f9fa; }
-        summary::-webkit-details-marker { display: none; }
-        .feed-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
-        .feed-title-text { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .feed-meta-count { display: flex; align-items: center; gap: 8px; font-size: 12px; flex-shrink: 0; }
-        .count-badge { background-color: #eee; color: #555; padding: 2px 8px; border-radius: 12px; font-weight: normal; }
-        .count-badge.has-new { background-color: #fff0f0; color: var(--new-badge); border: 1px solid #ffcccc; }
-        
-        .entry-list, .timeline-list { border-top: 1px solid var(--border); padding: 0; margin: 0; list-style: none; }
-        .list-item {
-            padding: 15px; border-bottom: 1px solid var(--border); display: flex; gap: 15px; align-items: flex-start;
-        }
-        .list-item:last-child { border-bottom: none; }
-        
-        /* タイムライン用カードUIの調整（アコーディオン内） */
-        .timeline-card-wrapper {
-            padding: 15px; background: var(--bg-color); border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px;
-        }
-        .card {
-            background: var(--card-bg); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            border: 1px solid var(--border); overflow: hidden; display: flex; gap: 15px; padding: 15px;
-            transition: transform 0.2s;
-        }
-        .card:hover { transform: translateY(-2px); }
-        .card-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; }
-        .entry-thumbnail { width: 120px; height: 90px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee; }
-
-        .read { background-color: #fafafa; opacity: 0.85; }
-        .read .entry-title a { color: var(--read-color); }
-        .read .entry-summary { color: #b5b5b5; }
-        .read .entry-thumbnail { filter: grayscale(100%); opacity: 0.5; }
-        .read .new-badge { background-color: #ccc; }
-
-        .entry-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-sub); margin-bottom: 8px; flex-wrap: wrap; }
-        .feed-favicon { width: 14px; height: 14px; border-radius: 2px; }
-        .entry-source { font-weight: 600; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
-        .entry-time { border-left: 1px solid #ddd; padding-left: 8px; white-space: nowrap; }
-        
-        .entry-title { font-size: 16px; margin: 0 0 6px 0; line-height: 1.4; }
-        .entry-title a { text-decoration: none; color: var(--text-main); font-weight: bold; }
-        .entry-title a:hover { color: var(--accent); text-decoration: underline; }
-
-        .new-badge { display: inline-block; background-color: var(--new-badge); color: white; font-size: 10px; padding: 2px 5px; border-radius: 3px; margin-right: 5px; vertical-align: middle; font-weight: bold; transform: translateY(-1px); }
-
-        .entry-summary { font-size: 13px; color: #555; margin-top: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.9; line-height: 1.5; }
-        .entry-summary img { display: none; }
-
-        .empty-state { padding: 40px 20px; text-align: center; color: #999; font-size: 14px; background: #fff; border-radius: 8px; border: 1px dashed #ccc; }
-
-        #backToTop { position: fixed; bottom: 20px; right: 20px; background-color: var(--accent); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transition: all 0.3s; font-size: 20px; z-index: 2000; }
         #backToTop.show { opacity: 1; visibility: visible; }
-        
-        mark { background-color: var(--highlight); padding: 0 2px; border-radius: 2px; color: inherit; }
 
-        @media (max-width: 600px) {
-            .container { padding: 15px 10px; }
-            .card, .list-item { padding: 12px; gap: 10px; }
-            .entry-thumbnail { width: 90px; height: 70px; }
-            .entry-source { max-width: 130px; }
-            .search-input.active { width: 140px; }
-            .jump-nav { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-            .jump-nav::-webkit-scrollbar { display: none; }
-            .jump-btn { white-space: nowrap; }
+        @media (min-width: 640px) {
+            .container { padding: 18px 16px; }
+            .entry-thumbnail { width: 112px; height: 82px; }
+            .entry-title { font-size: 16.5px; }
         }
     </style>
 </head>
 <body>
+    <!-- 上部ナビゲーション -->
     <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-links">
+        <div class="nav-inner">
+            <div class="nav-links" id="navLinks">
                 
-                <a href="index.html" 
+                <a href="index.html"
                    class="nav-link ">
                     ★トピック★
                 </a>
                 
-                <a href="01_topics.html" 
+                <a href="01_topics.html"
                    class="nav-link ">
                     総合ニュース
                 </a>
                 
-                <a href="02_blog.html" 
+                <a href="02_blog.html"
                    class="nav-link ">
                     ブログ
                 </a>
                 
-                <a href="03_wether.html" 
+                <a href="03_wether.html"
                    class="nav-link ">
                     天気
                 </a>
                 
-                <a href="05_gadget.html" 
+                <a href="05_gadget.html"
                    class="nav-link ">
                     ガジェット
                 </a>
                 
-                <a href="11_fukushi.html" 
+                <a href="11_fukushi.html"
                    class="nav-link ">
                     福祉行政
                 </a>
                 
-                <a href="21_entertainment.html" 
+                <a href="21_entertainment.html"
                    class="nav-link active">
                     エンタメ・コラム
                 </a>
                 
             </div>
-            <div class="search-container">
-                <button id="searchToggle" class="search-toggle-btn">🔍</button>
-                <input type="text" id="searchInput" class="search-input" placeholder="キーワード検索...">
+            <div class="nav-actions">
+                <button id="searchToggle" class="icon-btn" aria-label="検索" title="検索">🔍</button>
+                <button id="themeToggle" class="icon-btn" aria-label="テーマ切替" title="ダーク/ライト切替">🌙</button>
+            </div>
+
+            <!-- フル幅検索オーバーレイ -->
+            <div class="search-overlay" id="searchOverlay">
+                <div class="search-input-wrap">
+                    <input type="search" id="searchInput" class="search-input" placeholder="タイトル・概要を検索..." autocomplete="off">
+                    <button id="searchClear" class="search-clear-btn" aria-label="クリア">×</button>
+                </div>
+                <button id="searchClose" class="search-close-btn">閉じる</button>
             </div>
         </div>
     </nav>
 
     <div class="container">
-        <header class="">
-            <h1>エンタメ・コラム</h1>
-            
-            <div class="last-updated">最終更新: 11/25 08:20</div>
+        <header class="page-header">
+            <h1 class="page-title">エンタメ・コラム</h1>
+            <div class="last-updated">更新: 11/25 08:21</div>
         </header>
 
         
-        <div class="jump-nav">
+
+        
+        <!-- タブ切り替え（0タップでタイムライン表示） -->
+        <div class="tab-bar" role="tablist">
+            <button class="tab-btn active" data-tab="panel-timeline" role="tab" aria-selected="true">🕒 タイムライン</button>
+            <button class="tab-btn" data-tab="panel-feed" role="tab" aria-selected="false">📁 サイト別</button>
             
-            <a href="#section-timeline" class="jump-btn">🕒 タイムライン</a>
-            <a href="#section-feed" class="jump-btn">📁 サイト別</a>
         </div>
-        
 
-        
+        <!-- フィルタ・一括操作バー -->
+        <div class="filter-bar">
+            <div class="filter-group">
+                <button id="unreadOnlyBtn" class="chip-btn">未読のみ</button>
+                <button id="bookmarkedOnlyBtn" class="chip-btn">★ 保存済み</button>
+            </div>
+            <button id="markAllReadBtn" class="chip-btn subtle">✓ すべて既読</button>
+        </div>
 
-        
+        <!-- フィルタ該当なし時の共通メッセージ -->
+        <div id="filterEmptyState" class="empty-state" style="display:none; margin-bottom: 12px;">
+            条件に一致する記事がありません
+        </div>
 
-        
-        <div id="section-timeline" class="content-section">
-            <h2 class="section-title">🕒 タイムライン</h2>
+        <!-- パネル1: タイムライン（デフォルト展開） -->
+        <section id="panel-timeline" class="tab-panel active">
+            <div class="card-list">
+                
+                <article class="entry-item" data-link="https://news.mynavi.jp/article/dual_income-73/" data-title="限界間近!? 共働き世帯のリアル物語 第73回 【漫画】「そっちがやってよ!」共働き夫婦の家事の押し付け合い、どう解決した?" data-summary="共働き世帯が過半数を占める今、家庭と仕事の両立は多くの人にとって身近な課題となっています。ただ、共働きが当たり前になった今も、それを前提とした社会の仕組みができていないという現実があります。そこで本連載では、共働き家庭の「あるある漫画」を通…">
+                    <div class="entry-body">
+                        <div class="entry-top-row">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" loading="lazy" onerror="this.style.display='none'">
+                                <span class="entry-source">まいなび</span>
+                                <span class="entry-time">4分前</span>
+                            </div>
+                            <button class="bookmark-btn" type="button" aria-label="あとで読む" title="あとで読む">☆</button>
+                        </div>
+                        <h2 class="entry-title">
+                            <span class="new-badge">NEW</span>
+                            <a href="https://news.mynavi.jp/article/dual_income-73/" target="_blank" rel="noopener noreferrer" class="entry-link">限界間近!? 共働き世帯のリアル物語 第73回 【漫画】「そっちがやってよ!」共働き夫婦の家事の押し付け合い、どう解決した?</a>
+                        </h2>
+                        
+                        <p class="entry-summary">共働き世帯が過半数を占める今、家庭と仕事の両立は多くの人にとって身近な課題となっています。ただ、共働きが当たり前になった今も、それを前提とした社会の仕組みができていないという現実があります。そこで本連載では、共働き家庭の「あるある漫画」を通…</p>
+                        
+                    </div>
+                    
+                </article>
+                
+                <article class="entry-item" data-link="https://news.mynavi.jp/premium/article/automotive-industry-71/" data-title="自動車業界 ニュースの見方 第71回 EV全振りから現実路線へ、ホンダはHV「アヴァンシア」で再起を図る" data-summary="ホンダが次世代ハイブリッド車シリーズの第1弾となる大型SUV「アヴァンシア」を世界初公開した。米国ではHV向け新工場の建設も発表。「EV全振り」の挑戦から撤退し、一気に現実路線へとかじを切ったホンダの戦略を読み解く。">
+                    <div class="entry-body">
+                        <div class="entry-top-row">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" loading="lazy" onerror="this.style.display='none'">
+                                <span class="entry-source">まいなび</span>
+                                <span class="entry-time">21分前</span>
+                            </div>
+                            <button class="bookmark-btn" type="button" aria-label="あとで読む" title="あとで読む">☆</button>
+                        </div>
+                        <h2 class="entry-title">
+                            <span class="new-badge">NEW</span>
+                            <a href="https://news.mynavi.jp/premium/article/automotive-industry-71/" target="_blank" rel="noopener noreferrer" class="entry-link">自動車業界 ニュースの見方 第71回 EV全振りから現実路線へ、ホンダはHV「アヴァンシア」で再起を図る</a>
+                        </h2>
+                        
+                        <p class="entry-summary">ホンダが次世代ハイブリッド車シリーズの第1弾となる大型SUV「アヴァンシア」を世界初公開した。米国ではHV向け新工場の建設も発表。「EV全振り」の挑戦から撤退し、一気に現実路線へとかじを切ったホンダの戦略を読み解く。</p>
+                        
+                    </div>
+                    
+                </article>
+                
+                <article class="entry-item" data-link="https://news.mynavi.jp/article/20261125-5401498/" data-title="尿管結石のニュースが出るたびに共演者から「大丈夫?」と心配され…佐藤栞里が吐露した胸中「腎臓とは数年前からずっと親友」　現在の体の状態も明かす" data-summary="自身の尿管結石に関する話題がニュースになるたび、翌日の仕事現場で共演者から心配されるという佐藤栞里。数年前の出来事であることを説明するやり取りが、数カ月に1回ほど繰り返されているという。22日配信のニッポン放送のPodcast番組『オールナ…">
+                    <div class="entry-body">
+                        <div class="entry-top-row">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" loading="lazy" onerror="this.style.display='none'">
+                                <span class="entry-source">まいなび</span>
+                                <span class="entry-time">21分前</span>
+                            </div>
+                            <button class="bookmark-btn" type="button" aria-label="あとで読む" title="あとで読む">☆</button>
+                        </div>
+                        <h2 class="entry-title">
+                            <span class="new-badge">NEW</span>
+                            <a href="https://news.mynavi.jp/article/20261125-5401498/" target="_blank" rel="noopener noreferrer" class="entry-link">尿管結石のニュースが出るたびに共演者から「大丈夫?」と心配され…佐藤栞里が吐露した胸中「腎臓とは数年前からずっと親友」　現在の体の状態も明かす</a>
+                        </h2>
+                        
+                        <p class="entry-summary">自身の尿管結石に関する話題がニュースになるたび、翌日の仕事現場で共演者から心配されるという佐藤栞里。数年前の出来事であることを説明するやり取りが、数カ月に1回ほど繰り返されているという。22日配信のニッポン放送のPodcast番組『オールナ…</p>
+                        
+                    </div>
+                    
+                </article>
+                
+                <article class="entry-item" data-link="https://news.mynavi.jp/article/kuruma-quiz-68/" data-title="クルマのクイズ 第68回 EVで復活! シトロエンが生んだ伝説的大衆車「2CV」の車名の意味は?" data-summary="2026年10月の「パリモーターショー」で、シトロエンがEVのコンセプトカー「2CV」を披露しました。1948年に登場し、42年にわたって作られた大衆車「2CV」がEVで復活するかもしれません! ところで、この「2CV」という車名ですが、い…">
+                    <div class="entry-body">
+                        <div class="entry-top-row">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" loading="lazy" onerror="this.style.display='none'">
+                                <span class="entry-source">まいなび</span>
+                                <span class="entry-time">21分前</span>
+                            </div>
+                            <button class="bookmark-btn" type="button" aria-label="あとで読む" title="あとで読む">☆</button>
+                        </div>
+                        <h2 class="entry-title">
+                            <span class="new-badge">NEW</span>
+                            <a href="https://news.mynavi.jp/article/kuruma-quiz-68/" target="_blank" rel="noopener noreferrer" class="entry-link">クルマのクイズ 第68回 EVで復活! シトロエンが生んだ伝説的大衆車「2CV」の車名の意味は?</a>
+                        </h2>
+                        
+                        <p class="entry-summary">2026年10月の「パリモーターショー」で、シトロエンがEVのコンセプトカー「2CV」を披露しました。1948年に登場し、42年にわたって作られた大衆車「2CV」がEVで復活するかもしれません! ところで、この「2CV」という車名ですが、い…</p>
+                        
+                    </div>
+                    
+                </article>
+                
+                <article class="entry-item" data-link="https://news.mynavi.jp/article/20261125-5350106/" data-title="胃もたれ、胃痛、胸やけ…今年約6割が「胃の不調」を経験! 「食べ過ぎ」を上回った原因とは?" data-summary="ヒューマン・データ・ラボラトリは2026年11月17日、「第1回 胃の不調白書2026」を発表した。">
+                    <div class="entry-body">
+                        <div class="entry-top-row">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" loading="lazy" onerror="this.style.display='none'">
+                                <span class="entry-source">まいなび</span>
+                                <span class="entry-time">21分前</span>
+                            </div>
+                            <button class="bookmark-btn" type="button" aria-label="あとで読む" title="あとで読む">☆</button>
+                        </div>
+                        <h2 class="entry-title">
+                            <span class="new-badge">NEW</span>
+                            <a href="https://news.mynavi.jp/article/20261125-5350106/" target="_blank" rel="noopener noreferrer" class="entry-link">胃もたれ、胃痛、胸やけ…今年約6割が「胃の不調」を経験! 「食べ過ぎ」を上回った原因とは?</a>
+                        </h2>
+                        
+                        <p class="entry-summary">ヒューマン・データ・ラボラトリは2026年11月17日、「第1回 胃の不調白書2026」を発表した。</p>
+                        
+                    </div>
+                    
+                </article>
+                
+                <article class="entry-item" data-link="https://news.mynavi.jp/article/20261125-5401121/" data-title="乃木坂46川崎桜、地上波ドラマ初出演で主演　村上佳菜子、無良崇人、樋口新葉らフィギュアスケーターと共演" data-summary="乃木坂46の川崎桜(※崎は「立つ崎」)が、フジテレビの4夜連続ドラマ『フレンチ オン アイス～聖夜のLevel4～』(12月21日～24日24:15～24:25 ※関東地区ほか)で主演を務めることが25日、発表された。川崎にとって、地上波ド…">
+                    <div class="entry-body">
+                        <div class="entry-top-row">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" loading="lazy" onerror="this.style.display='none'">
+                                <span class="entry-source">まいなび</span>
+                                <span class="entry-time">21分前</span>
+                            </div>
+                            <button class="bookmark-btn" type="button" aria-label="あとで読む" title="あとで読む">☆</button>
+                        </div>
+                        <h2 class="entry-title">
+                            <span class="new-badge">NEW</span>
+                            <a href="https://news.mynavi.jp/article/20261125-5401121/" target="_blank" rel="noopener noreferrer" class="entry-link">乃木坂46川崎桜、地上波ドラマ初出演で主演　村上佳菜子、無良崇人、樋口新葉らフィギュアスケーターと共演</a>
+                        </h2>
+                        
+                        <p class="entry-summary">乃木坂46の川崎桜(※崎は「立つ崎」)が、フジテレビの4夜連続ドラマ『フレンチ オン アイス～聖夜のLevel4～』(12月21日～24日24:15～24:25 ※関東地区ほか)で主演を務めることが25日、発表された。川崎にとって、地上波ド…</p>
+                        
+                    </div>
+                    
+                </article>
+                
+                <article class="entry-item" data-link="https://news.mynavi.jp/article/20261125-5403496/" data-title="プレミア首位アーセナル、ブンデス首位ドルトムント…CLで実現した強豪対決は痛み分けドロー" data-summary="チャンピオンズリーグ（CL）・リーグフェーズ第5節が現地時間で24日に行われ、アーセナル（イングランド）とドルトムント（ドイツ）が対戦した。 現在、プレミアリーグで首位に立つアーセナルと、ブンデス">
+                    <div class="entry-body">
+                        <div class="entry-top-row">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" loading="lazy" onerror="this.style.display='none'">
+                                <span class="entry-source">まいなび</span>
+                                <span class="entry-time">24分前</span>
+                            </div>
+                            <button class="bookmark-btn" type="button" aria-label="あとで読む" title="あとで読む">☆</button>
+                        </div>
+                        <h2 class="entry-title">
+                            <span class="new-badge">NEW</span>
+                            <a href="https://news.mynavi.jp/article/20261125-5403496/" target="_blank" rel="noopener noreferrer" class="entry-link">プレミア首位アーセナル、ブンデス首位ドルトムント…CLで実現した強豪対決は痛み分けドロー</a>
+                        </h2>
+                        
+                        <p class="entry-summary">チャンピオンズリーグ（CL）・リーグフェーズ第5節が現地時間で24日に行われ、アーセナル（イングランド）とドルトムント（ドイツ）が対戦した。 現在、プレミアリーグで首位に立つアーセナルと、ブンデス</p>
+                        
+                    </div>
+                    
+                </article>
+                
+                <article class="entry-item" data-link="https://news.mynavi.jp/article/20261125-5399000/" data-title="ドライバーの荷待ち・荷役時間は減らせる? いすゞなど6社が実証を開始" data-summary="いすゞ自動車や東芝など6社は、物流拠点でドライバーの荷待ち・荷役時間を自動で記録する実証実験を開始した。トラックの走行データと倉庫の作業データを組み合わせ、物流現場の「見えにくい時間」を正確に把握するのが狙いだ。">
+                    <div class="entry-body">
+                        <div class="entry-top-row">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" loading="lazy" onerror="this.style.display='none'">
+                                <span class="entry-source">まいなび</span>
+                                <span class="entry-time">31分前</span>
+                            </div>
+                            <button class="bookmark-btn" type="button" aria-label="あとで読む" title="あとで読む">☆</button>
+                        </div>
+                        <h2 class="entry-title">
+                            <span class="new-badge">NEW</span>
+                            <a href="https://news.mynavi.jp/article/20261125-5399000/" target="_blank" rel="noopener noreferrer" class="entry-link">ドライバーの荷待ち・荷役時間は減らせる? いすゞなど6社が実証を開始</a>
+                        </h2>
+                        
+                        <p class="entry-summary">いすゞ自動車や東芝など6社は、物流拠点でドライバーの荷待ち・荷役時間を自動で記録する実証実験を開始した。トラックの走行データと倉庫の作業データを組み合わせ、物流現場の「見えにくい時間」を正確に把握するのが狙いだ。</p>
+                        
+                    </div>
+                    
+                </article>
+                
+                <article class="entry-item" data-link="https://news.mynavi.jp/article/20261125-5403497/" data-title="レアル・マドリード、無傷のCL開幕5連勝！　佐野航大擁するPSVに先制許すも、後半5発で逆転勝利" data-summary="チャンピオンズリーグ（CL）・リーグフェーズ第5節が現地時間で24日に行われ、レアル・マドリード（スペイン）とPSV（オランダ）が対戦した。 今季のCL・リーグフェーズの戦いも折り返しの第5節に突">
+                    <div class="entry-body">
+                        <div class="entry-top-row">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" loading="lazy" onerror="this.style.display='none'">
+                                <span class="entry-source">まいなび</span>
+                                <span class="entry-time">42分前</span>
+                            </div>
+                            <button class="bookmark-btn" type="button" aria-label="あとで読む" title="あとで読む">☆</button>
+                        </div>
+                        <h2 class="entry-title">
+                            <span class="new-badge">NEW</span>
+                            <a href="https://news.mynavi.jp/article/20261125-5403497/" target="_blank" rel="noopener noreferrer" class="entry-link">レアル・マドリード、無傷のCL開幕5連勝！　佐野航大擁するPSVに先制許すも、後半5発で逆転勝利</a>
+                        </h2>
+                        
+                        <p class="entry-summary">チャンピオンズリーグ（CL）・リーグフェーズ第5節が現地時間で24日に行われ、レアル・マドリード（スペイン）とPSV（オランダ）が対戦した。 今季のCL・リーグフェーズの戦いも折り返しの第5節に突</p>
+                        
+                    </div>
+                    
+                </article>
+                
+                <article class="entry-item" data-link="https://news.mynavi.jp/techplus/article/20261125-5403388/" data-title="見たいセッションだけでも参加できます。11月26日開催「Enterprise Mac Forum 2026」、立場別のおすすめの見方" data-summary="11月26日（木）13:30から開催する無料のオンラインイベント「Enterprise Mac Forum 2026」。お申し込みは当日12:30まで受け付けています。 プログラムは3時間ですが、すべてを視聴する必要はありません。管理・運用…">
+                    <div class="entry-body">
+                        <div class="entry-top-row">
+                            <div class="entry-meta">
+                                <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" loading="lazy" onerror="this.style.display='none'">
+                                <span class="entry-source">まいなび</span>
+                                <span class="entry-time">51分前</span>
+                            </div>
+                            <button class="bookmark-btn" type="button" aria-label="あとで読む" title="あとで読む">☆</button>
+                        </div>
+                        <h2 class="entry-title">
+                            <span class="new-badge">NEW</span>
+                            <a href="https://news.mynavi.jp/techplus/article/20261125-5403388/" target="_blank" rel="noopener noreferrer" class="entry-link">見たいセッションだけでも参加できます。11月26日開催「Enterprise Mac Forum 2026」、立場別のおすすめの見方</a>
+                        </h2>
+                        
+                        <p class="entry-summary">11月26日（木）13:30から開催する無料のオンラインイベント「Enterprise Mac Forum 2026」。お申し込みは当日12:30まで受け付けています。 プログラムは3時間ですが、すべてを視聴する必要はありません。管理・運用…</p>
+                        
+                    </div>
+                    
+                </article>
+                
+            </div>
+        </section>
+
+        <!-- パネル2: サイト別 -->
+        <section id="panel-feed" class="tab-panel">
+            
             <details class="feed-section">
                 <summary>
                     <div class="feed-info">
-                        <span class="feed-title-text">すべての新着記事</span>
+                        <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" loading="lazy" onerror="this.style.display='none'">
+                        <span class="feed-title-text">まいなび</span>
                     </div>
-                    <div class="feed-meta-count">
-                        <span class="count-badge">10 件</span>
-                    </div>
-                </summary>
-                <div class="timeline-card-wrapper">
                     
-                    <div class="card entry-item" data-link="https://news.mynavi.jp/article/dual_income-73/" data-title="限界間近!? 共働き世帯のリアル物語 第73回 【漫画】「そっちがやってよ!」共働き夫婦の家事の押し付け合い、どう解決した?" data-summary="共働き世帯が過半数を占める今、家庭と仕事の両立は多くの人にとって身近な課題となっています。ただ、共働きが当たり前になった今も、それを前提とした社会の仕組みができていないという現実があります。そこで本連載では、共働き家庭の「あるある漫画」を通…">
-                        <div class="card-content">
-                            <div class="entry-meta">
-                                <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                                <span class="entry-source">まいなび</span>
-                                <span class="entry-time">2分前</span>
+                    <span class="count-badge has-new">新着 10 / 10</span>
+                    
+                </summary>
+                <div class="accordion-body">
+                    
+                    <article class="entry-item" data-link="https://news.mynavi.jp/article/dual_income-73/" data-title="限界間近!? 共働き世帯のリアル物語 第73回 【漫画】「そっちがやってよ!」共働き夫婦の家事の押し付け合い、どう解決した?" data-summary="共働き世帯が過半数を占める今、家庭と仕事の両立は多くの人にとって身近な課題となっています。ただ、共働きが当たり前になった今も、それを前提とした社会の仕組みができていないという現実があります。そこで本連載では、共働き家庭の「あるある漫画」を通…">
+                        <div class="entry-body">
+                            <div class="entry-top-row">
+                                <div class="entry-meta">
+                                    <span class="entry-time no-dot">4分前</span>
+                                </div>
+                                <button class="bookmark-btn" type="button" aria-label="あとで読む" title="あとで読む">☆</button>
                             </div>
-                            <div class="entry-title">
+                            <h3 class="entry-title">
                                 <span class="new-badge">NEW</span>
                                 <a href="https://news.mynavi.jp/article/dual_income-73/" target="_blank" rel="noopener noreferrer" class="entry-link">限界間近!? 共働き世帯のリアル物語 第73回 【漫画】「そっちがやってよ!」共働き夫婦の家事の押し付け合い、どう解決した?</a>
-                            </div>
-                            <div class="entry-summary">共働き世帯が過半数を占める今、家庭と仕事の両立は多くの人にとって身近な課題となっています。ただ、共働きが当たり前になった今も、それを前提とした社会の仕組みができていないという現実があります。そこで本連載では、共働き家庭の「あるある漫画」を通…</div>
+                            </h3>
+                            
+                            <p class="entry-summary">共働き世帯が過半数を占める今、家庭と仕事の両立は多くの人にとって身近な課題となっています。ただ、共働きが当たり前になった今も、それを前提とした社会の仕組みができていないという現実があります。そこで本連載では、共働き家庭の「あるある漫画」を通…</p>
+                            
                         </div>
                         
-                    </div>
+                    </article>
                     
-                    <div class="card entry-item" data-link="https://news.mynavi.jp/premium/article/automotive-industry-71/" data-title="自動車業界 ニュースの見方 第71回 EV全振りから現実路線へ、ホンダはHV「アヴァンシア」で再起を図る" data-summary="ホンダが次世代ハイブリッド車シリーズの第1弾となる大型SUV「アヴァンシア」を世界初公開した。米国ではHV向け新工場の建設も発表。「EV全振り」の挑戦から撤退し、一気に現実路線へとかじを切ったホンダの戦略を読み解く。">
-                        <div class="card-content">
-                            <div class="entry-meta">
-                                <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                                <span class="entry-source">まいなび</span>
-                                <span class="entry-time">19分前</span>
+                    <article class="entry-item" data-link="https://news.mynavi.jp/premium/article/automotive-industry-71/" data-title="自動車業界 ニュースの見方 第71回 EV全振りから現実路線へ、ホンダはHV「アヴァンシア」で再起を図る" data-summary="ホンダが次世代ハイブリッド車シリーズの第1弾となる大型SUV「アヴァンシア」を世界初公開した。米国ではHV向け新工場の建設も発表。「EV全振り」の挑戦から撤退し、一気に現実路線へとかじを切ったホンダの戦略を読み解く。">
+                        <div class="entry-body">
+                            <div class="entry-top-row">
+                                <div class="entry-meta">
+                                    <span class="entry-time no-dot">21分前</span>
+                                </div>
+                                <button class="bookmark-btn" type="button" aria-label="あとで読む" title="あとで読む">☆</button>
                             </div>
-                            <div class="entry-title">
+                            <h3 class="entry-title">
                                 <span class="new-badge">NEW</span>
                                 <a href="https://news.mynavi.jp/premium/article/automotive-industry-71/" target="_blank" rel="noopener noreferrer" class="entry-link">自動車業界 ニュースの見方 第71回 EV全振りから現実路線へ、ホンダはHV「アヴァンシア」で再起を図る</a>
-                            </div>
-                            <div class="entry-summary">ホンダが次世代ハイブリッド車シリーズの第1弾となる大型SUV「アヴァンシア」を世界初公開した。米国ではHV向け新工場の建設も発表。「EV全振り」の挑戦から撤退し、一気に現実路線へとかじを切ったホンダの戦略を読み解く。</div>
+                            </h3>
+                            
+                            <p class="entry-summary">ホンダが次世代ハイブリッド車シリーズの第1弾となる大型SUV「アヴァンシア」を世界初公開した。米国ではHV向け新工場の建設も発表。「EV全振り」の挑戦から撤退し、一気に現実路線へとかじを切ったホンダの戦略を読み解く。</p>
+                            
                         </div>
                         
-                    </div>
+                    </article>
                     
-                    <div class="card entry-item" data-link="https://news.mynavi.jp/article/20261125-5401498/" data-title="尿管結石のニュースが出るたびに共演者から「大丈夫?」と心配され…佐藤栞里が吐露した胸中「腎臓とは数年前からずっと親友」　現在の体の状態も明かす" data-summary="自身の尿管結石に関する話題がニュースになるたび、翌日の仕事現場で共演者から心配されるという佐藤栞里。数年前の出来事であることを説明するやり取りが、数カ月に1回ほど繰り返されているという。22日配信のニッポン放送のPodcast番組『オールナ…">
-                        <div class="card-content">
-                            <div class="entry-meta">
-                                <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                                <span class="entry-source">まいなび</span>
-                                <span class="entry-time">19分前</span>
+                    <article class="entry-item" data-link="https://news.mynavi.jp/article/20261125-5401498/" data-title="尿管結石のニュースが出るたびに共演者から「大丈夫?」と心配され…佐藤栞里が吐露した胸中「腎臓とは数年前からずっと親友」　現在の体の状態も明かす" data-summary="自身の尿管結石に関する話題がニュースになるたび、翌日の仕事現場で共演者から心配されるという佐藤栞里。数年前の出来事であることを説明するやり取りが、数カ月に1回ほど繰り返されているという。22日配信のニッポン放送のPodcast番組『オールナ…">
+                        <div class="entry-body">
+                            <div class="entry-top-row">
+                                <div class="entry-meta">
+                                    <span class="entry-time no-dot">21分前</span>
+                                </div>
+                                <button class="bookmark-btn" type="button" aria-label="あとで読む" title="あとで読む">☆</button>
                             </div>
-                            <div class="entry-title">
+                            <h3 class="entry-title">
                                 <span class="new-badge">NEW</span>
                                 <a href="https://news.mynavi.jp/article/20261125-5401498/" target="_blank" rel="noopener noreferrer" class="entry-link">尿管結石のニュースが出るたびに共演者から「大丈夫?」と心配され…佐藤栞里が吐露した胸中「腎臓とは数年前からずっと親友」　現在の体の状態も明かす</a>
-                            </div>
-                            <div class="entry-summary">自身の尿管結石に関する話題がニュースになるたび、翌日の仕事現場で共演者から心配されるという佐藤栞里。数年前の出来事であることを説明するやり取りが、数カ月に1回ほど繰り返されているという。22日配信のニッポン放送のPodcast番組『オールナ…</div>
+                            </h3>
+                            
+                            <p class="entry-summary">自身の尿管結石に関する話題がニュースになるたび、翌日の仕事現場で共演者から心配されるという佐藤栞里。数年前の出来事であることを説明するやり取りが、数カ月に1回ほど繰り返されているという。22日配信のニッポン放送のPodcast番組『オールナ…</p>
+                            
                         </div>
                         
-                    </div>
+                    </article>
                     
-                    <div class="card entry-item" data-link="https://news.mynavi.jp/article/kuruma-quiz-68/" data-title="クルマのクイズ 第68回 EVで復活! シトロエンが生んだ伝説的大衆車「2CV」の車名の意味は?" data-summary="2026年10月の「パリモーターショー」で、シトロエンがEVのコンセプトカー「2CV」を披露しました。1948年に登場し、42年にわたって作られた大衆車「2CV」がEVで復活するかもしれません! ところで、この「2CV」という車名ですが、い…">
-                        <div class="card-content">
-                            <div class="entry-meta">
-                                <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                                <span class="entry-source">まいなび</span>
-                                <span class="entry-time">19分前</span>
+                    <article class="entry-item" data-link="https://news.mynavi.jp/article/kuruma-quiz-68/" data-title="クルマのクイズ 第68回 EVで復活! シトロエンが生んだ伝説的大衆車「2CV」の車名の意味は?" data-summary="2026年10月の「パリモーターショー」で、シトロエンがEVのコンセプトカー「2CV」を披露しました。1948年に登場し、42年にわたって作られた大衆車「2CV」がEVで復活するかもしれません! ところで、この「2CV」という車名ですが、い…">
+                        <div class="entry-body">
+                            <div class="entry-top-row">
+                                <div class="entry-meta">
+                                    <span class="entry-time no-dot">21分前</span>
+                                </div>
+                                <button class="bookmark-btn" type="button" aria-label="あとで読む" title="あとで読む">☆</button>
                             </div>
-                            <div class="entry-title">
+                            <h3 class="entry-title">
                                 <span class="new-badge">NEW</span>
                                 <a href="https://news.mynavi.jp/article/kuruma-quiz-68/" target="_blank" rel="noopener noreferrer" class="entry-link">クルマのクイズ 第68回 EVで復活! シトロエンが生んだ伝説的大衆車「2CV」の車名の意味は?</a>
-                            </div>
-                            <div class="entry-summary">2026年10月の「パリモーターショー」で、シトロエンがEVのコンセプトカー「2CV」を披露しました。1948年に登場し、42年にわたって作られた大衆車「2CV」がEVで復活するかもしれません! ところで、この「2CV」という車名ですが、い…</div>
+                            </h3>
+                            
+                            <p class="entry-summary">2026年10月の「パリモーターショー」で、シトロエンがEVのコンセプトカー「2CV」を披露しました。1948年に登場し、42年にわたって作られた大衆車「2CV」がEVで復活するかもしれません! ところで、この「2CV」という車名ですが、い…</p>
+                            
                         </div>
                         
-                    </div>
+                    </article>
                     
-                    <div class="card entry-item" data-link="https://news.mynavi.jp/article/20261125-5350106/" data-title="胃もたれ、胃痛、胸やけ…今年約6割が「胃の不調」を経験! 「食べ過ぎ」を上回った原因とは?" data-summary="ヒューマン・データ・ラボラトリは2026年11月17日、「第1回 胃の不調白書2026」を発表した。">
-                        <div class="card-content">
-                            <div class="entry-meta">
-                                <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                                <span class="entry-source">まいなび</span>
-                                <span class="entry-time">19分前</span>
+                    <article class="entry-item" data-link="https://news.mynavi.jp/article/20261125-5350106/" data-title="胃もたれ、胃痛、胸やけ…今年約6割が「胃の不調」を経験! 「食べ過ぎ」を上回った原因とは?" data-summary="ヒューマン・データ・ラボラトリは2026年11月17日、「第1回 胃の不調白書2026」を発表した。">
+                        <div class="entry-body">
+                            <div class="entry-top-row">
+                                <div class="entry-meta">
+                                    <span class="entry-time no-dot">21分前</span>
+                                </div>
+                                <button class="bookmark-btn" type="button" aria-label="あとで読む" title="あとで読む">☆</button>
                             </div>
-                            <div class="entry-title">
+                            <h3 class="entry-title">
                                 <span class="new-badge">NEW</span>
                                 <a href="https://news.mynavi.jp/article/20261125-5350106/" target="_blank" rel="noopener noreferrer" class="entry-link">胃もたれ、胃痛、胸やけ…今年約6割が「胃の不調」を経験! 「食べ過ぎ」を上回った原因とは?</a>
-                            </div>
-                            <div class="entry-summary">ヒューマン・データ・ラボラトリは2026年11月17日、「第1回 胃の不調白書2026」を発表した。</div>
+                            </h3>
+                            
+                            <p class="entry-summary">ヒューマン・データ・ラボラトリは2026年11月17日、「第1回 胃の不調白書2026」を発表した。</p>
+                            
                         </div>
                         
-                    </div>
+                    </article>
                     
-                    <div class="card entry-item" data-link="https://news.mynavi.jp/article/20261125-5401121/" data-title="乃木坂46川崎桜、地上波ドラマ初出演で主演　村上佳菜子、無良崇人、樋口新葉らフィギュアスケーターと共演" data-summary="乃木坂46の川崎桜(※崎は「立つ崎」)が、フジテレビの4夜連続ドラマ『フレンチ オン アイス～聖夜のLevel4～』(12月21日～24日24:15～24:25 ※関東地区ほか)で主演を務めることが25日、発表された。川崎にとって、地上波ド…">
-                        <div class="card-content">
-                            <div class="entry-meta">
-                                <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                                <span class="entry-source">まいなび</span>
-                                <span class="entry-time">19分前</span>
+                    <article class="entry-item" data-link="https://news.mynavi.jp/article/20261125-5401121/" data-title="乃木坂46川崎桜、地上波ドラマ初出演で主演　村上佳菜子、無良崇人、樋口新葉らフィギュアスケーターと共演" data-summary="乃木坂46の川崎桜(※崎は「立つ崎」)が、フジテレビの4夜連続ドラマ『フレンチ オン アイス～聖夜のLevel4～』(12月21日～24日24:15～24:25 ※関東地区ほか)で主演を務めることが25日、発表された。川崎にとって、地上波ド…">
+                        <div class="entry-body">
+                            <div class="entry-top-row">
+                                <div class="entry-meta">
+                                    <span class="entry-time no-dot">21分前</span>
+                                </div>
+                                <button class="bookmark-btn" type="button" aria-label="あとで読む" title="あとで読む">☆</button>
                             </div>
-                            <div class="entry-title">
+                            <h3 class="entry-title">
                                 <span class="new-badge">NEW</span>
                                 <a href="https://news.mynavi.jp/article/20261125-5401121/" target="_blank" rel="noopener noreferrer" class="entry-link">乃木坂46川崎桜、地上波ドラマ初出演で主演　村上佳菜子、無良崇人、樋口新葉らフィギュアスケーターと共演</a>
-                            </div>
-                            <div class="entry-summary">乃木坂46の川崎桜(※崎は「立つ崎」)が、フジテレビの4夜連続ドラマ『フレンチ オン アイス～聖夜のLevel4～』(12月21日～24日24:15～24:25 ※関東地区ほか)で主演を務めることが25日、発表された。川崎にとって、地上波ド…</div>
+                            </h3>
+                            
+                            <p class="entry-summary">乃木坂46の川崎桜(※崎は「立つ崎」)が、フジテレビの4夜連続ドラマ『フレンチ オン アイス～聖夜のLevel4～』(12月21日～24日24:15～24:25 ※関東地区ほか)で主演を務めることが25日、発表された。川崎にとって、地上波ド…</p>
+                            
                         </div>
                         
-                    </div>
+                    </article>
                     
-                    <div class="card entry-item" data-link="https://news.mynavi.jp/article/20261125-5403496/" data-title="プレミア首位アーセナル、ブンデス首位ドルトムント…CLで実現した強豪対決は痛み分けドロー" data-summary="チャンピオンズリーグ（CL）・リーグフェーズ第5節が現地時間で24日に行われ、アーセナル（イングランド）とドルトムント（ドイツ）が対戦した。 現在、プレミアリーグで首位に立つアーセナルと、ブンデス">
-                        <div class="card-content">
-                            <div class="entry-meta">
-                                <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                                <span class="entry-source">まいなび</span>
-                                <span class="entry-time">23分前</span>
+                    <article class="entry-item" data-link="https://news.mynavi.jp/article/20261125-5403496/" data-title="プレミア首位アーセナル、ブンデス首位ドルトムント…CLで実現した強豪対決は痛み分けドロー" data-summary="チャンピオンズリーグ（CL）・リーグフェーズ第5節が現地時間で24日に行われ、アーセナル（イングランド）とドルトムント（ドイツ）が対戦した。 現在、プレミアリーグで首位に立つアーセナルと、ブンデス">
+                        <div class="entry-body">
+                            <div class="entry-top-row">
+                                <div class="entry-meta">
+                                    <span class="entry-time no-dot">24分前</span>
+                                </div>
+                                <button class="bookmark-btn" type="button" aria-label="あとで読む" title="あとで読む">☆</button>
                             </div>
-                            <div class="entry-title">
+                            <h3 class="entry-title">
                                 <span class="new-badge">NEW</span>
                                 <a href="https://news.mynavi.jp/article/20261125-5403496/" target="_blank" rel="noopener noreferrer" class="entry-link">プレミア首位アーセナル、ブンデス首位ドルトムント…CLで実現した強豪対決は痛み分けドロー</a>
-                            </div>
-                            <div class="entry-summary">チャンピオンズリーグ（CL）・リーグフェーズ第5節が現地時間で24日に行われ、アーセナル（イングランド）とドルトムント（ドイツ）が対戦した。 現在、プレミアリーグで首位に立つアーセナルと、ブンデス</div>
+                            </h3>
+                            
+                            <p class="entry-summary">チャンピオンズリーグ（CL）・リーグフェーズ第5節が現地時間で24日に行われ、アーセナル（イングランド）とドルトムント（ドイツ）が対戦した。 現在、プレミアリーグで首位に立つアーセナルと、ブンデス</p>
+                            
                         </div>
                         
-                    </div>
+                    </article>
                     
-                    <div class="card entry-item" data-link="https://news.mynavi.jp/article/20261125-5399000/" data-title="ドライバーの荷待ち・荷役時間は減らせる? いすゞなど6社が実証を開始" data-summary="いすゞ自動車や東芝など6社は、物流拠点でドライバーの荷待ち・荷役時間を自動で記録する実証実験を開始した。トラックの走行データと倉庫の作業データを組み合わせ、物流現場の「見えにくい時間」を正確に把握するのが狙いだ。">
-                        <div class="card-content">
-                            <div class="entry-meta">
-                                <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                                <span class="entry-source">まいなび</span>
-                                <span class="entry-time">29分前</span>
+                    <article class="entry-item" data-link="https://news.mynavi.jp/article/20261125-5399000/" data-title="ドライバーの荷待ち・荷役時間は減らせる? いすゞなど6社が実証を開始" data-summary="いすゞ自動車や東芝など6社は、物流拠点でドライバーの荷待ち・荷役時間を自動で記録する実証実験を開始した。トラックの走行データと倉庫の作業データを組み合わせ、物流現場の「見えにくい時間」を正確に把握するのが狙いだ。">
+                        <div class="entry-body">
+                            <div class="entry-top-row">
+                                <div class="entry-meta">
+                                    <span class="entry-time no-dot">31分前</span>
+                                </div>
+                                <button class="bookmark-btn" type="button" aria-label="あとで読む" title="あとで読む">☆</button>
                             </div>
-                            <div class="entry-title">
+                            <h3 class="entry-title">
                                 <span class="new-badge">NEW</span>
                                 <a href="https://news.mynavi.jp/article/20261125-5399000/" target="_blank" rel="noopener noreferrer" class="entry-link">ドライバーの荷待ち・荷役時間は減らせる? いすゞなど6社が実証を開始</a>
-                            </div>
-                            <div class="entry-summary">いすゞ自動車や東芝など6社は、物流拠点でドライバーの荷待ち・荷役時間を自動で記録する実証実験を開始した。トラックの走行データと倉庫の作業データを組み合わせ、物流現場の「見えにくい時間」を正確に把握するのが狙いだ。</div>
+                            </h3>
+                            
+                            <p class="entry-summary">いすゞ自動車や東芝など6社は、物流拠点でドライバーの荷待ち・荷役時間を自動で記録する実証実験を開始した。トラックの走行データと倉庫の作業データを組み合わせ、物流現場の「見えにくい時間」を正確に把握するのが狙いだ。</p>
+                            
                         </div>
                         
-                    </div>
+                    </article>
                     
-                    <div class="card entry-item" data-link="https://news.mynavi.jp/article/20261125-5403497/" data-title="レアル・マドリード、無傷のCL開幕5連勝！　佐野航大擁するPSVに先制許すも、後半5発で逆転勝利" data-summary="チャンピオンズリーグ（CL）・リーグフェーズ第5節が現地時間で24日に行われ、レアル・マドリード（スペイン）とPSV（オランダ）が対戦した。 今季のCL・リーグフェーズの戦いも折り返しの第5節に突">
-                        <div class="card-content">
-                            <div class="entry-meta">
-                                <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                                <span class="entry-source">まいなび</span>
-                                <span class="entry-time">41分前</span>
+                    <article class="entry-item" data-link="https://news.mynavi.jp/article/20261125-5403497/" data-title="レアル・マドリード、無傷のCL開幕5連勝！　佐野航大擁するPSVに先制許すも、後半5発で逆転勝利" data-summary="チャンピオンズリーグ（CL）・リーグフェーズ第5節が現地時間で24日に行われ、レアル・マドリード（スペイン）とPSV（オランダ）が対戦した。 今季のCL・リーグフェーズの戦いも折り返しの第5節に突">
+                        <div class="entry-body">
+                            <div class="entry-top-row">
+                                <div class="entry-meta">
+                                    <span class="entry-time no-dot">42分前</span>
+                                </div>
+                                <button class="bookmark-btn" type="button" aria-label="あとで読む" title="あとで読む">☆</button>
                             </div>
-                            <div class="entry-title">
+                            <h3 class="entry-title">
                                 <span class="new-badge">NEW</span>
                                 <a href="https://news.mynavi.jp/article/20261125-5403497/" target="_blank" rel="noopener noreferrer" class="entry-link">レアル・マドリード、無傷のCL開幕5連勝！　佐野航大擁するPSVに先制許すも、後半5発で逆転勝利</a>
-                            </div>
-                            <div class="entry-summary">チャンピオンズリーグ（CL）・リーグフェーズ第5節が現地時間で24日に行われ、レアル・マドリード（スペイン）とPSV（オランダ）が対戦した。 今季のCL・リーグフェーズの戦いも折り返しの第5節に突</div>
+                            </h3>
+                            
+                            <p class="entry-summary">チャンピオンズリーグ（CL）・リーグフェーズ第5節が現地時間で24日に行われ、レアル・マドリード（スペイン）とPSV（オランダ）が対戦した。 今季のCL・リーグフェーズの戦いも折り返しの第5節に突</p>
+                            
                         </div>
                         
-                    </div>
+                    </article>
                     
-                    <div class="card entry-item" data-link="https://news.mynavi.jp/techplus/article/20261125-5403388/" data-title="見たいセッションだけでも参加できます。11月26日開催「Enterprise Mac Forum 2026」、立場別のおすすめの見方" data-summary="11月26日（木）13:30から開催する無料のオンラインイベント「Enterprise Mac Forum 2026」。お申し込みは当日12:30まで受け付けています。 プログラムは3時間ですが、すべてを視聴する必要はありません。管理・運用…">
-                        <div class="card-content">
-                            <div class="entry-meta">
-                                <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                                <span class="entry-source">まいなび</span>
-                                <span class="entry-time">49分前</span>
+                    <article class="entry-item" data-link="https://news.mynavi.jp/techplus/article/20261125-5403388/" data-title="見たいセッションだけでも参加できます。11月26日開催「Enterprise Mac Forum 2026」、立場別のおすすめの見方" data-summary="11月26日（木）13:30から開催する無料のオンラインイベント「Enterprise Mac Forum 2026」。お申し込みは当日12:30まで受け付けています。 プログラムは3時間ですが、すべてを視聴する必要はありません。管理・運用…">
+                        <div class="entry-body">
+                            <div class="entry-top-row">
+                                <div class="entry-meta">
+                                    <span class="entry-time no-dot">51分前</span>
+                                </div>
+                                <button class="bookmark-btn" type="button" aria-label="あとで読む" title="あとで読む">☆</button>
                             </div>
-                            <div class="entry-title">
+                            <h3 class="entry-title">
                                 <span class="new-badge">NEW</span>
                                 <a href="https://news.mynavi.jp/techplus/article/20261125-5403388/" target="_blank" rel="noopener noreferrer" class="entry-link">見たいセッションだけでも参加できます。11月26日開催「Enterprise Mac Forum 2026」、立場別のおすすめの見方</a>
-                            </div>
-                            <div class="entry-summary">11月26日（木）13:30から開催する無料のオンラインイベント「Enterprise Mac Forum 2026」。お申し込みは当日12:30まで受け付けています。 プログラムは3時間ですが、すべてを視聴する必要はありません。管理・運用…</div>
+                            </h3>
+                            
+                            <p class="entry-summary">11月26日（木）13:30から開催する無料のオンラインイベント「Enterprise Mac Forum 2026」。お申し込みは当日12:30まで受け付けています。 プログラムは3時間ですが、すべてを視聴する必要はありません。管理・運用…</p>
+                            
                         </div>
                         
-                    </div>
+                    </article>
                     
                 </div>
             </details>
-        </div>
-        
+            
+        </section>
 
+        <!-- パネル3: トピック別（ウォッチページのみ） -->
         
-        <div id="section-feed" class="content-section">
-            <h2 class="section-title">📁 サイト別</h2>
-            
-            <details class="feed-section">
-                <summary>
-                    <div class="feed-info">
-                        <img src="https://www.google.com/s2/favicons?domain=news.mynavi.jp&amp;sz=32" class="feed-favicon" alt="" onerror="this.style.display='none'">
-                        <span class="feed-title-text">まいなび</span>
-                    </div>
-                    <div class="feed-meta-count">
-                        
-                        <span class="count-badge has-new">新着 10 / 10</span>
-                        
-                    </div>
-                </summary>
-                <ul class="entry-list">
-                    
-                    <li class="list-item entry-item" data-link="https://news.mynavi.jp/article/dual_income-73/" data-title="限界間近!? 共働き世帯のリアル物語 第73回 【漫画】「そっちがやってよ!」共働き夫婦の家事の押し付け合い、どう解決した?" data-summary="共働き世帯が過半数を占める今、家庭と仕事の両立は多くの人にとって身近な課題となっています。ただ、共働きが当たり前になった今も、それを前提とした社会の仕組みができていないという現実があります。そこで本連載では、共働き家庭の「あるある漫画」を通…">
-                        <div class="card-content">
-                            <div class="entry-title">
-                                <span class="new-badge">NEW</span>
-                                <a href="https://news.mynavi.jp/article/dual_income-73/" target="_blank" rel="noopener noreferrer" class="entry-link">限界間近!? 共働き世帯のリアル物語 第73回 【漫画】「そっちがやってよ!」共働き夫婦の家事の押し付け合い、どう解決した?</a>
-                            </div>
-                            <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">2分前</span>
-                            </div>
-                            <div class="entry-summary">共働き世帯が過半数を占める今、家庭と仕事の両立は多くの人にとって身近な課題となっています。ただ、共働きが当たり前になった今も、それを前提とした社会の仕組みができていないという現実があります。そこで本連載では、共働き家庭の「あるある漫画」を通…</div>
-                        </div>
-                        
-                    </li>
-                    
-                    <li class="list-item entry-item" data-link="https://news.mynavi.jp/premium/article/automotive-industry-71/" data-title="自動車業界 ニュースの見方 第71回 EV全振りから現実路線へ、ホンダはHV「アヴァンシア」で再起を図る" data-summary="ホンダが次世代ハイブリッド車シリーズの第1弾となる大型SUV「アヴァンシア」を世界初公開した。米国ではHV向け新工場の建設も発表。「EV全振り」の挑戦から撤退し、一気に現実路線へとかじを切ったホンダの戦略を読み解く。">
-                        <div class="card-content">
-                            <div class="entry-title">
-                                <span class="new-badge">NEW</span>
-                                <a href="https://news.mynavi.jp/premium/article/automotive-industry-71/" target="_blank" rel="noopener noreferrer" class="entry-link">自動車業界 ニュースの見方 第71回 EV全振りから現実路線へ、ホンダはHV「アヴァンシア」で再起を図る</a>
-                            </div>
-                            <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">19分前</span>
-                            </div>
-                            <div class="entry-summary">ホンダが次世代ハイブリッド車シリーズの第1弾となる大型SUV「アヴァンシア」を世界初公開した。米国ではHV向け新工場の建設も発表。「EV全振り」の挑戦から撤退し、一気に現実路線へとかじを切ったホンダの戦略を読み解く。</div>
-                        </div>
-                        
-                    </li>
-                    
-                    <li class="list-item entry-item" data-link="https://news.mynavi.jp/article/20261125-5401498/" data-title="尿管結石のニュースが出るたびに共演者から「大丈夫?」と心配され…佐藤栞里が吐露した胸中「腎臓とは数年前からずっと親友」　現在の体の状態も明かす" data-summary="自身の尿管結石に関する話題がニュースになるたび、翌日の仕事現場で共演者から心配されるという佐藤栞里。数年前の出来事であることを説明するやり取りが、数カ月に1回ほど繰り返されているという。22日配信のニッポン放送のPodcast番組『オールナ…">
-                        <div class="card-content">
-                            <div class="entry-title">
-                                <span class="new-badge">NEW</span>
-                                <a href="https://news.mynavi.jp/article/20261125-5401498/" target="_blank" rel="noopener noreferrer" class="entry-link">尿管結石のニュースが出るたびに共演者から「大丈夫?」と心配され…佐藤栞里が吐露した胸中「腎臓とは数年前からずっと親友」　現在の体の状態も明かす</a>
-                            </div>
-                            <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">19分前</span>
-                            </div>
-                            <div class="entry-summary">自身の尿管結石に関する話題がニュースになるたび、翌日の仕事現場で共演者から心配されるという佐藤栞里。数年前の出来事であることを説明するやり取りが、数カ月に1回ほど繰り返されているという。22日配信のニッポン放送のPodcast番組『オールナ…</div>
-                        </div>
-                        
-                    </li>
-                    
-                    <li class="list-item entry-item" data-link="https://news.mynavi.jp/article/kuruma-quiz-68/" data-title="クルマのクイズ 第68回 EVで復活! シトロエンが生んだ伝説的大衆車「2CV」の車名の意味は?" data-summary="2026年10月の「パリモーターショー」で、シトロエンがEVのコンセプトカー「2CV」を披露しました。1948年に登場し、42年にわたって作られた大衆車「2CV」がEVで復活するかもしれません! ところで、この「2CV」という車名ですが、い…">
-                        <div class="card-content">
-                            <div class="entry-title">
-                                <span class="new-badge">NEW</span>
-                                <a href="https://news.mynavi.jp/article/kuruma-quiz-68/" target="_blank" rel="noopener noreferrer" class="entry-link">クルマのクイズ 第68回 EVで復活! シトロエンが生んだ伝説的大衆車「2CV」の車名の意味は?</a>
-                            </div>
-                            <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">19分前</span>
-                            </div>
-                            <div class="entry-summary">2026年10月の「パリモーターショー」で、シトロエンがEVのコンセプトカー「2CV」を披露しました。1948年に登場し、42年にわたって作られた大衆車「2CV」がEVで復活するかもしれません! ところで、この「2CV」という車名ですが、い…</div>
-                        </div>
-                        
-                    </li>
-                    
-                    <li class="list-item entry-item" data-link="https://news.mynavi.jp/article/20261125-5350106/" data-title="胃もたれ、胃痛、胸やけ…今年約6割が「胃の不調」を経験! 「食べ過ぎ」を上回った原因とは?" data-summary="ヒューマン・データ・ラボラトリは2026年11月17日、「第1回 胃の不調白書2026」を発表した。">
-                        <div class="card-content">
-                            <div class="entry-title">
-                                <span class="new-badge">NEW</span>
-                                <a href="https://news.mynavi.jp/article/20261125-5350106/" target="_blank" rel="noopener noreferrer" class="entry-link">胃もたれ、胃痛、胸やけ…今年約6割が「胃の不調」を経験! 「食べ過ぎ」を上回った原因とは?</a>
-                            </div>
-                            <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">19分前</span>
-                            </div>
-                            <div class="entry-summary">ヒューマン・データ・ラボラトリは2026年11月17日、「第1回 胃の不調白書2026」を発表した。</div>
-                        </div>
-                        
-                    </li>
-                    
-                    <li class="list-item entry-item" data-link="https://news.mynavi.jp/article/20261125-5401121/" data-title="乃木坂46川崎桜、地上波ドラマ初出演で主演　村上佳菜子、無良崇人、樋口新葉らフィギュアスケーターと共演" data-summary="乃木坂46の川崎桜(※崎は「立つ崎」)が、フジテレビの4夜連続ドラマ『フレンチ オン アイス～聖夜のLevel4～』(12月21日～24日24:15～24:25 ※関東地区ほか)で主演を務めることが25日、発表された。川崎にとって、地上波ド…">
-                        <div class="card-content">
-                            <div class="entry-title">
-                                <span class="new-badge">NEW</span>
-                                <a href="https://news.mynavi.jp/article/20261125-5401121/" target="_blank" rel="noopener noreferrer" class="entry-link">乃木坂46川崎桜、地上波ドラマ初出演で主演　村上佳菜子、無良崇人、樋口新葉らフィギュアスケーターと共演</a>
-                            </div>
-                            <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">19分前</span>
-                            </div>
-                            <div class="entry-summary">乃木坂46の川崎桜(※崎は「立つ崎」)が、フジテレビの4夜連続ドラマ『フレンチ オン アイス～聖夜のLevel4～』(12月21日～24日24:15～24:25 ※関東地区ほか)で主演を務めることが25日、発表された。川崎にとって、地上波ド…</div>
-                        </div>
-                        
-                    </li>
-                    
-                    <li class="list-item entry-item" data-link="https://news.mynavi.jp/article/20261125-5403496/" data-title="プレミア首位アーセナル、ブンデス首位ドルトムント…CLで実現した強豪対決は痛み分けドロー" data-summary="チャンピオンズリーグ（CL）・リーグフェーズ第5節が現地時間で24日に行われ、アーセナル（イングランド）とドルトムント（ドイツ）が対戦した。 現在、プレミアリーグで首位に立つアーセナルと、ブンデス">
-                        <div class="card-content">
-                            <div class="entry-title">
-                                <span class="new-badge">NEW</span>
-                                <a href="https://news.mynavi.jp/article/20261125-5403496/" target="_blank" rel="noopener noreferrer" class="entry-link">プレミア首位アーセナル、ブンデス首位ドルトムント…CLで実現した強豪対決は痛み分けドロー</a>
-                            </div>
-                            <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">23分前</span>
-                            </div>
-                            <div class="entry-summary">チャンピオンズリーグ（CL）・リーグフェーズ第5節が現地時間で24日に行われ、アーセナル（イングランド）とドルトムント（ドイツ）が対戦した。 現在、プレミアリーグで首位に立つアーセナルと、ブンデス</div>
-                        </div>
-                        
-                    </li>
-                    
-                    <li class="list-item entry-item" data-link="https://news.mynavi.jp/article/20261125-5399000/" data-title="ドライバーの荷待ち・荷役時間は減らせる? いすゞなど6社が実証を開始" data-summary="いすゞ自動車や東芝など6社は、物流拠点でドライバーの荷待ち・荷役時間を自動で記録する実証実験を開始した。トラックの走行データと倉庫の作業データを組み合わせ、物流現場の「見えにくい時間」を正確に把握するのが狙いだ。">
-                        <div class="card-content">
-                            <div class="entry-title">
-                                <span class="new-badge">NEW</span>
-                                <a href="https://news.mynavi.jp/article/20261125-5399000/" target="_blank" rel="noopener noreferrer" class="entry-link">ドライバーの荷待ち・荷役時間は減らせる? いすゞなど6社が実証を開始</a>
-                            </div>
-                            <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">29分前</span>
-                            </div>
-                            <div class="entry-summary">いすゞ自動車や東芝など6社は、物流拠点でドライバーの荷待ち・荷役時間を自動で記録する実証実験を開始した。トラックの走行データと倉庫の作業データを組み合わせ、物流現場の「見えにくい時間」を正確に把握するのが狙いだ。</div>
-                        </div>
-                        
-                    </li>
-                    
-                    <li class="list-item entry-item" data-link="https://news.mynavi.jp/article/20261125-5403497/" data-title="レアル・マドリード、無傷のCL開幕5連勝！　佐野航大擁するPSVに先制許すも、後半5発で逆転勝利" data-summary="チャンピオンズリーグ（CL）・リーグフェーズ第5節が現地時間で24日に行われ、レアル・マドリード（スペイン）とPSV（オランダ）が対戦した。 今季のCL・リーグフェーズの戦いも折り返しの第5節に突">
-                        <div class="card-content">
-                            <div class="entry-title">
-                                <span class="new-badge">NEW</span>
-                                <a href="https://news.mynavi.jp/article/20261125-5403497/" target="_blank" rel="noopener noreferrer" class="entry-link">レアル・マドリード、無傷のCL開幕5連勝！　佐野航大擁するPSVに先制許すも、後半5発で逆転勝利</a>
-                            </div>
-                            <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">41分前</span>
-                            </div>
-                            <div class="entry-summary">チャンピオンズリーグ（CL）・リーグフェーズ第5節が現地時間で24日に行われ、レアル・マドリード（スペイン）とPSV（オランダ）が対戦した。 今季のCL・リーグフェーズの戦いも折り返しの第5節に突</div>
-                        </div>
-                        
-                    </li>
-                    
-                    <li class="list-item entry-item" data-link="https://news.mynavi.jp/techplus/article/20261125-5403388/" data-title="見たいセッションだけでも参加できます。11月26日開催「Enterprise Mac Forum 2026」、立場別のおすすめの見方" data-summary="11月26日（木）13:30から開催する無料のオンラインイベント「Enterprise Mac Forum 2026」。お申し込みは当日12:30まで受け付けています。 プログラムは3時間ですが、すべてを視聴する必要はありません。管理・運用…">
-                        <div class="card-content">
-                            <div class="entry-title">
-                                <span class="new-badge">NEW</span>
-                                <a href="https://news.mynavi.jp/techplus/article/20261125-5403388/" target="_blank" rel="noopener noreferrer" class="entry-link">見たいセッションだけでも参加できます。11月26日開催「Enterprise Mac Forum 2026」、立場別のおすすめの見方</a>
-                            </div>
-                            <div class="entry-meta">
-                                <span class="entry-time" style="border-left:none; padding-left:0;">49分前</span>
-                            </div>
-                            <div class="entry-summary">11月26日（木）13:30から開催する無料のオンラインイベント「Enterprise Mac Forum 2026」。お申し込みは当日12:30まで受け付けています。 プログラムは3時間ですが、すべてを視聴する必要はありません。管理・運用…</div>
-                        </div>
-                        
-                    </li>
-                    
-                </ul>
-            </details>
-            
-        </div>
         
     </div>
 
-    <div id="backToTop" title="トップへ戻る">↑</div>
+    <button id="backToTop" aria-label="トップへ戻る" title="トップへ戻る">↑</button>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 修正箇所: ジャンプボタン連動のスクロール＆アコーディオン自動展開ロジック
-            document.querySelectorAll('.jump-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href').substring(1);
-                    const targetSection = document.getElementById(targetId);
-                    
-                    if (targetSection) {
-                        // ジャンプ先のセクション内にあるアコーディオンをすべて開く
-                        targetSection.querySelectorAll('details').forEach(details => {
-                            details.open = true;
-                        });
-                        
-                        // ヘッダーの高さを考慮して少しずらしてスクロール
-                        const headerOffset = 70;
-                        const elementPosition = targetSection.getBoundingClientRect().top;
-                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                        
-                        window.scrollTo({
-                             top: offsetPosition,
-                             behavior: "smooth"
-                        });
-                    }
+            const READ_KEY = 'rss_read_items';
+            const BOOKMARK_KEY = 'rss_bookmarked_items';
+            const THEME_KEY = 'rss_theme';
+
+            let readItems = new Set(JSON.parse(localStorage.getItem(READ_KEY) || '[]'));
+            let bookmarkedItems = new Set(JSON.parse(localStorage.getItem(BOOKMARK_KEY) || '[]'));
+            let unreadOnly = false;
+            let bookmarkedOnly = false;
+            let currentSearchTerm = '';
+
+            const entryItems = Array.from(document.querySelectorAll('.entry-item'));
+            const filterEmptyState = document.getElementById('filterEmptyState');
+
+            // 1. 選択中のカテゴリをナビゲーションバー中央へ自動スクロール
+            const activeNav = document.querySelector('.nav-link.active');
+            if (activeNav) {
+                activeNav.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' });
+            }
+
+            // 2. ダークモード切替
+            const themeToggle = document.getElementById('themeToggle');
+            function updateThemeIcon() {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                themeToggle.textContent = isDark ? '☀️' : '🌙';
+            }
+            updateThemeIcon();
+            themeToggle.addEventListener('click', () => {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                if (isDark) {
+                    document.documentElement.removeAttribute('data-theme');
+                    localStorage.setItem(THEME_KEY, 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem(THEME_KEY, 'dark');
+                }
+                updateThemeIcon();
+            });
+
+            // 3. タブ切り替え
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabPanels = document.querySelectorAll('.tab-panel');
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.dataset.tab;
+                    tabBtns.forEach(b => {
+                        b.classList.toggle('active', b === btn);
+                        b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+                    });
+                    tabPanels.forEach(p => p.classList.toggle('active', p.id === targetId));
+                    updateEmptyState();
                 });
             });
 
-            // 既読管理
-            const STORAGE_KEY = 'rss_read_items';
-            let readItems = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
-            const entryItems = document.querySelectorAll('.entry-item');
-            
-            entryItems.forEach(item => {
-                const link = item.dataset.link;
-                if (readItems.has(link)) {
-                    item.classList.add('read');
-                }
-                const anchor = item.querySelector('a.entry-link');
-                if(anchor) {
-                    anchor.addEventListener('click', function() {
-                        // 同じURLを持つすべての記事（タイムラインとサイト別の両方）を既読にする
-                        document.querySelectorAll(`.entry-item[data-link="${link}"]`).forEach(el => {
-                            el.classList.add('read');
-                        });
-                        readItems.add(link);
-                        if (readItems.size > 1000) {
-                            const array = Array.from(readItems);
-                            readItems = new Set(array.slice(array.length - 1000));
+            // 4. 記事の初期状態（既読・保存済み・元のHTML保持）
+            function saveReadItems() {
+                let arr = Array.from(readItems);
+                if (arr.length > 1500) arr = arr.slice(arr.length - 1500);
+                readItems = new Set(arr);
+                localStorage.setItem(READ_KEY, JSON.stringify(arr));
+            }
+            function saveBookmarkedItems() {
+                localStorage.setItem(BOOKMARK_KEY, JSON.stringify(Array.from(bookmarkedItems)));
+            }
+            function syncItemStates(link) {
+                const isRead = readItems.has(link);
+                const isBookmarked = bookmarkedItems.has(link);
+                entryItems.forEach(el => {
+                    if (el.dataset.link === link) {
+                        el.classList.toggle('read', isRead);
+                        const starBtn = el.querySelector('.bookmark-btn');
+                        if (starBtn) {
+                            starBtn.classList.toggle('bookmarked', isBookmarked);
+                            starBtn.textContent = isBookmarked ? '★' : '☆';
                         }
-                        localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readItems)));
-                    });
-                }
-            });
-
-            // 検索・絞り込み
-            const searchToggle = document.getElementById('searchToggle');
-            const searchInput = document.getElementById('searchInput');
-            
-            if (searchToggle && searchInput) {
-                searchToggle.addEventListener('click', () => {
-                    searchInput.classList.toggle('active');
-                    if(searchInput.classList.contains('active')) {
-                        searchInput.focus();
                     }
                 });
             }
 
-            entryItems.forEach(entry => {
-                const titleLink = entry.querySelector('.entry-title a');
-                const summaryDiv = entry.querySelector('.entry-summary');
-                if(titleLink && summaryDiv){
-                    entry.dataset.originalTitleHtml = titleLink.innerHTML;
-                    entry.dataset.originalSummaryHtml = summaryDiv.innerHTML;
+            entryItems.forEach(item => {
+                const link = item.dataset.link;
+                const titleLink = item.querySelector('.entry-link');
+                const summaryEl = item.querySelector('.entry-summary');
+                if (titleLink) item.dataset.originalTitleHtml = titleLink.innerHTML;
+                if (summaryEl) item.dataset.originalSummaryHtml = summaryEl.innerHTML;
+
+                if (readItems.has(link)) item.classList.add('read');
+                const starBtn = item.querySelector('.bookmark-btn');
+                if (starBtn) {
+                    if (bookmarkedItems.has(link)) {
+                        starBtn.classList.add('bookmarked');
+                        starBtn.textContent = '★';
+                    }
+                    starBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (bookmarkedItems.has(link)) {
+                            bookmarkedItems.delete(link);
+                        } else {
+                            bookmarkedItems.add(link);
+                        }
+                        saveBookmarkedItems();
+                        syncItemStates(link);
+                        applyFilters();
+                    });
+                }
+
+                if (titleLink) {
+                    titleLink.addEventListener('click', () => {
+                        readItems.add(link);
+                        saveReadItems();
+                        syncItemStates(link);
+                        if (unreadOnly) applyFilters();
+                    });
                 }
             });
 
-            searchInput.addEventListener('input', function(e) {
-                const term = e.target.value.trim().toLowerCase();
+            // 5. フィルタ＆検索の一元制御
+            function escapeRegExp(str) {
+                return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
 
-                if (term === '') {
-                    entryItems.forEach(entry => {
-                        entry.style.display = '';
-                        const titleLink = entry.querySelector('.entry-title a');
-                        const summaryDiv = entry.querySelector('.entry-summary');
-                        if(titleLink && entry.dataset.originalTitleHtml) titleLink.innerHTML = entry.dataset.originalTitleHtml;
-                        if(summaryDiv && entry.dataset.originalSummaryHtml) summaryDiv.innerHTML = entry.dataset.originalSummaryHtml;
-                    });
-                    
-                    // 検索クリア時は全アコーディオンを閉じて元の目次状態に戻す
-                    document.querySelectorAll('details.feed-section').forEach(sec => {
-                        sec.style.display = '';
-                        sec.open = false; 
-                    });
+            function applyHighlight(entry, term) {
+                const titleLink = entry.querySelector('.entry-link');
+                const summaryEl = entry.querySelector('.entry-summary');
+                if (!term) {
+                    if (titleLink && entry.dataset.originalTitleHtml !== undefined) {
+                        titleLink.innerHTML = entry.dataset.originalTitleHtml;
+                    }
+                    if (summaryEl && entry.dataset.originalSummaryHtml !== undefined) {
+                        summaryEl.innerHTML = entry.dataset.originalSummaryHtml;
+                    }
                     return;
                 }
+                try {
+                    const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
+                    if (titleLink && entry.dataset.originalTitleHtml !== undefined) {
+                        titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, '<mark>$1</mark>');
+                    }
+                    if (summaryEl && entry.dataset.originalSummaryHtml !== undefined) {
+                        summaryEl.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, '<mark>$1</mark>');
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+
+            function updateEmptyState() {
+                if (!filterEmptyState) return;
+                const activePanel = document.querySelector('.tab-panel.active');
+                if (!activePanel) return;
+                const visibleEntries = Array.from(activePanel.querySelectorAll('.entry-item'))
+                    .filter(el => el.style.display !== 'none');
+                filterEmptyState.style.display = visibleEntries.length === 0 ? 'block' : 'none';
+            }
+
+            function applyFilters() {
+                const term = currentSearchTerm.trim().toLowerCase();
+                const isFiltering = Boolean(term || unreadOnly || bookmarkedOnly);
 
                 entryItems.forEach(entry => {
+                    const link = entry.dataset.link;
                     const titleText = (entry.dataset.title || '').toLowerCase();
                     const summaryText = (entry.dataset.summary || '').toLowerCase();
 
-                    if (titleText.includes(term) || summaryText.includes(term)) {
-                        entry.style.display = '';
-                        highlightText(entry, term);
-                    } else {
-                        entry.style.display = 'none';
-                    }
+                    let visible = true;
+                    if (unreadOnly && readItems.has(link)) visible = false;
+                    if (bookmarkedOnly && !bookmarkedItems.has(link)) visible = false;
+                    if (term && !titleText.includes(term) && !summaryText.includes(term)) visible = false;
+
+                    entry.style.display = visible ? '' : 'none';
+                    applyHighlight(entry, visible ? term : '');
                 });
 
-                // 修正箇所: トピック・タイムライン・サイト別のすべてのアコーディオンを横断して制御
+                // サイト別・トピック別のアコーディオン制御
                 document.querySelectorAll('details.feed-section').forEach(section => {
-                    // クラスが .list-item (サイト別・トピック別) または .card (タイムライン) のものを探す
-                    const visibleItems = Array.from(section.querySelectorAll('.entry-item')).filter(el => el.style.display !== 'none');
-                    if(visibleItems.length === 0) {
+                    const visibleItems = Array.from(section.querySelectorAll('.entry-item'))
+                        .filter(el => el.style.display !== 'none');
+                    if (visibleItems.length === 0) {
                         section.style.display = 'none';
                     } else {
                         section.style.display = '';
-                        section.open = true; // ヒットしたアコーディオンは自動で開く
+                        if (isFiltering) section.open = true;
                     }
                 });
+
+                updateEmptyState();
+            }
+
+            // フィルタボタン
+            const unreadOnlyBtn = document.getElementById('unreadOnlyBtn');
+            const bookmarkedOnlyBtn = document.getElementById('bookmarkedOnlyBtn');
+            const markAllReadBtn = document.getElementById('markAllReadBtn');
+
+            if (unreadOnlyBtn) {
+                unreadOnlyBtn.addEventListener('click', () => {
+                    unreadOnly = !unreadOnly;
+                    unreadOnlyBtn.classList.toggle('active', unreadOnly);
+                    applyFilters();
+                });
+            }
+            if (bookmarkedOnlyBtn) {
+                bookmarkedOnlyBtn.addEventListener('click', () => {
+                    bookmarkedOnly = !bookmarkedOnly;
+                    bookmarkedOnlyBtn.classList.toggle('star-active', bookmarkedOnly);
+                    applyFilters();
+                });
+            }
+            if (markAllReadBtn) {
+                markAllReadBtn.addEventListener('click', () => {
+                    if (!confirm('このページのすべての記事を既読にしますか？')) return;
+                    entryItems.forEach(item => {
+                        const link = item.dataset.link;
+                        readItems.add(link);
+                        item.classList.add('read');
+                    });
+                    saveReadItems();
+                    applyFilters();
+                });
+            }
+
+            // 6. 検索オーバーレイ
+            const searchToggle = document.getElementById('searchToggle');
+            const searchOverlay = document.getElementById('searchOverlay');
+            const searchInput = document.getElementById('searchInput');
+            const searchClear = document.getElementById('searchClear');
+            const searchClose = document.getElementById('searchClose');
+
+            searchToggle.addEventListener('click', () => {
+                searchOverlay.classList.add('active');
+                searchInput.focus();
             });
-
-            function highlightText(entry, term) {
-                try {
-                    const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
-                    const highlightMark = '<mark>$1</mark>';
-                    const titleLink = entry.querySelector('.entry-title a');
-                    const summaryDiv = entry.querySelector('.entry-summary');
-                    
-                    if(titleLink && entry.dataset.originalTitleHtml) {
-                        titleLink.innerHTML = entry.dataset.originalTitleHtml.replace(regex, highlightMark);
-                    }
-                    if(summaryDiv && entry.dataset.originalSummaryHtml) {
-                        summaryDiv.innerHTML = entry.dataset.originalSummaryHtml.replace(regex, highlightMark);
-                    }
-                } catch(e) { console.error(e); }
-            }
-
-            function escapeRegExp(string) {
-                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            }
-
-            const backToTopBtn = document.getElementById('backToTop');
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 300) {
-                    backToTopBtn.classList.add('show');
-                } else {
-                    backToTopBtn.classList.remove('show');
+            searchClose.addEventListener('click', () => {
+                searchOverlay.classList.remove('active');
+                if (searchInput.value !== '') {
+                    searchInput.value = '';
+                    currentSearchTerm = '';
+                    searchClear.classList.remove('visible');
+                    applyFilters();
                 }
             });
+            searchInput.addEventListener('input', (e) => {
+                currentSearchTerm = e.target.value;
+                searchClear.classList.toggle('visible', currentSearchTerm.length > 0);
+                applyFilters();
+            });
+            searchClear.addEventListener('click', () => {
+                searchInput.value = '';
+                currentSearchTerm = '';
+                searchClear.classList.remove('visible');
+                searchInput.focus();
+                applyFilters();
+            });
+
+            // 7. トップへ戻るボタン
+            const backToTopBtn = document.getElementById('backToTop');
+            window.addEventListener('scroll', () => {
+                backToTopBtn.classList.toggle('show', window.scrollY > 300);
+            }, { passive: true });
             backToTopBtn.addEventListener('click', () => {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
