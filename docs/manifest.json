@@ -1,0 +1,18 @@
+{
+  "name": "RSS News Portal",
+  "short_name": "RSS News",
+  "description": "スマホ最適化された個人用RSSニュースリーダー",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f6f9",
+  "theme_color": "#1e293b",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
